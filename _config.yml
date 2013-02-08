@@ -9,10 +9,10 @@ pygments: true
 # Themes are encouraged to use these universal variables
 # so be sure to set them if your theme uses them.
 #
-title : 一亩三分地
+title : Chunlong's Blog
 tagline: Site Tagline
 author :
-  name : tacy lee
+  name : 李春龙
   email : tacy.lee@gmail.com
   github : tacy
   twitter : tacy
