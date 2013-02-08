@@ -1,0 +1,417 @@
+---
+layout: post
+categories: [tech]
+title: Knowledge of network
+tags : [network, tcpip]
+---
+
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1">tcp/ip</h2>
+<div class="outline-text-2" id="text-1">
+
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1">一些基本概念</h3>
+<div class="outline-text-3" id="text-1-1">
+
+<p>ip在网络层，只负责发送和路由，不保证有序、正确、送达；tcp负责保证包有序、正确、送达，流量控制这种事自然也是tcp负责；端口说的是tcp层的事情，tcp是有状态的，而ip是无状态的，三次握手建立连接和4次握手关闭连接说的都是tcp的事情。
+</p>
+<p>
+数据链路层（2层）不涉及到ip,如果要走路由，不是这一层能完成的，目前的很多虚拟网络都是基于2层，比如openstack quantum，vmware vds。
+</p></div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2">连接建立和关闭</h3>
+<div class="outline-text-3" id="text-1-2">
+
+<p>client发起syn，server应答syn/ack，client应答ack，握手成功。
+关闭连接可以由任意一端发起，假设client发起：client发送fin，server端应答fin/ack，客户端接收之后不再继续发送数据，server处理完剩余的数据之后，发送fin，客户端应答fin/ack，连接关闭。
+</p></div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3">连接状态</h3>
+<div class="outline-text-3" id="text-1-3">
+
+
+
+
+<pre class="example">   TCP A                                                TCP B
+1.  ESTABLISHED                                          ESTABLISHED
+2.  (Close)
+    FIN-WAIT-1  --&gt; &lt;SEQ=100&gt;&lt;ACK=300&gt;&lt;CTL=FIN,ACK&gt;  --&gt; CLOSE-WAIT
+3.  FIN-WAIT-2  &lt;-- &lt;SEQ=300&gt;&lt;ACK=101&gt;&lt;CTL=ACK&gt;      &lt;-- CLOSE-WAIT
+4.                                                       (Close)
+    TIME-WAIT   &lt;-- &lt;SEQ=300&gt;&lt;ACK=101&gt;&lt;CTL=FIN,ACK&gt;  &lt;-- LAST-ACK
+5.  TIME-WAIT   --&gt; &lt;SEQ=101&gt;&lt;ACK=301&gt;&lt;CTL=ACK&gt;      --&lt; CLOSED
+6.  (2 MSL)
+    CLOSED
+</pre>
+
+
+<p>
+tcp A 发送FIN到tcp B，请求终止连接，tcp A来到FIN-WAIT-1状态；tcp B接收到FIN之后处于CLOSE-WAIT状态，tcp B发送ACK到TCP A；TCP A接收到ACK之后来到FIN-WAIT-2状态，这个时候，tcp A到tcp B的发送数据通道其实已经结束，但是由于连接是双向的，所以tcp A依然要等待tcp B发送完数据；tcp B处理完剩余的数据之后，发送FIN到tcp A，tcp B处于LAST-ACK状态，这个时候tcp A处于TIME-WAIT状态，tcp A应答ACK，tcp B CLOSED，tcp A等待2 MSL（一般是2毫秒）之后CLOSED。
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2">Hub &amp; Bridge &amp; Switch &amp; Router</h2>
+<div class="outline-text-2" id="text-2">
+
+<p>Hub工作在第一层（物理层），Bridge工作在第二层（数据链路层）；Switch分很多种，一般我们说的Switch也是工作在第二层，但是也有很多Switch工作在三层、四层、四-七层；Router工作在三层。
+</p>
+<p>
+Hub没有学习能力，只是一个中继，他收到一个packet之后，直接广播到所有的其他端口，由于带宽共享和处于单一包冲突域（collision domain），基本无法实现大量主机高速连接。
+</p>
+<p>
+Switch具备MAC学习能力，每个端口为一个冲突域，每个通讯建立独立的链路，全速带宽。能有效建立高速网络。三层交换具备路由功能，四层具备负载均衡能力，四-七层CDN。
+</p>
+<p>
+Bridge工作在二层，因此可以连接异构网络和多协议，其他感觉和两层Switch差不多，当然没有Switch功能那么多，更多是用来在网络间连接。当然linux bridge相比硬件bridge更强大，他能过滤和改变传输，具体可以参考ebtables
+</p>
+<p>
+Router工作在三层（网络层），实现路由功能。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3">VLAN</h2>
+<div class="outline-text-2" id="text-3">
+
+<p>vlan工作在二层，早期vlan是解决大的单一网络的冲突域问题，现在主要解决mac层的广播域问题。vlan id 设计为12位，支持4096个
+vlan。一般一个vlan可以对应多个ip子网。trunk一般是指switch-to-switch,switch-to-router，而不是指连接到主机的端口。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4">tunnel</h2>
+<div class="outline-text-2" id="text-4">
+
+
+
+</div>
+
+<div id="outline-container-4-1" class="outline-3">
+<h3 id="sec-4-1">vxlan</h3>
+<div class="outline-text-3" id="text-4-1">
+
+<p>Vxlan是cisco、Vmware等发起的一个标准，主要解决Vlan可扩展性和基于二层的局限性，它采用MAC-in-UDP技术，封装两层的包到三层，工作在三层，主要应用在当前的云计算中心虚拟网络，可以划分16M的网络（24位id），同时实现虚拟机跨两层网络迁移，目前采用的都是one-on-one方式，不支持multipath。简单概括vxlan：实现跨三层的两层网络，利用现有的路由
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-4-2" class="outline-3">
+<h3 id="sec-4-2">otv (Overlay Transport vritualization)</h3>
+<div class="outline-text-3" id="text-4-2">
+
+<p>解决跨数据中心实现两层网络扩展（异地，跨互联网），vxlan的包封装格式和otv类似，解决问题不一样，实现Vlan跨数据中心。cisco最晚版本不需要依赖IP Multicast
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-5" class="outline-2">
+<h2 id="sec-5">TAP/TUN</h2>
+<div class="outline-text-2" id="text-5">
+
+<ol>
+<li>What is the TUN ?
+</li>
+</ol>
+
+<p>The TUN is Virtual Point-to-Point network device. TUN driver was designed as low level kernel support for IP tunneling. It provides to userland application two interfaces:
+</p><ul>
+<li>/dev/tunX   - character device;
+</li>
+<li>tunX    - virtual Point-to-Point interface.
+</li>
+</ul>
+
+
+<p>
+Userland application can write IP frame to /dev/tunX and kernel will receive this frame from tunX interface. In the same time every frame that kernel writes to tunX interface can be read by userland application from /dev/tunX device.
+</p>
+<ol>
+<li>What is the TAP ?
+</li>
+</ol>
+
+<p>The TAP is a Virtual Ethernet network device. TAP driver was designed as low level kernel support for Ethernet tunneling. It provides to userland application two interfaces:
+</p><ul>
+<li>/dev/tapX   - character device;
+</li>
+<li>tapX    - virtual Ethernet interface.
+</li>
+</ul>
+
+
+<p>
+Userland application can write Ethernet frame to /dev/tapX and kernel will receive this frame from tapX interface. In the same time every frame that kernel writes to tapX interface can be read by userland application from /dev/tapX device.
+</p>
+<p>
+简单说tun工作在IP层，走路由，tap工作在数据链路层，tap其实就是一个虚拟网卡，bridge可以利用它实现异地互联（局域网）
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-6" class="outline-2">
+<h2 id="sec-6">网络虚拟化</h2>
+<div class="outline-text-2" id="text-6">
+
+
+<p>
+面临的问题：
+</p><ol>
+<li>多租户网络管理问题，目前通常采用vlan实现流量隔离，受限于VLAN的4096问题，租户受限，另外租户内流量隔离也无法满足。
+</li>
+<li>Switch mac 表空间问题，虚拟环境下，虚拟机导致mac地址激增，容易导致mac表空间溢出，switch会停止mac地址学习，导致网络风暴。
+</li>
+<li>两层网络的STP（spanning tree protocol）问题，导致浪费和多路径支持问题。
+</li>
+<li>独立于物理网络的虚拟机迁移。
+</li>
+</ol>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-7" class="outline-2">
+<h2 id="sec-7">Overlay</h2>
+<div class="outline-text-2" id="text-7">
+
+
+<p>
+网络虚拟化目前是一个很热门的话题，主要的话题集中在SDN和Overlay，这里是对overlay的一个简单介绍
+</p>
+<p>
+Overlay的提出主要是要解决数据中心网络虚拟化问题，在这之前有又很多这方面的努力，比如OTV,LISP等等，实现跨数据中心VLAN延伸和ip位置分离，这些技术也可以很好结合。
+</p>
+
+</div>
+
+<div id="outline-container-7-1" class="outline-3">
+<h3 id="sec-7-1">四个特性</h3>
+<div class="outline-text-3" id="text-7-1">
+
+<ol>
+<li>多租户流量隔离
+</li>
+<li>租户有自己独立的ip网络
+</li>
+<li>允许VM位置自由和任意迁移而不受底层物理网络结构限制
+</li>
+<li>好的扩展性（支持更多的租户）
+</li>
+</ol>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-7-2" class="outline-3">
+<h3 id="sec-7-2">主流的实现方式</h3>
+<div class="outline-text-3" id="text-7-2">
+
+
+</div>
+
+<div id="outline-container-7-2-1" class="outline-4">
+<h4 id="sec-7-2-1">vxlan</h4>
+<div class="outline-text-4" id="text-7-2-1">
+
+<p>采用mac-over-udp方式，实现跨三层的两层虚拟网络，由cisco和vmware提出，实现机制类似Bridge（flood和learn）
+</p>
+<p>
+优点：
+</p><ol>
+<li>不用修改底层网络配置
+</li>
+<li>支持VM数据内中心迁移
+</li>
+<li>支持16M网段
+</li>
+<li>支持PortChannel和ACL
+</li>
+</ol>
+
+
+<p>
+缺点：
+</p><ol>
+<li>需要ip multicast支持，这也决定了他无法跨wan
+</li>
+<li>现有的网络服务无法使用，比如LB，Firewall等，目前这些都需要通过特定VM实现（比如Vmware Vshield Edge），影响性能
+</li>
+<li>由于在三层实现，无法使用网卡的Offload特性（tso、lro）
+</li>
+</ol>
+
+
+<p>
+Vxlan跨Router的时候，需要首跳Router打开ARP Proxy，目前已经有支持Vxlan的switch计划上市，我想支持tunnel的网卡应该也快了
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-7-2-2" class="outline-4">
+<h4 id="sec-7-2-2">nvgre</h4>
+<div class="outline-text-4" id="text-7-2-2">
+
+<p>采用mac-over-gre方式，实现跨三层的两层虚拟网络，由microsoft等厂商提出
+</p>
+<p>
+优点：
+</p><ol>
+<li>不用修改底层网络配置
+</li>
+<li>支持VM数据中心内迁移
+</li>
+<li>支持16M网段
+</li>
+</ol>
+
+
+<p>
+缺点：
+</p><ol>
+<li>由于很多switch和router不支持GRE解析，无法支持一些load distribution（Port Channel）和安全策略（ACLS）
+</li>
+<li>其他同Vxlan
+</li>
+</ol>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-7-2-3" class="outline-4">
+<h4 id="sec-7-2-3">stt</h4>
+<div class="outline-text-4" id="text-7-2-3">
+
+<p>采用mac-over-ip方式，增加了一个tcp header，具体没看太明白，由nicira提出
+</p>
+<p>
+优点
+</p><ol>
+<li>支持网卡offload
+</li>
+<li>其他同Vxlan
+</li>
+</ol>
+
+
+<p>
+缺点
+</p><ol>
+<li>需要ip multicast支持，这也决定了他无法跨wan
+</li>
+<li>现有的网络服务无法使用，比如LB，Firewall等，目前这些都需要通过特定VM实现（比如Vmware Vshield Edge），影响性能
+</li>
+</ol>
+
+
+</div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-8" class="outline-2">
+<h2 id="sec-8">Trill</h2>
+<div class="outline-text-2" id="text-8">
+
+<p>The goal of trill is combine the best aspects of L2 with the best aspects of L3, The means easy configuration, "Plug and play", multipathing(ECMP), fast convergence, and easy scalability.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-9" class="outline-2">
+<h2 id="sec-9">LISP (locate identify split protocol)</h2>
+<div class="outline-text-2" id="text-9">
+
+
+</div>
+
+</div>
+
+<div id="outline-container-10" class="outline-2">
+<h2 id="sec-10">OVT</h2>
+<div class="outline-text-2" id="text-10">
+
+
+</div>
+
+</div>
+
+<div id="outline-container-11" class="outline-2">
+<h2 id="sec-11">layer 2 network &amp; layer 3 network</h2>
+<div class="outline-text-2" id="text-11">
+
+<ol>
+<li>layer 2 stp问题，浪费物理链路，且不支持多路径，layer 3采用路由，支持多路径
+</li>
+<li>layer 2 boardcast frame问题，对于vdc，强制hypervisor nic处于promiscuous模式，接受所有的boardcast frame；另外太多的vm，导致switch mac表溢出，形成广播风暴
+</li>
+<li>layer 2 vlan限制，只能支持4094个vlan，子网可以任意
+</li>
+<li>layer 2 故障域问题，影响layer 2域（segment）甚至整个网络，layer 3只影响具体subnet
+</li>
+</ol>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-12" class="outline-2">
+<h2 id="sec-12">参考资料</h2>
+<div class="outline-text-2" id="text-12">
+
+<ol>
+<li><a href="http://www.frozentux.net/iptables-tutorial/iptables-tutorial.html">iptables tutorial</a>
+</li>
+<li><a href="http://en.wikipedia.org/wiki/Ethernet_hub">Ethernet hub</a>
+</li>
+<li><a href="http://www.linuxfoundation.org/collaborate/workgroups/networking/bridge">linux bridge</a>
+</li>
+<li><a href="https://learningnetwork.cisco.com/servlet/JiveServlet/previewBody/2810-102-1-7611/primch5.pdf">Network interfaces, hubs,switches, bridges, routers, and firewalls</a>
+</li>
+<li><a href="http://en.wikipedia.org/wiki/Multilayer_switch">Multilayer switch</a>
+</li>
+<li><a href="http://www.cisco.com/en/US/prod/collateral/switches/ps9441/ps9902/white_paper_c11-685115.html">Scalable Cloud Networking with Cisco Nexus 1000V Series Switches and VXLAN</a>
+</li>
+<li><a href="http://www.kernel.org/pub/linux/kernel/people/marcelo/linux-2.4/Documentation/networking/tuntap.txt">tun/tap</a>
+</li>
+<li><a href="http://openvpn.net/index.php/open-source/faq.html">openvpn faq</a>
+</li>
+<li><a href="http://tools.ietf.org/html/draft-mahalingam-dutt-dcops-vxlan-00">vxlan draft</a>
+</li>
+<li><a href="http://it20.info/2012/05/typical-vxlan-use-case/">Typical vxlan use case</a>
+</li>
+</ol>
+
+</div>
+</div>

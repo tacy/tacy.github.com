@@ -1,0 +1,49 @@
+---
+layout: post
+categories: [tech]
+title: OpenVSwitch notes
+description: "openvswitch简单笔记，包括介绍和一些技术细节，使用过程中的一些操作记录和理解，更多的是方便自己以后能做一个概括性的了解。不定期完善，类似wikipedia。"
+tags : [network, tcpip, virtualization]
+---
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1">tunnel</h2>
+<div class="outline-text-2" id="text-1">
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1">GRE (Generic Routing Encapsulation)</h3>
+<div class="outline-text-3" id="text-1-1">
+
+<p>采用GRE隧道协议实现网络虚拟化，基于IP网络，由于NIC的性能优化特性都工作在tcp层，无法利用，导致性能地下。
+</p></div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2">STT (stateless Transport Tunnelling Protocol</h3>
+<div class="outline-text-3" id="text-1-2">
+
+<p>解决网络虚拟化提出的隧道协议解决方案，由Nicira提出（参考IEFT：<a href="http://tools.ietf.org/html/draft-davie-stt-01">STT draft）</a>。相比GRE的优势，主要在于STT能利用NIC的特性（例如TSO，LRO），提升传输效率。对比GRE性能提升4倍。
+</p>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2">参考文档</h2>
+<div class="outline-text-2" id="text-2">
+
+<ol>
+<li><a href="http://networkheresy.com/2012/06/08/the-overhead-of-software-tunneling">the overhead of software tunneling</a>
+</li>
+<li>aa
+</li>
+</ol>
+
+</div>
+</div>

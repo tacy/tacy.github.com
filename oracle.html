@@ -1,0 +1,54 @@
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1">performance</h2>
+<div class="outline-text-2" id="text-1">
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1">report</h3>
+<div class="outline-text-3" id="text-1-1">
+
+
+</div>
+
+<div id="outline-container-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1">awr报告</h4>
+<div class="outline-text-4" id="text-1-1-1">
+
+<p>execute dbms<sub>workload</sub><sub>repository</sub>.create<sub>snapshot</sub>()
+@?/rdbms/admin/awrrpt.sql
+</p></div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2">terminology</h2>
+<div class="outline-text-2" id="text-2">
+
+
+</div>
+
+<div id="outline-container-2-1" class="outline-3">
+<h3 id="sec-2-1">ITL</h3>
+<div class="outline-text-3" id="text-2-1">
+
+<p>ITL (Interested Transaction List) is an array of 23-byte entries in the variable portion of an Oracle data block. Any process that changes data, must store it's transaction id and undo segment address in an ITL.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-2" class="outline-3">
+<h3 id="sec-2-2">Undo block</h3>
+<div class="outline-text-3" id="text-2-2">
+
+<p>For read consistency we make a copy of the data block in memory and apply the undo records to that block, and it's a copy of the block that we can discard very rapidly once we've finished with it;
+</p>
+<p>
+THere is an important principle of optimization that is often overlooked. Sometimes it is better for everyone to do a little more work if that means they are operatiing in separate locations rather than constantly colliding on the same contention point-competition wastes resources.
+</p></div>
+</div>
+</div>

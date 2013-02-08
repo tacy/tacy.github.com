@@ -81,16 +81,16 @@ JB :
   comments :
     provider : disqus
     disqus :
-      short_name : tacyweblog
-    livefyre :
-      site_id : 308628
-    intensedebate :
-      account : 123abc
-    facebook :
-      appid : 123
-      num_posts: 5
-      width: 580
-      colorscheme: light
+       short_name : tacysweblog
+#    livefyre :
+#      site_id : 308628
+#    intensedebate :
+#      account : 123abc
+#    facebook :
+#      appid : 123
+#      num_posts: 5
+#      width: 580
+#      colorscheme: light
 
   # Settings for analytics helper
   # Set 'provider' to the analytics provider you want to use.
