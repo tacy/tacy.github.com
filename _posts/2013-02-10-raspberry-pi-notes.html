@@ -30,19 +30,30 @@ Raspberry Pi主要分为两个型号，A型号是低配，B型号是高配，我
 <p>Raspberry Pi板子就不用说了，淘宝到处都是，我买的是B板，其他的需要购买的配件包括：
 </p><ul>
 <li>一个USB键盘
+
+<p>
   我买的是无线键鼠套装，方便点，毕竟未来会放在客厅用，有线总是个累赘。
-</li>
-<li>一根HDMI线 连接电视用，HDMI可以同时负责视频和音频传输，当然如果你的电视不提供HDMI输入，也可以用RCA接口和AUDIO接口接入电视，问题也不大，只是高清自然是不行了，这样太对不起Raspberry Pi了吧。
-</li>
+</p></li>
+<li>一根HDMI线
+
+<p>
+   连接电视用，HDMI可以同时负责视频和音频传输，也可以用RCA接口和AUDIO接口接入电视，问题也不大。只是高清自然是不行了，这样太对不起Raspberry Pi了吧。
+</p></li>
 <li>一根网线
+
+<p>
   当然你的有有线网络接入，如果你家里只有无线接入，可以通过购置一个带有线口的无线设备做repeater接入，我用的是tplink 的TL-WR710N。
-</li>
+</p></li>
 <li>一张SDHC卡
+
+<p>
   我买的Kingston 16G class4，买之前最好去网上查查是否支持<sup><a class="footref" name="fnr.1" href="#fn.1">1</a></sup>，据说Raspberry Pi挑卡。
-</li>
+</p></li>
 <li>一个放置Raspberry Pi的盒子
+
+<p>
   固定和防尘用（我忘了买，挺麻烦的，不好固定，简单用个纸盒先凑合着）。
-</li>
+</p></li>
 </ul>
 
 
@@ -64,10 +75,26 @@ Raspberry Pi主要分为两个型号，A型号是低配，B型号是高配，我
 <div class="outline-text-3" id="text-3-1">
 
 <p>我用的是Ubuntu系统，机器自带SD读卡器，直接插入SD卡，检查SD卡路径：
-$sudo fdisk -l
+</p>
+
+
+
+<pre class="example">$sudo fdisk -l
+</pre>
+
+
+<p>
 通常都是sdb，不清楚你就对比一下插入前后的输出，如果你的SD卡已经分区，并且自动mount了，记得unmount它，接下来我们写入下载的系统镜像文件：
-$unzip 2012-12-16-wheezy-raspbian.zip
+</p>
+
+
+
+<pre class="example">$unzip 2012-12-16-wheezy-raspbian.zip
 $sudo dd bs=1M if=2012-12-16-wheezy-raspbian of=/dev/sdb
+</pre>
+
+
+<p>
 等上几分钟或者十几分钟，视SD卡速度而定，完成之后弹出SD卡，插入Raspberry Pi卡槽中，通过MicroUSB插入电源，注意电源一般的手机充电器都可以，前提是输出需要大于700毫安，我试过IPad充电器也可以（2100mA），Rasberry Pi不带开关，电源插入自动开机，关机只能拔电源，正常就可以在TV上看到Rasberry Pi的启动过程了。
 </p>
 </div>
@@ -78,7 +105,7 @@ $sudo dd bs=1M if=2012-12-16-wheezy-raspbian of=/dev/sdb
 <h3 id="sec-3-2">配置Rasberry Pi</h3>
 <div class="outline-text-3" id="text-3-2">
 
-<p>第一次系统启动自动进入Raspi-config配置界面，设置正确的timezone、locale(en<sub>US</sub>.UTF8)、Keyboard（Generic 105-key intel PC)、ssh enable，最后是expand-rootfs，完成重启系统。
+<p>第一次系统启动自动进入Raspi-config配置界面，设置正确的timezone、locale(en_US.UTF8)、Keyboard（Generic 105-key intel PC)、ssh enable，最后是expand-rootfs，完成重启系统。
 </p>
 <p>
 经过漫长的expand rootfs之后，终于来到登入终端，用pi/raspberry登入系统，用命令startx启动进入xwindows，这时候你应该就可以正常上网了（lan通过dhcp自动获取ip地址）。
@@ -91,10 +118,16 @@ $sudo dd bs=1M if=2012-12-16-wheezy-raspbian of=/dev/sdb
 <h3 id="sec-3-3">中文环境配置</h3>
 <div class="outline-text-3" id="text-3-3">
 
-<p>缺省我用的是en<sub>us</sub>.utf8环境，当然我也不打算修改，我需要的只是显示中文和输入中文，只需安装字体和输入法。
-$sudo apt-get install ttf-wqy-zenhei
-$sudo apt-get install scim-pinyin
+<p>缺省我用的是en_us.utf8环境，当然我也不打算修改，我需要的只是显示中文和输入中文，只需安装字体和输入法。
 </p>
+
+
+
+<pre class="example">$sudo apt-get install ttf-wqy-zenhei
+$sudo apt-get install scim-pinyin
+</pre>
+
+
 </div>
 
 </div>
@@ -104,10 +137,18 @@ $sudo apt-get install scim-pinyin
 <div class="outline-text-3" id="text-3-4">
 
 <p>系统缺省安装了omxplayer播放器，这是一个命令行播放器,GPU支持，上传一个视频，播放视频看效果：
-$omxplayer test.avi
 </p>
+
+
+
+<pre class="example">$omxplayer test.avi
+</pre>
+
+
 <p>
 另外提醒一下，omxplayer支持不启动xwindows播放视频，我之前一直以为必须启动xwindows才行，估计其他的播放器也都一样，确实没太注意，如果你需要播放视频，你可以直接在远程通过ssh登入Raspberry Pi，执行omxplayer命令，视频会直接显示在电视上，不管你是不是启动了xwindows。
+</p>
+<p>
 Enjoying!
 </p>
 </div>
@@ -122,18 +163,42 @@ Enjoying!
 <p>支持控制，包括终端控制的ssh和远程桌面的vnc、rdp等，我这里用了简单的共享键盘方式，通过和客户端共享一套输入设备实现，简单说就是用我的笔记本键盘鼠标操作Raspberry Pi的桌面（我这里是电视），实现方式：
 </p><ul>
 <li>修改ssh允许X11 Forward
-  $sudo vi /etc/ssh/sshd<sub>config</sub>
+
+
+
+
+<pre class="example">$sudo vi /etc/ssh/sshd_config
+</pre>
+
+
+<p>
   设置X11Forwarding的值为yes，重启sshd
+</p>
 </li>
 <li>在Raspberry Pi上安装x2x
-  $sudo apt-get install x2x
+
+
+
+
+<pre class="example">$sudo apt-get install x2x
+</pre>
+
+
 </li>
-<li>在你的客户端远程登入Raspberry Pi：
-  $ssh -X pi@192.168.1.104 'x2x -east -to :0'
+<li>在你的客户端远程登入Raspberry Pi
+
+
+
+
+<pre class="example">$ssh -X pi@192.168.1.104 'x2x -east -to :0'
+</pre>
+
 </li>
 </ul>
 
-<p>配置完成，当然这里你的Raspberry Pi上的xwindows必须启动才行，移动你的鼠标到最右边试试看，鼠标跑到电视上去了。
+
+<p>
+配置完成，当然这里你的Raspberry Pi上的xwindows必须启动才行，移动你的鼠标到最右边试试看，鼠标跑到电视上去了。
 </p>
 </div>
 
@@ -172,7 +237,15 @@ XMBC针对Raspberry Pi有几个发布版本，集成OS，直接刷就行了，�
 <div class="outline-text-3" id="text-5-1">
 
 <p>xbmc的缺省字体字符集应该不是gbk的，显示中文很多子都是方块，我直接用wqy替换，没找到怎么新增字体的方法：
-$sudo cp <i>usr/share/fonts/truetype/wqy/wqy-zenhei.ttc arial.ttf /usr/share/xbmc/media/Fonts</i>
+</p>
+
+
+
+<pre class="example">$sudo cp /usr/share/fonts/truetype/wqy/wqy-zenhei.ttc arial.ttf /usr/share/xbmc/media/Fonts/
+</pre>
+
+
+<p>
 备份arial.ttf，然后重命名wqy字体即可
 </p>
 </div>
@@ -185,17 +258,21 @@ $sudo cp <i>usr/share/fonts/truetype/wqy/wqy-zenhei.ttc arial.ttf /usr/share/xbm
 
 <p>Raspberry Pi运行XBMC负载很重，很容易就跑到100%，可以尝试超频，不过这个要小心，毕竟还是危险的，当然Raspberry  Pi 还是有保护措施，设置overclock时当温度超过85度时，会自动disable<sup><a class="footref" name="fnr.2" href="#fn.2">2</a></sup>，从网上情况看，超频到900应该问题不大，下面是我的设置：
 </p>
+
+
+
+<pre class="example">arm_freq=900
+core_freq=450
+sdram_freq=450
+over_voltage=2
+gpu_mem=128
+arm_freq_min=700
+initial_turbo=30
+</pre>
+
+
 <p>
-arm<sub>freq</sub>=900
-core<sub>freq</sub>=450
-sdram<sub>freq</sub>=450
-over<sub>voltage</sub>=2
-gpu<sub>mem</sub>=128
-arm<sub>freq</sub><sub>min</sub>=700
-initial<sub>turbo</sub>=30
-</p>
-<p>
-设置arm<sub>freq</sub><sub>min主要是因为新版本的kernel会自动调整主频，看起来好像不是很靠谱，我的长期运行在500左右，可以通过</sub>/proc/cpuinfo查看。
+设置arm_freq_min主要是因为新版本的kernel会自动调整主频，看起来好像不是很靠谱，我的长期运行在500左右，可以通过/proc/cpuinfo查看。
 </p>
 </div>
 </div>
@@ -208,31 +285,69 @@ initial<sub>turbo</sub>=30
 
 <ul>
 <li>键盘配置不对
-  当你按下“|”键的时候，出来的键值不对，那应该是用了GB的键盘布局，可以通过如下方式修改：
-  $sudo vi /etc/default/keyboard
-  修改XKBLAYOUG值为“us”，重启系统。
 
+<p>
+  当你按下“|”键的时候，出来的键值不对，那应该是用了GB的键盘布局，可以通过如下方式修改：
+</p>
+
+
+<pre class="example">$sudo vi /etc/default/keyboard
+</pre>
+
+
+<p>
+  修改XKBLAYOUG值为“us”，重启系统。
+</p>
 </li>
 <li>播放视频没有声音，并且视频没有满屏<sup><a class="footref" name="fnr.3" href="#fn.3">3</a></sup>
+
+<p>
   通过如下方式修改hdmi配置
-  $sudo vi /boot/config.txt
-  修改hdmi<sub>drive值为2，如果改行被注释，也需要取消注释。</sub>
+</p>
+
+
+<pre class="example">$sudo vi /boot/config.txt
+</pre>
+
+<p>
+  修改hdmi_drive值为2，如果改行被注释，也需要取消注释。
+</p>
+<p>
   通过如下命令行播放视频：
-  $omxplayer -r -o hdmi test.avi
+</p>
+
+
+<pre class="example">$omxplayer -r -o hdmi test.avi
+</pre>
+
 
 </li>
 <li>omxplayer中文乱码
+
+<p>
   可以直接在omxplayer中指定字体，直接使用wqy字体即可：
-  $omxplayer -t 1 -p -r &ndash;font /usr/share/fonts/truetype/wqy/wqy-zenhei.ttc &ndash;align center -o hdmi test.avi
+</p>
+
+
+<pre class="example">$omxplayer -t 1 -p -r --font /usr/share/fonts/truetype/wqy/wqy-zenhei.ttc --align center -o hdmi test.avi
+</pre>
+
 
 </li>
-<li>omxplayer不支持外置字幕 目前新版本omxplayer已经支持外置字幕，可以去网站上下载<sup><a class="footref" name="fnr.4" href="#fn.4">4</a></sup>，不过目前好像只支持utf-8，不行只能通过enca转码，我用了一下20120208版本，如果加上“-r”参数图像被压扁了，不知道为啥，不过不用加上该参数就能自动满屏了。
+<li>omxplayer不支持外置字幕
 
+<p>
+  目前新版本omxplayer已经支持外置字幕，可以去网站上下载<sup><a class="footref" name="fnr.4" href="#fn.4">4</a></sup>，不过目前好像只支持utf-8，不行只能通过enca转码。
+</p>
 </li>
 <li>undefined symbo问题
-  “/usr/bin/omxplayer.bin: Symbol lookup error: /usr/bin/omxplayer.bin: undefined symbol: vc<sub>xxxxxxxxxx</sub>.”
-  如果你碰到类似问题，基本上是firmware没有更新，你可以通过rpi-update更新。
 
+<p>
+  “/usr/bin/omxplayer.bin: Symbol lookup error: /usr/bin/omxplayer.bin: undefined symbol: vc_xxxxxxxxxx.”
+</p>
+<p>
+  如果你碰到类似问题，基本上是firmware没有更新，你可以通过rpi-update更新。
+</p>
 </li>
 <li>如果你遇到一些我没遇到的问题，建议参考elinux<sup><a class="footref" name="fnr.5" href="#fn.5">5</a></sup>
 </li>
@@ -255,14 +370,15 @@ initial<sub>turbo</sub>=30
 
 
 
+
 <div id="footnotes">
 <h2 class="footnotes">Footnotes: </h2>
 <div id="text-footnotes">
-<p class="footnote"><sup><a class="footnum" name="fn.1" href="#fnr.1">1</a></sup> Raspberry Pi兼容SD卡查询地址：<a href="http://elinux.org/RPi_SD_cards">http://elinux.org/RPi_SD_cards</a>
+<p class="footnote"><sup><a class="footnum" name="fn.1" href="#fnr.1">1</a></sup> Raspberry Pi兼容SD卡查询地址：<a href="http://elinux.org/RPi_SD_cards">http://elinux.org/RPi\_SD\_cards</a>
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn.2" href="#fnr.2">2</a></sup> Raspberry Pi 超频设置： <a href="http://elinux.org/RPi_config.txt#Overclocking">http://elinux.org/RPi_config.txt#Overclocking</a>
+<p class="footnote"><sup><a class="footnum" name="fn.2" href="#fnr.2">2</a></sup> Raspberry Pi 超频设置： <a href="http://elinux.org/RPi_config.txt#Overclocking">http://elinux.org/RPi\_config.txt#Overclocking</a>
 </p>
 
 
@@ -270,7 +386,7 @@ initial<sub>turbo</sub>=30
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn.4" href="#fnr.4">4</a></sup> elinux Raspberry Pi troubleshooting: <a href="http://elinux.org/R-Pi_Troubleshooting">http://elinux.org/R-Pi_Troubleshooting</a>
+<p class="footnote"><sup><a class="footnum" name="fn.4" href="#fnr.4">4</a></sup> elinux Raspberry Pi troubleshooting: <a href="http://elinux.org/R-Pi_Troubleshooting">http://elinux.org/R-Pi\_Troubleshooting</a>
 </p>
 
 
