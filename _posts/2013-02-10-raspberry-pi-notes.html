@@ -176,6 +176,28 @@ $sudo cp <i>usr/share/fonts/truetype/wqy/wqy-zenhei.ttc arial.ttf /usr/share/xbm
 备份arial.ttf，然后重命名wqy字体即可
 </p>
 </div>
+
+</div>
+
+<div id="outline-container-5-2" class="outline-3">
+<h3 id="sec-5-2">超频</h3>
+<div class="outline-text-3" id="text-5-2">
+
+<p>Raspberry Pi运行XBMC负载很重，很容易就跑到100%，可以尝试超频，不过这个要小心，毕竟还是危险的，当然Raspberry  Pi 还是有保护措施，设置overclock时当温度超过85度时，会自动disable<sup><a class="footref" name="fnr.2" href="#fn.2">2</a></sup>，从网上情况看，超频到900应该问题不大，下面是我的设置：
+</p>
+<p>
+arm<sub>freq</sub>=900
+core<sub>freq</sub>=450
+sdram<sub>freq</sub>=450
+over<sub>voltage</sub>=2
+gpu<sub>mem</sub>=128
+arm<sub>freq</sub><sub>min</sub>=700
+initial<sub>turbo</sub>=30
+</p>
+<p>
+设置arm<sub>freq</sub><sub>min主要是因为新版本的kernel会自动调整主频，看起来好像不是很靠谱，我的长期运行在500左右，可以通过</sub>/proc/cpuinfo查看。
+</p>
+</div>
 </div>
 
 </div>
@@ -191,7 +213,7 @@ $sudo cp <i>usr/share/fonts/truetype/wqy/wqy-zenhei.ttc arial.ttf /usr/share/xbm
   修改XKBLAYOUG值为“us”，重启系统。
 
 </li>
-<li>播放视频没有声音，并且视频没有满屏<sup><a class="footref" name="fnr.2" href="#fn.2">2</a></sup>
+<li>播放视频没有声音，并且视频没有满屏<sup><a class="footref" name="fnr.3" href="#fn.3">3</a></sup>
   通过如下方式修改hdmi配置
   $sudo vi /boot/config.txt
   修改hdmi<sub>drive值为2，如果改行被注释，也需要取消注释。</sub>
@@ -204,7 +226,7 @@ $sudo cp <i>usr/share/fonts/truetype/wqy/wqy-zenhei.ttc arial.ttf /usr/share/xbm
   $omxplayer -t 1 -p -r &ndash;font /usr/share/fonts/truetype/wqy/wqy-zenhei.ttc &ndash;align center -o hdmi test.avi
 
 </li>
-<li>omxplayer不支持外置字幕 目前新版本omxplayer已经支持外置字幕，可以去网站上下载<sup><a class="footref" name="fnr.3" href="#fn.3">3</a></sup>，不过目前好像只支持utf-8，不行只能通过enca转码，我用了一下20120208版本，如果加上“-r”参数图像被压扁了，不知道为啥，不过不用加上该参数就能自动满屏了。
+<li>omxplayer不支持外置字幕 目前新版本omxplayer已经支持外置字幕，可以去网站上下载<sup><a class="footref" name="fnr.4" href="#fn.4">4</a></sup>，不过目前好像只支持utf-8，不行只能通过enca转码，我用了一下20120208版本，如果加上“-r”参数图像被压扁了，不知道为啥，不过不用加上该参数就能自动满屏了。
 
 </li>
 <li>undefined symbo问题
@@ -212,7 +234,7 @@ $sudo cp <i>usr/share/fonts/truetype/wqy/wqy-zenhei.ttc arial.ttf /usr/share/xbm
   如果你碰到类似问题，基本上是firmware没有更新，你可以通过rpi-update更新。
 
 </li>
-<li>如果你遇到一些我没遇到的问题，建议参考elinux<sup><a class="footref" name="fnr.4" href="#fn.4">4</a></sup>
+<li>如果你遇到一些我没遇到的问题，建议参考elinux<sup><a class="footref" name="fnr.5" href="#fn.5">5</a></sup>
 </li>
 </ul>
 
@@ -231,13 +253,6 @@ $sudo cp <i>usr/share/fonts/truetype/wqy/wqy-zenhei.ttc arial.ttf /usr/share/xbm
 </ul>
 
 
-</div>
-
-</div>
-
-<div id="outline-container-8" class="outline-2">
-<h2 id="sec-8">参考资料</h2>
-<div class="outline-text-2" id="text-8">
 
 
 <div id="footnotes">
@@ -247,15 +262,19 @@ $sudo cp <i>usr/share/fonts/truetype/wqy/wqy-zenhei.ttc arial.ttf /usr/share/xbm
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn.2" href="#fnr.2">2</a></sup> How to get 1080p videos running on my Raspberry Pi: <a href="http://www.brianhensley.net/2012/07/how-to-get-1080p-videos-running-on-my.html?spref=fb">http://www.brianhensley.net/2012/07/how-to-get-1080p-videos-running-on-my.html?spref=fb</a>
+<p class="footnote"><sup><a class="footnum" name="fn.2" href="#fnr.2">2</a></sup> Raspberry Pi 超频设置： <a href="http://elinux.org/RPi_config.txt#Overclocking">http://elinux.org/RPi_config.txt#Overclocking</a>
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn.3" href="#fnr.3">3</a></sup> omxplayer download site: <a href="http://omxplayer.sconde.net/">http://omxplayer.sconde.net/</a>
+<p class="footnote"><sup><a class="footnum" name="fn.3" href="#fnr.3">3</a></sup> How to get 1080p videos running on my Raspberry Pi: <a href="http://www.brianhensley.net/2012/07/how-to-get-1080p-videos-running-on-my.html?spref=fb">http://www.brianhensley.net/2012/07/how-to-get-1080p-videos-running-on-my.html?spref=fb</a>
 </p>
 
 
 <p class="footnote"><sup><a class="footnum" name="fn.4" href="#fnr.4">4</a></sup> elinux Raspberry Pi troubleshooting: <a href="http://elinux.org/R-Pi_Troubleshooting">http://elinux.org/R-Pi_Troubleshooting</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn.5" href="#fnr.5">5</a></sup> omxplayer download site: <a href="http://omxplayer.sconde.net/">http://omxplayer.sconde.net/</a>
 </p></div>
 </div>
 
