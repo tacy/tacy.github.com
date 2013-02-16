@@ -37,7 +37,7 @@ tags: [life, emacs]
 
 
 <p>
-jekyll目录直接从jekyllbootstrap check out下来的，你写文档就直接在/org/<sub>posts写就可以了，写完之后可以通过M</sub>-x org-publish-all发布到jekyll目录下的<sub>posts目录，然后按下面程序提交：</sub>
+jekyll目录直接从jekyllbootstrap check out下来的，你写文档就直接在/org/_posts写就可以了，写完之后可以通过M-x org-publish-all发布到jekyll目录下的_posts目录，然后按下面程序提交：
 </p>
 <p>
 M-x magit-status
@@ -46,7 +46,7 @@ M-x magit-status
 s键添加提交对象，之后通过c键写注视，C-c C-c提交，P键push，更新就提交到github了。
 </p>
 <p>
-如果你碰到提交的页面没有生效， 一般都是在github上page build失败导致的，你可以在本地调试，关闭<sub>config</sub>.yml中的auto，设置为false，然后就可以在本地看到page build失败的异常，修复即可。
+如果你碰到提交的页面没有生效， 一般都是在github上page build失败导致的，你可以在本地调试，关闭_config.yml中的auto，设置为false，然后就可以在本地看到page build失败的异常，修复即可。
 </p>
 <p>
 下面是我的emacs配置，供感兴趣的同学参考：
