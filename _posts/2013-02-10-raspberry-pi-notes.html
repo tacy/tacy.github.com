@@ -133,8 +133,57 @@ $sudo apt-get install scim-pinyin
 </div>
 
 <div id="outline-container-3-4" class="outline-3">
-<h3 id="sec-3-4">lxde键盘快捷键</h3>
+<h3 id="sec-3-4">自动登入xwindows<sup><a class="footref" name="fnr.2" href="#fn.2">2</a></sup></h3>
 <div class="outline-text-3" id="text-3-4">
+
+
+
+</div>
+
+<div id="outline-container-3-4-1" class="outline-4">
+<h4 id="sec-3-4-1">自动登入</h4>
+<div class="outline-text-4" id="text-3-4-1">
+
+<p>修改/etc/inittab文件，注释行：
+</p>
+
+
+<pre class="example">1:2345:respawn:/sbin/getty --noclear 38400 tty1
+</pre>
+
+
+<p>
+添加行:
+</p>
+
+
+<pre class="example">1:2345:respawn:/bin/login -f pi tty1 &lt;/dev/tty1 &gt;/dev/tty1 2&gt;&amp;1
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-3-4-2" class="outline-4">
+<h4 id="sec-3-4-2">自动启动xwindows</h4>
+<div class="outline-text-4" id="text-3-4-2">
+
+<p>修改/etc/rc.local，在exit 0行之前添加如下行：
+</p>
+
+
+<pre class="example">su pi -c startx
+</pre>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-3-5" class="outline-3">
+<h3 id="sec-3-5">lxde键盘快捷键</h3>
+<div class="outline-text-3" id="text-3-5">
 
 <p>直接查看".config/openbox/lxde-rc.xml"，查看keyboard部分即可，如需添加自己的映射，照着添加就行。
 </p>
@@ -142,9 +191,9 @@ $sudo apt-get install scim-pinyin
 
 </div>
 
-<div id="outline-container-3-5" class="outline-3">
-<h3 id="sec-3-5">播放视频</h3>
-<div class="outline-text-3" id="text-3-5">
+<div id="outline-container-3-6" class="outline-3">
+<h3 id="sec-3-6">播放视频</h3>
+<div class="outline-text-3" id="text-3-6">
 
 <p>系统缺省安装了omxplayer播放器，这是一个命令行播放器,GPU支持，上传一个视频，播放视频看效果：
 </p>
@@ -237,7 +286,7 @@ XMBC针对Raspberry Pi有几个发布版本，集成OS，直接刷就行了，�
 播放视频的时候CPU在55%左右，还是有点偏高，还得研究研究怎么优化一下。
 </p>
 <p>
-具体的XBMC键盘控制参考<a href="http://wiki.xbmc.org/index.php?title=Keyboard">http://wiki.xbmc.org/index.php?title=Keyboard</a>
+具体的XBMC键盘控制参考<a href="http://wiki.xbmc.org/index.php?title=Keyboard">http://wiki.xbmc.org/index.php?title=Keyboard</a>， 完整版可以参考<a href="https://github.com/xbmc/xbmc/blob/Frodo/system/keymaps/keyboard.xml">xbmc keyboard.xml</a>, 不过还是要仔细找， 我找使用键盘收藏视频找了半天，用“c”键即可。
 </p>
 
 </div>
@@ -266,7 +315,7 @@ XMBC针对Raspberry Pi有几个发布版本，集成OS，直接刷就行了，�
 <h3 id="sec-5-2">超频</h3>
 <div class="outline-text-3" id="text-5-2">
 
-<p>Raspberry Pi运行XBMC负载很重，很容易就跑到100%，可以尝试超频，不过这个要小心，毕竟还是危险的，当然Raspberry  Pi 还是有保护措施，设置overclock时当温度超过85度时，会自动disable<sup><a class="footref" name="fnr.2" href="#fn.2">2</a></sup>，从网上情况看，超频到900应该问题不大，下面是我的设置：
+<p>Raspberry Pi运行XBMC负载很重，很容易就跑到100%，可以尝试超频，不过这个要小心，毕竟还是危险的，当然Raspberry  Pi 还是有保护措施，设置overclock时当温度超过85度时，会自动disable<sup><a class="footref" name="fnr.3" href="#fn.3">3</a></sup>，从网上情况看，超频到900应该问题不大，下面是我的设置：
 </p>
 
 
@@ -309,7 +358,7 @@ initial_turbo=30
   修改XKBLAYOUG值为“us”，重启系统。
 </p>
 </li>
-<li>播放视频没有声音，并且视频没有满屏<sup><a class="footref" name="fnr.3" href="#fn.3">3</a></sup>
+<li>播放视频没有声音，并且视频没有满屏<sup><a class="footref" name="fnr.4" href="#fn.4">4</a></sup>
 
 <p>
   通过如下方式修改hdmi配置
@@ -347,7 +396,7 @@ initial_turbo=30
 <li>omxplayer不支持外置字幕
 
 <p>
-  目前新版本omxplayer已经支持外置字幕，可以去网站上下载<sup><a class="footref" name="fnr.4" href="#fn.4">4</a></sup>，不过目前好像只支持utf-8，不行只能通过enca转码。
+  目前新版本omxplayer已经支持外置字幕，可以去网站上下载<sup><a class="footref" name="fnr.5" href="#fn.5">5</a></sup>，不过目前好像只支持utf-8，不行只能通过enca转码。
 </p>
 </li>
 <li>undefined symbo问题
@@ -359,7 +408,7 @@ initial_turbo=30
   如果你碰到类似问题，基本上是firmware没有更新，你可以通过rpi-update更新。
 </p>
 </li>
-<li>如果你遇到一些我没遇到的问题，建议参考elinux<sup><a class="footref" name="fnr.5" href="#fn.5">5</a></sup>
+<li>如果你遇到一些我没遇到的问题，建议参考elinux<sup><a class="footref" name="fnr.6" href="#fn.6">6</a></sup>
 </li>
 </ul>
 
@@ -382,6 +431,7 @@ initial_turbo=30
 
 
 
+
 <div id="footnotes">
 <h2 class="footnotes">Footnotes: </h2>
 <div id="text-footnotes">
@@ -389,19 +439,23 @@ initial_turbo=30
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn.2" href="#fnr.2">2</a></sup> Raspberry Pi超频设置： <a href="http://elinux.org/RPi_config.txt#Overclocking">http://elinux.org/RPi\_config.txt#Overclocking</a>
+<p class="footnote"><sup><a class="footnum" name="fn.2" href="#fnr.2">2</a></sup> Raspberry Pi auto login : <a href="http://elinux.org/RPi_Debian_Auto_Login">http://elinux.org/RPi\_Debian\_Auto\_Login</a>
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn.3" href="#fnr.3">3</a></sup> <a href="#How-to-get-1080p-videos-running-on-my-Raspberry-Pi-http-www.brianhensley.net-2012-07-how-to-get-1080p-videos-running-on-my.html-spref-fb">How to get 1080p videos running on my Raspberry Pi</a>
+<p class="footnote"><sup><a class="footnum" name="fn.3" href="#fnr.3">3</a></sup> Raspberry Pi超频设置： <a href="http://elinux.org/RPi_config.txt#Overclocking">http://elinux.org/RPi\_config.txt#Overclocking</a>
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn.4" href="#fnr.4">4</a></sup> omxplayer download site: <a href="http://omxplayer.sconde.net/">http://omxplayer.sconde.net/</a>
+<p class="footnote"><sup><a class="footnum" name="fn.4" href="#fnr.4">4</a></sup> <a href="#How-to-get-1080p-videos-running-on-my-Raspberry-Pi-http-www.brianhensley.net-2012-07-how-to-get-1080p-videos-running-on-my.html-spref-fb">How to get 1080p videos running on my Raspberry Pi</a>
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn.5" href="#fnr.5">5</a></sup> elinux Raspberry Pi troubleshooting: <a href="http://elinux.org/R-Pi_Troubleshooting">http://elinux.org/R-Pi\_Troubleshooting</a>
+<p class="footnote"><sup><a class="footnum" name="fn.5" href="#fnr.5">5</a></sup> omxplayer download site: <a href="http://omxplayer.sconde.net/">http://omxplayer.sconde.net/</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn.6" href="#fnr.6">6</a></sup> elinux Raspberry Pi troubleshooting: <a href="http://elinux.org/R-Pi_Troubleshooting">http://elinux.org/R-Pi\_Troubleshooting</a>
 </p></div>
 </div>
 
