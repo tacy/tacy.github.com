@@ -168,11 +168,13 @@ $sudo apt-get install scim-pinyin
 <h4 id="sec-3-4-2">自动启动xwindows</h4>
 <div class="outline-text-4" id="text-3-4-2">
 
-<p>修改/etc/rc.local，在exit 0行之前添加如下行：
+<p>修改~/.bash_profile，添加如下行：
 </p>
 
 
-<pre class="example">su pi -c startx
+<pre class="example">if [ -z "$DISPLAY" ] &amp;&amp; [ $(tty) = /dev/tty1 ]; then
+  startx
+fi
 </pre>
 
 
@@ -257,9 +259,8 @@ Enjoying!
 
 
 <p>
-配置完成，当然这里你的Raspberry Pi上的xwindows必须启动才行，移动你的鼠标到最右边试试看，鼠标跑到电视上去了。
-</p>
-</div>
+配置完成，当然这里你的Raspberry Pi上的xwindows必须启动才行，移动你的鼠标到最右边试试看，鼠标跑到电视上去
+</p></div>
 
 </div>
 
