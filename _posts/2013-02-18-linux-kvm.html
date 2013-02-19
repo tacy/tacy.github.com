@@ -424,6 +424,151 @@ root      1563     2  0 Feb18 ?        00:00:00 [vhost-1561]
 <p>
 上面我指定了光驱,和从光驱启动，这样你通过vnc就可以连接上虚拟机，进行系统安装了。
 </p>
+</div>
+
+</div>
+
+<div id="outline-container-6" class="outline-2">
+<h2 id="sec-6">windows guest</h2>
+<div class="outline-text-2" id="text-6">
+
+
+
+</div>
+
+<div id="outline-container-6-1" class="outline-3">
+<h3 id="sec-6-1">virtio</h3>
+<div class="outline-text-3" id="text-6-1">
+
+<p>如果把系统安装在virtio磁盘上，安装的时候必须指定驱动，否则找不到磁盘，驱动下载地址可以参考<a href="http://www.linux-kvm.org/page/WindowsGuestDrivers">Windows guest drivers</a>
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-6-2" class="outline-3">
+<h3 id="sec-6-2">关机</h3>
+<div class="outline-text-3" id="text-6-2">
+
+<p>gpedit.msc  (允许无用户登入关机）
+</p>
+
+
+<pre class="example">Computer Configuration\Windows Settings\Security Settings\Local Policies\Security Options\Shutdown: Allow system to be shut down without having to log on
+</pre>
+
+
+<p>
+regedit  （有用户登入时，提示超时关机）
+</p>
+
+
+<pre class="example">[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows]  "ShutdownWarningDialogTimeout"=dword:00000001
+</pre>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-7" class="outline-2">
+<h2 id="sec-7">base image &amp; snapshot</h2>
+<div class="outline-text-2" id="text-7">
+
+
+</div>
+
+<div id="outline-container-7-1" class="outline-3">
+<h3 id="sec-7-1">base image<sup><a class="footref" name="fnr.3" href="#fn.3">3</a></sup></h3>
+<div class="outline-text-3" id="text-7-1">
+
+<p>base image简单可以理解为模板，举个例子，你在部署公司的虚拟化环境，公司的所有的系统都跑在centos上，只是上面配置的应用各有不同，有c开发的，有java开发的等等，简单来说，你会先安装一个base image
+</p>
+
+
+<pre class="example">$kvm-img create -f qcow2 centos.qcow2 10g
+$kvm -drive file=centos.qcow2 -m 1024 -boot d -drive file=centos.iso,media=cdrom
+</pre>
+
+
+<p>
+安装完操作系统和相应补丁之后，你可以从你的base image创建一个新的image:
+</p>
+
+
+<pre class="example">$kvm-img create -b centos.qcow2 -f qcow2 centos-clone.qcow2
+</pre>
+
+
+<p>
+新的image文件并不会实际占用空间，他链接在base image上，只有修改之后，才会通过copy on write方式保存修改内容到新的image文件：
+</p>
+
+
+<pre class="example">$kvm-img info centos-clone.qcow2
+image: centos-clone.qcow2
+file format: qcow2
+virtual size: 10G (10737418240 bytes)
+disk size: 136K
+cluster_size: 65536
+backing file: centos.qcow2 (actual path: centos.qcow2)
+</pre>
+
+
+<p>
+你可以从centos-clone.qcow2启动虚拟机，然后完成配置，然后重新rebase该clone，生成新的base image:
+</p>
+
+
+<pre class="example">kvm-img convert centos-clone.qcow2 -O qcow2 centos-base-java.qcow2
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-7-2" class="outline-3">
+<h3 id="sec-7-2">移动base image</h3>
+<div class="outline-text-3" id="text-7-2">
+
+<p>有时候，为了运维的目的，你可能需要移动base image, 这个时候你需要重新rebase所有相关的clone，否则clone就会出错：
+</p>
+
+
+<pre class="example">kvm-img rebase -f qcow2 -u -b centos54.img -F raw centos-clone.qcow2
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-7-3" class="outline-3">
+<h3 id="sec-7-3">snapshot<sup><a class="footref" name="fnr.4" href="#fn.4">4</a></sup></h3>
+<div class="outline-text-3" id="text-7-3">
+
+<p>快照是虚拟机一个常用的功能，你可以利用快照功能来保留某个时间点的虚拟机状态，方便虚拟机回滚。离线快照参考man手册即可。在线快照通过monitor或者QMP实现。
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-8" class="outline-2">
+<h2 id="sec-8">其他相关</h2>
+<div class="outline-text-2" id="text-8">
+
+
+</div>
+
+<div id="outline-container-8-1" class="outline-3">
+<h3 id="sec-8-1">查看虚拟机ip地址</h3>
+<div class="outline-text-3" id="text-8-1">
+
+<p>如果虚拟机很少，简单通过“arp -an”查看即可，如果虚拟机很多，你不容易找到ip和mac的对应关系，需要自己写脚本去实现了<sup><a class="footref" name="fnr.5" href="#fn.5">5</a></sup>
+</p>
 <div id="footnotes">
 <h2 class="footnotes">Footnotes: </h2>
 <div id="text-footnotes">
@@ -435,7 +580,19 @@ root      1563     2  0 Feb18 ?        00:00:00 [vhost-1561]
 </p>
 
 
+<p class="footnote"><sup><a class="footnum" name="fn.3" href="#fnr.3">3</a></sup> how to use base image: <a href="http://www.linux-kvm.com/content/how-you-can-use-qemukvm-base-images-be-more-productive-part-1">http://www.linux-kvm.com/content/how-you-can-use-qemukvm-base-images-be-more-productive-part-1</a>
+</p>
 
+
+<p class="footnote"><sup><a class="footnum" name="fn.4" href="#fnr.4">4</a></sup> kvm snapshot: <a href="http://wiki.qemu.org/Features/Snapshots">http://wiki.qemu.org/Features/Snapshots</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn.5" href="#fnr.5">5</a></sup> find the ip address of a vm: <a href="http://rwmj.wordpress.com/2010/10/26/tip-find-the-ip-address-of-a-virtual-machine/">http://rwmj.wordpress.com/2010/10/26/tip-find-the-ip-address-of-a-virtual-machine/</a>
+</p>
+
+
+</div>
 </div>
 </div>
 
