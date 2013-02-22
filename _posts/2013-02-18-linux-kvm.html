@@ -570,7 +570,7 @@ regedit  （有用户登入时，提示超时关机）
 </p>
 
 
-<pre class="example">sudo apt-get install libtool libnss3-dev libxrandr-dev libxfixes-dev libaio-dev libsasl2-dev libjpeg8-dev libpixman-1-dev libcap-dev libattr1-dev libusb-1.0.0-dev
+<pre class="example">sudo apt-get install libtool libnss3-dev libxrandr-dev libxfixes-dev libaio-dev libsasl2-dev libjpeg8-dev libpixman-1-dev libcap-dev libattr1-dev libusb-1.0.0-dev texinfo
 wget http://downloads.us.xiph.org/releases/celt/celt-0.5.1.3.tar.gz
 wget http://spice-space.org/download/releases/spice-protocol-0.12.4.tar.bz2
 wget http://spice-space.org/download/releases/spice-0.12.2.tar.bz2
@@ -654,7 +654,7 @@ sudo make install
 ./configure --prefix=/usr/local --target-list=x86_64-softmmu \
     --extra-cflags="-march=native -O2 -pipe" --extra-ldflags="-Wl,-Bsymbolic-functions -Wl,-z,relro" \
     --audio-drv-list="pa,alsa,oss" --enable-kvm --enable-linux-aio --enable-spice \
-    --enable-vhost-net --enable-vnc --enable-virtfs --enable-system --enable-usb-redir
+    --enable-vhost-net --enable-vnc --enable-virtfs --enable-system --enable-usb-redir --enable-docs
 make j5
 sudo make install
 </pre>
