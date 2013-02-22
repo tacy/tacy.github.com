@@ -730,6 +730,72 @@ sudo make install
 为了获得更好的性能，需要在虚拟机上安装spice guest tools，直接去spice网站下载spice-guest-tools即可：<a href="http://www.spice-space.org/download.html">http://www.spice-space.org/download.html</a>， 里面已经包括了qxl驱动和guest agent。
 </p>
 </div>
+
+</div>
+
+<div id="outline-container-7-5" class="outline-3">
+<h3 id="sec-7-5">usbredir</h3>
+<div class="outline-text-3" id="text-7-5">
+
+<p>简单来说，就是客户端机器上插入的usb存储设备能够在vm上发现并使用，举例来说，你用你的笔记本电脑通过网络访问远程虚拟机，那么插入你笔记本电脑上的usb存储设备能在虚拟机上使用。目前支持usbredir的spice客户端只有spice-gtk，我们下面来编译spice-gtk，使他具有usbredir功能：
+</p>
+<ol>
+<li>下载spice-gtk代码：
+
+
+
+<pre class="example">wget http://spice-space.org/download/gtk/spice-gtk-0.18.tar.bz2
+</pre>
+
+
+</li>
+<li>编译包：
+
+
+
+<pre class="example">cd spice-gtk
+./configure --prefix=/usr/local --with-gtk=2.0 --enable-usbredir=yes --enable-smartcard=yes --with-python=yes
+make
+sudo make install
+</pre>
+
+
+</li>
+<li>运行虚拟机命令增加usbredir设置：
+   首先需要一个ich9-ehci-uhci.cfg文件，你可以从qemu代码里面找，在src/qemu1.3.1/docs目录下，拷贝到/usr/local/etc/qemu/目录下
+
+
+
+<pre class="example">cp qemu1.3.1/docs/ich9-ehci-uhci.cfg /usr/local/etc/qemu/
+</pre>
+
+
+<p>
+   然后需要修改虚拟机启动脚本，添加如下三行
+</p>
+
+
+<pre class="example">-readconfig /usr/local/etc/qemu/ich9-ehci-uhci.cfg \
+-chardev spicevmc,name=usbredir,id=usbredirchardev1 \
+-device usb-redir,chardev=usbredirchardev1,id=usbredirdev1,debug=3 \
+</pre>
+
+
+<p>
+   然后启动虚拟机，并用spicy连接
+</p>
+
+
+<pre class="example">sudo spicy -h localhost -p 5900
+</pre>
+
+<p>
+   选中spicy option菜单中的auto connection选项，在客户端中插入usb设备，不出意外的话，你就能在虚拟机上看到插入的usb设备了。
+</p></li>
+</ol>
+
+
+</div>
 </div>
 
 </div>
