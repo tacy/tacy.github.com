@@ -31,7 +31,7 @@ tags: [virtualization, hypervisor, kvm, spice]
 </div>
 
 <div id="outline-container-3" class="outline-2">
-<h2 id="sec-3">kvm安装</h2>
+<h2 id="sec-3">Kvm安装</h2>
 <div class="outline-text-2" id="text-3">
 
 <p>在ubuntu下需要安装的kvm包：
@@ -437,7 +437,7 @@ root      1563     2  0 Feb18 ?        00:00:00 [vhost-1561]
 </div>
 
 <div id="outline-container-6" class="outline-2">
-<h2 id="sec-6">windows7 guest</h2>
+<h2 id="sec-6">Windows7 guest</h2>
 <div class="outline-text-2" id="text-6">
 
 
@@ -556,7 +556,7 @@ regedit  （有用户登入时，提示超时关机）
 </div>
 
 <div id="outline-container-7" class="outline-2">
-<h2 id="sec-7">spice</h2>
+<h2 id="sec-7">Spice</h2>
 <div class="outline-text-2" id="text-7">
 
 
@@ -734,7 +734,7 @@ sudo make install
 </div>
 
 <div id="outline-container-7-5" class="outline-3">
-<h3 id="sec-7-5">usbredir</h3>
+<h3 id="sec-7-5">usbredir<sup><a class="footref" name="fnr.14" href="#fn.14">14</a></sup></h3>
 <div class="outline-text-3" id="text-7-5">
 
 <p>简单来说，就是客户端机器上插入的usb存储设备能够在vm上发现并使用，举例来说，你用你的笔记本电脑通过网络访问远程虚拟机，那么插入你笔记本电脑上的usb存储设备能在虚拟机上使用。目前支持usbredir的spice客户端只有spice-gtk，我们下面来编译spice-gtk，使他具有usbredir功能：
@@ -801,14 +801,14 @@ sudo make install
 </div>
 
 <div id="outline-container-8" class="outline-2">
-<h2 id="sec-8">base image &amp; snapshot</h2>
+<h2 id="sec-8">Base image &amp; Snapshot</h2>
 <div class="outline-text-2" id="text-8">
 
 
 </div>
 
 <div id="outline-container-8-1" class="outline-3">
-<h3 id="sec-8-1">base image<sup><a class="footref" name="fnr.14" href="#fn.14">14</a></sup></h3>
+<h3 id="sec-8-1">base image<sup><a class="footref" name="fnr.15" href="#fn.15">15</a></sup></h3>
 <div class="outline-text-3" id="text-8-1">
 
 <p>base image简单可以理解为模板，举个例子，你在部署公司的虚拟化环境，公司的所有的系统都跑在centos上，只是上面配置的应用各有不同，有c开发的，有java开发的等等，简单来说，你会先安装一个base image
@@ -874,7 +874,7 @@ backing file: centos.qcow2 (actual path: centos.qcow2)
 </div>
 
 <div id="outline-container-8-3" class="outline-3">
-<h3 id="sec-8-3">snapshot<sup><a class="footref" name="fnr.15" href="#fn.15">15</a></sup></h3>
+<h3 id="sec-8-3">snapshot<sup><a class="footref" name="fnr.16" href="#fn.16">16</a></sup></h3>
 <div class="outline-text-3" id="text-8-3">
 
 <p>快照是虚拟机一个常用的功能，你可以利用快照功能来保留某个时间点的虚拟机状态，方便虚拟机回滚。离线快照参考man手册即可。在线快照通过monitor或者QMP实现。
@@ -895,7 +895,7 @@ backing file: centos.qcow2 (actual path: centos.qcow2)
 <h3 id="sec-9-1">查看虚拟机ip地址</h3>
 <div class="outline-text-3" id="text-9-1">
 
-<p>如果虚拟机很少，简单通过“arp -an”查看即可，如果虚拟机很多，你不容易找到ip和mac的对应关系，需要自己写脚本去实现了<sup><a class="footref" name="fnr.16" href="#fn.16">16</a></sup>
+<p>如果虚拟机很少，简单通过“arp -an”查看即可，如果虚拟机很多，你不容易找到ip和mac的对应关系，需要自己写脚本去实现了<sup><a class="footref" name="fnr.17" href="#fn.17">17</a></sup>
 </p>
 <div id="footnotes">
 <h2 class="footnotes">Footnotes: </h2>
@@ -952,15 +952,19 @@ backing file: centos.qcow2 (actual path: centos.qcow2)
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn.14" href="#fnr.14">14</a></sup> how to use base image: <a href="http://www.linux-kvm.com/content/how-you-can-use-qemukvm-base-images-be-more-productive-part-1">http://www.linux-kvm.com/content/how-you-can-use-qemukvm-base-images-be-more-productive-part-1</a>
+<p class="footnote"><sup><a class="footnum" name="fn.14" href="#fnr.14">14</a></sup> Using spice from the qemu cmdline: <a href="http://hansdegoede.livejournal.com/11686.html">http://hansdegoede.livejournal.com/11686.html</a>
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn.15" href="#fnr.15">15</a></sup> kvm snapshot: <a href="http://wiki.qemu.org/Features/Snapshots">http://wiki.qemu.org/Features/Snapshots</a>
+<p class="footnote"><sup><a class="footnum" name="fn.15" href="#fnr.15">15</a></sup> how to use base image: <a href="http://www.linux-kvm.com/content/how-you-can-use-qemukvm-base-images-be-more-productive-part-1">http://www.linux-kvm.com/content/how-you-can-use-qemukvm-base-images-be-more-productive-part-1</a>
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn.16" href="#fnr.16">16</a></sup> find the ip address of a vm: <a href="http://rwmj.wordpress.com/2010/10/26/tip-find-the-ip-address-of-a-virtual-machine/">http://rwmj.wordpress.com/2010/10/26/tip-find-the-ip-address-of-a-virtual-machine/</a>
+<p class="footnote"><sup><a class="footnum" name="fn.16" href="#fnr.16">16</a></sup> kvm snapshot: <a href="http://wiki.qemu.org/Features/Snapshots">http://wiki.qemu.org/Features/Snapshots</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn.17" href="#fnr.17">17</a></sup> find the ip address of a vm: <a href="http://rwmj.wordpress.com/2010/10/26/tip-find-the-ip-address-of-a-virtual-machine/">http://rwmj.wordpress.com/2010/10/26/tip-find-the-ip-address-of-a-virtual-machine/</a>
 </p>
 
 
