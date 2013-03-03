@@ -7,37 +7,83 @@ tags: [virtualization, hypervisor, kvm, spice]
 ---
 
 
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 背景信息</a></li>
+<li><a href="#sec-2">2 文档目的</a></li>
+<li><a href="#sec-3">3 KVM安装</a></li>
+<li><a href="#sec-4">4 NAT模式虚拟网络</a></li>
+<li><a href="#sec-5">5 创建虚拟机</a>
+<ul>
+<li><a href="#sec-5-1">5.1 创建镜像</a></li>
+<li><a href="#sec-5-2">5.2 配置启动参数</a></li>
+<li><a href="#sec-5-3">5.3 启动虚拟机</a></li>
+</ul>
+</li>
+<li><a href="#sec-6">6 虚拟机串口</a></li>
+<li><a href="#sec-7">7 Windows7 guest</a>
+<ul>
+<li><a href="#sec-7-1">7.1 virtio</a></li>
+<li><a href="#sec-7-2">7.2 audio</a></li>
+<li><a href="#sec-7-3">7.3 usb</a></li>
+<li><a href="#sec-7-4">7.4 shutdown（about winxp and win2003)</a></li>
+</ul>
+</li>
+<li><a href="#sec-8">8 Spice</a>
+<ul>
+<li><a href="#sec-8-1">8.1 准备软件包</a></li>
+<li><a href="#sec-8-2">8.2 编译软件包</a></li>
+<li><a href="#sec-8-3">8.3 启动虚拟机</a></li>
+<li><a href="#sec-8-4">8.4 客户端连接</a></li>
+<li><a href="#sec-8-5">8.5 usbredir[14]</a></li>
+</ul>
+</li>
+<li><a href="#sec-9">9 Base image &amp; Snapshot</a>
+<ul>
+<li><a href="#sec-9-1">9.1 base image[15]</a></li>
+<li><a href="#sec-9-2">9.2 移动base image</a></li>
+<li><a href="#sec-9-3">9.3 snapshot[16]</a></li>
+</ul>
+</li>
+<li><a href="#sec-10">10 其他相关</a>
+<ul>
+<li><a href="#sec-10-1">10.1 查看虚拟机ip地址</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
 <div id="outline-container-1" class="outline-2">
-<h2 id="sec-1">背景信息</h2>
+<h2 id="sec-1"><span class="section-number-2">1</span> 背景信息</h2>
 <div class="outline-text-2" id="text-1">
 
 
 <hr/>
 <p>
-本文档是自己在工作中对kvm使用上的一些记录，基于ubuntu 12.04 desktop操作系统，在我的工作笔记本电脑实现，机器带一块以太网卡和一块无线网卡，通过无线网卡连互联网。
+本文档是自己在工作中对kvm使用上的一些记录，基于ubuntu 12.04 desktop，在我的工作笔记本电脑实现，机器带一块以太网卡和一块无线网卡，通过无线网卡连互联网。
 </p>
 </div>
 
 </div>
 
 <div id="outline-container-2" class="outline-2">
-<h2 id="sec-2">文档目的</h2>
+<h2 id="sec-2"><span class="section-number-2">2</span> 文档目的</h2>
 <div class="outline-text-2" id="text-2">
 
 
 <hr/>
 <p>
-介绍kvm，包括配置，不使用libvirt层实现的命令行模式虚拟机操作，一些主要参数介绍，以及kvm虚拟机优化等。
-</p>
-<p>
-在文档中，我会利用kvm命令行方式，实现一个nat模式的虚拟化网络，虚拟机通过nat访问外网，外网无法访问虚拟机。
+介绍kvm，包括配置，不使用libvirt层实现的命令行模式虚拟机操作，一些主要参数介绍，以及kvm虚拟机优化等。在文档中，我会利用kvm命令行方式，实现一个nat模式的虚拟化网络，虚拟机通过nat访问外网，外网无法访问虚拟机。
 </p>
 </div>
 
 </div>
 
 <div id="outline-container-3" class="outline-2">
-<h2 id="sec-3">KVM安装</h2>
+<h2 id="sec-3"><span class="section-number-2">3</span> KVM安装</h2>
 <div class="outline-text-2" id="text-3">
 
 
@@ -74,7 +120,7 @@ kvm_intel nested=1
 </div>
 
 <div id="outline-container-4" class="outline-2">
-<h2 id="sec-4">NAT模式虚拟网络</h2>
+<h2 id="sec-4"><span class="section-number-2">4</span> NAT模式虚拟网络</h2>
 <div class="outline-text-2" id="text-4">
 
 
@@ -229,13 +275,20 @@ cmdcmd
 </div>
 
 <div id="outline-container-5" class="outline-2">
-<h2 id="sec-5">创建虚拟机</h2>
+<h2 id="sec-5"><span class="section-number-2">5</span> 创建虚拟机</h2>
 <div class="outline-text-2" id="text-5">
 
 
 <hr/>
-<p>
-以创建centos虚拟机为例，你首先需要创建一个磁盘镜像文件，也可以是一个块设备：
+
+
+</div>
+
+<div id="outline-container-5-1" class="outline-3">
+<h3 id="sec-5-1"><span class="section-number-3">5.1</span> 创建镜像</h3>
+<div class="outline-text-3" id="text-5-1">
+
+<p>以创建centos虚拟机为例，你首先需要创建一个磁盘镜像文件，也可以是一个块设备：
 </p><pre class="example">
 $kvm-img create -f raw centos.img 10G
 </pre>
@@ -257,8 +310,15 @@ $kvm-img create -f raw centos.img 10G
 <p>
 当然你也可以通过lvm来分配一个lv给虚拟机用，块设备性能最佳，当然也有很多问题，可维护性一般，而且一般也不支持精简配置，其他的分布式块系统比如sheepdog这里就不多说了。最终目的只有一个，给虚拟机提供磁盘块安装操作系统。
 </p>
-<p>
-有了磁盘镜像文件之后，你就可以启动虚拟机了，由于我们这里直接通过原始的命令行启动虚拟机，不需要创建额外的xml配置文件。启动虚拟机涉及到组成计算机的几个核心组件：cpu/ram/storage/network/cdrom/soundcard/display，我们一一描述：
+</div>
+
+</div>
+
+<div id="outline-container-5-2" class="outline-3">
+<h3 id="sec-5-2"><span class="section-number-3">5.2</span> 配置启动参数</h3>
+<div class="outline-text-3" id="text-5-2">
+
+<p>有了磁盘镜像文件之后，你就可以启动虚拟机了，由于我们这里直接通过KVM命令行启动虚拟机，不需要创建额外的xml配置文件。启动虚拟机涉及到组成计算机的几个核心组件：cpu/ram/storage/network/cdrom/soundcard/display，我们一一描述：
 </p>
 <ul>
 <li>cpu
@@ -394,10 +454,16 @@ echo system_reset | socat - UNIX-CONNECT:/home/tacy/vm/monitor/centos.monitor
 </ul>
 
 
-<p>
-下面是我的启动命令：
-</p>
+</div>
 
+</div>
+
+<div id="outline-container-5-3" class="outline-3">
+<h3 id="sec-5-3"><span class="section-number-3">5.3</span> 启动虚拟机</h3>
+<div class="outline-text-3" id="text-5-3">
+
+<p>下面是我的启动命令：
+</p>
 
 
 <pre class="example">sudo kvm -m 2048 -smp 2 -cpu host -enable-kvm -boot c \
@@ -418,11 +484,12 @@ echo system_reset | socat - UNIX-CONNECT:/home/tacy/vm/monitor/centos.monitor
 上面我指定了光驱,和从光驱启动，这样你通过vnc就可以连接上虚拟机，进行系统安装了。
 </p>
 </div>
+</div>
 
 </div>
 
 <div id="outline-container-6" class="outline-2">
-<h2 id="sec-6">虚拟机串口</h2>
+<h2 id="sec-6"><span class="section-number-2">6</span> 虚拟机串口</h2>
 <div class="outline-text-2" id="text-6">
 
 
@@ -445,14 +512,14 @@ console=/dev/tty0 console=/dev/ttyS0,115200
 
 
 <p>
-重启虚拟机，然后你就可以通过telnet连接到虚拟机console上了。这里只是以telnet为例子，其他的你可以参考qemu man实现。
+重启虚拟机，然后你就可以通过telnet连接到虚拟机console上了。这里只是以telnet为例子，其他的你可以参考qemu man实现，比如你可以直接设置虚拟机串口输出到host当前终端的stdio，试试就知道了，非常方便。
 </p>
 </div>
 
 </div>
 
 <div id="outline-container-7" class="outline-2">
-<h2 id="sec-7">Windows7 guest</h2>
+<h2 id="sec-7"><span class="section-number-2">7</span> Windows7 guest</h2>
 <div class="outline-text-2" id="text-7">
 
 
@@ -461,7 +528,7 @@ console=/dev/tty0 console=/dev/ttyS0,115200
 </div>
 
 <div id="outline-container-7-1" class="outline-3">
-<h3 id="sec-7-1">virtio</h3>
+<h3 id="sec-7-1"><span class="section-number-3">7.1</span> virtio</h3>
 <div class="outline-text-3" id="text-7-1">
 
 <p>如果把系统安装在virtio磁盘上，安装的时候必须指定驱动，否则找不到磁盘，驱动下载地址可以参考<a href="http://www.linux-kvm.org/page/WindowsGuestDrivers">Windows guest drivers</a>，另外注意，在安装的时候加载virtio驱动，需要把驱动光盘防止在第一个光盘驱动器，否则会无法启动，例如：
@@ -483,7 +550,7 @@ console=/dev/tty0 console=/dev/ttyS0,115200
 </div>
 
 <div id="outline-container-7-2" class="outline-3">
-<h3 id="sec-7-2">audio</h3>
+<h3 id="sec-7-2"><span class="section-number-3">7.2</span> audio</h3>
 <div class="outline-text-3" id="text-7-2">
 
 <p>直接用ac97，不过你需要自己去下载驱动，注意下载win7版本的就行
@@ -493,7 +560,7 @@ console=/dev/tty0 console=/dev/ttyS0,115200
 </div>
 
 <div id="outline-container-7-3" class="outline-3">
-<h3 id="sec-7-3">usb</h3>
+<h3 id="sec-7-3"><span class="section-number-3">7.3</span> usb</h3>
 <div class="outline-text-3" id="text-7-3">
 
 <p>说实在的，被这玩意搞死了，实在是不熟悉usb这块，搞了两天才弄明白，如果你用下面方式加载usb：
@@ -544,7 +611,7 @@ device_add usb-storage,id=usbdrive,bus=ehci.0,drive=usbdrive
 </div>
 
 <div id="outline-container-7-4" class="outline-3">
-<h3 id="sec-7-4">shutdown（about winxp and win2003)</h3>
+<h3 id="sec-7-4"><span class="section-number-3">7.4</span> shutdown（about winxp and win2003)</h3>
 <div class="outline-text-3" id="text-7-4">
 
 <p>gpedit.msc  (允许无用户登入关机）
@@ -568,7 +635,7 @@ regedit  （有用户登入时，提示超时关机）
 </div>
 
 <div id="outline-container-8" class="outline-2">
-<h2 id="sec-8">Spice</h2>
+<h2 id="sec-8"><span class="section-number-2">8</span> Spice</h2>
 <div class="outline-text-2" id="text-8">
 
 
@@ -583,7 +650,7 @@ regedit  （有用户登入时，提示超时关机）
 </div>
 
 <div id="outline-container-8-1" class="outline-3">
-<h3 id="sec-8-1">准备软件包</h3>
+<h3 id="sec-8-1"><span class="section-number-3">8.1</span> 准备软件包</h3>
 <div class="outline-text-3" id="text-8-1">
 
 <p>下载相关依赖包和代码<sup><a class="footref" name="fnr.9" href="#fn.9">9</a></sup>
@@ -608,7 +675,7 @@ wget http://wiki.qemu-project.org/download/qemu-1.3.1.tar.bz2
 </div>
 
 <div id="outline-container-8-2" class="outline-3">
-<h3 id="sec-8-2">编译软件包</h3>
+<h3 id="sec-8-2"><span class="section-number-3">8.2</span> 编译软件包</h3>
 <div class="outline-text-3" id="text-8-2">
 
 <ol>
@@ -700,7 +767,7 @@ sudo make install
 </div>
 
 <div id="outline-container-8-3" class="outline-3">
-<h3 id="sec-8-3">启动虚拟机</h3>
+<h3 id="sec-8-3"><span class="section-number-3">8.3</span> 启动虚拟机</h3>
 <div class="outline-text-3" id="text-8-3">
 
 <p>启动windows虚拟机
@@ -730,7 +797,7 @@ sudo make install
 </div>
 
 <div id="outline-container-8-4" class="outline-3">
-<h3 id="sec-8-4">客户端连接</h3>
+<h3 id="sec-8-4"><span class="section-number-3">8.4</span> 客户端连接</h3>
 <div class="outline-text-3" id="text-8-4">
 
 <p>启动spice客户端spicec
@@ -747,7 +814,7 @@ sudo make install
 </div>
 
 <div id="outline-container-8-5" class="outline-3">
-<h3 id="sec-8-5">usbredir<sup><a class="footref" name="fnr.14" href="#fn.14">14</a></sup></h3>
+<h3 id="sec-8-5"><span class="section-number-3">8.5</span> usbredir<sup><a class="footref" name="fnr.14" href="#fn.14">14</a></sup></h3>
 <div class="outline-text-3" id="text-8-5">
 
 <p>简单来说，就是客户端机器上插入的usb存储设备能够在vm上发现并使用，举例来说，你用你的笔记本电脑通过网络访问远程虚拟机，那么插入你笔记本电脑上的usb存储设备能在虚拟机上使用。目前支持usbredir的spice客户端只有spice-gtk，我们下面来编译spice-gtk，使他具有usbredir功能：
@@ -809,7 +876,7 @@ sudo spicy -h localhost -p 5900
 </div>
 
 <div id="outline-container-9" class="outline-2">
-<h2 id="sec-9">Base image &amp; Snapshot</h2>
+<h2 id="sec-9"><span class="section-number-2">9</span> Base image &amp; Snapshot</h2>
 <div class="outline-text-2" id="text-9">
 
 
@@ -818,7 +885,7 @@ sudo spicy -h localhost -p 5900
 </div>
 
 <div id="outline-container-9-1" class="outline-3">
-<h3 id="sec-9-1">base image<sup><a class="footref" name="fnr.15" href="#fn.15">15</a></sup></h3>
+<h3 id="sec-9-1"><span class="section-number-3">9.1</span> base image<sup><a class="footref" name="fnr.15" href="#fn.15">15</a></sup></h3>
 <div class="outline-text-3" id="text-9-1">
 
 <p>base image简单可以理解为模板，举个例子，你在部署公司的虚拟化环境，公司的所有的系统都跑在centos上，只是上面配置的应用各有不同，有c开发的，有java开发的等等，简单来说，你会先安装一个base image
@@ -864,7 +931,7 @@ kvm-img convert centos-clone.qcow2 -O qcow2 centos-base-java.qcow2
 </div>
 
 <div id="outline-container-9-2" class="outline-3">
-<h3 id="sec-9-2">移动base image</h3>
+<h3 id="sec-9-2"><span class="section-number-3">9.2</span> 移动base image</h3>
 <div class="outline-text-3" id="text-9-2">
 
 <p>有时候，为了运维的目的，你可能需要移动base image, 这个时候你需要重新rebase所有相关的clone，否则clone就会出错：
@@ -878,7 +945,7 @@ kvm-img rebase -f qcow2 -u -b centos54.img -F raw centos-clone.qcow2
 </div>
 
 <div id="outline-container-9-3" class="outline-3">
-<h3 id="sec-9-3">snapshot<sup><a class="footref" name="fnr.16" href="#fn.16">16</a></sup></h3>
+<h3 id="sec-9-3"><span class="section-number-3">9.3</span> snapshot<sup><a class="footref" name="fnr.16" href="#fn.16">16</a></sup></h3>
 <div class="outline-text-3" id="text-9-3">
 
 <p>快照是虚拟机一个常用的功能，你可以利用快照功能来保留某个时间点的虚拟机状态，方便虚拟机回滚。离线快照参考man手册即可。在线快照通过monitor或者QMP实现。
@@ -889,7 +956,7 @@ kvm-img rebase -f qcow2 -u -b centos54.img -F raw centos-clone.qcow2
 </div>
 
 <div id="outline-container-10" class="outline-2">
-<h2 id="sec-10">其他相关</h2>
+<h2 id="sec-10"><span class="section-number-2">10</span> 其他相关</h2>
 <div class="outline-text-2" id="text-10">
 
 
@@ -898,7 +965,7 @@ kvm-img rebase -f qcow2 -u -b centos54.img -F raw centos-clone.qcow2
 </div>
 
 <div id="outline-container-10-1" class="outline-3">
-<h3 id="sec-10-1">查看虚拟机ip地址</h3>
+<h3 id="sec-10-1"><span class="section-number-3">10.1</span> 查看虚拟机ip地址</h3>
 <div class="outline-text-3" id="text-10-1">
 
 <p>如果虚拟机很少，简单通过“arp -an”查看即可，如果虚拟机很多，你不容易找到ip和mac的对应关系，需要自己写脚本去实现了<sup><a class="footref" name="fnr.17" href="#fn.17">17</a></sup>

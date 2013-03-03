@@ -49,6 +49,34 @@ s键添加提交对象，之后通过c键写注视，C-c C-c提交，P键push，
 如果你碰到提交的页面没有生效， 一般都是在github上page build失败导致的，你可以在本地调试，关闭_config.yml中的auto，设置为false，然后就可以在本地看到page build失败的异常，修复即可。
 </p>
 <p>
+另外，jekyll只能渲染body，不能包括head，所以我们在配置的时候需要设置orgmode只能包括body：
+</p><pre class="example">
+body-only t
+</pre>
+
+<p>但是这样的话，orgmode就不能导出toc和章节编号，我自己对lisp不熟悉，就粗暴的修改了org-html.el：
+先编辑下面行：
+</p><pre class="example">
+      (if (and org-export-with-toc (not body-only))
+</pre>
+
+<p>修改为：
+</p><pre class="example">
+     (if (and org-export-with-toc)
+</pre>
+
+<p>然后修改下面行：
+</p><pre class="example">
+  (if (and num (not body-only))
+</pre>
+
+<p>修改为：
+</p><pre class="example">
+  (if (and num)
+</pre>
+
+
+<p>
 下面是我的emacs配置，供感兴趣的同学参考：
 </p>
 
