@@ -1,0 +1,243 @@
+---
+layout: post
+title: "python notes"
+description: "python学习点滴"
+categories: [tech]
+tags: [python, program]
+---
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 语法</a></li>
+<li><a href="#sec-2">2 String</a>
+<ul>
+<li><a href="#sec-2-1">2.1 encoding</a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3 Regex</a>
+<ul>
+<li><a href="#sec-3-1">3.1 MyDemo</a></li>
+<li><a href="#sec-3-2">3.2 findall group</a></li>
+<li><a href="#sec-3-3">3.3 Options</a></li>
+<li><a href="#sec-3-4">3.4 Substitution</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1">语法</h2>
+<div class="outline-text-2" id="text-1">
+
+<ul>
+<li>type(objectName)    查看对象类型
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2">String</h2>
+<div class="outline-text-2" id="text-2">
+
+
+</div>
+
+<div id="outline-container-2-1" class="outline-3">
+<h3 id="sec-2-1">encoding<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup></h3>
+<div class="outline-text-3" id="text-2-1">
+
+<p>   python内部都用unicode做中介，比如你要把一个string转换成utf-8，必须先做unicode()，然后才能去做encode()转换：
+</p>
+
+
+<pre class="example">&gt;str = '斯坦福'
+&gt;str.encode('utf-8')
+UnicodeDecodeError: 'ascii' codec can't decode byte 0xe6 in position 0: ordinal not in range(128)
+</pre>
+
+<p>
+   上面例子中，str在做encode的时候，会先去做unicode()，转换成unicode编码，然后再从unicode编码格式encode()成utf-8，问题就处在内部的unicode()这个步骤上，python缺省做unicode()用的编码是ASCII，而‘斯坦福’是不能用ASCII表达的，这就出现了上面的错误。要解决上面的问题，必须你告诉python用什么编码做unicode():
+</p>
+
+
+<pre class="example">&gt;str = '斯坦福'
+&gt;str = unicode(str, 'utf-8')
+&gt;str.encode('utf-8')
+'\xe6\x96\xaf\xe5\x9d\xa6\xe7\xa6\x8f'
+&gt;str.encode('gb18030')
+'\xcb\xb9\xcc\xb9\xb8\xa3'
+</pre>
+
+<p>
+   上面我们显示指定了unicode()的编码，这样str就能正确unicode()。
+</p>
+<p>
+   另外注意我们上面指定的unicode()编码，这个也不能随便写，python编码规范要求你指定源代码编码<sup><a class="footref" name="fnr-.2" href="#fn-.2">2</a></sup>，例如你指定coding为”# -*- coding: utf-8 -*-“，那么你在对str做unicode()的时候就不能用gbk去做，会出错：
+</p>
+
+
+<pre class="example">&gt;str = '斯坦福'
+&gt;unicode(str, 'gb18030')
+UnicodeDecodeError: 'gb18030' codec can't decode byte 0x8f in position 8: incomplete multibyte sequence
+</pre>
+
+
+<p>
+   转换一个str成为url也比较麻烦，你要先对他做正确的encode，然后还要quote:
+</p>
+
+
+<pre class="example">&gt;str = '斯坦福'
+&gt;str = unicode(str, 'utf-8')
+&gt;urllib2.quote(str.encode('utf-8')
+'%E6%96%AF%E5%9D%A6%E7%A6%8F'
+</pre>
+
+<p>
+   当然，你还得根据不同网站的编码做不同转换，如果网站用的编码是gbk，你这里就需要encode成gbk
+</p>
+<p>
+   另外看下面一些例子，关于转换结果之间的关系：
+</p>
+
+
+<pre class="example">&gt;str = '斯坦福'
+&gt;ustr = u'斯坦福'
+&gt;str
+'\xe6\x96\xaf\xe5\x9d\xa6\xe7\xa6\x8f'
+&gt;ustr
+u'\u65af\u5766\u798f'
+&gt;ustr2 = unicode(str, 'utf-8')
+&gt;ustr2 == ustr
+True
+&gt;str2 = ustr2.encode('utf-8')
+&gt;str == str2
+True
+&gt;ustr2 == str2.decode('utf-8')
+True
+</pre>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3">Regex<sup><a class="footref" name="fnr-.3" href="#fn-.3">3</a></sup></h2>
+<div class="outline-text-2" id="text-3">
+
+
+</div>
+
+<div id="outline-container-3-1" class="outline-3">
+<h3 id="sec-3-1">MyDemo</h3>
+<div class="outline-text-3" id="text-3-1">
+
+
+
+
+<pre class="example">str = 'atestaa,btestbb,'
+rs = re.match(r'test.*', str)   不匹配，match是从第一个字符开始匹配
+rs = re.match(r'.test.*', str)  匹配，rs.group()输出 'atestaa,btestbb,'
+rs = re.match(r'.test.*,', str) 匹配，注意patten后面多了一个逗号字符，但是匹配结果同上，因为缺省是贪吃模式，原则是最长匹配
+rs = re.match(r'.test.*?,', str) 匹配，注意patten中多了一个问好，匹配结果变成了 'atestaa,',改变模式为最短匹配
+rs = re.match(r'.test(.*?),', str) 匹配，group模式，patten中多了一对括号，匹配结果同上，只是括号中表达式匹配的字符会单独存放在re.group(1)中，本例中为'aa'
+rs = re.match(r'.test(.*?),.test(.*?),', str) 匹配，多了一个re.group(2)，本例中存放'bb'
+rs = re.search   使用方式同match，唯一区别就是search从任意位置开始匹配，而match必须从第一个字符开始匹配，另外match和search都是一次匹配
+rs = re.findall(r'test(.*?),', str)   匹配，多次匹配模式，rs输出['aa', 'bb']
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3-2" class="outline-3">
+<h3 id="sec-3-2">findall group</h3>
+<div class="outline-text-3" id="text-3-2">
+
+
+
+
+<pre class="example">str = 'purple alice@google.com, blah monkey bob@abc.com blah dishwasher'
+tuples = re.findall(r'([\w\.-]+)@([\w\.-]+)', str)
+print tuples  ## [('alice', 'google.com'), ('bob', 'abc.com')]
+for tuple in tuples:
+  print tuple[0]  ## username
+  print tuple[1]  ## host
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3-3" class="outline-3">
+<h3 id="sec-3-3">Options</h3>
+<div class="outline-text-3" id="text-3-3">
+
+<p>   The re functions take options to modify the behavior of the pattern match. The option flag is added as an extra argument to the search() or findall() etc., e.g. re.search(pat, str, re.IGNORECASE).
+</p>
+<ul>
+<li>IGNORECASE &ndash; ignore upper/lowercase differences for matching, so 'a' matches both 'a' and 'A'.
+</li>
+<li>DOTALL &ndash; allow dot (.) to match newline &ndash; normally it matches anything but newline. This can trip you up &ndash; you think .* matches everything, but by default it does not go past the end of a line. Note that \s (whitespace) includes newlines, so if you want to match a run of whitespace that may include a newline, you can just use \s*
+</li>
+<li>MULTILINE &ndash; Within a string made of many lines, allow ^ and $ to match the start and end of each line. Normally ^/$ would just match the start and end of the whole string.
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3-4" class="outline-3">
+<h3 id="sec-3-4">Substitution</h3>
+<div class="outline-text-3" id="text-3-4">
+
+<p>   The re.sub(pat, replacement, str) function searches for all the instances of pattern in the given string, and replaces them. The replacement string can include '\1', '\2' which refer to the text from group(1), group(2), and so on from the original matching text.
+</p>
+<p>
+   Here's an example which searches for all the email addresses, and changes them to keep the user (\1) but have yo-yo-dyne.com as the host.
+</p>
+
+
+<pre class="example">str = 'purple alice@google.com, blah monkey bob@abc.com blah dishwasher'
+## re.sub(pat, replacement, str) -- returns new string with all replacements,
+## \1 is group(1), \2 group(2) in the replacement
+print re.sub(r'([\w\.-]+)@([\w\.-]+)', r'\1@yo-yo-dyne.com', str)
+## purple alice@yo-yo-dyne.com, blah monkey bob@yo-yo-dyne.com blah dishwasher
+</pre>
+
+
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+<p class="footnote"><sup><a class="footnum" name="fn-.1" href="#fnr-.1">1</a></sup> Unicode HOWTO: <a href="http://docs.python.org/2/howto/unicode.html">http://docs.python.org/2/howto/unicode.html</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.2" href="#fnr-.2">2</a></sup> PEP 0263: <a href="http://www.python.org/dev/peps/pep-0263/">http://www.python.org/dev/peps/pep-0263/</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.3" href="#fnr-.3">3</a></sup> Google Python Regex: <a href="https://developers.google.com/edu/python/regular-expressions">https://developers.google.com/edu/python/regular-expressions</a>
+</p>
+
+
+</div>
+</div>
+</div>
+
+</div>
+</div>
