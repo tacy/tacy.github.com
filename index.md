@@ -18,7 +18,7 @@ description: "李春龙的博客"
 				</div>
 				<div class="category">
 					<label>Category: </label>
-					<span>{{ post.category }}</span>
+					<span>{{ post.categories }}</span>
 				</div>
 			</div>
 			<div class="post-content">
@@ -59,6 +59,3 @@ description: "李春龙的博客"
 <div style="width:50%;margin-left:auto;margin-right:auto;text-align:center;clear:both;">
 	<a href="/archive.html">查看所有{{site.posts.size}}篇文章...</a>
 </div>
-
-
-
