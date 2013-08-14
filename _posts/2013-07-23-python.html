@@ -20,9 +20,15 @@ tags: [python, program]
 <li><a href="#sec-3">3 Regex</a>
 <ul>
 <li><a href="#sec-3-1">3.1 MyDemo</a></li>
-<li><a href="#sec-3-2">3.2 findall group</a></li>
+<li><a href="#sec-3-2">3.2 findall group  - return tuple</a></li>
 <li><a href="#sec-3-3">3.3 Options</a></li>
 <li><a href="#sec-3-4">3.4 Substitution</a></li>
+</ul>
+</li>
+<li><a href="#sec-4">4 Python分支</a>
+<ul>
+<li><a href="#sec-4-1">4.1 Stackless Python</a></li>
+<li><a href="#sec-4-2">4.2 PyPy</a></li>
 </ul>
 </li>
 </ul>
@@ -35,6 +41,10 @@ tags: [python, program]
 
 <ul>
 <li>type(objectName)    查看对象类型
+</li>
+<li>string,tuple is immutable
+</li>
+<li>变量不用定义，所以你在给变量取名字的时候最好带上变量类型，比如aItem,这样你能很清楚知道你的变量类型
 </li>
 </ul>
 
@@ -153,7 +163,17 @@ rs = re.match(r'.test.*?,', str) 匹配，注意patten中多了一个问好，�
 rs = re.match(r'.test(.*?),', str) 匹配，group模式，patten中多了一对括号，匹配结果同上，只是括号中表达式匹配的字符会单独存放在re.group(1)中，本例中为'aa'
 rs = re.match(r'.test(.*?),.test(.*?),', str) 匹配，多了一个re.group(2)，本例中存放'bb'
 rs = re.search   使用方式同match，唯一区别就是search从任意位置开始匹配，而match必须从第一个字符开始匹配，另外match和search都是一次匹配
-rs = re.findall(r'test(.*?),', str)   匹配，多次匹配模式，rs输出['aa', 'bb']
+rs = re.findall(r'test(.*?),', str)   匹配，多次匹配模式，rs输出['aa', 'bb']，return list
+</pre>
+
+
+<p>
+   复杂的例子：
+</p>
+
+
+<pre class="example">re = re.search(r'(x|y)(x|y)', 'xy')   这里匹配xx，xy，yx，yy，但是如果你只想匹配xy和yx的时候怎么办呢
+rs = re.search(r'(?:(x)|y)(?(1)y|x)', 'xy')     #匹配xy或者yx，不匹配xx，yy，解释一下，第一个大括号里面是表示当找到x的时候，存入group（1）里面，如果是y则不存入group（1），后面一个括号里面表示如果group（1）存在，则继续匹配y，否则匹配x
 </pre>
 
 
@@ -162,7 +182,7 @@ rs = re.findall(r'test(.*?),', str)   匹配，多次匹配模式，rs输出['aa
 </div>
 
 <div id="outline-container-3-2" class="outline-3">
-<h3 id="sec-3-2">findall group</h3>
+<h3 id="sec-3-2">findall group  - return tuple</h3>
 <div class="outline-text-3" id="text-3-2">
 
 
@@ -220,9 +240,59 @@ print re.sub(r'([\w\.-]+)@([\w\.-]+)', r'\1@yo-yo-dyne.com', str)
 </pre>
 
 
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4">Python分支</h2>
+<div class="outline-text-2" id="text-4">
+
+
+</div>
+
+<div id="outline-container-4-1" class="outline-3">
+<h3 id="sec-4-1">Stackless Python</h3>
+<div class="outline-text-3" id="text-4-1">
+
 <div id="footnotes">
 <h2 class="footnotes">Footnotes: </h2>
 <div id="text-footnotes">
+<p class="footnote"><sup><a class="footnum" name="fn-.4" href="#fnr-.4">4</a></sup>先看看wikipedia上的解释：
+   "Stackless microthreads are managed by the language interpreter itself, not the operating system kernel—context switching and task scheduling is done purely in the interpreter (these are thus also regarded as a form of green thread). This avoids many of the overheads of threads, because no mode switching between user mode and kernel mode needs to be done, and can significantly reduce CPU load in some high-concurrency situations.Due to the considerable number of changes in the source, Stackless Python cannot be installed on a preexisting Python installation as an extension or library. It is instead a complete Python distribution in itself. The majority of Stackless's features have also been implemented in PyPy, a self-hosting Python interpreter and JIT compiler."
+   stackless是一个python的分支实现，主要的优势就是microthread，其实就是Coroutine（协程），轻量级别的伪线程，采用栈方式实现协程切换，不会带来ContextSwitch，缺点是需要自己管理协程调用栈，stackless能实现10，0000级别的连接.
+</p>
+
+
+<pre class="example">from greenlet import greenlet
+def test1():
+    print 12
+    gr2.switch()
+    print 34
+
+def test2():
+    print 56
+    gr1.switch()
+    print 78   #not to be printed
+
+gr1 = greenlet(test1)
+gr2 = greenlet(test2)
+gr1.switch()
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4-2" class="outline-3">
+<h3 id="sec-4-2">PyPy</h3>
+<div class="outline-text-3" id="text-4-2">
+
+<p>   实现了一个JIT，运行时转换python代码到机器码，主要关注在运行效率的提升，和原生python兼容，采用RPython（python的一个子集）实现，目前好像还没有看到那里有大规模的使用。关于PyPy和CPython的性能讨论可以看这里<sup><a class="footref" name="fnr-.5" href="#fn-.5">5</a></sup>
+</p>
+
 <p class="footnote"><sup><a class="footnum" name="fn-.1" href="#fnr-.1">1</a></sup> Unicode HOWTO: <a href="http://docs.python.org/2/howto/unicode.html">http://docs.python.org/2/howto/unicode.html</a>
 </p>
 
@@ -232,6 +302,14 @@ print re.sub(r'([\w\.-]+)@([\w\.-]+)', r'\1@yo-yo-dyne.com', str)
 
 
 <p class="footnote"><sup><a class="footnum" name="fn-.3" href="#fnr-.3">3</a></sup> Google Python Regex: <a href="https://developers.google.com/edu/python/regular-expressions">https://developers.google.com/edu/python/regular-expressions</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.4" href="#fnr-.4">4</a></sup> Stackless: <a href="http://en.wikipedia.org/wiki/Stackless_Python">http://en.wikipedia.org/wiki/Stackless_Python</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.5" href="#fnr-.5">5</a></sup> Pypy - How can it possibly beat CPython: <a href="http://stackoverflow.com/questions/2591879/pypy-how-can-it-possibly-beat-cpython">http://stackoverflow.com/questions/2591879/pypy-how-can-it-possibly-beat-cpython</a>
 </p>
 
 
