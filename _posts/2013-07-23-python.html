@@ -52,7 +52,8 @@ tags: [python, program]
 </li>
 <li>string,tuple is immutable
 </li>
-<li>变量不用定义，所以你在给变量取名字的时候最好带上变量类型，比如aItem,这样你能很清楚知道你的变量类型
+<li>变量不用定义，所以你在给变量取名字的时候最好带上变量类型，比如aItem,这样你能
+    很清楚知道你的变量类型
 </li>
 </ul>
 
@@ -72,17 +73,22 @@ tags: [python, program]
 <h3 id="sec-2-1">encoding<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup></h3>
 <div class="outline-text-3" id="text-2-1">
 
-<p>   python内部都用unicode做中介，比如你要把一个string转换成utf-8，必须先做unicode()，然后才能去做encode()转换：
+<p>   python内部都用unicode做中介，比如你要把一个string转换成utf-8，必须先做
+   unicode()，然后才能去做encode()转换：
 </p>
 
 
 <pre class="example">&gt;str = '斯坦福'
 &gt;str.encode('utf-8')
-UnicodeDecodeError: 'ascii' codec can't decode byte 0xe6 in position 0: ordinal not in range(128)
+UnicodeDecodeError: 'ascii' codec can't decode byte 0xe6 in position 0:
+ordinal not in range(128)
 </pre>
 
 <p>
-   上面例子中，str在做encode的时候，会先去做unicode()，转换成unicode编码，然后再从unicode编码格式encode()成utf-8，问题就处在内部的unicode()这个步骤上，python缺省做unicode()用的编码是ASCII，而‘斯坦福’是不能用ASCII表达的，这就出现了上面的错误。要解决上面的问题，必须你告诉python用什么编码做unicode():
+   上面例子中，str在做encode的时候，会先去做unicode()，转换成unicode编码，然后再
+   从unicode编码格式encode()成utf-8，问题就处在内部的unicode()这个步骤上，python
+   缺省做unicode()用的编码是ASCII，而‘斯坦福’是不能用ASCII表达的，这就出现了
+   上面的错误。要解决上面的问题，必须你告诉python用什么编码做unicode():
 </p>
 
 
@@ -98,13 +104,16 @@ UnicodeDecodeError: 'ascii' codec can't decode byte 0xe6 in position 0: ordinal 
    上面我们显示指定了unicode()的编码，这样str就能正确unicode()。
 </p>
 <p>
-   另外注意我们上面指定的unicode()编码，这个也不能随便写，python编码规范要求你指定源代码编码<sup><a class="footref" name="fnr-.2" href="#fn-.2">2</a></sup>，例如你指定coding为”# -*- coding: utf-8 -*-“，那么你在对str做unicode()的时候就不能用gbk去做，会出错：
+   另外注意我们上面指定的unicode()编码，这个也不能随便写，python编码规范要求你指
+   定源代码编码<sup><a class="footref" name="fnr-.2" href="#fn-.2">2</a></sup>，例如你指定coding为”# -*- coding: utf-8 -*-“，那么你在
+   对str做unicode()的时候就不能用gbk去做，会出错：
 </p>
 
 
 <pre class="example">&gt;str = '斯坦福'
 &gt;unicode(str, 'gb18030')
-UnicodeDecodeError: 'gb18030' codec can't decode byte 0x8f in position 8: incomplete multibyte sequence
+UnicodeDecodeError: 'gb18030' codec can't decode byte 0x8f in position 8:
+incomplete multibyte sequence
 </pre>
 
 
@@ -120,7 +129,8 @@ UnicodeDecodeError: 'gb18030' codec can't decode byte 0x8f in position 8: incomp
 </pre>
 
 <p>
-   当然，你还得根据不同网站的编码做不同转换，如果网站用的编码是gbk，你这里就需要encode成gbk
+   当然，你还得根据不同网站的编码做不同转换，如果网站用的编码是gbk，你这里就需要
+   encode成gbk
 </p>
 <p>
    另外看下面一些例子，关于转换结果之间的关系：
@@ -163,26 +173,26 @@ True
 
 
 
-<pre class="src src-python"><span style="color: #859900;">str</span> = <span style="color: #2aa198;">'atestaa,btestbb,'</span>
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#19981;&#21305;&#37197;&#65292;match&#26159;&#20174;&#31532;&#19968;&#20010;&#23383;&#31526;&#24320;&#22987;&#21305;&#37197;</span>
-<span style="color: #268bd2;">rs</span> = re.match(r<span style="color: #2aa198;">'test.*'</span>, <span style="color: #859900;">str</span>)
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;&#65292;rs.group()&#36755;&#20986; 'atestaa,btestbb,'</span>
-<span style="color: #268bd2;">rs</span> = re.match(r<span style="color: #2aa198;">'.test.*'</span>, <span style="color: #859900;">str</span>)
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;&#65292;&#27880;&#24847;patten&#21518;&#38754;&#22810;&#20102;&#19968;&#20010;&#36887;&#21495;&#23383;&#31526;&#65292;&#20294;&#26159;&#21305;&#37197;&#32467;&#26524;&#21516;&#19978;&#65292;&#22240;&#32570;&#30465;&#26159;&#36138;&#21507;&#27169;&#24335;,</span>
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21407;&#21017;&#26159;&#26368;&#38271;&#21305;&#37197;</span>
-<span style="color: #268bd2;">rs</span> = re.match(r<span style="color: #2aa198;">'.test.*,'</span>, <span style="color: #859900;">str</span>)
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;&#65292;&#27880;&#24847;patten&#20013;&#22810;&#20102;&#20010;&#38382;&#21495;&#65292;&#21305;&#37197;&#32467;&#26524;&#21464;&#25104;&#20102;'atestaa,',&#25913;&#21464;&#27169;&#24335;&#20026;&#26368;&#30701;&#21305;&#37197;</span>
-<span style="color: #268bd2;">rs</span> = re.match(r<span style="color: #2aa198;">'.test.*?,'</span>, <span style="color: #859900;">str</span>)
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;&#65292;group&#27169;&#24335;&#65292;patten&#20013;&#22810;&#20102;&#19968;&#23545;&#25324;&#21495;&#65292;&#21305;&#37197;&#32467;&#26524;&#21516;&#19978;&#65292;&#21482;&#26159;&#25324;&#21495;&#20013;&#34920;&#36798;&#24335;&#21305;</span>
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#37197;&#30340;&#23383;&#31526;&#20250;&#21333;&#29420;&#23384;&#25918;&#22312;re.group(1)&#20013;&#65292;&#26412;&#20363;&#20013;&#20026;'aa'</span>
-<span style="color: #268bd2;">rs</span> = re.match(r<span style="color: #2aa198;">'.test(.*?),'</span>, <span style="color: #859900;">str</span>)
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;&#65292;&#22810;&#20102;&#19968;&#20010;re.group(2)&#65292;&#26412;&#20363;&#20013;&#23384;&#25918;'bb'</span>
-<span style="color: #268bd2;">rs</span> = re.match(r<span style="color: #2aa198;">'.test(.*?),.test(.*?),'</span>, <span style="color: #859900;">str</span>)
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#20351;&#29992;&#26041;&#24335;&#21516;match&#65292;&#21807;&#19968;&#21306;&#21035;&#23601;&#26159;search&#20174;&#20219;&#24847;&#20301;&#32622;&#24320;&#22987;&#21305;&#37197;&#65292;&#32780;match&#24517;&#39035;&#20174;&#31532;&#19968;&#20010;</span>
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#23383;&#31526;&#24320;&#22987;&#21305;&#37197;&#65292;&#21478;&#22806;match&#21644;search&#37117;&#26159;&#19968;&#27425;&#21305;&#37197;</span>
-<span style="color: #268bd2;">rs</span> = re.search
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;&#65292;&#22810;&#27425;&#21305;&#37197;&#27169;&#24335;&#65292;rs&#36755;&#20986;['aa', 'bb']&#65292;return list</span>
-<span style="color: #268bd2;">rs</span> = re.findall(r<span style="color: #2aa198;">'test(.*?),'</span>, <span style="color: #859900;">str</span>)
+<pre class="src src-python"><span style="color: #859900;">str</span> = <span style="color: #2aa198;">'atestaa,btestbb,'</span>&#57344;&#57345;&#57345;
+<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#19981;&#21305;&#37197;&#65292;match&#26159;&#20174;&#31532;&#19968;&#20010;&#23383;&#31526;&#24320;&#22987;&#21305;&#37197;</span>&#57344;&#57345;&#57345;
+<span style="color: #268bd2;">rs</span> = re.match(r<span style="color: #2aa198;">'test.*'</span>, <span style="color: #859900;">str</span>)&#57344;&#57345;&#57345;
+<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;&#65292;rs.group()&#36755;&#20986; 'atestaa,btestbb,'</span>&#57344;&#57345;&#57345;
+<span style="color: #268bd2;">rs</span> = re.match(r<span style="color: #2aa198;">'.test.*'</span>, <span style="color: #859900;">str</span>)&#57344;&#57345;&#57345;
+<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;&#65292;&#27880;&#24847;patten&#21518;&#38754;&#22810;&#20102;&#19968;&#20010;&#36887;&#21495;&#23383;&#31526;&#65292;&#20294;&#26159;&#21305;&#37197;&#32467;&#26524;&#21516;&#19978;&#65292;&#22240;&#32570;&#30465;&#26159;&#36138;&#21507;&#27169;&#24335;,</span>&#57344;&#57345;&#57345;
+<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21407;&#21017;&#26159;&#26368;&#38271;&#21305;&#37197;</span>&#57344;&#57345;&#57345;
+<span style="color: #268bd2;">rs</span> = re.match(r<span style="color: #2aa198;">'.test.*,'</span>, <span style="color: #859900;">str</span>)&#57344;&#57345;&#57345;
+<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;&#65292;&#27880;&#24847;patten&#20013;&#22810;&#20102;&#20010;&#38382;&#21495;&#65292;&#21305;&#37197;&#32467;&#26524;&#21464;&#25104;&#20102;'atestaa,',&#25913;&#21464;&#27169;&#24335;&#20026;&#26368;&#30701;&#21305;&#37197;</span>&#57344;&#57345;&#57345;
+<span style="color: #268bd2;">rs</span> = re.match(r<span style="color: #2aa198;">'.test.*?,'</span>, <span style="color: #859900;">str</span>)&#57344;&#57345;&#57345;
+<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;&#65292;group&#27169;&#24335;&#65292;patten&#20013;&#22810;&#20102;&#19968;&#23545;&#25324;&#21495;&#65292;&#21305;&#37197;&#32467;&#26524;&#21516;&#19978;&#65292;&#21482;&#26159;&#25324;&#21495;&#20013;&#34920;&#36798;&#24335;&#21305;</span>&#57344;&#57345;&#57345;
+<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#37197;&#30340;&#23383;&#31526;&#20250;&#21333;&#29420;&#23384;&#25918;&#22312;re.group(1)&#20013;&#65292;&#26412;&#20363;&#20013;&#20026;'aa'</span>&#57344;&#57345;&#57345;
+<span style="color: #268bd2;">rs</span> = re.match(r<span style="color: #2aa198;">'.test(.*?),'</span>, <span style="color: #859900;">str</span>)&#57344;&#57345;&#57345;
+<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;&#65292;&#22810;&#20102;&#19968;&#20010;re.group(2)&#65292;&#26412;&#20363;&#20013;&#23384;&#25918;'bb'</span>&#57344;&#57345;&#57345;
+<span style="color: #268bd2;">rs</span> = re.match(r<span style="color: #2aa198;">'.test(.*?),.test(.*?),'</span>, <span style="color: #859900;">str</span>)&#57344;&#57345;&#57345;
+<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#20351;&#29992;&#26041;&#24335;&#21516;match&#65292;&#21807;&#19968;&#21306;&#21035;&#23601;&#26159;search&#20174;&#20219;&#24847;&#20301;&#32622;&#24320;&#22987;&#21305;&#37197;&#65292;&#32780;match&#24517;&#39035;&#20174;&#31532;&#19968;&#20010;</span>&#57344;&#57345;&#57345;
+<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#23383;&#31526;&#24320;&#22987;&#21305;&#37197;&#65292;&#21478;&#22806;match&#21644;search&#37117;&#26159;&#19968;&#27425;&#21305;&#37197;</span>&#57344;&#57345;&#57345;
+<span style="color: #268bd2;">rs</span> = re.search&#57344;&#57345;&#57345;
+<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;&#65292;&#22810;&#27425;&#21305;&#37197;&#27169;&#24335;&#65292;rs&#36755;&#20986;['aa', 'bb']&#65292;return list</span>&#57344;&#57345;&#57345;
+<span style="color: #268bd2;">rs</span> = re.findall(r<span style="color: #2aa198;">'test(.*?),'</span>, <span style="color: #859900;">str</span>)&#57344;&#57345;&#57345;
 </pre>
 
 
@@ -191,12 +201,12 @@ True
 </p>
 
 
-<pre class="src src-python"><span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#36825;&#37324;&#21305;&#37197;xx&#65292;xy&#65292;yx&#65292;yy&#65292;&#20294;&#26159;&#22914;&#26524;&#20320;&#21482;&#24819;&#21305;&#37197;xy&#21644;yx&#30340;&#26102;&#20505;&#24590;&#20040;&#21150;&#21602;</span>
-<span style="color: #268bd2;">re</span> = re.search(r<span style="color: #2aa198;">'(x|y)(x|y)'</span>, <span style="color: #2aa198;">'xy'</span>)
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;xy&#25110;&#32773;yx&#65292;&#19981;&#21305;&#37197;xx&#65292;yy&#65292;&#35299;&#37322;&#19968;&#19979;&#65292;&#31532;&#19968;&#20010;&#22823;&#25324;&#21495;&#37324;&#38754;&#26159;&#34920;&#31034;&#24403;&#25214;&#21040;x&#30340;&#26102;</span>
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#20505;&#65292;&#23384;&#20837;group&#65288;1&#65289;&#37324;&#38754;&#65292;&#22914;&#26524;&#26159;y&#21017;&#19981;&#23384;&#20837;group&#65288;1&#65289;&#65292;&#21518;&#38754;&#19968;&#20010;&#25324;&#21495;&#37324;&#38754;&#34920;&#31034;&#22914;</span>
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#26524;group&#65288;1&#65289;&#23384;&#22312;&#65292;&#21017;&#32487;&#32493;&#21305;&#37197;y&#65292;&#21542;&#21017;&#21305;&#37197;x</span>
-<span style="color: #268bd2;">rs</span> = re.search(r<span style="color: #2aa198;">'(?:(x)|y)(?(1)y|x)'</span>, <span style="color: #2aa198;">'xy'</span>)
+<pre class="src src-python"><span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#36825;&#37324;&#21305;&#37197;xx&#65292;xy&#65292;yx&#65292;yy&#65292;&#20294;&#26159;&#22914;&#26524;&#20320;&#21482;&#24819;&#21305;&#37197;xy&#21644;yx&#30340;&#26102;&#20505;&#24590;&#20040;&#21150;&#21602;</span>&#57344;&#57345;&#57345;
+<span style="color: #268bd2;">re</span> = re.search(r<span style="color: #2aa198;">'(x|y)(x|y)'</span>, <span style="color: #2aa198;">'xy'</span>)&#57344;&#57345;&#57345;
+<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;xy&#25110;&#32773;yx&#65292;&#19981;&#21305;&#37197;xx&#65292;yy&#65292;&#35299;&#37322;&#19968;&#19979;&#65292;&#31532;&#19968;&#20010;&#22823;&#25324;&#21495;&#37324;&#38754;&#26159;&#34920;&#31034;&#24403;&#25214;&#21040;x&#30340;&#26102;</span>&#57344;&#57345;&#57345;
+<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#20505;&#65292;&#23384;&#20837;group&#65288;1&#65289;&#37324;&#38754;&#65292;&#22914;&#26524;&#26159;y&#21017;&#19981;&#23384;&#20837;group&#65288;1&#65289;&#65292;&#21518;&#38754;&#19968;&#20010;&#25324;&#21495;&#37324;&#38754;&#34920;&#31034;&#22914;</span>&#57344;&#57345;&#57345;
+<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#26524;group&#65288;1&#65289;&#23384;&#22312;&#65292;&#21017;&#32487;&#32493;&#21305;&#37197;y&#65292;&#21542;&#21017;&#21305;&#37197;x</span>&#57344;&#57345;&#57345;
+<span style="color: #268bd2;">rs</span> = re.search(r<span style="color: #2aa198;">'(?:(x)|y)(?(1)y|x)'</span>, <span style="color: #2aa198;">'xy'</span>)&#57344;&#57345;&#57345;
 </pre>
 
 
@@ -211,12 +221,12 @@ True
 
 
 
-<pre class="src src-python"><span style="color: #859900;">str</span> = <span style="color: #2aa198;">'purple alice@google.com, blah monkey bob@abc.com blah dishwasher'</span>
-<span style="color: #268bd2;">tuples</span> = re.findall(r<span style="color: #2aa198;">'([\w\.-]+)@([\w\.-]+)'</span>, <span style="color: #859900;">str</span>)
-<span style="color: #859900;">print</span> tuples  <span style="color: #586e75; font-style: italic;">## </span><span style="color: #586e75; font-style: italic;">[('alice', 'google.com'), ('bob', 'abc.com')]</span>
-<span style="color: #859900;">for</span> <span style="color: #859900;">tuple</span> <span style="color: #859900;">in</span> tuples:
-  <span style="color: #859900;">print</span> <span style="color: #859900;">tuple</span>[0]  <span style="color: #586e75; font-style: italic;">## </span><span style="color: #586e75; font-style: italic;">username</span>
-  <span style="color: #859900;">print</span> <span style="color: #859900;">tuple</span>[1]  <span style="color: #586e75; font-style: italic;">## </span><span style="color: #586e75; font-style: italic;">host</span>
+<pre class="src src-python"><span style="color: #859900;">str</span> = <span style="color: #2aa198;">'purple alice@google.com, blah monkey bob@abc.com blah dishwasher'</span>&#57344;&#57345;&#57345;
+<span style="color: #268bd2;">tuples</span> = re.findall(r<span style="color: #2aa198;">'([\w\.-]+)@([\w\.-]+)'</span>, <span style="color: #859900;">str</span>)&#57344;&#57345;&#57345;
+<span style="color: #859900;">print</span> tuples  <span style="color: #586e75; font-style: italic;">## </span><span style="color: #586e75; font-style: italic;">[('alice', 'google.com'), ('bob', 'abc.com')]</span>&#57344;&#57345;&#57345;
+<span style="color: #859900;">for</span> <span style="color: #859900;">tuple</span> <span style="color: #859900;">in</span> tuples:&#57344;&#57345;&#57345;
+  <span style="color: #859900;">print</span> <span style="color: #859900;">tuple</span>[0]  <span style="color: #586e75; font-style: italic;">## </span><span style="color: #586e75; font-style: italic;">username</span>&#57344;&#57345;&#57345;
+  <span style="color: #859900;">print</span> <span style="color: #859900;">tuple</span>[1]  <span style="color: #586e75; font-style: italic;">## </span><span style="color: #586e75; font-style: italic;">host</span>&#57344;&#57345;&#57345;
 </pre>
 
 
@@ -228,14 +238,23 @@ True
 <h3 id="sec-3-3">Options</h3>
 <div class="outline-text-3" id="text-3-3">
 
-<p>   The re functions take options to modify the behavior of the pattern match. The option flag is added as an extra argument to the search() or findall() etc., e.g. re.search(pat, str, re.IGNORECASE).
+<p>   The re functions take options to modify the behavior of the pattern match.
+   The option flag is added as an extra argument to the search() or findall()
+   etc., e.g. re.search(pat, str, re.IGNORECASE).
 </p>
 <ul>
-<li>IGNORECASE &ndash; ignore upper/lowercase differences for matching, so 'a' matches both 'a' and 'A'.
+<li>IGNORECASE &ndash; ignore upper/lowercase differences for matching, so 'a'
+     matches both 'a' and 'A'.
 </li>
-<li>DOTALL &ndash; allow dot (.) to match newline &ndash; normally it matches anything but newline. This can trip you up &ndash; you think .* matches everything, but by default it does not go past the end of a line. Note that \s (whitespace) includes newlines, so if you want to match a run of whitespace that may include a newline, you can just use \s*
+<li>DOTALL &ndash; allow dot (.) to match newline &ndash; normally it matches anything
+     but newline. This can trip you up &ndash; you think .* matches everything, but
+     by default it does not go past the end of a line. Note that \s (whitespace)
+     includes newlines, so if you want to match a run of whitespace that may
+     include a newline, you can just use \s*
 </li>
-<li>MULTILINE &ndash; Within a string made of many lines, allow ^ and $ to match the start and end of each line. Normally ^/$ would just match the start and end of the whole string.
+<li>MULTILINE &ndash; Within a string made of many lines, allow ^ and $ to match the
+     start and end of each line. Normally ^/$ would just match the start and end
+     of the whole string.
 </li>
 </ul>
 
@@ -248,18 +267,23 @@ True
 <h3 id="sec-3-4">Substitution</h3>
 <div class="outline-text-3" id="text-3-4">
 
-<p>   The re.sub(pat, replacement, str) function searches for all the instances of pattern in the given string, and replaces them. The replacement string can include '\1', '\2' which refer to the text from group(1), group(2), and so on from the original matching text.
+<p>   The re.sub(pat, replacement, str) function searches for all the instances of
+   pattern in the given string, and replaces them. The replacement string can
+   include '\1', '\2' which refer to the text from group(1), group(2), and so on
+   from the original matching text.
 </p>
 <p>
-   Here's an example which searches for all the email addresses, and changes them to keep the user (\1) but have yo-yo-dyne.com as the host.
+   Here's an example which searches for all the email addresses, and changes
+   them to keep the user (\1) but have yo-yo-dyne.com as the host.
 </p>
 
 
-<pre class="src src-python"><span style="color: #859900;">str</span> = <span style="color: #2aa198;">'purple alice@google.com, blah monkey bob@abc.com blah dishwasher'</span>
-<span style="color: #586e75; font-style: italic;">## </span><span style="color: #586e75; font-style: italic;">re.sub(pat, replacement, str) -- returns new string with all replacements,</span>
-<span style="color: #586e75; font-style: italic;">## </span><span style="color: #586e75; font-style: italic;">\1 is group(1), \2 group(2) in the replacement</span>
-<span style="color: #859900;">print</span> re.sub(r<span style="color: #2aa198;">'([\w\.-]+)@([\w\.-]+)'</span>, r<span style="color: #2aa198;">'\1@yo-yo-dyne.com'</span>, <span style="color: #859900;">str</span>)
-<span style="color: #586e75; font-style: italic;">## </span><span style="color: #586e75; font-style: italic;">purple alice@yo-yo-dyne.com, blah monkey bob@yo-yo-dyne.com blah dishwasher</span>
+<pre class="src src-python"><span style="color: #859900;">str</span> = <span style="color: #2aa198;">'purple alice@google.com, blah monkey bob@abc.com blah dishwasher'</span>&#57344;&#57345;&#57345;
+<span style="color: #586e75; font-style: italic;">## </span><span style="color: #586e75; font-style: italic;">re.sub(pat, replacement, str) -returns new string with all replacements,</span>&#57344;&#57345;&#57345;
+<span style="color: #586e75; font-style: italic;">## </span><span style="color: #586e75; font-style: italic;">\1 is group(1), \2 group(2) in the replacement</span>&#57344;&#57345;&#57345;
+<span style="color: #859900;">print</span> re.sub(r<span style="color: #2aa198;">'([\w\.-]+)@([\w\.-]+)'</span>, r<span style="color: #2aa198;">'\1@yo-yo-dyne.com'</span>, <span style="color: #859900;">str</span>)&#57344;&#57345;&#57345;
+<span style="color: #586e75; font-style: italic;">## </span><span style="color: #586e75; font-style: italic;">purple alice@yo-yo-dyne.com, blah monkey bob@yo-yo-dyne.com blah</span>&#57344;&#57345;&#57345;
+<span style="color: #586e75; font-style: italic;">##</span><span style="color: #586e75; font-style: italic;">dishwasher</span>&#57344;&#57345;&#57345;
 </pre>
 
 
@@ -280,9 +304,23 @@ True
 <div class="outline-text-3" id="text-4-1">
 
 <p>   先看看wikipedia上的解释：<br/>
-   "Stackless microthreads are managed by the language interpreter itself, not the operating system kernel—context switching and task scheduling is done purely in the interpreter (these are thus also regarded as a form of green thread). This avoids many of the overheads of threads, because no mode switching between user mode and kernel mode needs to be done, and can significantly reduce CPU load in some high-concurrency situations.Due to the considerable number of changes in the source, Stackless Python cannot be installed on a preexisting Python installation as an extension or library. It is instead a complete Python distribution in itself. The majority of Stackless's features have also been implemented in PyPy, a self-hosting Python interpreter and JIT compiler." <br/>
-   stackless是一个python的分支实现，主要的优势就是microthread，其实就是协程（coroutines / green threads），轻量级别的伪线程，采用栈方式实现协程切换，不会带来ContextSwitch，缺点是需要自己管理协程调用栈，stackless能实现10，0000级别的连接.
+   "Stackless microthreads are managed by the language interpreter itself,
+   not the operating system kernel—context switching and task scheduling is
+   done purely in the interpreter (these are thus also regarded as a form of
+   green thread). This avoids many of the overheads of threads, because no mode
+   switching between user mode and kernel mode needs to be done, and can
+   significantly reduce CPU load in some high-concurrency situations.Due to the
+   considerable number of changes in the source, Stackless Python cannot be
+   installed on a preexisting Python installation as an extension or library.
+   It is instead a complete Python distribution in itself. The majority of
+   Stackless's features have also been implemented in PyPy, a self-hosting
+   Python interpreter and JIT compiler." <br/>
+   stackless是一个python的分支实现，主要的优势就是microthread，其实就是协程
+   （coroutines / green threads），轻量级别的伪线程，采用栈方式实现协程切换，不
+   会带来ContextSwitch，缺点是需要自己管理协程调用栈，stackless能实现10，0000级
+   别的连接.
 </p>
+
 
 
 <pre class="example">from greenlet import greenlet
@@ -310,7 +348,9 @@ gr1.switch()
 <h3 id="sec-4-2">PyPy</h3>
 <div class="outline-text-3" id="text-4-2">
 
-<p>   实现了一个JIT，运行时转换python代码到机器码，主要关注在运行效率的提升，和原生python兼容，采用RPython（python的一个子集）实现，目前好像还没有看到那里有大规模的使用。关于PyPy和CPython的性能讨论可以看这里<sup><a class="footref" name="fnr-.5" href="#fn-.5">5</a></sup>
+<p>   实现了一个JIT，运行时转换python代码到机器码，主要关注在运行效率的提升，和原生
+   python兼容，采用RPython（python的一个子集）实现，目前好像还没有看到那里有大规
+   模的使用。关于PyPy和CPython的性能讨论可以看这里<sup><a class="footref" name="fnr-.5" href="#fn-.5">5</a></sup>
 </p>
 </div>
 </div>
@@ -321,8 +361,10 @@ gr1.switch()
 <h2 id="sec-5">Django &amp; Flask</h2>
 <div class="outline-text-2" id="text-5">
 
-<p>  Django是一个整体解决方案，Python Web framework，实现快速开发网站，你不用做什么其他技术选择，比如templage engine、ORM等，社区很活跃。
-  Flask是一个microframework，基于Werkzeug和Jinja2，Flash核心非常简单，不像Django帮你做了所有技术决策，缺省template engine用的是jinja。
+<p>  Django是一个整体解决方案，Python Web framework，实现快速开发网站，你不用做什么
+  其他技术选择，比如templage engine、ORM等，社区很活跃。
+  Flask是一个microframework，基于Werkzeug和Jinja2，Flash核心非常简单，不像Django
+  帮你做了所有技术决策，缺省template engine用的是jinja。
 </p></div>
 
 </div>
@@ -332,7 +374,10 @@ gr1.switch()
 <div class="outline-text-2" id="text-6">
 
 <p>  Twisted是一个经典的非阻塞I/O框架，采用Callback方式实现异步调用，用户最广
-  gevent和eventlet都是基于协程的异步框架（底下是greenlet），gevent是eventlet之后的一个项目，作者当时的一些需求不能被eventlet满足而重新设计的<sup><a class="footref" name="fnr-.6" href="#fn-.6">6</a></sup>，gevent地下的I/O异步框架是libevent/livev（epoll on linux / kqueue on FreeBSD / iocp on windows)，evenlet自己实现的。
+  gevent和eventlet都是基于协程的异步框架（底下是greenlet），gevent是eventlet之后
+  的一个项目，作者当时的一些需求不能被eventlet满足而重新设计的<sup><a class="footref" name="fnr-.6" href="#fn-.6">6</a></sup>，gevent底下
+  的I/O异步框架是libevent/livev（epoll on linux / kqueue on FreeBSD / iocp on
+  windows)，evenlet自己实现的。
 </p>
 </div>
 
@@ -399,27 +444,27 @@ gr1.switch()
 <div id="footnotes">
 <h2 class="footnotes">Footnotes: </h2>
 <div id="text-footnotes">
-<p class="footnote"><sup><a class="footnum" name="fn-.1" href="#fnr-.1">1</a></sup> Unicode HOWTO: <a href="http://docs.python.org/2/howto/unicode.html">http://docs.python.org/2/howto/unicode.html</a>
+<p class="footnote"><sup><a class="footnum" name="fn-.1" href="#fnr-.1">1</a></sup> <a href="http://docs.python.org/2/howto/unicode.html">Unicode HOWTO</a>
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn-.2" href="#fnr-.2">2</a></sup> PEP 0263: <a href="http://www.python.org/dev/peps/pep-0263/">http://www.python.org/dev/peps/pep-0263/</a>
+<p class="footnote"><sup><a class="footnum" name="fn-.2" href="#fnr-.2">2</a></sup> <a href="http://www.python.org/dev/peps/pep-0263/">PEP 0263</a>
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn-.3" href="#fnr-.3">3</a></sup> Google Python Regex: <a href="https://developers.google.com/edu/python/regular-expressions">https://developers.google.com/edu/python/regular-expressions</a>
+<p class="footnote"><sup><a class="footnum" name="fn-.3" href="#fnr-.3">3</a></sup> <a href="https://developers.google.com/edu/python/regular-expressions">Google Python Regex</a>
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn-.4" href="#fnr-.4">4</a></sup> Stackless: <a href="http://en.wikipedia.org/wiki/Stackless_Python">http://en.wikipedia.org/wiki/Stackless_Python</a>
+<p class="footnote"><sup><a class="footnum" name="fn-.4" href="#fnr-.4">4</a></sup> <a href="http://en.wikipedia.org/wiki/Stackless_Python">Stackless</a>
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn-.5" href="#fnr-.5">5</a></sup> Pypy - How can it possibly beat CPython: <a href="http://stackoverflow.com/questions/2591879/pypy-how-can-it-possibly-beat-cpython">http://stackoverflow.com/questions/2591879/pypy-how-can-it-possibly-beat-cpython</a>
+<p class="footnote"><sup><a class="footnum" name="fn-.5" href="#fnr-.5">5</a></sup> <a href="http://stackoverflow.com/questions/2591879/pypy-how-can-it-possibly-beat-cpython">Pypy - How can it possibly beat CPython</a>
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn-.6" href="#fnr-.6">6</a></sup> Comparing gevent to eventlet: <a href="http://blog.gevent.org/2010/02/27/why-gevent/">http://blog.gevent.org/2010/02/27/why-gevent/</a>
+<p class="footnote"><sup><a class="footnum" name="fn-.6" href="#fnr-.6">6</a></sup> <a href="http://blog.gevent.org/2010/02/27/why-gevent/">Comparing gevent to eventlet</a>
 </p>
 
 
