@@ -36,7 +36,7 @@ tags: [openstack]
 
 <p>   添加device的时候可以指定每个device的meta信息和replication ip，Swift会给每
    个device一个id，这个id会一直递增，也就是说新增加的device的id总是比device的id
-   大，不会重用id。
+   大，不会重用id
 </p>
 
 
@@ -92,58 +92,58 @@ while dev['id'] &gt;= len(self.devs):
 <h3 id="sec-1-2">rebalance</h3>
 <div class="outline-text-3" id="text-1-2">
 
-<p>   relalance入口：
+<p>   relalance入口
 </p>
 
 
-<pre class="example">def rebalance(self, seed=None):
-    """
-    Rebalance the ring.
+<pre class="src src-python"><span style="color: #859900;">def</span> <span style="color: #268bd2;">rebalance</span>(<span style="color: #859900;">self</span>, seed=<span style="color: #2aa198;">None</span>):
+    <span style="color: #2aa198;">"""</span>
+<span style="color: #2aa198;">    Rebalance the ring.</span>
 
-    This is the main work function of the builder, as it will assign and
-    reassign partitions to devices in the ring based on weights, distinct
-    zones, recent reassignments, etc.
+<span style="color: #2aa198;">    This is the main work function of the builder, as it will assign and</span>
+<span style="color: #2aa198;">    reassign partitions to devices in the ring based on weights, distinct</span>
+<span style="color: #2aa198;">    zones, recent reassignments, etc.</span>
 
-    The process doesn't always perfectly assign partitions (that'd take a
-    lot more analysis and therefore a lot more time -- I had code that did
-    that before). Because of this, it keeps rebalancing until the device
-    skew (number of partitions a device wants compared to what it has) gets
-    below 1% or doesn't change by more than 1% (only happens with ring that
-    can't be balanced no matter what -- like with 3 zones of differing
-    weights with replicas set to 3).
+<span style="color: #2aa198;">    The process doesn't always perfectly assign partitions (that'd take a</span>
+<span style="color: #2aa198;">    lot more analysis and therefore a lot more time -- I had code that did</span>
+<span style="color: #2aa198;">    that before). Because of this, it keeps rebalancing until the device</span>
+<span style="color: #2aa198;">    skew (number of partitions a device wants compared to what it has) gets</span>
+<span style="color: #2aa198;">    below 1% or doesn't change by more than 1% (only happens with ring that</span>
+<span style="color: #2aa198;">    can't be balanced no matter what -- like with 3 zones of differing</span>
+<span style="color: #2aa198;">    weights with replicas set to 3).</span>
 
-    :returns: (number_of_partitions_altered, resulting_balance)
-    """
+<span style="color: #2aa198;">    :returns: (number_of_partitions_altered, resulting_balance)</span>
+<span style="color: #2aa198;">    """</span>
 
-    if seed:
+    <span style="color: #859900;">if</span> seed:
         random.seed(seed)
 
-    self._ring = None
-    if self._last_part_moves_epoch is None:    #如果为空，表示第一次做balance
-        self._initial_balance()                #这里的操作和重做balance差不多
-        self.devs_changed = False
-        return self.parts, self.get_balance()
-    retval = 0
-    self._update_last_part_moves()
-    last_balance = 0
-    new_parts, removed_part_count = self._adjust_replica2part2dev_size()  #收集哪些part需要分配dev
-    retval += removed_part_count
-    self._reassign_parts(new_parts)            #执行分配操作
-    retval += len(new_parts)
-    while True:
-        reassign_parts = self._gather_reassign_parts()    #收集移除的device持有的part
-        self._reassign_parts(reassign_parts)              #执行分配操作
-        retval += len(reassign_parts)
-        while self._remove_devs:
-            self.devs[self._remove_devs.pop()['id']] = None
-        balance = self.get_balance()
-        if balance &lt; 1 or abs(last_balance - balance) &lt; 1 or \
-                retval == self.parts:
-            break
+    <span style="color: #859900;">self</span>._ring = <span style="color: #2aa198;">None</span>
+    <span style="color: #859900;">if</span> <span style="color: #859900;">self</span>._last_part_moves_epoch <span style="color: #859900;">is</span> <span style="color: #2aa198;">None</span>:    <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#22914;&#26524;&#20026;&#31354;&#65292;&#34920;&#31034;&#31532;&#19968;&#27425;&#20570;balance</span>
+        <span style="color: #859900;">self</span>._initial_balance()                <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#36825;&#37324;&#30340;&#25805;&#20316;&#21644;&#37325;&#20570;balance&#24046;&#19981;&#22810;</span>
+        <span style="color: #859900;">self</span>.devs_changed = <span style="color: #2aa198;">False</span>
+        <span style="color: #859900;">return</span> <span style="color: #859900;">self</span>.parts, <span style="color: #859900;">self</span>.get_balance()
+    <span style="color: #268bd2;">retval</span> = 0
+    <span style="color: #859900;">self</span>._update_last_part_moves()
+    <span style="color: #268bd2;">last_balance</span> = 0
+    <span style="color: #268bd2;">new_parts</span>, <span style="color: #268bd2;">removed_part_count</span> = <span style="color: #859900;">self</span>._adjust_replica2part2dev_size()  <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#25910;&#38598;&#21738;&#20123;part&#38656;&#35201;&#20998;&#37197;dev</span>
+    <span style="color: #268bd2;">retval</span> += removed_part_count
+    <span style="color: #859900;">self</span>._reassign_parts(new_parts)            <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#25191;&#34892;&#20998;&#37197;&#25805;&#20316;</span>
+    <span style="color: #268bd2;">retval</span> += <span style="color: #859900;">len</span>(new_parts)
+    <span style="color: #859900;">while</span> <span style="color: #2aa198;">True</span>:
+        <span style="color: #268bd2;">reassign_parts</span> = <span style="color: #859900;">self</span>._gather_reassign_parts()    <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#32479;&#35745;&#31227;&#38500;&#30340;device&#25345;&#26377;&#30340;part</span>
+        <span style="color: #859900;">self</span>._reassign_parts(reassign_parts)              <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21644;&#36229;&#36733;&#30340;device&#65292;&#25191;&#34892;&#20998;&#37197;&#25805;&#20316;</span>
+        <span style="color: #268bd2;">retval</span> += <span style="color: #859900;">len</span>(reassign_parts)                     <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#37325;&#22797;&#25191;&#34892;balance&#65292;&#30452;&#21040;&#24179;&#34913;</span>
+        <span style="color: #859900;">while</span> <span style="color: #859900;">self</span>._remove_devs:
+            <span style="color: #859900;">self</span>.devs[<span style="color: #859900;">self</span>._remove_devs.pop()[<span style="color: #2aa198;">'id'</span>]] = <span style="color: #2aa198;">None</span>
+        <span style="color: #268bd2;">balance</span> = <span style="color: #859900;">self</span>.get_balance()
+        <span style="color: #859900;">if</span> balance &lt; 1 <span style="color: #859900;">or</span> <span style="color: #859900;">abs</span>(last_balance - balance) &lt; 1 <span style="color: #859900;">or</span> \
+                retval == <span style="color: #859900;">self</span>.parts:
+            <span style="color: #859900;">break</span>
         last_balance = balance
-    self.devs_changed = False
-    self.version += 1
-    return retval, balance
+    <span style="color: #859900;">self</span>.devs_changed = <span style="color: #2aa198;">False</span>
+    <span style="color: #859900;">self</span>.version += 1
+    <span style="color: #859900;">return</span> retval, balance
 </pre>
 
 
