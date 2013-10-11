@@ -6,12 +6,11 @@ categories: [tech]
 tags: [python, program]
 ---
 
-
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 语法</a></li>
+<li><a href="#sec-1">1 Core type</a></li>
 <li><a href="#sec-2">2 String</a>
 <ul>
 <li><a href="#sec-2-1">2.1 encoding</a></li>
@@ -44,18 +43,39 @@ tags: [python, program]
 </div>
 
 <div id="outline-container-1" class="outline-2">
-<h2 id="sec-1">语法</h2>
+<h2 id="sec-1">Core type</h2>
 <div class="outline-text-2" id="text-1">
 
 <ul>
-<li>type(objectName) 查看对象类型
+<li>integer, string, tuple is immutable, can't by change in-place
 </li>
-<li>string,tuple is immutable
+<li>keep in mind that the mutable type is share reference, if you need to change
+    them
 </li>
-<li>变量不用定义，所以你在给变量取名字的时候最好带上变量类型，比如aItem,这样你能
-    很清楚知道你的变量类型
+<li>You can copy sequence type by slice, but it only copy top-level, if you want
+    to completely copy the object, use deepcopy
+
+
+
+<pre class="src src-python">&gt;&gt;&gt;<span style="color: #268bd2;">x</span> = [1, 2, [3, 4]]
+&gt;&gt;&gt;<span style="color: #268bd2;">y</span> = [<span style="color: #2aa198;">'aa'</span>, x[:]]
+&gt;&gt;&gt;<span style="color: #268bd2;">x</span>[0] = 11
+&gt;&gt;&gt;x[2][0] = 33
+&gt;&gt;&gt;x
+[11, 2, [33, 4]]
+&gt;&gt;&gt;y
+[<span style="color: #2aa198;">'aa'</span>, [1, 2, [33, 4]]
+</pre>
+
+</li>
+<li>comprehensions
+<pre class="example">
+[x*2 for x in range(10)]
+</pre>
+
 </li>
 </ul>
+
 
 
 </div>
@@ -152,6 +172,7 @@ True
 &gt;ustr2 == str2.decode('utf-8')
 True
 </pre>
+
 
 
 </div>
@@ -287,6 +308,7 @@ True
 </pre>
 
 
+
 </div>
 </div>
 
@@ -352,6 +374,7 @@ gr1.switch()
    python兼容，采用RPython（python的一个子集）实现，目前好像还没有看到那里有大规
    模的使用。关于PyPy和CPython的性能讨论可以看这里<sup><a class="footref" name="fnr-.5" href="#fn-.5">5</a></sup>
 </p>
+
 </div>
 </div>
 
@@ -365,7 +388,9 @@ gr1.switch()
   其他技术选择，比如templage engine、ORM等，社区很活跃。
   Flask是一个microframework，基于Werkzeug和Jinja2，Flash核心非常简单，不像Django
   帮你做了所有技术决策，缺省template engine用的是jinja。
-</p></div>
+</p>
+
+</div>
 
 </div>
 
@@ -379,6 +404,7 @@ gr1.switch()
   的I/O异步框架是libevent/livev（epoll on linux / kqueue on FreeBSD / iocp on
   windows)，evenlet自己实现的。
 </p>
+
 </div>
 
 </div>
@@ -411,6 +437,8 @@ gr1.switch()
 <li>?s: help for command s
 </li>
 </ul>
+
+
 
 </div>
 </div>
@@ -466,6 +494,7 @@ gr1.switch()
 
 <p class="footnote"><sup><a class="footnum" name="fn-.6" href="#fnr-.6">6</a></sup> <a href="http://blog.gevent.org/2010/02/27/why-gevent/">Comparing gevent to eventlet</a>
 </p>
+
 
 
 </div>

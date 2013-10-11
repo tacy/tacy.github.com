@@ -10,29 +10,43 @@ tags: [openstack]
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 Swift ring builder</a>
+<li><a href="#sec-1">1 Swift</a>
 <ul>
-<li><a href="#sec-1-1">1.1 add device</a></li>
-<li><a href="#sec-1-2">1.2 rebalance</a></li>
+<li><a href="#sec-1-1">1.1 Ring builder</a>
+<ul>
+<li><a href="#sec-1-1-1">1.1.1 Add device</a></li>
+<li><a href="#sec-1-1-2">1.1.2 Rebalance</a></li>
+</ul></li>
 </ul>
 </li>
 <li><a href="#sec-2">2 经典文章</a></li>
-<li><a href="#sec-3">3 nova develop environment</a></li>
+<li><a href="#sec-3">3 Nova</a>
+<ul>
+<li><a href="#sec-3-1">3.1 Develop environment</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
 
 <div id="outline-container-1" class="outline-2">
-<h2 id="sec-1">Swift ring builder</h2>
+<h2 id="sec-1">Swift</h2>
 <div class="outline-text-2" id="text-1">
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1">Ring builder</h3>
+<div class="outline-text-3" id="text-1-1">
 
 <p>  读了一下ringbuilder代码，简单记录一下，免的忘了
 </p>
 </div>
 
-<div id="outline-container-1-1" class="outline-3">
-<h3 id="sec-1-1">add device</h3>
-<div class="outline-text-3" id="text-1-1">
+<div id="outline-container-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1">Add device</h4>
+<div class="outline-text-4" id="text-1-1-1">
 
 <p>   添加device的时候可以指定每个device的meta信息和replication ip，Swift会给每
    个device一个id，这个id会一直递增，也就是说新增加的device的id总是比device的id
@@ -89,9 +103,9 @@ tags: [openstack]
 
 </div>
 
-<div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2">rebalance</h3>
-<div class="outline-text-3" id="text-1-2">
+<div id="outline-container-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2">Rebalance</h4>
+<div class="outline-text-4" id="text-1-1-2">
 
 <p>   relalance入口
 </p>
@@ -326,6 +340,8 @@ tags: [openstack]
 </pre>
 
 
+
+</div>
 </div>
 </div>
 
@@ -341,13 +357,21 @@ tags: [openstack]
 </ul>
 
 
+
 </div>
 
 </div>
 
 <div id="outline-container-3" class="outline-2">
-<h2 id="sec-3">nova develop environment</h2>
+<h2 id="sec-3">Nova</h2>
 <div class="outline-text-2" id="text-3">
+
+
+</div>
+
+<div id="outline-container-3-1" class="outline-3">
+<h3 id="sec-3-1">Develop environment</h3>
+<div class="outline-text-3" id="text-3-1">
 
 <ol>
 <li>install package
@@ -374,7 +398,12 @@ tags: [openstack]
 <h2 class="footnotes">Footnotes: </h2>
 <div id="text-footnotes">
 <p class="footnote"><sup><a class="footnum" name="fn-.1" href="#fnr-.1">1</a></sup> <a href="http://pypi.python.org/pypi/virtualenv">using virtualenv to create isolated python environments</a>
-</p></div>
+</p>
+
+
+
+</div>
+</div>
 </div>
 
 </div>
