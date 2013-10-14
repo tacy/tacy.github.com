@@ -339,7 +339,7 @@ True
 <div class="outline-text-2" id="text-4">
 
 <p>简单来说，function可以通过def和lambda定义，当function定义在class内部时，它通过
-descriptor protocol转换成method（这么说也不准确，理论上你依然可以通过_<sub>dict</sub>_<sub>方</sub>
+descriptor protocol转换成method（这么说也不准确，理论上你依然可以通过__dict__方
 式绕开descriptor protocol访问到function）。
 </p>
 <p>
@@ -372,7 +372,7 @@ Out[264]: &lt;bound method MyClass.m1 of &lt;__main__.MyClass <span style="color
 
 <p>
 疑问自然产生，为啥m1是method，明明也是一个function，怎么就变成method了呢，为啥
-同样是method还有unbound和bound之分呢，他们直接到底是如何转换的。
+同样是method还有unbound和bound之分呢，他们之间到底是如何转换的。
 </p>
 <p>
 其实背后的魔法都来自于descriptor protocol，在解释descriptor之前，我们先来看看
@@ -391,15 +391,15 @@ Out[285]: &lt;unbound method MyClass.m1&gt;
 </pre>
 
 <p>
-参考上面的输出，你可以发现m1依然是一个function，你可以通_<sub>dict</sub>_<sub>访问到它，那为</sub>
+参考上面的输出，你可以发现m1依然是一个function，你可以通__dict__访问到它，那为
 啥通过MyClass.m1访问时，返回的又是method呢？
 </p>
 <p>
 其实问题就在于方法m1是descriptor，要理解这个得费点功夫，建议参考Peter Inglesby
 的Discovering Descriptors<sup><a class="footref" name="fnr-.4" href="#fn-.4">4</a></sup>。我这里简单解释一下，首先你需要知道的是，Python
 中一切都是对象，m1是一个对象，foo是一个对象，MyClass和m都是对象，而m1是一个实现
-了descriptor protocol的对象(实现了_<sub>get</sub>__,_<sub>set</sub>__,_<sub>del</sub>_<sub>三个方法中的任意一个）</sub>
-，当访问descriptor对象时，直接调用_<sub>get</sub>_<sub>方法返回了一个method。</sub>
+了descriptor protocol的对象(实现了__get__,__set__,__del__三个方法中的任意一个）
+，当访问descriptor对象时，直接调用__get__方法返回了一个method。
 </p>
 
 
@@ -411,8 +411,8 @@ Out[330]: <span style="color: #2aa198;">'__call__#__class__#__cmp__#__delattr__#
 </pre>
 
 <p>
-当你通过class访问m1的时候，Python其实是调用MyClass.m1._<sub>get</sub>_<sub>(None, MyClass)</sub>，
-当你通过instance访问m1的是，调用MyClass.m1._<sub>get</sub>_<sub>(m, MyClass)</sub>。
+当你通过class访问m1的时候，Python其实是调用MyClass.m1.__get__(None, MyClass)，
+当你通过instance访问m1的是，调用MyClass.m1.__get__(m, MyClass)。
 </p>
 
 
