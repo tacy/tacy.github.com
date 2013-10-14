@@ -24,20 +24,23 @@ tags: [python, program]
 <li><a href="#sec-3-4">3.4 Substitution</a></li>
 </ul>
 </li>
-<li><a href="#sec-4">4 Python分支</a>
+<li><a href="#sec-4">4 function &amp; method</a></li>
+<li><a href="#sec-5">5 staticmethod &amp; classmethod &amp; instancemethod</a></li>
+<li><a href="#sec-6">6 desctiptor protocol</a></li>
+<li><a href="#sec-7">7 Python分支</a>
 <ul>
-<li><a href="#sec-4-1">4.1 Stackless Python</a></li>
-<li><a href="#sec-4-2">4.2 PyPy</a></li>
+<li><a href="#sec-7-1">7.1 Stackless Python</a></li>
+<li><a href="#sec-7-2">7.2 PyPy</a></li>
 </ul>
 </li>
-<li><a href="#sec-5">5 Django &amp; Flask</a></li>
-<li><a href="#sec-6">6 Twisted &amp; Tornado &amp; gevent &amp; eventlet</a></li>
-<li><a href="#sec-7">7 Emacs &amp; Python</a>
+<li><a href="#sec-8">8 Django &amp; Flask</a></li>
+<li><a href="#sec-9">9 Twisted &amp; Tornado &amp; gevent &amp; eventlet</a></li>
+<li><a href="#sec-10">10 Emacs &amp; Python</a>
 <ul>
-<li><a href="#sec-7-1">7.1 ipdb</a></li>
+<li><a href="#sec-10-1">10.1 ipdb</a></li>
 </ul>
 </li>
-<li><a href="#sec-8">8 一些必读的文章</a></li>
+<li><a href="#sec-11">11 一些必读的文章</a></li>
 </ul>
 </div>
 </div>
@@ -73,6 +76,23 @@ tags: [python, program]
 [x*2 for x in range(10)]
 </pre>
 
+</li>
+<li>sorted
+    sorted dict by value
+
+
+
+<pre class="src src-python"><span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">method 1</span>
+<span style="color: #859900;">sorted</span>(d.iteritems(), key=<span style="color: #859900;">lambda</span> x: x[1])   <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">d.items() return list</span>
+<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">method 2</span>
+<span style="color: #859900;">import</span> operator
+<span style="color: #268bd2;">x</span> = {1: 2, 3: 4, 4:3, 2:1, 0:0}
+<span style="color: #268bd2;">sorted_x</span> = <span style="color: #859900;">sorted</span>(x.iteritems(), key=operator.itemgetter(1))
+</pre>
+
+</li>
+<li>pickle &amp; struct
+    object serialization &amp; C structs represented as Python strings
 </li>
 </ul>
 
@@ -315,15 +335,176 @@ True
 </div>
 
 <div id="outline-container-4" class="outline-2">
-<h2 id="sec-4">Python分支</h2>
+<h2 id="sec-4">function &amp; method</h2>
 <div class="outline-text-2" id="text-4">
+
+<p>简单来说，function可以通过def和lambda定义，当function定义在class内部时，它通过
+descriptor protocol转换成method（这么说也不准确，理论上你依然可以通过_<sub>dict</sub>_<sub>方</sub>
+式绕开descriptor protocol访问到function）。
+</p>
+<p>
+同时method又分为unbound method和bound method，当我们直接通过class访问method时，
+它是unbound method；当我们通过该class的instance访问method时，他是bound method。
+</p>
+
+
+<pre class="src src-python"><span style="color: #859900;">def</span> <span style="color: #268bd2;">foo</span>(x):
+    <span style="color: #859900;">print</span> <span style="color: #2aa198;">'call foo'</span>, x
+
+<span style="color: #859900;">class</span> <span style="color: #b58900;">MyClass</span>(<span style="color: #859900;">object</span>):
+    <span style="color: #859900;">def</span> <span style="color: #268bd2;">m1</span>(x):
+        <span style="color: #859900;">print</span> <span style="color: #2aa198;">'call m1'</span>, x
+
+    <span style="color: #859900;">def</span> <span style="color: #268bd2;">m2</span>(<span style="color: #859900;">self</span>, y):
+        <span style="color: #859900;">print</span> <span style="color: #2aa198;">'call m2'</span>, y
+
+In [259]: foo
+Out[259]: &lt;function __main__.foo&gt;
+
+In [260]: MyClass.m1
+Out[260]: &lt;unbound method MyClass.m1&gt;
+
+In [261]: <span style="color: #268bd2;">m</span> = MyClass()
+
+In [264]: m.m1
+Out[264]: &lt;bound method MyClass.m1 of &lt;__main__.MyClass <span style="color: #859900;">object</span> at 0x1e49c10&gt;&gt;
+</pre>
+
+<p>
+疑问自然产生，为啥m1是method，明明也是一个function，怎么就变成method了呢，为啥
+同样是method还有unbound和bound之分呢，他们直接到底是如何转换的。
+</p>
+<p>
+其实背后的魔法都来自于descriptor protocol，在解释descriptor之前，我们先来看看
+方法m1到底是啥?
+</p>
+
+
+<pre class="src src-python">In [281]: foo
+Out[281]: &lt;function __main__.foo&gt;
+
+In [282]: MyClass.__dict__.get(<span style="color: #2aa198;">'m1'</span>)
+Out[284]: &lt;function __main__.m1&gt;
+
+In [285]: MyClass.m1
+Out[285]: &lt;unbound method MyClass.m1&gt;
+</pre>
+
+<p>
+参考上面的输出，你可以发现m1依然是一个function，你可以通_<sub>dict</sub>_<sub>访问到它，那为</sub>
+啥通过MyClass.m1访问时，返回的又是method呢？
+</p>
+<p>
+其实问题就在于方法m1是descriptor，要理解这个得费点功夫，建议参考Peter Inglesby
+的Discovering Descriptors<sup><a class="footref" name="fnr-.4" href="#fn-.4">4</a></sup>。我这里简单解释一下，首先你需要知道的是，Python
+中一切都是对象，m1是一个对象，foo是一个对象，MyClass和m都是对象，而m1是一个实现
+了descriptor protocol的对象(实现了_<sub>get</sub>__,_<sub>set</sub>__,_<sub>del</sub>_<sub>三个方法中的任意一个）</sub>
+，当访问descriptor对象时，直接调用_<sub>get</sub>_<sub>方法返回了一个method</sub>
+</p>
+
+
+<pre class="src src-python">In [328]: <span style="color: #2aa198;">'#'</span>.join(<span style="color: #859900;">dir</span>(MyClass.m1))
+Out[330]: <span style="color: #2aa198;">'__call__#__class__#__cmp__#__delattr__#__doc__#__format__#__func__#</span>
+<span style="color: #2aa198;">__get__#__getattribute__#__hash__#__init__#__new__#__reduce__#__reduce_ex__#</span>
+<span style="color: #2aa198;">__repr__#__self__#__setattr__#__sizeof__#__str__#__subclasshook__#im_class#</span>
+<span style="color: #2aa198;">im_func#im_self'</span>
+</pre>
+
+<p>
+当你通过class访问m1的时候，Python其实是调用MyClass.m1._<sub>get</sub>_<sub>(None, MyClass)</sub>，
+当你通过instance访问m1的是，调用MyClass.m1._<sub>get</sub>_<sub>(m, MyClass)</sub>
+</p>
+
+
+<pre class="src src-python">In [346]: MyClass.m1.__get__(<span style="color: #2aa198;">None</span>, MyClass)
+Out[346]: &lt;unbound method MyClass.m1&gt;
+
+In [347]: MyClass.m1.__get__(m, MyClass)
+Out[354]: &lt;bound method MyClass.m1 of &lt;__main__.MyClass <span style="color: #859900;">object</span> at 0x1e49c10&gt;&gt;
+</pre>
+
+
+<p>
+另外，如果你想调用m1，你会发现你总是失败
+</p>
+
+
+<pre class="src src-python">In [357]: m.m1(1)
+---------------------------------------------------------------------------
+<span style="color: #b58900;">TypeError</span>                                 Traceback (most recent call last)
+&lt;ipython-<span style="color: #859900;">input</span>-357-329146df192e&gt; <span style="color: #859900;">in</span> &lt;module&gt;()
+----&gt; 1 m.m1(1)
+
+<span style="color: #b58900;">TypeError</span>: m1() takes exactly 1 argument (2 given)
+
+In [358]: MyClass.m1(1)
+---------------------------------------------------------------------------
+<span style="color: #b58900;">TypeError</span>                                 Traceback (most recent call last)
+&lt;ipython-<span style="color: #859900;">input</span>-360-f35a4576c1b2&gt; <span style="color: #859900;">in</span> &lt;module&gt;()
+----&gt; 1 MyClass.m1(1)
+
+<span style="color: #b58900;">TypeError</span>: unbound method m1() must be called <span style="color: #859900;">with</span> MyClass instance <span style="color: #859900;">as</span> first
+argument (got <span style="color: #859900;">int</span> instance instead)
+</pre>
+
+<p>
+当你需要访问一个method，必须满足两个条件，首先必须bound，另外必须在定义的时候
+明确定义self参数。Python在调用method的时候会隐式传递instance作为参数，如果你没
+有明确声明self参数，调用就无法成功。如果你需要调用没有声明self参数的方法，参考
+如下方式
+</p>
+
+
+<pre class="src src-python">In [382]: MyClass.__dict__.get(<span style="color: #2aa198;">'m1'</span>)(1)
+call m1 1
+
+In [393]: m.m2(1)
+call m2 1
+
+In [394]: m.__class__.__dict__.get(<span style="color: #2aa198;">'m1'</span>)(1)
+call m1 1
+</pre>
+
+<p>
+其他的方法是通过把m1声明为staticmethod或classmethod方法实现。
+</p>
+
+</div>
+
+</div>
+
+<div id="outline-container-5" class="outline-2">
+<h2 id="sec-5">staticmethod &amp; classmethod &amp; instancemethod</h2>
+<div class="outline-text-2" id="text-5">
+
+<p>TODO
+</p>
+
+</div>
+
+</div>
+
+<div id="outline-container-6" class="outline-2">
+<h2 id="sec-6">desctiptor protocol</h2>
+<div class="outline-text-2" id="text-6">
+
+<p>TODO
+</p>
+
+</div>
+
+</div>
+
+<div id="outline-container-7" class="outline-2">
+<h2 id="sec-7">Python分支</h2>
+<div class="outline-text-2" id="text-7">
 
 
 </div>
 
-<div id="outline-container-4-1" class="outline-3">
-<h3 id="sec-4-1">Stackless Python<sup><a class="footref" name="fnr-.4" href="#fn-.4">4</a></sup></h3>
-<div class="outline-text-3" id="text-4-1">
+<div id="outline-container-7-1" class="outline-3">
+<h3 id="sec-7-1">Stackless Python<sup><a class="footref" name="fnr-.5" href="#fn-.5">5</a></sup></h3>
+<div class="outline-text-3" id="text-7-1">
 
 <p>   先看看wikipedia上的解释：<br/>
    "Stackless microthreads are managed by the language interpreter itself,
@@ -366,13 +547,13 @@ gr1.switch()
 
 </div>
 
-<div id="outline-container-4-2" class="outline-3">
-<h3 id="sec-4-2">PyPy</h3>
-<div class="outline-text-3" id="text-4-2">
+<div id="outline-container-7-2" class="outline-3">
+<h3 id="sec-7-2">PyPy</h3>
+<div class="outline-text-3" id="text-7-2">
 
 <p>   实现了一个JIT，运行时转换python代码到机器码，主要关注在运行效率的提升，和原生
    python兼容，采用RPython（python的一个子集）实现，目前好像还没有看到那里有大规
-   模的使用。关于PyPy和CPython的性能讨论可以看这里<sup><a class="footref" name="fnr-.5" href="#fn-.5">5</a></sup>
+   模的使用。关于PyPy和CPython的性能讨论可以看这里<sup><a class="footref" name="fnr-.6" href="#fn-.6">6</a></sup>
 </p>
 
 </div>
@@ -380,9 +561,9 @@ gr1.switch()
 
 </div>
 
-<div id="outline-container-5" class="outline-2">
-<h2 id="sec-5">Django &amp; Flask</h2>
-<div class="outline-text-2" id="text-5">
+<div id="outline-container-8" class="outline-2">
+<h2 id="sec-8">Django &amp; Flask</h2>
+<div class="outline-text-2" id="text-8">
 
 <p>  Django是一个整体解决方案，Python Web framework，实现快速开发网站，你不用做什么
   其他技术选择，比如templage engine、ORM等，社区很活跃。
@@ -394,13 +575,13 @@ gr1.switch()
 
 </div>
 
-<div id="outline-container-6" class="outline-2">
-<h2 id="sec-6">Twisted &amp; Tornado &amp; gevent &amp; eventlet</h2>
-<div class="outline-text-2" id="text-6">
+<div id="outline-container-9" class="outline-2">
+<h2 id="sec-9">Twisted &amp; Tornado &amp; gevent &amp; eventlet</h2>
+<div class="outline-text-2" id="text-9">
 
 <p>  Twisted是一个经典的非阻塞I/O框架，采用Callback方式实现异步调用，用户最广
   gevent和eventlet都是基于协程的异步框架（底下是greenlet），gevent是eventlet之后
-  的一个项目，作者当时的一些需求不能被eventlet满足而重新设计的<sup><a class="footref" name="fnr-.6" href="#fn-.6">6</a></sup>，gevent底下
+  的一个项目，作者当时的一些需求不能被eventlet满足而重新设计的<sup><a class="footref" name="fnr-.7" href="#fn-.7">7</a></sup>，gevent底下
   的I/O异步框架是libevent/livev（epoll on linux / kqueue on FreeBSD / iocp on
   windows)，evenlet自己实现的。
 </p>
@@ -409,17 +590,17 @@ gr1.switch()
 
 </div>
 
-<div id="outline-container-7" class="outline-2">
-<h2 id="sec-7">Emacs &amp; Python</h2>
-<div class="outline-text-2" id="text-7">
+<div id="outline-container-10" class="outline-2">
+<h2 id="sec-10">Emacs &amp; Python</h2>
+<div class="outline-text-2" id="text-10">
 
 <p>  设置python-shell-extra-pythonpaths变量来增加额外的PYTHONPATH环境变量
 </p>
 </div>
 
-<div id="outline-container-7-1" class="outline-3">
-<h3 id="sec-7-1">ipdb</h3>
-<div class="outline-text-3" id="text-7-1">
+<div id="outline-container-10-1" class="outline-3">
+<h3 id="sec-10-1">ipdb</h3>
+<div class="outline-text-3" id="text-10-1">
 
 <p>   emacs里面的ipython需要运行%pdb打开断点模式，否则好像即使设置了断点也进不去，
    不清楚为什么，另外一些简单的命令记录一下：
@@ -445,9 +626,9 @@ gr1.switch()
 
 </div>
 
-<div id="outline-container-8" class="outline-2">
-<h2 id="sec-8">一些必读的文章</h2>
-<div class="outline-text-2" id="text-8">
+<div id="outline-container-11" class="outline-2">
+<h2 id="sec-11">一些必读的文章</h2>
+<div class="outline-text-2" id="text-11">
 
 <ul>
 <li><a href="http://docs.python-guide.org/en/latest/">The Hitchhiker’s Guide to Python!</a>
@@ -457,6 +638,8 @@ gr1.switch()
 <li><a href="http://stackoverflow.com/questions/739654/how-can-i-make-a-chain-of-function-decorators-in-python">How can I make a chain of function decorators in Python?</a>
 </li>
 <li><a href="http://stackoverflow.com/questions/100003/what-is-a-metaclass-in-python">What is a metaclass in Python?</a>
+</li>
+<li><a href="http://nbviewer.ipython.org/urls/gist.github.com/ChrisBeaumont/5758381/raw/descriptor_writeup.ipynb">Python Descriptors Demystified</a>
 </li>
 <li><a href="http://stackoverflow.com/questions/101268/hidden-features-of-python">Hidden features of Python</a>
 </li>
@@ -484,15 +667,19 @@ gr1.switch()
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn-.4" href="#fnr-.4">4</a></sup> <a href="http://en.wikipedia.org/wiki/Stackless_Python">Stackless</a>
+<p class="footnote"><sup><a class="footnum" name="fn-.4" href="#fnr-.4">4</a></sup> <a href="https://ep2012.europython.eu/conference/talks/discovering-descriptors">Discovering Descriptors</a>
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn-.5" href="#fnr-.5">5</a></sup> <a href="http://stackoverflow.com/questions/2591879/pypy-how-can-it-possibly-beat-cpython">Pypy - How can it possibly beat CPython</a>
+<p class="footnote"><sup><a class="footnum" name="fn-.5" href="#fnr-.5">5</a></sup> <a href="http://en.wikipedia.org/wiki/Stackless_Python">Stackless</a>
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn-.6" href="#fnr-.6">6</a></sup> <a href="http://blog.gevent.org/2010/02/27/why-gevent/">Comparing gevent to eventlet</a>
+<p class="footnote"><sup><a class="footnum" name="fn-.6" href="#fnr-.6">6</a></sup> <a href="http://stackoverflow.com/questions/2591879/pypy-how-can-it-possibly-beat-cpython">Pypy - How can it possibly beat CPython</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.7" href="#fnr-.7">7</a></sup> <a href="http://blog.gevent.org/2010/02/27/why-gevent/">Comparing gevent to eventlet</a>
 </p>
 
 
