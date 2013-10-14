@@ -399,7 +399,7 @@ Out[285]: &lt;unbound method MyClass.m1&gt;
 的Discovering Descriptors<sup><a class="footref" name="fnr-.4" href="#fn-.4">4</a></sup>。我这里简单解释一下，首先你需要知道的是，Python
 中一切都是对象，m1是一个对象，foo是一个对象，MyClass和m都是对象，而m1是一个实现
 了descriptor protocol的对象(实现了_<sub>get</sub>__,_<sub>set</sub>__,_<sub>del</sub>_<sub>三个方法中的任意一个）</sub>
-，当访问descriptor对象时，直接调用_<sub>get</sub>_<sub>方法返回了一个method</sub>
+，当访问descriptor对象时，直接调用_<sub>get</sub>_<sub>方法返回了一个method。</sub>
 </p>
 
 
@@ -412,7 +412,7 @@ Out[330]: <span style="color: #2aa198;">'__call__#__class__#__cmp__#__delattr__#
 
 <p>
 当你通过class访问m1的时候，Python其实是调用MyClass.m1._<sub>get</sub>_<sub>(None, MyClass)</sub>，
-当你通过instance访问m1的是，调用MyClass.m1._<sub>get</sub>_<sub>(m, MyClass)</sub>
+当你通过instance访问m1的是，调用MyClass.m1._<sub>get</sub>_<sub>(m, MyClass)</sub>。
 </p>
 
 
@@ -425,7 +425,7 @@ Out[354]: &lt;bound method MyClass.m1 of &lt;__main__.MyClass <span style="color
 
 
 <p>
-另外，如果你想调用m1，你会发现你总是失败
+另外，如果你想调用m1，你会发现你总是失败。
 </p>
 
 
@@ -451,7 +451,7 @@ argument (got <span style="color: #859900;">int</span> instance instead)
 当你需要访问一个method，必须满足两个条件，首先必须bound，另外必须在定义的时候
 明确定义self参数。Python在调用method的时候会隐式传递instance作为参数，如果你没
 有明确声明self参数，调用就无法成功。如果你需要调用没有声明self参数的方法，参考
-如下方式
+如下方式。
 </p>
 
 
