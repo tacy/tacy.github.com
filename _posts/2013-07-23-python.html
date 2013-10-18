@@ -25,23 +25,23 @@ tags: [python, program]
 </ul>
 </li>
 <li><a href="#sec-4">4 function &amp; method</a></li>
-<li><a href="#sec-5">5 staticmethod &amp; classmethod &amp; instancemethod</a></li>
-<li><a href="#sec-6">6 desctiptor protocol</a></li>
-<li><a href="#sec-7">7 scopes &amp; closure</a></li>
-<li><a href="#sec-8">8 Python分支</a>
+<li><a href="#sec-5">5 descriptor protocol</a></li>
+<li><a href="#sec-6">6 scopes &amp; closure</a></li>
+<li><a href="#sec-7">7 Python分支</a>
 <ul>
-<li><a href="#sec-8-1">8.1 Stackless Python</a></li>
-<li><a href="#sec-8-2">8.2 PyPy</a></li>
+<li><a href="#sec-7-1">7.1 Stackless Python</a></li>
+<li><a href="#sec-7-2">7.2 PyPy</a></li>
 </ul>
 </li>
-<li><a href="#sec-9">9 Django &amp; Flask</a></li>
-<li><a href="#sec-10">10 Twisted &amp; Tornado &amp; gevent &amp; eventlet</a></li>
-<li><a href="#sec-11">11 Emacs &amp; Python</a>
+<li><a href="#sec-8">8 Django &amp; Flask</a></li>
+<li><a href="#sec-9">9 Twisted &amp; Tornado &amp; gevent &amp; eventlet</a></li>
+<li><a href="#sec-10">10 Emacs &amp; Python</a>
 <ul>
-<li><a href="#sec-11-1">11.1 ipdb</a></li>
+<li><a href="#sec-10-1">10.1 ipdb</a></li>
 </ul>
 </li>
-<li><a href="#sec-12">12 一些必读的文章</a></li>
+<li><a href="#sec-11">11 一些必读的文章</a></li>
+<li><a href="#sec-12">12 自己看的书</a></li>
 </ul>
 </div>
 </div>
@@ -344,7 +344,7 @@ descriptor protocol转换成method（这么说也不准确，理论上你依然�
 式绕开descriptor protocol访问到function）。
 </p>
 <p>
-同时method又分为unbound method和bound method，当我们直接通过class访问method时，
+同时method又分为unbound method和bound method<sup><a class="footref" name="fnr-.4" href="#fn-.4">4</a></sup>，当我们直接通过class访问method时，
 它是unbound method；当我们通过该class的instance访问method时，他是bound method。
 </p>
 
@@ -397,7 +397,7 @@ Out[285]: &lt;unbound method MyClass.m1&gt;
 </p>
 <p>
 其实问题就在于方法m1是descriptor，要理解这个得费点功夫，建议参考Peter Inglesby
-的Discovering Descriptors<sup><a class="footref" name="fnr-.4" href="#fn-.4">4</a></sup>。我这里简单解释一下，首先你需要知道的是，Python
+的Discovering Descriptors<sup><a class="footref" name="fnr-.5" href="#fn-.5">5</a></sup>。我这里简单解释一下，首先你需要知道的是，Python
 中一切都是对象，m1是一个对象，foo是一个对象，MyClass和m都是对象，而m1是一个实现
 了descriptor protocol的对象(实现了__get__,__set__,__del__三个方法中的任意一个）
 ，当访问descriptor对象时，直接调用__get__方法返回了一个method。
@@ -481,10 +481,10 @@ call m1 1
 </div>
 
 <div id="outline-container-5" class="outline-2">
-<h2 id="sec-5">staticmethod &amp; classmethod &amp; instancemethod</h2>
+<h2 id="sec-5">descriptor protocol</h2>
 <div class="outline-text-2" id="text-5">
 
-<p>TODO
+<p>TODO &amp; staticmethod &amp; classmethod &amp; instancemethod &amp; super
 </p>
 
 </div>
@@ -492,19 +492,8 @@ call m1 1
 </div>
 
 <div id="outline-container-6" class="outline-2">
-<h2 id="sec-6">desctiptor protocol</h2>
+<h2 id="sec-6">scopes &amp; closure</h2>
 <div class="outline-text-2" id="text-6">
-
-<p>TODO
-</p>
-
-</div>
-
-</div>
-
-<div id="outline-container-7" class="outline-2">
-<h2 id="sec-7">scopes &amp; closure</h2>
-<div class="outline-text-2" id="text-7">
 
 <p>先看下面的代码片段
 </p>
@@ -529,13 +518,12 @@ In [126]: 3
 
 <p>
 看到这个结果，是不是有点惊讶，我们期望的输出是“0，2，3，4”，这里输出的确全是3，
-其实要理解这个首先你必须明白变量的范围和查找规则，变量可以定义在module、function
+其要理解这个首先你必须明白变量的范围和查找规则，变量可以定义在module、function
 中，另外就是Python内建功能内，module对应的是global，function对应的是local，而内
 建功能对应的是builtin。Python的查找规则简单来说叫LEGB，依次是
 local-》enclosing-》global-》builtin。这里奇怪的冒出来一个enclosing，enclosing
-这个概念其实是由于Python支持nest function，enclosing function的local变量对于
-nest function就是enclosing的概念，具体到我们上面的例子inner是nest function，
-outter就是inner的enclosing function。
+这个概念其实是由于Python支持nest function，enclosing module内的变量对于nest
+function就是enclosing的概念。
 </p>
 <p>
 回到上面的例子，funcs是global，outer是global，i对于outer是local（不准确说法），
@@ -576,7 +564,7 @@ In [127]: 0
 这样对于inner来说，他有了一个local的i，当他执行的时候，就不再找enclosing了。
 </p>
 <p>
-另外我们需要注意的是global，看下面代码：
+我们还需要注意的是global，看下面代码：
 </p>
 
 
@@ -602,21 +590,37 @@ f2()
 说，他的global限制在demo_global.py里面，如果你没有在demo_global中定义x，程序执
 行会出错。
 </p>
+<p>
+另外，Python是先编译再执行，如果你在一个function里面定义了一个变量，不论是在什
+么位置，他都被申明为本地变量，下面情况需要注意
+</p>
+
+
+<pre class="src src-python"><span style="color: #268bd2;">x</span> = 10
+
+<span style="color: #859900;">def</span> <span style="color: #268bd2;">f</span>():
+  <span style="color: #859900;">print</span> x
+  <span style="color: #268bd2;">x</span> = x + 1
+</pre>
+
+<p>
+如果你调用f，系统会告诉你x是一个没有赋值的本地变量，调用失败
+</p>
 
 </div>
 
 </div>
 
-<div id="outline-container-8" class="outline-2">
-<h2 id="sec-8">Python分支</h2>
-<div class="outline-text-2" id="text-8">
+<div id="outline-container-7" class="outline-2">
+<h2 id="sec-7">Python分支</h2>
+<div class="outline-text-2" id="text-7">
 
 
 </div>
 
-<div id="outline-container-8-1" class="outline-3">
-<h3 id="sec-8-1">Stackless Python<sup><a class="footref" name="fnr-.5" href="#fn-.5">5</a></sup></h3>
-<div class="outline-text-3" id="text-8-1">
+<div id="outline-container-7-1" class="outline-3">
+<h3 id="sec-7-1">Stackless Python<sup><a class="footref" name="fnr-.6" href="#fn-.6">6</a></sup></h3>
+<div class="outline-text-3" id="text-7-1">
 
 <p>   先看看wikipedia上的解释：<br/>
    "Stackless microthreads are managed by the language interpreter itself,
@@ -659,13 +663,13 @@ gr1.switch()
 
 </div>
 
-<div id="outline-container-8-2" class="outline-3">
-<h3 id="sec-8-2">PyPy</h3>
-<div class="outline-text-3" id="text-8-2">
+<div id="outline-container-7-2" class="outline-3">
+<h3 id="sec-7-2">PyPy</h3>
+<div class="outline-text-3" id="text-7-2">
 
 <p>   实现了一个JIT，运行时转换python代码到机器码，主要关注在运行效率的提升，和原生
    python兼容，采用RPython（python的一个子集）实现，目前好像还没有看到那里有大规
-   模的使用。关于PyPy和CPython的性能讨论可以看这里<sup><a class="footref" name="fnr-.6" href="#fn-.6">6</a></sup>
+   模的使用。关于PyPy和CPython的性能讨论可以看这里<sup><a class="footref" name="fnr-.7" href="#fn-.7">7</a></sup>
 </p>
 
 </div>
@@ -673,9 +677,9 @@ gr1.switch()
 
 </div>
 
-<div id="outline-container-9" class="outline-2">
-<h2 id="sec-9">Django &amp; Flask</h2>
-<div class="outline-text-2" id="text-9">
+<div id="outline-container-8" class="outline-2">
+<h2 id="sec-8">Django &amp; Flask</h2>
+<div class="outline-text-2" id="text-8">
 
 <p>  Django是一个整体解决方案，Python Web framework，实现快速开发网站，你不用做什么
   其他技术选择，比如templage engine、ORM等，社区很活跃。
@@ -687,13 +691,13 @@ gr1.switch()
 
 </div>
 
-<div id="outline-container-10" class="outline-2">
-<h2 id="sec-10">Twisted &amp; Tornado &amp; gevent &amp; eventlet</h2>
-<div class="outline-text-2" id="text-10">
+<div id="outline-container-9" class="outline-2">
+<h2 id="sec-9">Twisted &amp; Tornado &amp; gevent &amp; eventlet</h2>
+<div class="outline-text-2" id="text-9">
 
 <p>  Twisted是一个经典的非阻塞I/O框架，采用Callback方式实现异步调用，用户最广
   gevent和eventlet都是基于协程的异步框架（底下是greenlet），gevent是eventlet之后
-  的一个项目，作者当时的一些需求不能被eventlet满足而重新设计的<sup><a class="footref" name="fnr-.7" href="#fn-.7">7</a></sup>，gevent底下
+  的一个项目，作者当时的一些需求不能被eventlet满足而重新设计的<sup><a class="footref" name="fnr-.8" href="#fn-.8">8</a></sup>，gevent底下
   的I/O异步框架是libevent/livev（epoll on linux / kqueue on FreeBSD / iocp on
   windows)，evenlet自己实现的。
 </p>
@@ -702,17 +706,17 @@ gr1.switch()
 
 </div>
 
-<div id="outline-container-11" class="outline-2">
-<h2 id="sec-11">Emacs &amp; Python</h2>
-<div class="outline-text-2" id="text-11">
+<div id="outline-container-10" class="outline-2">
+<h2 id="sec-10">Emacs &amp; Python</h2>
+<div class="outline-text-2" id="text-10">
 
 <p>  设置python-shell-extra-pythonpaths变量来增加额外的PYTHONPATH环境变量
 </p>
 </div>
 
-<div id="outline-container-11-1" class="outline-3">
-<h3 id="sec-11-1">ipdb</h3>
-<div class="outline-text-3" id="text-11-1">
+<div id="outline-container-10-1" class="outline-3">
+<h3 id="sec-10-1">ipdb</h3>
+<div class="outline-text-3" id="text-10-1">
 
 <p>   emacs里面的ipython需要运行%pdb打开断点模式，否则好像即使设置了断点也进不去，
    不清楚为什么，另外一些简单的命令记录一下：
@@ -738,11 +742,13 @@ gr1.switch()
 
 </div>
 
-<div id="outline-container-12" class="outline-2">
-<h2 id="sec-12">一些必读的文章</h2>
-<div class="outline-text-2" id="text-12">
+<div id="outline-container-11" class="outline-2">
+<h2 id="sec-11">一些必读的文章</h2>
+<div class="outline-text-2" id="text-11">
 
 <ul>
+<li><a href="http://docs.python.org/2/reference/index.html">The Python Language Reference</a>
+</li>
 <li><a href="http://docs.python-guide.org/en/latest/">The Hitchhiker’s Guide to Python!</a>
 </li>
 <li><a href="http://stackoverflow.com/questions/231767/the-python-yield-keyword-explained">The Python yield keyword explained</a>
@@ -764,6 +770,25 @@ gr1.switch()
 </ul>
 
 
+
+</div>
+
+</div>
+
+<div id="outline-container-12" class="outline-2">
+<h2 id="sec-12">自己看的书</h2>
+<div class="outline-text-2" id="text-12">
+
+<p>建议还是系统的看一本书，自己感觉看书能比较系统的了解一门语言，相比边学边用或者
+碰到问题再去找答案，前者效率会更高
+</p><ul>
+<li>Learning Python
+</li>
+<li>Python Essential Reference
+</li>
+</ul>
+
+
 <div id="footnotes">
 <h2 class="footnotes">Footnotes: </h2>
 <div id="text-footnotes">
@@ -779,19 +804,23 @@ gr1.switch()
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn-.4" href="#fnr-.4">4</a></sup> <a href="https://ep2012.europython.eu/conference/talks/discovering-descriptors">Discovering Descriptors</a>
+<p class="footnote"><sup><a class="footnum" name="fn-.4" href="#fnr-.4">4</a></sup> <a href="http://stackoverflow.com/questions/114214/class-method-differences-in-python-bound-unbound-and-static">Class method differences in Python: bound, unbound and static</a>
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn-.5" href="#fnr-.5">5</a></sup> <a href="http://en.wikipedia.org/wiki/Stackless_Python">Stackless</a>
+<p class="footnote"><sup><a class="footnum" name="fn-.5" href="#fnr-.5">5</a></sup> <a href="https://ep2012.europython.eu/conference/talks/discovering-descriptors">Discovering Descriptors</a>
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn-.6" href="#fnr-.6">6</a></sup> <a href="http://stackoverflow.com/questions/2591879/pypy-how-can-it-possibly-beat-cpython">Pypy - How can it possibly beat CPython</a>
+<p class="footnote"><sup><a class="footnum" name="fn-.6" href="#fnr-.6">6</a></sup> <a href="http://en.wikipedia.org/wiki/Stackless_Python">Stackless</a>
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn-.7" href="#fnr-.7">7</a></sup> <a href="http://blog.gevent.org/2010/02/27/why-gevent/">Comparing gevent to eventlet</a>
+<p class="footnote"><sup><a class="footnum" name="fn-.7" href="#fnr-.7">7</a></sup> <a href="http://stackoverflow.com/questions/2591879/pypy-how-can-it-possibly-beat-cpython">Pypy - How can it possibly beat CPython</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.8" href="#fnr-.8">8</a></sup> <a href="http://blog.gevent.org/2010/02/27/why-gevent/">Comparing gevent to eventlet</a>
 </p>
 
 
