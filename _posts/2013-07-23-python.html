@@ -297,10 +297,18 @@ unicode表示多字节字符，有byte类型，主要是为了向前兼容，其
 
 <pre class="src src-python"><span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#36825;&#37324;&#21305;&#37197;xx&#65292;xy&#65292;yx&#65292;yy&#65292;&#20294;&#26159;&#22914;&#26524;&#20320;&#21482;&#24819;&#21305;&#37197;xy&#21644;yx&#30340;&#26102;&#20505;&#24590;&#20040;&#21150;&#21602;</span>
 <span style="color: #268bd2;">re</span> = re.search(r<span style="color: #2aa198;">'(x|y)(x|y)'</span>, <span style="color: #2aa198;">'xy'</span>)
+
 <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;xy&#25110;&#32773;yx&#65292;&#19981;&#21305;&#37197;xx&#65292;yy&#65292;&#35299;&#37322;&#19968;&#19979;&#65292;&#31532;&#19968;&#20010;&#22823;&#25324;&#21495;&#37324;&#38754;&#26159;&#34920;&#31034;&#24403;&#25214;&#21040;x&#30340;&#26102;</span>
 <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#20505;&#65292;&#23384;&#20837;group&#65288;1&#65289;&#37324;&#38754;&#65292;&#22914;&#26524;&#26159;y&#21017;&#19981;&#23384;&#20837;group&#65288;1&#65289;&#65292;&#21518;&#38754;&#19968;&#20010;&#25324;&#21495;&#37324;&#38754;&#34920;&#31034;&#22914;</span>
 <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#26524;group&#65288;1&#65289;&#23384;&#22312;&#65292;&#21017;&#32487;&#32493;&#21305;&#37197;y&#65292;&#21542;&#21017;&#21305;&#37197;x</span>
 <span style="color: #268bd2;">rs</span> = re.search(r<span style="color: #2aa198;">'(?:(x)|y)(?(1)y|x)'</span>, <span style="color: #2aa198;">'xy'</span>)
+
+<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">OR&#20851;&#31995;&#21305;&#37197;</span>
+<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#20551;&#22914;&#20320;&#35201;&#21305;&#37197;&#30340;&#20869;&#23481;&#21069;&#38754;&#30340;&#38480;&#23450;&#31526;&#26377;&#21464;&#21270;&#65292;&#27604;&#22914;&#19979;&#38754;&#20363;&#23376;&#65292;</span>
+<span style="color: #268bd2;">s</span> = <span style="color: #2aa198;">'''&lt;div class="data"&gt;12-11&lt;a href="http://www.google.com"&gt;&lt;/a&gt;&lt;/div&gt;</span>
+<span style="color: #2aa198;">       &lt;div class ="phase"&gt;1102&lt;a href="http://www.yahoo.com"&gt;&lt;/a&gt;&lt;/div&gt;'''</span>
+<span style="color: #268bd2;">rs</span> = re.findall(r<span style="color: #2aa198;">'class="(?:(?:data)|(?:phase))"&gt;([\d-]+)&lt;a.*?"(.*?)"&gt;'</span>, s)
+
 </pre>
 
 
