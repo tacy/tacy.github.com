@@ -695,6 +695,129 @@ object.__getattribute__(self, attr)
 
 
 <p>
+需要特别注意的是，隐式调用在new class里面是不会触发这两个方法的，比如说你在代码
+里面定义了方法"__add__(self, value)"，当你执行"instance + value"时候就不会触发。
+old class中任何attribute fetch操作都会触发"__getattr__"，没有__getattribute__。
+</p>
+
+
+<pre class="src src-python"><span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">-*- coding: utf-8 -*-</span>
+<span style="color: #859900;">class</span> <span style="color: #b58900;">GetAttr</span>(<span style="color: #859900;">object</span>):
+    <span style="color: #268bd2;">eggs</span> = 88
+    <span style="color: #859900;">def</span> <span style="color: #268bd2;">__init__</span>(<span style="color: #859900;">self</span>):
+        <span style="color: #859900;">self</span>.spam = 77
+    <span style="color: #859900;">def</span> <span style="color: #268bd2;">__len__</span>(<span style="color: #859900;">self</span>):
+        <span style="color: #859900;">print</span>(<span style="color: #2aa198;">'__len__:42'</span>)
+        <span style="color: #859900;">return</span> 42
+    <span style="color: #859900;">def</span> <span style="color: #268bd2;">__getattr__</span>(<span style="color: #859900;">self</span>, attr):
+        <span style="color: #859900;">print</span>(<span style="color: #2aa198;">'getattr:'</span> + attr)
+        <span style="color: #859900;">if</span> attr == <span style="color: #2aa198;">'__str__'</span>:
+            <span style="color: #859900;">return</span> <span style="color: #859900;">lambda</span> *args: <span style="color: #2aa198;">'[Getattr str]'</span>
+        <span style="color: #859900;">else</span>:
+            <span style="color: #859900;">return</span> <span style="color: #859900;">lambda</span> *args: <span style="color: #2aa198;">None</span>
+
+
+<span style="color: #859900;">class</span> <span style="color: #b58900;">GetAttrOld</span>:
+    eggs = 88
+    <span style="color: #859900;">def</span> <span style="color: #268bd2;">__init__</span>(<span style="color: #859900;">self</span>):
+        <span style="color: #859900;">self</span>.spam = 77
+    <span style="color: #859900;">def</span> <span style="color: #268bd2;">__len__</span>(<span style="color: #859900;">self</span>):
+        <span style="color: #859900;">print</span>(<span style="color: #2aa198;">'__len__:42'</span>)
+        <span style="color: #859900;">return</span> 42
+    <span style="color: #859900;">def</span> <span style="color: #268bd2;">__getattr__</span>(<span style="color: #859900;">self</span>, attr):
+        <span style="color: #859900;">print</span>(<span style="color: #2aa198;">'getattr:'</span> + attr)
+        <span style="color: #859900;">if</span> attr == <span style="color: #2aa198;">'__str__'</span>:
+            <span style="color: #859900;">return</span> <span style="color: #859900;">lambda</span> *args: <span style="color: #2aa198;">'[Getattr str]'</span>
+        <span style="color: #859900;">else</span>:
+            <span style="color: #859900;">return</span> <span style="color: #859900;">lambda</span> *args: <span style="color: #2aa198;">None</span>
+
+
+<span style="color: #859900;">class</span> <span style="color: #b58900;">GetAttribute</span>(<span style="color: #859900;">object</span>):
+    eggs = 88
+    <span style="color: #859900;">def</span> <span style="color: #268bd2;">__init__</span>(<span style="color: #859900;">self</span>):
+        <span style="color: #859900;">self</span>.spam = 77
+    <span style="color: #859900;">def</span> <span style="color: #268bd2;">__len__</span>(<span style="color: #859900;">self</span>):
+        <span style="color: #859900;">print</span>(<span style="color: #2aa198;">'__len__:42'</span>)
+        <span style="color: #859900;">return</span> 42
+    <span style="color: #859900;">def</span> <span style="color: #268bd2;">__getattribute__</span>(<span style="color: #859900;">self</span>, attr):
+        <span style="color: #859900;">print</span>(<span style="color: #2aa198;">'getattribute:'</span> + attr)
+        <span style="color: #859900;">if</span> attr == <span style="color: #2aa198;">'__str__'</span>:
+            <span style="color: #859900;">return</span> <span style="color: #859900;">lambda</span> *args: <span style="color: #2aa198;">'[GetAttribute str]'</span>
+        <span style="color: #859900;">else</span>:
+            <span style="color: #859900;">return</span> <span style="color: #859900;">lambda</span> *args: <span style="color: #2aa198;">None</span>
+
+
+<span style="color: #859900;">for</span> Class <span style="color: #859900;">in</span> GetAttr, GetAttrOld, GetAttribute:
+    <span style="color: #859900;">print</span>(<span style="color: #2aa198;">'\n'</span> + Class.<span style="color: #859900;">__name__</span>.ljust(50, <span style="color: #2aa198;">'='</span>))
+    x = Class()
+    x.eggs
+    x.spam
+    x.other
+    <span style="color: #859900;">len</span>(x)
+
+    <span style="color: #859900;">try</span>: x[0]
+    <span style="color: #859900;">except</span>: <span style="color: #859900;">print</span>(<span style="color: #2aa198;">'fail []'</span>)
+
+    <span style="color: #859900;">try</span>: x + 99
+    <span style="color: #859900;">except</span>: <span style="color: #859900;">print</span>(<span style="color: #2aa198;">'fail +'</span>)
+
+    <span style="color: #859900;">try</span>: x()
+    <span style="color: #859900;">except</span>: <span style="color: #859900;">print</span> (<span style="color: #2aa198;">'fail ()'</span>)
+
+    x.b()
+    x.__call__()
+    <span style="color: #859900;">print</span>(x.__str__())
+    <span style="color: #859900;">print</span>(x)
+</pre>
+
+
+
+<pre class="example">In [168]:
+GetAttr===========================================
+getattr:other
+__len__:42
+fail []
+fail +
+fail ()
+getattr:b
+getattr:__call__
+&lt;__main__.GetAttr object at 0x7fe770053550&gt;
+&lt;__main__.GetAttr object at 0x7fe770053550&gt;
+
+GetAttrOld========================================
+getattr:other
+__len__:42
+getattr:__getitem__
+getattr:__coerce__
+getattr:__add__
+getattr:__call__
+getattr:b
+getattr:__call__
+getattr:__str__
+[Getattr str]
+getattr:__str__
+[Getattr str]
+
+GetAttribute======================================
+getattribute:eggs
+getattribute:spam
+getattribute:other
+__len__:42
+fail []
+fail +
+fail ()
+getattribute:b
+getattribute:__call__
+getattribute:__str__
+[GetAttribute str]
+&lt;__main__.GetAttribute object at 0x7fe770053550&gt;
+</pre>
+
+<p>
+关键要注意一点，比如"x.b()"这行代码，在python中是先运行"x.b"这个表达式，注意是
+表达式，然后才是执行调用，它会触发__getattr__和__getattribute__方法。
+</p>
+<p>
 "__setattr__"和"__delattr__"影响所有的attribute赋值和删除操作，也必须注意死循环
 </p>
 <p>

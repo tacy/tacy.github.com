@@ -15,9 +15,13 @@ tags: [emacs, tips]
 <li><a href="#sec-1-1">1.1 too long line highlight</a></li>
 </ul>
 </li>
-<li><a href="#sec-2">2 orgmode</a>
+<li><a href="#sec-2">2 macro</a></li>
+<li><a href="#sec-3">3 navigate</a></li>
+<li><a href="#sec-4">4 copy &amp; paste</a></li>
+<li><a href="#sec-5">5 replace</a></li>
+<li><a href="#sec-6">6 orgmode</a>
 <ul>
-<li><a href="#sec-2-1">2.1 add footnotes</a></li>
+<li><a href="#sec-6-1">6.1 add footnotes</a></li>
 </ul>
 </li>
 </ul>
@@ -50,15 +54,118 @@ tags: [emacs, tips]
 </div>
 
 <div id="outline-container-2" class="outline-2">
-<h2 id="sec-2">orgmode</h2>
+<h2 id="sec-2">macro</h2>
 <div class="outline-text-2" id="text-2">
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">key sequence</th><th scope="col" class="left">comment</th></tr>
+</thead>
+<tbody>
+<tr><td class="left">F3</td><td class="left">start record macro</td></tr>
+<tr><td class="left">F4</td><td class="left">end record macro</td></tr>
+<tr><td class="left">C-x (</td><td class="left">start record macro</td></tr>
+<tr><td class="left">C-x )</td><td class="left">end record macro</td></tr>
+<tr><td class="left">C-x e</td><td class="left">execute last macro</td></tr>
+<tr><td class="left">C-u 10 C-x e</td><td class="left">execute last macro repeat 100</td></tr>
+</tbody>
+</table>
 
 
 </div>
 
-<div id="outline-container-2-1" class="outline-3">
-<h3 id="sec-2-1">add footnotes</h3>
-<div class="outline-text-3" id="text-2-1">
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3">navigate</h2>
+<div class="outline-text-2" id="text-3">
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">key sequence</th><th scope="col" class="left">comment</th></tr>
+</thead>
+<tbody>
+<tr><td class="left">C-x r m</td><td class="left">add file to bookmarks</td></tr>
+<tr><td class="left">C-x r l</td><td class="left">open bookmarks</td></tr>
+</tbody>
+</table>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4">copy &amp; paste</h2>
+<div class="outline-text-2" id="text-4">
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">key sequence</th><th scope="col" class="left">comment</th></tr>
+</thead>
+<tbody>
+<tr><td class="left">C-S-Backspace</td><td class="left">delete whole line</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+<div id="outline-container-5" class="outline-2">
+<h2 id="sec-5">replace</h2>
+<div class="outline-text-2" id="text-5">
+
+<p>替换字符串有很灵活的方式，比如我需要替换如下字符串组用序列数字：
+</p>
+
+
+<pre class="example">str01
+str01
+str01
+str01
+</pre>
+
+<p>
+替换成
+</p>
+
+
+<pre class="example">str1
+str2
+str3
+str4
+</pre>
+
+<p>
+执行如下键序列：
+</p><pre class="example">
+ :M-x replace-regexp
+ 在"Replace regexp:"提示符下输入“01”
+ 在"Replace regexp 01 with:"提示符下输入“\,(1+ \#)”
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-6" class="outline-2">
+<h2 id="sec-6">orgmode</h2>
+<div class="outline-text-2" id="text-6">
+
+
+</div>
+
+<div id="outline-container-6-1" class="outline-3">
+<h3 id="sec-6-1">add footnotes</h3>
+<div class="outline-text-3" id="text-6-1">
 
 <p>使用快捷键C-c C-x f添加注脚，使用C-c C-l添加URL链接，使用C-c C-c在footnotes和
 正文之间跳转，使用C-c C-o在浏览器打开URL连接

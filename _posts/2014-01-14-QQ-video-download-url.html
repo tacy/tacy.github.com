@@ -1,0 +1,43 @@
+---
+layout: post
+title: "腾讯视频下载地址解析"
+description: "一段解析腾讯视频下载地址的脚本，支持高清下载"
+categories: [tech]
+tags: [python, tools]
+---
+
+<p>
+写XBMC视频插件的时候，希望能播放腾讯视频，网上找了找，能发现的方法只能解析低码率
+的地址，自己扒了一下，顺利完成，贴出来给有需要的同学
+</p>
+
+
+
+<pre class="src src-python"><span style="color: #859900;">def</span> <span style="color: #268bd2;">qq</span>(<span style="color: #859900;">self</span>):
+    <span style="color: #268bd2;">html</span> = _http(<span style="color: #859900;">self</span>.url)
+    <span style="color: #268bd2;">vid</span> = re.<span style="color: #859900;">compile</span>(r<span style="color: #2aa198;">'vid:"([^"]+)"'</span>).search(html).group(1)
+    <span style="color: #268bd2;">murl</span> = <span style="color: #2aa198;">'http://vv.video.qq.com/'</span>
+    <span style="color: #268bd2;">vinfo</span> = _http(<span style="color: #2aa198;">'%sgetinfo?otype=json&amp;vids=%s'</span> % (murl, vid))
+    <span style="color: #268bd2;">infoj</span> = json.loads(vinfo.split(<span style="color: #2aa198;">'='</span>)[1][:-1])
+    <span style="color: #268bd2;">qtyps</span> = OrderedDict((
+        (<span style="color: #2aa198;">'1080P'</span>, <span style="color: #2aa198;">'fhd'</span>), (<span style="color: #2aa198;">'&#36229;&#28165;'</span>, <span style="color: #2aa198;">'shd'</span>), (<span style="color: #2aa198;">'&#39640;&#28165;'</span>, <span style="color: #2aa198;">'hd'</span>), (<span style="color: #2aa198;">'&#26631;&#28165;'</span>, <span style="color: #2aa198;">'sd'</span>)))
+    <span style="color: #268bd2;">vtyps</span> = {v[<span style="color: #2aa198;">'name'</span>]:v[<span style="color: #2aa198;">'id'</span>] <span style="color: #859900;">for</span> v <span style="color: #859900;">in</span> infoj[<span style="color: #2aa198;">'fl'</span>][<span style="color: #2aa198;">'fi'</span>]}
+    <span style="color: #268bd2;">qtypid</span> = vtyps[<span style="color: #2aa198;">'sd'</span>]
+    <span style="color: #268bd2;">sels</span> = [k <span style="color: #859900;">for</span> k,v <span style="color: #859900;">in</span> qtyps.iteritems() <span style="color: #859900;">if</span> v <span style="color: #859900;">in</span> vtyps]
+    <span style="color: #268bd2;">sel</span> = dialog.select(<span style="color: #2aa198;">'&#28165;&#26224;&#24230;'</span>, sels)
+    <span style="color: #268bd2;">surls</span> = []
+    <span style="color: #268bd2;">urlpre</span> = infoj[<span style="color: #2aa198;">'vl'</span>][<span style="color: #2aa198;">'vi'</span>][0][<span style="color: #2aa198;">'ul'</span>][<span style="color: #2aa198;">'ui'</span>][-1][<span style="color: #2aa198;">'url'</span>]
+    <span style="color: #859900;">if</span> sel <span style="color: #859900;">is</span> <span style="color: #859900;">not</span> -1:
+        <span style="color: #268bd2;">qtypid</span> = vtyps[qtyps[sels[sel]]]
+    <span style="color: #859900;">for</span> i <span style="color: #859900;">in</span> <span style="color: #859900;">range</span>(1, <span style="color: #859900;">int</span>(infoj[<span style="color: #2aa198;">'vl'</span>][<span style="color: #2aa198;">'vi'</span>][0][<span style="color: #2aa198;">'cl'</span>][<span style="color: #2aa198;">'fc'</span>])):
+        <span style="color: #268bd2;">fn</span> = <span style="color: #2aa198;">'%s.p%s.%s.mp4'</span> % (vid, qtypid%10000, <span style="color: #859900;">str</span>(i))
+        <span style="color: #268bd2;">sinfo</span> = _http(
+            <span style="color: #2aa198;">'{0}getkey?format={1}&amp;filename={2}&amp;vid={3}&amp;otype=json'</span>.<span style="color: #859900;">format</span>(
+                murl, qtypid, fn, vid))
+        <span style="color: #268bd2;">skey</span> = json.loads(sinfo.split(<span style="color: #2aa198;">'='</span>)[1][:-1])[<span style="color: #2aa198;">'key'</span>]
+        <span style="color: #268bd2;">surl</span> = urllib2.urlopen(
+            <span style="color: #2aa198;">'%s%s?vkey=%s'</span> % (urlpre, fn, skey), timeout=30).geturl()
+        <span style="color: #859900;">if</span> <span style="color: #859900;">not</span> surl: <span style="color: #859900;">break</span>
+        surls.append(surl)
+
+</pre>
