@@ -1,0 +1,113 @@
+---
+layout: post
+title: "百度在线输入法Python代码"
+description: "写了一段python代码，用于xbmc，通过云输入方式支持xbmc中文输入"
+categories: [tech]
+tags: [python, xbmc]
+---
+
+<p>
+代码里面有一些xbmc的语句，可以忽略，脚本只是提供了一个基本逻辑，供参考。
+</p>
+
+
+<pre class="src src-python"><span style="color: #859900;">def</span> <span style="color: #268bd2;">__init__</span>( <span style="color: #859900;">self</span>, *args, **kwargs ):
+    <span style="color: #859900;">self</span>.totalpage = 0
+    <span style="color: #859900;">self</span>.nowpage = 0
+    <span style="color: #859900;">self</span>.words = <span style="color: #2aa198;">''</span>
+    <span style="color: #859900;">self</span>.py = <span style="color: #2aa198;">''</span>
+    <span style="color: #859900;">self</span>.bg = 0
+    <span style="color: #859900;">self</span>.ed = 20
+    <span style="color: #859900;">self</span>.wordpgs = []   <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">word page metadata</span>
+    <span style="color: #859900;">self</span>.inputString = kwargs.get(<span style="color: #2aa198;">"default"</span>) <span style="color: #859900;">or</span> <span style="color: #2aa198;">""</span>
+    <span style="color: #859900;">self</span>.heading = kwargs.get(<span style="color: #2aa198;">"heading"</span>) <span style="color: #859900;">or</span> <span style="color: #2aa198;">""</span>
+    <span style="color: #859900;">self</span>.fetchCookie()
+    <span style="color: #859900;">self</span>.conn = httplib.HTTPConnection(<span style="color: #2aa198;">'olime.baidu.com'</span>)
+    xbmcgui.WindowXMLDialog.__init__(<span style="color: #859900;">self</span>)
+
+<span style="color: #859900;">def</span> <span style="color: #268bd2;">fetchCookie</span>(<span style="color: #859900;">self</span>):
+    <span style="color: #268bd2;">req</span> = urllib2.Request(<span style="color: #2aa198;">'http://ime.baidu.com/online.html'</span>)
+    req.add_header(<span style="color: #2aa198;">'User-Agent'</span>, UserAgent)
+    <span style="color: #268bd2;">response</span> = urllib2.urlopen(req)
+    response.close()
+    <span style="color: #268bd2;">cdata</span> = response.info().get(<span style="color: #2aa198;">'Set-Cookie'</span>)
+    <span style="color: #859900;">self</span>.cookie = cdata.split(<span style="color: #2aa198;">';'</span>)[0]
+    <span style="color: #859900;">if</span> re.search(<span style="color: #2aa198;">'BAIDUID'</span>,<span style="color: #859900;">self</span>.cookie) <span style="color: #859900;">is</span> <span style="color: #2aa198;">None</span>: <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">just in case</span>
+        <span style="color: #859900;">self</span>.cookie=<span style="color: #2aa198;">'BAIDUID=5FF5CF0348C2CD89C15799855BBCB09A:FG=1'</span>
+
+<span style="color: #859900;">def</span> <span style="color: #268bd2;">changepages</span> (<span style="color: #859900;">self</span>):
+    <span style="color: #859900;">self</span>.getControl(CTRL_ID_HZLIST).setLabel(<span style="color: #2aa198;">''</span>)
+    <span style="color: #268bd2;">hzlist</span> = <span style="color: #2aa198;">''</span>
+    <span style="color: #859900;">if</span> <span style="color: #859900;">not</span> <span style="color: #859900;">self</span>.wordpgs: <span style="color: #859900;">return</span>
+    <span style="color: #859900;">if</span> <span style="color: #859900;">self</span>.nowpage &gt;= <span style="color: #859900;">self</span>.totalpage-1:
+        <span style="color: #859900;">self</span>.bg += 20
+        <span style="color: #859900;">self</span>.ed += 20
+        <span style="color: #859900;">self</span>.getChineseWord(<span style="color: #859900;">self</span>.py, <span style="color: #859900;">self</span>.bg, <span style="color: #859900;">self</span>.ed)
+        <span style="color: #859900;">return</span>
+    <span style="color: #268bd2;">curwpg</span> = <span style="color: #859900;">self</span>.wordpgs[<span style="color: #859900;">self</span>.nowpage]
+    <span style="color: #859900;">for</span> i, w <span style="color: #859900;">in</span> <span style="color: #859900;">enumerate</span>(<span style="color: #859900;">self</span>.words[curwpg[0]:curwpg[1]]):
+        <span style="color: #268bd2;">hzlist</span> = hzlist + <span style="color: #859900;">str</span>(i) + <span style="color: #2aa198;">'.'</span> + w +<span style="color: #2aa198;">' '</span>
+    <span style="color: #859900;">if</span> <span style="color: #859900;">self</span>.nowpage &gt; 0:
+        <span style="color: #268bd2;">hzlist</span> = <span style="color: #2aa198;">'&lt;'</span> + hzlist
+    <span style="color: #859900;">if</span> <span style="color: #859900;">self</span>.nowpage &lt; <span style="color: #859900;">self</span>.totalpage-1:
+        <span style="color: #268bd2;">hzlist</span> = hzlist + <span style="color: #2aa198;">'&gt;'</span>
+    <span style="color: #859900;">self</span>.getControl(CTRL_ID_HZLIST).setLabel(hzlist)
+
+<span style="color: #859900;">def</span> <span style="color: #268bd2;">getChineseWord</span> (<span style="color: #859900;">self</span>, py, bg=0, ed=20):
+    <span style="color: #859900;">self</span>.getControl(CTRL_ID_HZLIST).setLabel(<span style="color: #2aa198;">''</span>)
+    <span style="color: #859900;">if</span> py==<span style="color: #2aa198;">''</span>: <span style="color: #859900;">return</span>
+    <span style="color: #859900;">if</span> <span style="color: #859900;">not</span> bg:
+        <span style="color: #859900;">self</span>.nowpage = 0
+        <span style="color: #859900;">self</span>.totalpage = 0
+        <span style="color: #859900;">self</span>.wordpgs = []
+        <span style="color: #859900;">self</span>.words= []
+        <span style="color: #859900;">self</span>.py = py
+        <span style="color: #859900;">self</span>.bg = 0
+        <span style="color: #859900;">self</span>.ed = 20
+    wres = <span style="color: #859900;">self</span>.getwords(py, bg, ed)
+    <span style="color: #859900;">if</span> wres:
+        <span style="color: #859900;">self</span>.words.extend(wres)
+        <span style="color: #859900;">self</span>.wordpgs = []
+        inum = 0
+        <span style="color: #859900;">for</span> s, w <span style="color: #859900;">in</span> <span style="color: #859900;">enumerate</span>(<span style="color: #859900;">self</span>.words):
+            <span style="color: #859900;">if</span> <span style="color: #859900;">len</span>(<span style="color: #2aa198;">''</span>.join(<span style="color: #859900;">self</span>.words[inum:s+1]).decode(<span style="color: #2aa198;">'utf-8'</span>)) + (
+                    s+1-inum)*2 &gt;30:
+                <span style="color: #859900;">self</span>.wordpgs.append((inum, s))
+                inum = s
+        <span style="color: #859900;">if</span> <span style="color: #859900;">len</span>(<span style="color: #859900;">self</span>.words) &gt; inum:
+            <span style="color: #859900;">self</span>.wordpgs.append((inum, <span style="color: #859900;">len</span>(<span style="color: #859900;">self</span>.words)))
+        <span style="color: #859900;">self</span>.totalpage = <span style="color: #859900;">len</span>(<span style="color: #859900;">self</span>.wordpgs)
+    <span style="color: #859900;">else</span>:
+        <span style="color: #859900;">self</span>.nowpage = <span style="color: #859900;">self</span>.totalpage - 1
+
+    hzlist = <span style="color: #2aa198;">''</span>
+    curwpg = <span style="color: #859900;">self</span>.wordpgs[<span style="color: #859900;">self</span>.nowpage]
+    <span style="color: #859900;">for</span> i, w <span style="color: #859900;">in</span> <span style="color: #859900;">enumerate</span>(<span style="color: #859900;">self</span>.words[curwpg[0]:curwpg[1]]):
+        hzlist = hzlist + <span style="color: #859900;">str</span>(i) + <span style="color: #2aa198;">'.'</span> + w +<span style="color: #2aa198;">' '</span>
+    <span style="color: #859900;">if</span> <span style="color: #859900;">self</span>.nowpage &gt; 0:
+        hzlist = <span style="color: #2aa198;">'&lt;'</span> + hzlist
+    <span style="color: #859900;">if</span> <span style="color: #859900;">self</span>.nowpage &lt; <span style="color: #859900;">self</span>.totalpage-1:
+        hzlist = hzlist + <span style="color: #2aa198;">'&gt;'</span>
+    <span style="color: #859900;">self</span>.getControl(CTRL_ID_HZLIST).setLabel(hzlist)
+
+<span style="color: #859900;">def</span> <span style="color: #268bd2;">getwords</span>(<span style="color: #859900;">self</span>, py, bg, ed):
+    t = time.time()
+    urlsuf = <span style="color: #2aa198;">'/py?input={0}&amp;inputtype=py&amp;bg={1}&amp;ed={2}&amp;{3}'</span>.<span style="color: #859900;">format</span>(
+        py, bg, ed,
+        <span style="color: #2aa198;">'result=hanzi&amp;resultcoding=unicode&amp;ch_en=0&amp;clientinfo=web'</span>)
+    <span style="color: #859900;">try</span>:
+        <span style="color: #859900;">self</span>.conn.request(<span style="color: #2aa198;">'GET'</span>, urlsuf, headers={<span style="color: #2aa198;">'Cookies'</span>:<span style="color: #859900;">self</span>.cookie,})
+    <span style="color: #859900;">except</span> <span style="color: #b58900;">Exception</span> <span style="color: #859900;">as</span> e:
+        <span style="color: #859900;">self</span>.conn = httplib.HTTPConnection(<span style="color: #2aa198;">'olime.baidu.com'</span>)
+        <span style="color: #859900;">self</span>.conn.request(<span style="color: #2aa198;">'GET'</span>, urlsuf, headers={<span style="color: #2aa198;">'Cookies'</span>:<span style="color: #859900;">self</span>.cookie,})
+    httpdata = <span style="color: #859900;">self</span>.conn.getresponse().read()
+    words = []
+    <span style="color: #859900;">try</span>:
+        jsondata = simplejson.loads(httpdata)
+    <span style="color: #859900;">except</span> <span style="color: #b58900;">ValueError</span>:
+        <span style="color: #859900;">return</span> <span style="color: #2aa198;">None</span>
+    <span style="color: #859900;">for</span> word <span style="color: #859900;">in</span> jsondata[0]:
+        words.append(word[0].encode(<span style="color: #2aa198;">'utf-8'</span>))
+    <span style="color: #859900;">return</span> words
+
+</pre>
