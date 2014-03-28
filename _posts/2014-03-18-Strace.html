@@ -60,15 +60,19 @@ strace -T -p pid
 <p>
 包括子进程：
 </p>
-<p>
-:strace -T -fp pid
-</p>
+<pre class="example">
+strace -T -fp pid
+</pre>
+
+
 <p>
 调用统计：
 </p>
-<p>
-:strace -c -fp pid
-</p>
+<pre class="example">
+strace -c -fp pid
+</pre>
+
+
 <p>
 下面是一个例子，看看apache为啥起不来：
 </p>

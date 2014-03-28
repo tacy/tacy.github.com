@@ -22,6 +22,7 @@ tags: [storage, performance]
 <h2 id="sec-1">硬盘IOPS<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup><sup>, </sup><sup><a class="footref" name="fnr-.2" href="#fn-.2">2</a></sup></h2>
 <div class="outline-text-2" id="text-1">
 
+
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <colgroup><col class="right" /><col class="right" /><col class="left" /><col class="left" /><col class="left" /><col class="left" />
 </colgroup>
@@ -46,6 +47,7 @@ tags: [storage, performance]
 <div id="outline-container-2" class="outline-2">
 <h2 id="sec-2">RAID对IOPS影响<sup><a class="footref" name="fnr-.3" href="#fn-.3">3</a></sup><sup>, </sup><sup><a class="footref" name="fnr-.4" href="#fn-.4">4</a></sup></h2>
 <div class="outline-text-2" id="text-2">
+
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <colgroup><col class="right" /><col class="right" /><col class="right" />
@@ -73,7 +75,11 @@ tags: [storage, performance]
 <h2 id="sec-3">Latency comparison<sup><a class="footref" name="fnr-.5" href="#fn-.5">5</a></sup></h2>
 <div class="outline-text-2" id="text-3">
 
-<p>L1 cache reference                            0.5 ns
+
+
+
+
+<pre class="example">L1 cache reference                            0.5 ns
 Branch mispredict                             5   ns
 L2 cache reference                            7   ns             14x L1 cache
 Mutex lock/unlock                            25   ns
@@ -87,7 +93,9 @@ Read 1 MB sequentially from SSD*      1,000,000   ns    1    ms  4X memory
 Disk seek                            10,000,000   ns   10    ms  20x datacenter roundtrip
 Read 1 MB sequentially from disk     20,000,000   ns   20    ms  80x memory, 20X SSD
 Send packet CA-&gt;Netherlands-&gt;CA     150,000,000   ns  150    ms
-</p>
+</pre>
+
+
 <div id="footnotes">
 <h2 class="footnotes">Footnotes: </h2>
 <div id="text-footnotes">
