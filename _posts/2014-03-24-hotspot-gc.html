@@ -310,6 +310,7 @@ Mark-Sweep-Compact，单线程对OldGen进行回收。这里Minor GC中的user�
 </p>
 
 
+
 <pre class="example">1.[GC [1 CMS-initial-mark: 463236K(515960K)] 464178K(522488K), 0.0018216 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]
 2.[GC[ParNew: 6528K-&gt;702K(6528K), 0.0130227 secs] 469764K-&gt;465500K(522488K), 0.0130578 secs] [Times: user=0.05 sys=0.00,real=0.01 secs]
 3.[GC[ParNew: 6526K-&gt;702K(6528K), 0.0136447 secs] 471324K-&gt;467077K(522488K), 0.0136804 secs] [Times: user=0.04 sys=0.01,real=0.01 secs]
@@ -331,6 +332,7 @@ Mark-Sweep-Compact，单线程对OldGen进行回收。这里Minor GC中的user�
 17.[CMS-concurrent-reset: 0.009/0.009 secs] [Times: user=0.01 sys=0.00, real=0.01 secs]
 </pre>
 
+
 <p>
 这里时间统计多说一句，比如倒数第二行中的0.756/0.833 secs，0.756表示运行sweep
 时间，0.833表示时钟运行的时间（等于real），由于sweep操作是并行的，所以user大
@@ -342,6 +344,7 @@ CMS周期期间，因为Minor GC会继续运行（Minor GC进入会挂起CMS的c
 Old Gen中，但是Old Gen空间不足或者没有连续的空间块来容纳移动的对象），这会导
 致CMS中断，同时触发Full GC操作，参考下面日志：
 </p>
+
 
 
 <pre class="example">64.528: [GC 64.528: [ParNew: 19128K-&gt;2112K(19136K), 0.0088010 secs] 108133K-&gt;94575K(128960K), 0.0088840 secs] [Times: user=0.02 sys=0.01, real=0.01 secs]
@@ -360,21 +363,31 @@ Old Gen中，但是Old Gen空间不足或者没有连续的空间块来容纳移
 65.250: [GC 65.250: [ParNew (promotion failed): 19136K-&gt;19136K(19136K), 0.8336480 secs]66.084: [CMS66.109: [CMS-concurrent-sweep: 0.112/0.946 secs] [Times: user=1.50 sys=0.22, real=0.95 secs]
  (concurrent mode failure): 107755K-&gt;92385K(109824K), 0.4802380 secs] 121588K-&gt;92385K(128960K), [CMS Perm : 80068K-&gt;78975K(133032K)], 1.3140100 secs] [Times: user=1.61 sys=0.22, real=1.31 secs]
 66.816: [GC 66.816: [ParNew: 17024K-&gt;2112K(19136K), 0.0097300 secs] 109409K-&gt;95636K(128960K), 0.0098010 secs] [Times: user=0.03 sys=0.00, real=0.01 secs]
+</pre>
+
+
+<p>
 在CMS周期内，Minor GC发现无法promotion对象，导致concurrent mode failure，中断CMS
 同时触发Full GC。注意所有的Full GC都是STW（CMS用的好像是SerialMarkSweepCompact）
 。造成这种情况需要分析是什么原因导致的，如果是碎片，最好是增加OldGen大小，如果是
 由于对象移动到OldGen太快，可以提前触发CMS，CMS触发通过OccupancyFraction控制，该
 值JVM会动态调整，你可以通过观察日志计算它，比如下面日志中：
-: 29.542: [GC [1 CMS-initial-mark: 56351K(109824K)] 58400K(128960K), 0.0031880 secs] [Times: user=0.00 sys=0.00, real=0.01 secs]
+</p>
+<pre class="example">
+29.542: [GC [1 CMS-initial-mark: 56351K(109824K)] 58400K(128960K), 0.0031880 secs] [Times: user=0.00 sys=0.00, real=0.01 secs]
+</pre>
+
+
+<p>
 该值在51左右（56351/109824=0.51），如果需要提前触发CMS，通过下面两个参数：
 CMSInitiatingOccupancyFraction和UseCMSInitiatingOccupancyOnly（需要两个都设置，
 否则只是第一次生效，后续JVM还是会自己调整）。另外就是避免对象移动过快，通过调优
 Young Gen参数实现，当然治标的办法自然是减少对象分配速度。当然你也能增加OldGen。
-
+</p>
+<p>
 下面的例子不在CMS周期之内，Minor GC发现无法promotin，触发Full GC，解决办法和
 前面一样：
-</pre>
-
+</p>
 <pre class="example">
 62.231: [GC 62.231: [ParNew (promotion failed): 19137K-&gt;19136K(19136K), 0.0403870 secs]62.271: [CMS: 99459K-&gt;77486K(109824K), 0.4331580 secs] 116817K-&gt;77486K(128960K), [CMS Perm : 80178K-&gt;79817K(132164K)], 0.4737430 secs] [Times: user=0.50 sys=0.01, real=0.47 secs]
 </pre>
@@ -481,7 +494,6 @@ VM中的对象分配都在Eden中进行，由于每次Minor GC都会清空Eden�
 <div class="outline-text-3" id="text-1-5">
 
 
-
 </div>
 
 <div id="outline-container-1-5-1" class="outline-4">
@@ -533,6 +545,7 @@ VM中的对象分配都在Eden中进行，由于每次Minor GC都会清空Eden�
 ，之类的。结合-XX:+PrintFlagsInitial与-XX:+PrintFlagsFinal，对比两者的差异，就可
 以知道ergonomics对哪些参数做了怎样的调整。
 </p>
+
 </div>
 </div>
 
@@ -587,7 +600,10 @@ VM中的对象分配都在Eden中进行，由于每次Minor GC都会清空Eden�
 
 
 <p class="footnote"><sup><a class="footnum" name="fn-.10" href="#fnr-.10">10</a></sup> <a href="https://blog.codecentric.de/en/2012/07/useful-jvm-flags-part-3-printing-all-xx-flags-and-their-values/">Useful JVM Flags – Part 3 (Printing all XX Flags and their Values)</a>
-</p></div>
+</p>
+
+
+</div>
 </div>
 </div>
 
