@@ -1,0 +1,586 @@
+---
+layout: post
+title: "cloud notes"
+description: "cloud notes"
+categories: [tech]
+tags: [cloud,training]
+---
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 question</a></li>
+<li><a href="#sec-2">2 day3</a></li>
+<li><a href="#sec-3">3 day4</a>
+<ul>
+<li><a href="#sec-3-1">3.1 dc管理人员</a></li>
+</ul>
+</li>
+<li><a href="#sec-4">4 day5</a></li>
+<li><a href="#sec-5">5 day6</a>
+<ul>
+<li><a href="#sec-5-1">5.1 utp cable</a></li>
+<li><a href="#sec-5-2">5.2 fiber</a></li>
+<li><a href="#sec-5-3">5.3 network tiers (cisco design)</a></li>
+</ul>
+</li>
+<li><a href="#sec-6">6 day7</a>
+<ul>
+<li><a href="#sec-6-1">6.1 data placement</a></li>
+<li><a href="#sec-6-2">6.2 backup type</a></li>
+</ul>
+</li>
+<li><a href="#sec-7">7 day8</a></li>
+<li><a href="#sec-8">8 day12</a>
+<ul>
+<li><a href="#sec-8-1">8.1 security</a></li>
+</ul>
+</li>
+<li><a href="#sec-9">9 day13</a></li>
+<li><a href="#sec-10">10 day15</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1">question</h2>
+<div class="outline-text-2" id="text-1">
+
+<p>1、资源调度组大小多少合适
+2、L2多大合适(500ip)
+3、不用vlan用啥
+4、现在的openstack网络规划问题
+5、itsm在云计算中的覆盖
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2">day3</h2>
+<div class="outline-text-2" id="text-2">
+
+
+<p>
+speed = distance (60km) /time (latch)
+</p>
+<p>
+core &lt; 1ms （lan）
+</p>
+<p>
+metro 1-20ms （fibre dark/wan）
+</p>
+<p>
+region 100-800ms  （wan）
+</p>
+<p>
+country 800ms+  （mpls/internet）
+</p>
+
+<p>
+tier1 99.671%
+tier2 99.741%
+tier3 99.982%
+tier4 99.995%
+</p>
+<p>
+rack pdu / redundant(多路供电介入rack）
+</p>
+<p>
+avg pue 1.8 - 1.89  google 1.1pue
+</p>
+<p>
+power unit
+</p>
+<p>
+container dc  2000server
+</p>
+<p>
+-&mdash; google dc
+</p>
+<p>
+server = no ha
+</p>
+<p>
+1nic 1power 1backplane
+</p>
+<p>
+software scale out
+</p></div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3">day4</h2>
+<div class="outline-text-2" id="text-3">
+
+
+</div>
+
+<div id="outline-container-3-1" class="outline-3">
+<h3 id="sec-3-1">dc管理人员</h3>
+<div class="outline-text-3" id="text-3-1">
+
+<p>如果ITIL实施
+</p><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="right" /><col class="left" /><col class="left" /><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="right">admin</th><th scope="col" class="left">server number(10)</th><th scope="col" class="left">20-30</th><th scope="col" class="left">100</th><th scope="col" class="left">1000</th></tr>
+</thead>
+<tbody>
+<tr><td class="right">1</td><td class="left">*</td><td class="left"></td><td class="left"></td><td class="left"></td></tr>
+<tr><td class="right">2</td><td class="left">*</td><td class="left"></td><td class="left"></td><td class="left"></td></tr>
+<tr><td class="right">3</td><td class="left"></td><td class="left">*</td><td class="left">*</td><td class="left"></td></tr>
+<tr><td class="right">4</td><td class="left"></td><td class="left"></td><td class="left">*</td><td class="left"></td></tr>
+<tr><td class="right">5</td><td class="left"></td><td class="left"></td><td class="left">*</td><td class="left">*</td></tr>
+<tr><td class="right">?</td><td class="left"></td><td class="left"></td><td class="left"></td><td class="left"></td></tr>
+</tbody>
+</table>
+
+
+<p>
+google 10000+ (4,5,?)
+</p>
+<p>
+防火（一块砖头1个小时）
+</p>
+<p>
+顶层漏水/底层进水 都不能用
+</p>
+<p>
+具备冗余供电/
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4">day5</h2>
+<div class="outline-text-2" id="text-4">
+
+<p>一个餐厅，我们需要一个200个vm规模的解决方案，提供我们的订餐系统运行，现在向你
+采购IaaS框架，系统的一些特性：
+</p>
+<p>
+1、java应用，stateless
+2、mysql stateful
+3、每天数据量大概100m
+4、应用负载类型属于cpu多点
+5、需要有DR（metro site）
+6、高峰期在中午大概需要200vm，晚上时间大概20个vm
+7、要求在高峰期每个物理机运行10vm，低谷期大概需要30vm每个物理机
+8、不需要硬件HA，需要应用HA
+</p>
+<p>
+解决方案：
+1、tech
+</p><ul>
+<li>kvm
+</li>
+<li>openstack
+</li>
+<li>monitor(zenoss)
+</li>
+<li>scale control ( glbl)
+</li>
+<li>lb(ngnix,lvs)
+</li>
+<li>security(fw rules / ip tables / vlan / rbac)
+</li>
+</ul>
+
+
+<p>
+2、blade * 16 (appvm)
+</p><ul>
+<li>2*8core / 128g ram / 1*10gb port
+</li>
+<li>vm(2c/4g)
+</li>
+</ul>
+
+
+<p>
+3、blade * 6 (appvm + mysqlvm)
+</p><ul>
+<li>2*8core / 128g ram / 1* 10gb port
+</li>
+<li>vm (4c/8g)
+</li>
+</ul>
+
+
+<p>
+4、storage
+</p><ul>
+<li>appvm ( hdd / stateless / just os and swap )
+</li>
+<li>mysqlvm ( iscsi / nas / netapp / emc isilon
+</li>
+</ul>
+
+
+<p>
+appvm - ipsan or nas or hdd
+   如果基于app stateless，考虑用hdd
+   如果给予automatic，考虑采用ipsan
+开始我的想法是appvm采用ipsan或者nas或者hdd，mysqlvm采用fc-san，另tim的想法是，
+appvm采用本地硬盘，主要考虑到app stateless，数据存储用iscsi（包括数据库和应用附
+件文件）。甚至考虑用swift或者ceph
+</p>
+
+<p>
+5、network
+</p><ul>
+<li>core switch
+</li>
+<li>tor switch
+</li>
+<li>wan dark fibre
+</li>
+<li>dns / glbl / cache ( akamai internet cache static files)
+</li>
+</ul>
+
+
+<p>
+6、mysql backup
+</p><ul>
+<li>mysql master / slave / rcp / hadr / drbd / mysql mm
+</li>
+</ul>
+
+
+
+<p>
+7、ami
+</p><ul>
+<li>appvm - centos / java
+</li>
+<li>mysqlvm - centos / mysql
+</li>
+</ul>
+
+
+<p>
+8、逻辑图
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" /><col class="left" />
+</colgroup>
+<tbody>
+<tr><td class="left">+</td><td class="left"></td><td class="left">+</td></tr>
+<tr><td class="left">rack one</td><td class="left"></td><td class="left">rack two</td></tr>
+<tr><td class="left">tor switch</td><td class="left"></td><td class="left">tor switch</td></tr>
+<tr><td class="left">blade chassic</td><td class="left"></td><td class="left">blade chassic</td></tr>
+<tr><td class="left">-------------</td><td class="left"></td><td class="left">-------------</td></tr>
+<tr><td class="left">lvs&lt;&ndash;&mdash;&mdash;&mdash;&mdash;</td><td class="left">-&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td><td class="left">-&mdash;&mdash;&mdash;&gt;lvs</td></tr>
+<tr><td class="left">\</td><td class="left">keepalive</td><td class="left">/</td></tr>
+<tr><td class="left">nginx</td><td class="left"></td><td class="left">nginx</td></tr>
+<tr><td class="left">\</td><td class="left"></td><td class="left">/</td></tr>
+<tr><td class="left">appvm / monitorvm</td><td class="left"></td><td class="left">appvm / monitorvm</td></tr>
+<tr><td class="left">mysqlvm / &hellip;</td><td class="left"></td><td class="left">mysqlvm / &hellip;</td></tr>
+</tbody>
+</table>
+
+
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" />
+</colgroup>
+<tbody>
+<tr><td class="left">+</td></tr>
+<tr><td class="left">netapp/isilon</td></tr>
+</tbody>
+</table>
+
+
+
+<p>
+cloud elasticity / scale
+done by managing
+virtual resources (pool)
+</p><ul>
+<li>cpu
+</li>
+<li>ram
+</li>
+<li>iops (nic/fc)
+</li>
+<li>storage
+</li>
+</ul>
+
+
+<p>
+high performance app
+</p><ul>
+<li>cpu no over subscriptor
+</li>
+<li>ram no over subscriptor
+</li>
+<li>nic no over subscriptor
+</li>
+<li>storage thin provisioning
+</li>
+</ul>
+
+
+<p>
+low performance
+</p><ul>
+<li>all thin
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-5" class="outline-2">
+<h2 id="sec-5">day6</h2>
+<div class="outline-text-2" id="text-5">
+
+
+</div>
+
+<div id="outline-container-5-1" class="outline-3">
+<h3 id="sec-5-1">utp cable</h3>
+<div class="outline-text-3" id="text-5-1">
+
+<p>cab 5 - 100m  (utp5) 100m
+cab 5e (utp5e) 1G
+cab 6  1G
+cab 6e 10g
+cab 7 10g
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-5-2" class="outline-3">
+<h3 id="sec-5-2">fiber</h3>
+<div class="outline-text-3" id="text-5-2">
+
+
+</div>
+
+</div>
+
+<div id="outline-container-5-3" class="outline-3">
+<h3 id="sec-5-3">network tiers (cisco design)</h3>
+<div class="outline-text-3" id="text-5-3">
+
+<ul>
+<li>core layer
+</li>
+<li>distribution layer
+</li>
+<li>access layer
+</li>
+</ul>
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" /><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left"></th><th scope="col" class="left">core dc</th><th scope="col" class="left"></th><th scope="col" class="left">&lt;&mdash; core layer (L3)</th></tr>
+</thead>
+<tbody>
+<tr><td class="left">eor</td><td class="left">eor</td><td class="left">eor</td><td class="left">&lt;&mdash; ditribution layer / ager (L3)（end of rack switch)</td></tr>
+<tr><td class="left">tor</td><td class="left">tor</td><td class="left">tor</td><td class="left">&lt;&mdash; access layer (L2) (top of rack switch)</td></tr>
+<tr><td class="left">tor</td><td class="left">tor</td><td class="left">tor</td><td class="left"></td></tr>
+<tr><td class="left">tor</td><td class="left">tor</td><td class="left">tor</td><td class="left"></td></tr>
+</tbody>
+</table>
+
+
+<p>
+1个rack高144u，如果按照P:V比例20:1，一个rack里面就可以有2000个以上的VM，这样会
+导致两层网络过于膨大，如果按照TIM的说法，一个L2建议容纳500IP，这样一个RACK里面
+就需要多个L2？
+</p>
+
+<p>
+存储网络一般直接接到core switch
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-6" class="outline-2">
+<h2 id="sec-6">day7</h2>
+<div class="outline-text-2" id="text-6">
+
+
+</div>
+
+<div id="outline-container-6-1" class="outline-3">
+<h3 id="sec-6-1">data placement</h3>
+<div class="outline-text-3" id="text-6-1">
+
+<p>online data  &ndash; 1 tier(sas / 6gb sec / 99.999% / fc drives / 15000rpm seek time about 1.8ms))
+near online data  &ndash; 2 tier (sas /99.99% / 10000rpm seek time about 3.6ms))
+offline data  &ndash; 3 tier(sata / for data archive / 3gb sec / 99.9% / 8.2ms 7200rpm)
+</p>
+
+</div>
+
+</div>
+
+<div id="outline-container-6-2" class="outline-3">
+<h3 id="sec-6-2">backup type</h3>
+<div class="outline-text-3" id="text-6-2">
+
+<ul>
+<li>client backup / push / small data  (host &mdash;&gt; media server)
+</li>
+<li>media backup / pull / large data  (san &mdash;&gt; media server)
+</li>
+<li>server backup / san  (san &mdash;&gt; san)
+</li>
+</ul>
+
+
+
+<p>
+how to multi-tenant?
+virtualization network ? technology
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">area / function</th><th scope="col" class="left">traditional</th><th scope="col" class="left">cloud</th></tr>
+</thead>
+<tbody>
+<tr><td class="left">toploogy</td><td class="left">tiered / BIG L2</td><td class="left">flat small L2 more L3</td></tr>
+<tr><td class="left">sharing</td><td class="left">single tenant</td><td class="left">multi-tenant</td></tr>
+<tr><td class="left">physical</td><td class="left">more P</td><td class="left">more v</td></tr>
+<tr><td class="left">change</td><td class="left">monthly / Q 1-2-3</td><td class="left">weekly / daily / hourly</td></tr>
+<tr><td class="left">security</td><td class="left">major role in network</td><td class="left">shared in all areas</td></tr>
+<tr><td class="left">duties</td><td class="left">seperated</td><td class="left">combing + automatic</td></tr>
+<tr><td class="left">automation + monitor</td><td class="left">ITIL/manual</td><td class="left">dynamic / agile</td></tr>
+<tr><td class="left">cost</td><td class="left">v High / high / med</td><td class="left">low - med</td></tr>
+<tr><td class="left">scalability</td><td class="left">scale up</td><td class="left">scale out</td></tr>
+<tr><td class="left">performance</td><td class="left">high - medium</td><td class="left">low - medium</td></tr>
+<tr><td class="left">data profection</td><td class="left">by inforstraction</td><td class="left">by app + business</td></tr>
+</tbody>
+</table>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-7" class="outline-2">
+<h2 id="sec-7">day8</h2>
+<div class="outline-text-2" id="text-7">
+
+<ul>
+<li>china union pay active/active dc &lt;&ndash;&gt; 演练的时候都在5分钟
+</li>
+<li>china union pay 2/3年前出过一次事故，导致大量的系统不能使用，比如ATM等，是\
+  由于x86的指令集和小机不同，而x86指令导致小机大量重启导致。
+</li>
+</ul>
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" />
+</colgroup>
+<tbody>
+<tr><td class="left">+</td><td class="left">+</td></tr>
+<tr><td class="left">APP</td><td class="left">rsync / data move / app -&gt;app copy / MQ</td></tr>
+<tr><td class="left">database</td><td class="left">replication(log ship/log ship/hadr(oracle)</td></tr>
+<tr><td class="left">vm</td><td class="left">vmdk(file copy) / active-active (ft) / live migration</td></tr>
+<tr><td class="left">os</td><td class="left">rsync / veritas cluster</td></tr>
+<tr><td class="left">hw/storage</td><td class="left">block copy (emc srdf) / netapp (file/block)+snapshot</td></tr>
+<tr><td class="left">other</td><td class="left">bit torrent / aspera(use udp)</td></tr>
+</tbody>
+</table>
+
+
+<p>
+云计算不要在硬件层做HA，通过应用实现HA，对于os/vm都保持无状态，app也做成无状态，
+在app层做ha
+</p></div>
+
+</div>
+
+<div id="outline-container-8" class="outline-2">
+<h2 id="sec-8">day12</h2>
+<div class="outline-text-2" id="text-8">
+
+<p>存储虚拟化，对于存储的分配（lun+maping）使用手动方式，通过流程控制，但是人工操
+作存储创建和映射环节。
+</p>
+
+</div>
+
+<div id="outline-container-8-1" class="outline-3">
+<h3 id="sec-8-1">security</h3>
+<div class="outline-text-3" id="text-8-1">
+
+<ul>
+<li>management plane
+</li>
+</ul>
+
+<p>隔离独立的管理网络，主要用于机器控制，比如ILOM管理口，注意安全控制，可以考虑建
+立跳转机器进入，建立安全审计。
+（bastion - 堡垒机）
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-9" class="outline-2">
+<h2 id="sec-9">day13</h2>
+<div class="outline-text-2" id="text-9">
+
+<p>itil是规范，itsm是实践。
+</p>
+<p>
+怎么看待itsm/itil在云计算时代的位置，目前成功的公有云产品中，有哪些ITIL/ITSM的
+实践，传统的itsm运维和云计算运维的区别，nokia在做的时候如何去衡量
+</p>
+<p>
+在做容量规划的时候，要仔细考量每个指标，比如IOPS，分为很多类型的IOPS，是随机读
+还是随机写，还是更多顺序读写，这些都需要考虑，如果是OLTP类型数据库，主要以随机
+读写为主，怎么测量呢？
+</p>
+<p>
+APM完成性能监控和分析报告
+</p></div>
+
+</div>
+
+<div id="outline-container-10" class="outline-2">
+<h2 id="sec-10">day15</h2>
+<div class="outline-text-2" id="text-10">
+
+<p>规划的时候，非常重要的一点是让数据流量停留在rack/pod里面，尽量不要到core或者
+aggration。另外一点非常重要的是，清楚data pacement和application dependence，
+减少hop（比如application到database需要经过的switch）
+____________________
+</p><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" />
+</colgroup>
+<tbody>
+<tr><td class="left">tor</td><td class="left">&lt;&ndash;&mdash;&gt; core switch &lt;&ndash;&mdash;&gt; SAN/NFS(rsync local nfs)</td></tr>
+<tr><td class="left">----------------</td></tr>
+<tr><td class="left">blade local hdd</td><td class="left">&mdash;&mdash;&mdash;&gt;store image</td></tr>
+<tr><td class="left">----------------</td></tr>
+<tr><td class="left">local nfs server</td><td class="left">&mdash;&mdash;&mdash;&gt; store image</td></tr>
+<tr><td class="left">----------------</td></tr>
+</tbody>
+</table>
+
+</div>
+</div>
