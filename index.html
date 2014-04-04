@@ -12,7 +12,7 @@ description: "李春龙的博客"
         {% for post in site.posts limit:5 %}
         <div class="home-page-post">
             <div class="post-header">
-                <div class="date">{{ post.date | date_to_string }}</div>
+                <div class="date">{{ post.date | date: "%d %B %Y" }}</div>
                 <div class="tags">
                     <label>Tags: </label>{{ post.tags | array_to_sentence_string }}
                 </div>

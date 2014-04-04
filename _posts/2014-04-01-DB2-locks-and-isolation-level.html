@@ -248,6 +248,9 @@ select * from test 或者 update test set a=1
 锁的使用情况如下表：
 </p>
 <p>
+<img src="/images/db2-locks-1.png" alt="db2locks table 1"/>
+</p>
+<p>
 <img src="../images/db2-locks-1.png"  alt="../images/db2-locks-1.png" />
 </p>
 <p>
@@ -298,6 +301,9 @@ select * from test where a=1 或者 update test set b=4 where a=1
 
 <p>
 针对test表的操作，a字段上无索引。
+</p>
+<p>
+<img src="/images/db2-locks-2.png" alt="db2locks table 2"/>
 </p>
 <p>
 <img src="../images/db2-locks-2.png"  alt="../images/db2-locks-2.png" />
@@ -358,6 +364,7 @@ select a from test 或者 update test set a=1
 这里，我们的test表上，对a字段有索引。
 </p>
 <p>
+<img src="/images/db2-locks-3.png" alt="db2locks table 3"/>
 <img src="../images/db2-locks-3.png"  alt="../images/db2-locks-3.png" />
 </p>
 <p>
@@ -383,6 +390,7 @@ select a from test where a=2 或者 update test set b=1 where a=4
 这里，我们的test表上，对a字段有索引。
 </p>
 <p>
+<img src="/images/db2-locks-4.png" alt="db2locks table 4"/>
 <img src="../images/db2-locks-4.png"  alt="../images/db2-locks-4.png" />
 </p>
 <p>
@@ -422,6 +430,7 @@ select * from test where a&gt;1 and a&lt;5
 基本情况都和上面类似，就不详述了，关键点就是执行计划会影响锁的使用。
 </p>
 <p>
+<img src="/images/db2-locks-5.png" alt="db2locks table 5"/>
 <img src="../images/db2-locks-5.png"  alt="../images/db2-locks-5.png" />
 </p>
 
@@ -435,6 +444,7 @@ select * from test where a&gt;1 and a&lt;5
 
 
 <p>
+<img src="/images/db2-locks-6.png" alt="db2locks table 6"/>
 <img src="../images/db2-locks-6.png"  alt="../images/db2-locks-6.png" />
 </p>
 
@@ -451,6 +461,7 @@ select * from test where a&gt;1 and a&lt;5
 续索引的bitmap做逻辑运算，获取最后结果，有可能更复杂，有待深入了解。
 </p>
 <p>
+<img src="/images/db2-locks-7.png" alt="db2locks table 7"/>
 <img src="../images/db2-locks-7.png"  alt="../images/db2-locks-7.png" />
 </p>
 
@@ -464,6 +475,7 @@ select * from test where a&gt;1 and a&lt;5
 
 
 <p>
+<img src="/images/db2-locks-8.png" alt="db2locks table 8"/>
 <img src="../images/db2-locks-8.png"  alt="../images/db2-locks-8.png" />
 </p>
 
@@ -477,6 +489,7 @@ select * from test where a&gt;1 and a&lt;5
 
 
 <p>
+<img src="/images/db2-locks-9.png" alt="db2locks table 9"/>
 <img src="../images/db2-locks-9.png"  alt="../images/db2-locks-9.png" />
 </p>
 
@@ -490,6 +503,7 @@ select * from test where a&gt;1 and a&lt;5
 
 
 <p>
+<img src="/images/db2-locks-10.png" alt="db2locks table 10"/>
 <img src="../images/db2-locks-10.png"  alt="../images/db2-locks-10.png" />
 </p>
 
@@ -503,6 +517,7 @@ select * from test where a&gt;1 and a&lt;5
 
 
 <p>
+<img src="/images/db2-locks-11.png" alt="db2locks table 11"/>
 <img src="../images/db2-locks-11.png"  alt="../images/db2-locks-11.png" />
 </p>
 
@@ -516,6 +531,7 @@ select * from test where a&gt;1 and a&lt;5
 
 
 <p>
+<img src="/images/db2-locks-12.png" alt="db2locks table 12"/>
 <img src="../images/db2-locks-12.png"  alt="../images/db2-locks-12.png" />
 </p>
 </div>
@@ -542,7 +558,6 @@ db2 +c 'select * from test where a=1 with rs'
 
 
 <pre class="example">db2inst1@tacy:~$ db2pd -d tacy -wlocks
-
 Database Partition 0 -- Database TACY -- Active -- Up 0 days 02:21:36 -- Date 04/03/2014 22:16:53
 
 Locks being waited on :
@@ -580,7 +595,7 @@ db2top -d tacy
 </pre>
 
 <p>首先进入Dyanmic sql视图；按‘/’键，输入‘test’，会列出所有包含‘test’关键字的SQL；
-键入‘L’键，输入对应SQL的‘SQL<sub>Statement</sub> HashValue‘，会显示该SQL全文；键入‘e’键
+键入‘L’键，输入对应SQL的‘SQL_Statement HashValue‘，会显示该SQL全文；键入‘e’键
 ，能够得到该SQL的执行计划。如果想更详细了解db2top，请参考官方文档。
 </p>
 <p>
@@ -606,6 +621,7 @@ db2dart tacy /dd /oi 4 /tsi 2 /ps 0 /np 1 /v y
 <pre class="example">db2 list tables for all
 db2 describe table syscat.tables
 </pre>
+
 
 
 </div>
