@@ -1,0 +1,195 @@
+---
+layout: post
+title: "Docker使用笔记"
+description: "Docker是对LXC的一个抽象，依赖于LXC，相比KVM这种Hypervisor，LXC要轻量级很多，但是LXC很难打包分发，Docker就是解决这个问题，当然还提供了一系列的辅助功能，本文是自己在使用Docker使用过程中的一些记录"
+categories: [tech]
+tags: [virtualization, linux, container]
+---
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Docker</a>
+<ul>
+<li><a href="#sec-1-1">1.1 一个例子</a></li>
+<li><a href="#sec-1-2">1.2 删除一个本地image</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1">Docker<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup></h2>
+<div class="outline-text-2" id="text-1">
+
+<p>Docker是对LXC的一个抽象，依赖于LXC，相比KVM这种Hypervisor，LXC要轻量级很多<sup><a class="footref" name="fnr-.2" href="#fn-.2">2</a></sup>
+，但是LXC很难打包分发，Docker就是解决这个问题，当然还提供了一系列的辅助功能，本
+文是自己在使用Docker使用过程中的一些记录。
+</p>
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1">一个例子</h3>
+<div class="outline-text-3" id="text-1-1">
+
+<p>先来感受一下，我想在我机器上跑一个Oracle，又不想跑在本地。之前都是通过KVM，然后
+建一个Ubuntu虚拟机，安装OracleXE版本。用起来也挺方便，但还是觉得有些不爽，一个是
+占地方，另外就是耗资源，开销挺大，多开几个就受不了。
+</p>
+<p>
+现在我们来看看Docker怎么玩，首先我们在docker仓库查找一下，看看是否有活雷锋：
+</p>
+
+
+<pre class="example">tacy@tacy:~$ sudo docker search oracle
+NAME                              DESCRIPTION                                     STARS     OFFICIAL   TRUSTED
+wnameless/oracle-xe-11g           SYS &amp; SYSTEM password: oracle https://inde...   5                    [OK]
+alexeiled/docker-oracle-xe-11g    This is a spin off from wnameless/docker-o...   2                    [OK]
+haroon/docker-oracle-jdk7         Trusted Oracle JDK7 on Ubuntu:12.10             1                    [OK]
+</pre>
+
+<p>
+很幸运，不用你自己费劲弄了，直接pull下来吧：
+</p><pre class="example">
+sudo docker pull wnameless/oracle-xe-11g
+</pre>
+
+<p>等待下载，时间比较长，接近1G的大小，完成之后来看看：
+</p>
+
+
+<pre class="example">tacy@tacy:~$ sudo docker images
+REPOSITORY                TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+wnameless/oracle-xe-11g   latest              f8d224b82290        17 hours ago        2.389 GB
+ubuntu                    13.10               9f676bd305a4        8 weeks ago         178 MB
+</pre>
+
+
+<p>
+接下来按照该Image的<a href="https://index.docker.io/u/wnameless/oracle-xe-11g/">文档</a>操作，直接启动一个Container：
+</p>
+
+
+<pre class="example">tacy@tacy:~$ sudo docker run -d -p 49160:22 -p 49161:1521 wnameless/oracle-xe-11g
+d14110dc542540c4b83a44d8ca7b9d393a9aa4be7a60cd1ca757463bc12df2a9
+tacy@tacy:~$ ps -ef|grep docker
+root      1599  1588  0 09:58 ?        00:02:43 /usr/bin/docker -d
+root     14977  1599  0 16:10 ?        00:00:00 lxc-start -n d14110dc542540c4b83a44d8ca7b9d393a9aa4be7a60cd1ca757463bc12df2a9 -f /var/lib/docker/containers/d14110dc542540c4b83a44d8ca7b9d393a9aa4be7a60cd1ca757463bc12df2a9/config.lxc -- /.dockerinit -g 172.17.42.1 -i 172.17.0.2/16 -mtu 1500 -- /bin/sh -c sed -i -E "s/HOST = [^)]+/HOST = $HOSTNAME/g" /u01/app/oracle/product/11.2.0/xe/network/admin/listener.ora; service oracle-xe start; /usr/sbin/sshd -D
+</pre>
+
+<p>
+秒级启动，数据库连接信息：
+</p><pre class="example">
+hostname: localhost port: 49161 sid: xe username: system password: oracle
+</pre>
+
+<p>sys用户密码是oracle，可以通过ssh连接到container，root密码是admin：
+</p>
+
+
+<pre class="example">tacy@tacy:~$ ssh root@localhost -p 49160
+root@localhost's password:
+Welcome to Ubuntu 12.04 LTS (GNU/Linux 3.11.0-15-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+root@d14110dc5425:~#
+</pre>
+
+
+<p>
+连接数据库:
+</p>
+
+
+<pre class="example">root@d14110dc5425:~# su - oracle
+oracle@d14110dc5425:~$ sqlplus '/as sysdba'
+
+SQL*Plus: Release 11.2.0.2.0 Production on Fri Apr 4 08:19:36 2014
+
+Copyright (c) 1982, 2011, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
+
+SQL&gt;
+</pre>
+
+
+<p>
+停止container：
+</p>
+
+
+<pre class="example">tacy@tacy:~$ sudo docker ps
+CONTAINER ID        IMAGE                            COMMAND                CREATED             STATUS              PORTS                                                      NAMES
+d14110dc5425        wnameless/oracle-xe-11g:latest   /bin/sh -c sed -i -E   11 minutes ago      Up 11 minutes       0.0.0.0:49160-&gt;22/tcp, 0.0.0.0:49161-&gt;1521/tcp, 8080/tcp   drunk_curie
+tacy@tacy:~$ sudo docker stop d14110dc5425
+d14110dc5425
+tacy@tacy:~$ sudo docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+tacy@tacy:~$
+</pre>
+
+
+<p>
+是不是很酷，还不赶紧去试试。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2">删除一个本地image</h3>
+<div class="outline-text-3" id="text-1-2">
+
+
+<pre class="example">
+sudo docker rmi &lt;IMAGE ID&gt;
+</pre>
+
+
+<p>
+如果你碰到如下错误：
+</p>
+
+
+<pre class="example">tacy@tacy:~$ sudo docker rmi 8dbd9e392a96
+Error: Conflict, 8dbd9e392a96 wasn't deleted
+2014/04/04 14:07:55 Error: failed to remove one or more images
+</pre>
+
+
+<p>
+很可能是由于该image正在被使用，你可以通过下面命令查看和操作
+</p>
+
+
+<pre class="example">sudo docker ps
+sudo docker stop &lt;CONTAINER ID&gt;
+sudo docker rm &lt;CONTAINER ID&gt;
+sudo docker rmi &lt;IMAGE ID&gt;
+</pre>
+
+
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+<p class="footnote"><sup><a class="footnum" name="fn-.1" href="#fnr-.1">1</a></sup> <a href="http://docs.docker.io/en/latest/faq/">Docker FAQ</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.2" href="#fnr-.2">2</a></sup> <a href="http://stackoverflow.com/questions/16047306/how-is-docker-io-different-from-a-normal-virtual-machine?rq=1">How is Docker.io different from a normal virtual machine?</a>
+</p>
+
+
+</div>
+</div>
+</div>
+
+</div>
+</div>
