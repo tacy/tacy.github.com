@@ -14,7 +14,8 @@ tags: [virtualization, linux, container]
 <li><a href="#sec-1">1 Docker</a>
 <ul>
 <li><a href="#sec-1-1">1.1 一个例子</a></li>
-<li><a href="#sec-1-2">1.2 删除一个本地image</a></li>
+<li><a href="#sec-1-2">1.2 运行一个DB2 Container</a></li>
+<li><a href="#sec-1-3">1.3 删除一个本地image</a></li>
 </ul>
 </li>
 </ul>
@@ -70,11 +71,11 @@ ubuntu                    13.10               9f676bd305a4        8 weeks ago   
 
 
 <p>
-接下来按照该Image的<a href="https://index.docker.io/u/wnameless/oracle-xe-11g/">文档</a>操作，直接启动一个Container：
+接下来按照该Image的<a href="https://index.docker.io/u/wnameless/oracle-xe-11g/">文档</a>操作，直接启动一个Container（我这里添加了-name参数）：
 </p>
 
 
-<pre class="example">tacy@tacy:~$ sudo docker run -d -p 49160:22 -p 49161:1521 wnameless/oracle-xe-11g
+<pre class="example">tacy@tacy:~$ sudo docker run -name oraclexe -d -p 49160:22 -p 49161:1521 wnameless/oracle-xe-11g
 d14110dc542540c4b83a44d8ca7b9d393a9aa4be7a60cd1ca757463bc12df2a9
 tacy@tacy:~$ ps -ef|grep docker
 root      1599  1588  0 09:58 ?        00:02:43 /usr/bin/docker -d
@@ -122,17 +123,29 @@ SQL&gt;
 
 <p>
 停止container：
+</p><pre class="example">
+tacy@tacy:~$ sudo docker stop oraclexe
+</pre>
+
+<p>或者：
 </p>
 
 
 <pre class="example">tacy@tacy:~$ sudo docker ps
 CONTAINER ID        IMAGE                            COMMAND                CREATED             STATUS              PORTS                                                      NAMES
-d14110dc5425        wnameless/oracle-xe-11g:latest   /bin/sh -c sed -i -E   11 minutes ago      Up 11 minutes       0.0.0.0:49160-&gt;22/tcp, 0.0.0.0:49161-&gt;1521/tcp, 8080/tcp   drunk_curie
+d14110dc5425        wnameless/oracle-xe-11g:latest   /bin/sh -c sed -i -E   11 minutes ago      Up 11 minutes       0.0.0.0:49160-&gt;22/tcp, 0.0.0.0:49161-&gt;1521/tcp, 8080/tcp   oraclexe
 tacy@tacy:~$ sudo docker stop d14110dc5425
 d14110dc5425
 tacy@tacy:~$ sudo docker ps
 CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
 tacy@tacy:~$
+</pre>
+
+
+<p>
+重新启动该容器：
+</p><pre class="example">
+tacy@tacy:~$ sudo docker start oraclexe
 </pre>
 
 
@@ -144,8 +157,184 @@ tacy@tacy:~$
 </div>
 
 <div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2">删除一个本地image</h3>
+<h3 id="sec-1-2">运行一个DB2 Container</h3>
 <div class="outline-text-3" id="text-1-2">
+
+<p>上面是个简单的例子，让你先对Docker有个认识，现在我们来自己配置一个Container，我
+们一步一步来。
+</p>
+<p>
+假设说你希望有一个跑DB2 Express-C（DB2的免费版本）的Container，搜索一下，仓库里
+没有，只能自己配置一个。
+</p>
+<p>
+首先我们需要从BASE启动一个Container，我们这里的测试环境是Ubuntu12.04/Docker0.75
+，首先我们下载BASE的Image：
+</p><pre class="example">
+sudo docker pull ubuntu
+</pre>
+
+
+<p>
+接下来创建并运行一个Container<sup><a class="footref" name="fnr-.3" href="#fn-.3">3</a></sup>：
+</p>
+
+
+<pre class="example">tacy@tacy:~$ sudo docker run -i -name db2exc -t ubuntu /bin/bash
+root@4e476fda5fb5:/# uname -a
+Linux 4e476fda5fb5 3.11.0-15-generic #23~precise1-Ubuntu SMP Tue Dec 10 16:39:48 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux
+</pre>
+
+<p>
+Kernel版本和宿主机一致。
+</p>
+<p>
+DB2 Express-C在Ubuntu源里面提供了，这点比Oracle XE方便，你只需要apt安装就行,我
+们先来找找：
+</p><pre class="example">
+sudo apt-cache search db2exc
+</pre>
+
+<p>显示没有这个包，由于db2exc属于Canonical Partner软件，查看一下apt源配置文件：
+</p>
+
+
+<pre class="example">root@4e476fda5fb5:/etc/apt# pwd
+/etc/apt
+root@4e476fda5fb5:/etc/apt# cat sources.list
+deb http://archive.ubuntu.com/ubuntu precise main universe
+deb http://archive.ubuntu.com/ubuntu precise-updates main universe
+deb http://archive.ubuntu.com/ubuntu precise-security main universe
+</pre>
+
+<p>
+源没有包括Partner源，我们从宿主机拷贝配置文件过来（简单编辑一下文件也行），但是
+找了一圈，没发现什么好办法直接从Host拷贝文件到Container，不行咱们先装SSH，通过
+scp来：
+</p>
+
+
+<pre class="example">root@4e476fda5fb5:/etc/apt# apt-get install ssh
+root@4e476fda5fb5:/etc/apt# scp tacy@172.17.42.1:/etc/apt/sources.list .
+tacy@172.17.42.1's password:
+sources.list                                                                                                    100% 2278     2.2KB/s   00:00
+root@4e476fda5fb5:/etc/apt# apt-get update
+root@4e476fda5fb5:/etc/apt# apt-cache search db2exc
+db2exc - DB2 Express-C 9.7 Fix Pack 5 for Linux
+</pre>
+
+
+<p>
+安装一下：
+</p><pre class="example">
+apt-get install db2exc
+</pre>
+
+
+<p>
+完成之后，切换到db2inst1用户就可以创建数据库了（缺省没有建库），到这里貌似问题
+就解决了？事情还没完呢，现在我希望能自动启动SSH服务和DB2，并且可以从外面管理数
+据库和访问它。
+</p>
+<p>
+尝试启动一下SSH服务：
+</p>
+
+
+<pre class="example">root@4e476fda5fb5:/usr/sbin# service ssh start
+root@4e476fda5fb5:/usr/sbin# ps -ef|grep ssh
+root@4e476fda5fb5:/usr/sbin#
+</pre>
+
+<p>
+没反应，其实很正常，Container并没有启动upstart服务，为了保证Container的轻量级，
+当你创建一个Container的时候，它只会启动你命令行指定的命令（一般在dockerfile），
+我们的Container启动的是/bin/bash，所以如果你要启动ssh，可以通过下面方式启动：
+</p>
+
+
+<pre class="example">root@4e476fda5fb5:/usr/sbin# /usr/sbin/sshd -D
+Missing privilege separation directory: /var/run/sshd
+root@4e476fda5fb5:/usr/sbin# mkdir /var/run/sshd
+root@4e476fda5fb5:/usr/sbin# /usr/sbin/sshd -D &amp;
+[1] 14
+root@4e476fda5fb5:/usr/sbin# ps -ef|grep sshd
+root        14     1  0 06:36 ?        00:00:00 /usr/sbin/sshd -D
+root        16     1  0 06:36 ?        00:00:00 grep sshd
+</pre>
+
+
+<p>
+能正常启动了，如果你想从外部连接进去，尝试一下：
+</p>
+
+
+<pre class="example">tacy@tacy:/var/cache/apt/archives$ ssh root@172.17.0.26
+ssh: connect to host 172.17.0.26 port 22: Connection refused
+</pre>
+
+
+<p>
+无法连接，你需要先把端口映射到Host上，另外你也不知道root密码，我们先设置一下密
+码，接下来你希望能修改启动参数，但是很不幸，Container启动之后，无法变更命令，你
+需要新建一个Container。<sup><a class="footref" name="fnr-.4" href="#fn-.4">4</a></sup>
+</p>
+<p>
+由于你需要基于当前Container的配置新建一个，但是Container只能从Image创建，因此你
+需要把当前的工作提交一下，生成一个新的Image，提交Image：
+</p>
+
+
+<pre class="example">tacy@tacy:/etc/init.d$ sudo docker commit db2exc tacylee/db2exc
+250b78860e291ebd71948bbb596f7dfc1a7d61563184a433bb44a8f2363079cb
+tacy@tacy:/etc/init.d$ sudo docker images
+REPOSITORY                TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+tacylee/db2exc            latest              250b78860e29        24 seconds ago      1.349 GB
+wnameless/oracle-xe-11g   latest              f8d224b82290        5 days ago          2.389 GB
+</pre>
+
+
+<p>
+基于我们提交的Image运行一个Container：
+</p>
+
+
+<pre class="example">tacy@tacy:/etc/init.d$ sudo docker run -d -p 49170:22 -p 49171:50000 -name tt tacylee/db2exc /bin/bash -c '/etc/init.d/db2exc start &amp;&amp; /usr/sbin/sshd -D'
+c71ac7f85e167850552809ec12a12e50e064d30dddfeb4d71302d16d0ac34502
+</pre>
+
+
+<p>
+这个命令行有几个地方要注意，首先我们通过‘-d’参数让我们的Container运行在detached
+模式（也就是后台模式），其次我们通过‘-p’参数把Container端口22和50000映射到Host，
+另外就是CMD，这地方比较晕，弄了好久才明白<sup><a class="footref" name="fnr-.5" href="#fn-.5">5</a></sup><sup>, </sup><sup><a class="footref" name="fnr-.6" href="#fn-.6">6</a></sup>。关键点是，每个Container必须
+有一个前台服务在运行，如果这个前台服务停止了，Container就停止了<sup><a class="footref" name="fnr-.7" href="#fn-.7">7</a></sup>，例如：
+</p>
+
+
+<pre class="example">tacy@tacy:~$ sudo docker run -d ubuntu echo 'helloworld'
+3088fce883ece6e04282ea965af84ddd4165b67873811e949b543f8930aebe82
+tacy@tacy:~$ sudo docker ps -a
+CONTAINER ID        IMAGE                            COMMAND                CREATED             STATUS              PORTS                                                      NAMES
+3088fce883ec        ubuntu:12.04                     echo helloworld        20 seconds ago      Exit 0
+</pre>
+
+<p>
+可以看到，这个Container已经停止了，因为他没有前台进程在跑了，所以如果你需要你的
+Container提供服务，你需要一个前台进程，很多时候我们用sshd来实现。接下来是要让我
+们的Container启动DB2，使用命令组合实现即可。注意不能让sshd放在前面执行，因为他不
+会结束，所以在它后面的命令无法执行。
+</p>
+<p>
+到这里，我们运行DB2 Express-C的Container就完成了。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3">删除一个本地image</h3>
+<div class="outline-text-3" id="text-1-3">
 
 
 <pre class="example">
@@ -184,6 +373,26 @@ sudo docker rmi &lt;IMAGE ID&gt;
 
 
 <p class="footnote"><sup><a class="footnum" name="fn-.2" href="#fnr-.2">2</a></sup> <a href="http://stackoverflow.com/questions/16047306/how-is-docker-io-different-from-a-normal-virtual-machine?rq=1">How is Docker.io different from a normal virtual machine?</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.3" href="#fnr-.3">3</a></sup> <a href="http://docs.docker.io/en/latest/reference/run/">Docker Run Reference</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.4" href="#fnr-.4">4</a></sup> <a href="https://github.com/dotcloud/docker/issues/1228">running a different command on an existing container</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.5" href="#fnr-.5">5</a></sup> <a href="https://github.com/dotcloud/docker/issues/1826">After importing an image, run gives "no command specified</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.6" href="#fnr-.6">6</a></sup> <a href="https://groups.google.com/forum/#!topic/docker-user/yv2RAnaXvpk">Using sudo inside Docker image</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.7" href="#fnr-.7">7</a></sup> <a href="http://blog.trifork.com/2014/03/11/using-supervisor-with-docker-to-manage-processes-supporting-image-inheritance/">Using Supervisor with Docker to manage processes</a>
 </p>
 
 
