@@ -15,7 +15,8 @@ tags: [virtualization, linux, container]
 <ul>
 <li><a href="#sec-1-1">1.1 一个例子</a></li>
 <li><a href="#sec-1-2">1.2 运行一个DB2 Container</a></li>
-<li><a href="#sec-1-3">1.3 删除一个本地image</a></li>
+<li><a href="#sec-1-3">1.3 Docker仓库</a></li>
+<li><a href="#sec-1-4">1.4 删除一个本地image</a></li>
 </ul>
 </li>
 </ul>
@@ -326,18 +327,164 @@ Container提供服务，你需要一个前台进程，很多时候我们用sshd�
 会结束，所以在它后面的命令无法执行。
 </p>
 <p>
-到这里，我们运行DB2 Express-C的Container就完成了。
+到这里，我们貌似已经已经有了一个跑DB2的Container了。但是，这个世界总是没那么美好
+，我们先看看Container的启动日志：
+</p>
+
+
+<pre class="example">tacy@tacy:~$ sudo docker logs tt
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+error: permission denied on key 'kernel.msgmni'
+error: permission denied on key 'kernel.msgmnb'
+error: permission denied on key 'kernel.msgmax'
+error: permission denied on key 'fs.file-max'
+  * Starting DAS:                       failed.
+
+Message: SQL4401C  The DB2 Administration Server encountered an error during startup.
+
+  * Instance db2inst1 ( db2c_db2inst1 ):        done.
+</pre>
+
+
+<p>
+进去看看/etc/init.d/db2exc脚本，发现它会去修改kernel参数，而Docker为了保证安全
+，这些权限是被关闭的。简单做法是在Container里面配置好，然后别让脚本执行Kernel
+参数的设置操作，另外如果你不想去配置，可以让你的Container运行在特权模式，只需在
+创建Container的时候加上‘-privileged‘参数，这样Container就能执行任何权限指令了。
+</p>
+<p>
+Kernel参数问题解决了之后，你通过SSH连接到Container，切换到db2inst1用户，尝试建
+立数据库，很不幸，你会碰到下面错误：
+</p>
+
+
+<pre class="example">db2inst1@c71ac7f85e16:~$ db2 create db dd
+SQL1042C  An unexpected system error occurred.  SQLSTATE=58004
+</pre>
+
+
+<p>
+查看DB2日志文件，你会发现如下错误信息：
+</p>
+
+
+<pre class="example">2014-04-11-11.44.10.392525+000 E100588E1093        LEVEL: Error (OS)
+PID     : 369                  TID  : 140502687016704PROC : db2sysc
+INSTANCE: db2inst1             NODE : 000          DB   : DD
+EDUID   : 79                   EDUNAME: db2loggr (DD)
+FUNCTION: DB2 UDB, oper system services, sqloopenp, probe:80
+MESSAGE : ZRC=0x870F0002=-2029060094=SQLO_BPSE "Debug logic error detected"
+          DIA8501C A buffer pool logic error has occurred.
+CALLED  : OS, -, open                             OSERR: EINVAL (22)
+DATA #1 : Codepath, 8 bytes
+4:11:15:20:22:37
+DATA #2 : File name, 63 bytes
+/home/db2inst1/db2inst1/NODE0000/SQL00001/SQLOGDIR/S0000000.LOG
+DATA #3 : SQO Open File Options, PD_TYPE_SQO_FILE_OPEN_OPTIONS, 4 bytes
+SQLO_REVISE, SQLO_READWRITE, SQLO_SHAREREAD, SQLO_WRITETHRU, SQLO_SECTOR_ALIGNED, SQLO_NO_THREAD_LEVEL_FILE_LOCK
+DATA #4 : Hex integer, 4 bytes
+0x00000180
+DATA #5 : signed integer, 4 bytes
+0
+DATA #6 : signed integer, 4 bytes
+16384
+DATA #7 : String, 105 bytes
+Search for ossError*Analysis probe point after this log entry for further
+</pre>
+
+
+<p>
+这个问题折腾了我两天，对Linux编程不了解的恶果。导致该问题的原因是Docker在mount
+rootfs的时候，用的aufs，但是不支持O_DIRECT<sup><a class="footref" name="fnr-.8" href="#fn-.8">8</a></sup><sup>, </sup><sup><a class="footref" name="fnr-.9" href="#fn-.9">9</a></sup><sup>, </sup><sup><a class="footref" name="fnr-.10" href="#fn-.10">10</a></sup><sup>, </sup><sup><a class="footref" name="fnr-.11" href="#fn-.11">11</a></sup>，而DB2对有
+些文件的操作用到O_DIRECT，比如日志，这就导致了该问题。上面的链接中提到0.7版本已
+经mount为ext4，并且支持O_DIRECT，但实际情况看貌似没有。解决办法上面的链接里面都
+提到了，我这里采用的办法是直接bind-mount了Host的一个目录到Container，该目录位于
+ext4文件系统，并且支持O_DIRECT，最终的Container创建命令如下：
+</p><pre class="example">
+sudo docker run -d -p 49170:22 -p 49171:50000 -v /home/tacy/Docker/db2db:/home/db2inst1/db2db -name db2exc -privileged tacylee/db2exc /bin/bash -c '/etc/init.d/db2exc start &amp;&amp; /usr/sbin/sshd -D'
+</pre>
+
+<p>然后把数据库创建在/home/db2inst1/db2db目录中即可。
+</p>
+<p>
+如果你不想bind-mount Host的目录到Container（毕竟很不灵活），也可以考虑替换Docker
+的后台存储为Devicemapper<sup><a class="footref" name="fnr-.12" href="#fn-.12">12</a></sup>。
+</p>
+<p>
+对于这类问题的诊断方法可以通过strace来实现，例如上面的例子：从DB2的日志里面我们
+知道是db2sysc需要执行系统的OPEN操作出现问题，你可以通过stace来捕获具体的错误。
+</p>
+<p>
+我们先获取db2sysc的进程ID：
+</p>
+
+
+<pre class="example">root@314f5d6aa350:~# ps -ef|grep db2sysc
+db2inst1   369   367  0 11:30 ?        00:00:23 db2sysc
+root      2894  2881  0 15:12 pts/1    00:00:00 grep --color=auto db2sysc
+</pre>
+
+
+<p>
+然后用下面命令trace db2sysc的所有open操作：
+</p>
+
+
+<pre class="example">root@314f5d6aa350:~# strace -Ff -e open -o trace.out -p 369
+Process 369 attached with 36 threads - interrupt to quit
+</pre>
+
+
+<p>
+在另一个终端执行数据库创建操作，完成之后，分析trace.out文件：
+</p>
+
+
+<pre class="example">2973  open("/home/db2inst1/sqllib/profile.env", O_RDONLY) = -1 ENOENT (No such file or directory)
+2973  open("/etc/passwd", O_RDONLY|O_CLOEXEC) = 42
+2973  open("/var/db2/global.reg", O_RDONLY|O_CREAT, 0644) = 42
+2973  open("/home/db2inst1/db2inst1/NODE0000/SQL00001/SQLOGCTL.LFH.1", O_RDWR|O_DSYNC) = 42
+2973  open("/home/db2inst1/db2inst1/NODE0000/SQL00001/SQLOGCTL.LFH.2", O_RDWR|O_DSYNC) = 43
+2973  open("/proc/mounts", O_RDONLY)    = 45
+2973  open("/home/db2inst1/db2inst1/NODE0000/SQL00001/SQLOGDIR/S0000000.LOG", O_RDWR|O_DSYNC|O_DIRECT) = -1 EINVAL (Invalid argument)
+</pre>
+
+
+<p>
+看截取部分的最后一行，提示open操作的参数错误，基本你就能判断是O_DIRECT无法执行
+导致，这属于换个思路解决问题，也很有效果。
+</p>
+<p>
+到这里，一个能跑DB2 Express-C的Container才算完成了，唯一的遗憾就是挂着个外部目
+录，不方便迁移，等待Docker解决吧。
 </p>
 </div>
 
 </div>
 
 <div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3">删除一个本地image</h3>
+<h3 id="sec-1-3">Docker仓库</h3>
 <div class="outline-text-3" id="text-1-3">
 
+<p>前面我们提到Docker的仓库，里面有各种Image提供，你也可以把你的Image提交到仓库，供
+别人使用，你需要先去<a href="https://index.docker.io/">Docker Index</a>注册一个帐号，然后通过docker login命令登入，再通
+过docker push即可，具体我也没有试过，等我把DB2的Image弄好了，或许去提交一个玩玩。
+</p>
+</div>
 
-<pre class="example">
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4">删除一个本地image</h3>
+<div class="outline-text-3" id="text-1-4">
+
+<p>删除命令如下：
+</p><pre class="example">
 sudo docker rmi &lt;IMAGE ID&gt;
 </pre>
 
@@ -393,6 +540,26 @@ sudo docker rmi &lt;IMAGE ID&gt;
 
 
 <p class="footnote"><sup><a class="footnum" name="fn-.7" href="#fnr-.7">7</a></sup> <a href="http://blog.trifork.com/2014/03/11/using-supervisor-with-docker-to-manage-processes-supporting-image-inheritance/">Using Supervisor with Docker to manage processes</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.8" href="#fnr-.8">8</a></sup> <a href="https://github.com/dotcloud/docker/issues/1916">docker build should support privileged operations</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.9" href="#fnr-.9">9</a></sup> <a href="https://github.com/dotcloud/docker/issues/3433">User defined layer mount options</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.10" href="#fnr-.10">10</a></sup> <a href="https://groups.google.com/forum/#!topic/docker-user/1pFhqlfbqQI">DB2 in container can't start unless I mount non-aufs volume from host</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.11" href="#fnr-.11">11</a></sup> <a href="http://webcache.googleusercontent.com/search?q=cache:tp3o-xrNBycJ:permalink.gmane.org/gmane.comp.sysutils.docker.user/950+&amp;cd=4&amp;hl=en&amp;ct=clnk">Re: Oracle Database won't run in docker container</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.12" href="#fnr-.12">12</a></sup> <a href="http://muehe.org/posts/switching-docker-from-aufs-to-devicemapper/">Switching Docker from aufs to devicemapper</a>
 </p>
 
 
