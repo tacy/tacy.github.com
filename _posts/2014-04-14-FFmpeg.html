@@ -1,0 +1,87 @@
+---
+layout: post
+title: "FFmpeg使用笔记"
+description: "这两天给孩子整理照片和视频，发现很多视频都非常大，一个3分钟的视频就300M，用vlc看了一下发现视频都没有做压缩，于是有了这个文章。"
+categories: [tech]
+tags: [multimedia, linux]
+---
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 FFmpeg</a></li>
+<li><a href="#sec-2">2 转码压缩</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1">FFmpeg</h2>
+<div class="outline-text-2" id="text-1">
+
+<p>视频压缩首先想到的自然是FFmpeg，我用的是Ubuntu，很不幸Ubuntu用Libav提到了FFmpeg
+，具体为啥有了Libav建议libav官网八卦去，反正就是一些开发人员对项目管理者不满另起
+炉灶啥的，这个暂且不提了<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup>。
+</p>
+<p>
+关键是，Libav的资料太少了，去官网看了一下WIKI，直接就没兴趣用了，Google上搜索也
+没有太多使用经验，虽然和FFmpeg大致相同，但总觉的别扭。我想把视频转成X264加AAC格
+式，采用VBR方式（就是动态码率，更好的压缩比和视频质量），看了一下X264没问题，但
+是AAC有好几个实现，其中最好的libfdk_aac不是GPL的license，所以Libav提供的版本不支
+持，也就是说我需要自己编译<sup><a class="footref" name="fnr-.2" href="#fn-.2">2</a></sup>。关键是这玩意编译还依赖很多外部包，人家FFmpeg编
+译文档写的很清晰，Libav啥都没有。没办法，直接干掉，换FFmpeg来<sup><a class="footref" name="fnr-.3" href="#fn-.3">3</a></sup>。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2">转码压缩</h2>
+<div class="outline-text-2" id="text-2">
+
+<p>发现没啥可写的<sup><a class="footref" name="fnr-.4" href="#fn-.4">4</a></sup><sup>, </sup><sup><a class="footref" name="fnr-.5" href="#fn-.5">5</a></sup><sup>, </sup><sup><a class="footref" name="fnr-.6" href="#fn-.6">6</a></sup>，别人都写的太清除了，我这里直接上我的命令吧：
+</p>
+<pre class="example">
+ffmpeg -i IMG_2596.MOV -c:v libx264 -crf 28 -c:a libfdk_aac -vbr 4 output.mp4
+</pre>
+
+
+<p>
+最后压缩下来，一个8分钟的视频大概120M左右，之前可是650M，播放了一下，看不出啥区
+别，效果不错，就是FFmpeg貌似不是那么高效，CPU都在nice状态，找个时间分析一下。
+</p>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+<p class="footnote"><sup><a class="footnum" name="fn-.1" href="#fnr-.1">1</a></sup> <a href="http://superuser.com/questions/507386/libav-vs-ffmpeg-better-to-use-libav-avconv-today">libav vs ffmpeg - better to use libav (avconv) today</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.2" href="#fnr-.2">2</a></sup> <a href="http://unix.stackexchange.com/questions/77687/how-do-i-convert-flac-files-to-aac-preferrably-vbr-320k">How do I convert FLAC files to AAC</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.3" href="#fnr-.3">3</a></sup> <a href="https://trac.ffmpeg.org/wiki/UbuntuCompilationGuide">Compile FFmpeg on Ubuntu, Debian, or Mint</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.4" href="#fnr-.4">4</a></sup> <a href="http://slhck.info/video-encoding">Video Encoding</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.5" href="#fnr-.5">5</a></sup> <a href="http://trac.ffmpeg.org/wiki/AACEncodingGuide">FFmpeg and AAC Encoding Guide</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.6" href="#fnr-.6">6</a></sup> <a href="http://trac.ffmpeg.org/wiki/x264EncodingGuide">FFmpeg and x264 Encoding Guide</a>
+</p>
+
+
+
+</div>
+</div>
+
+</div>
+</div>
