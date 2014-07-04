@@ -15,9 +15,12 @@ tags: [ubuntu, performance, tools]
 <li><a href="#sec-1-1">1.1 使用前提</a></li>
 <li><a href="#sec-1-2">1.2 编译</a>
 <ul>
-<li><a href="#sec-1-2-1">1.2.1 configure</a></li>
+<li><a href="#sec-1-2-1">1.2.1 kernel编译</a></li>
+<li><a href="#sec-1-2-2">1.2.2 systemtap</a></li>
 </ul>
 </li>
+<li><a href="#sec-1-3">1.3 使用</a></li>
+<li><a href="#sec-1-4">1.4 systemtap &amp; byteman</a></li>
 </ul>
 </li>
 </ul>
@@ -28,13 +31,14 @@ tags: [ubuntu, performance, tools]
 <h2 id="sec-1">Systemtap</h2>
 <div class="outline-text-2" id="text-1">
 
-<p>systemtap是红帽开发的一款分析工具，如果你需要使用的话，最好在redhat的系统上，其
-他系统兼容性都不好，基本上都只能使用部分功能（主要是kernel那部分），他自带的很多
-例子都无法兼容（主要还是代码对不上）。
+<p>systemtap是红帽开发的一款分析工具，如果你需要使用的话，最好在redhat的系统上，在
+Ubuntu上兼容性不好，坑非常多，Ubuntu缺省提供的Kernel无法正常运行Systemtap，只能
+跑跑HelloWorld，带的那些脚本都无法跑通，没法用。只能自己重新编译kernel，修改一些
+CFLAGS参数。
 </p>
 <p>
-我电脑使用的是ubuntu 12.04，kernel用的是trusy版本的3.13，自带的版本是1.6，基本没
-法用。
+我电脑使用的是ubuntu 12.04，kernel用的是trusy版本的3.13，Systemtap缺省版本是1.6
+，没法用。
 </p>
 
 </div>
@@ -43,7 +47,8 @@ tags: [ubuntu, performance, tools]
 <h3 id="sec-1-1">使用前提</h3>
 <div class="outline-text-3" id="text-1-1">
 
-<p>需要安装dbgsym包，这个包在ubuntu的ddeb源提供<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup>，系统缺省不包括，需要自己添加：
+<p>systemtap依赖dbgsym包，你必须安装kernel的dbgsym包，这个包在ubuntu的ddeb源提供<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup>，
+系统缺省不包括，需要自己添加：
 </p>
 
 
@@ -79,6 +84,10 @@ tacy@tacy:~$ sudo apt-get install linux-image-3.13.0-27-generic-dbgsym=3.13.0-27
 </pre>
 
 
+<p>
+当然上面的前提是ubuntu提供的kernel没问题的前提下，如果你想在ubuntu下跑systemtap
+可没那么轻松，必须自己编译kernel和dbgsym！
+</p>
 </div>
 
 </div>
@@ -87,21 +96,157 @@ tacy@tacy:~$ sudo apt-get install linux-image-3.13.0-27-generic-dbgsym=3.13.0-27
 <h3 id="sec-1-2">编译</h3>
 <div class="outline-text-3" id="text-1-2">
 
-<p>没啥特殊的，注意elfutils版本就行，缺省的0.152好像没问题。我编译了systemtap 2.5版
-本，可以用。
-</p>
-<p>
-另外需要主要的即使systemtap可以配合byteman使用，但是～，基本上别抱啥希望，我尝试
-了一下，问题一堆，能正常编译，无法使用，当然你也可以试试，一些需要注意的点：
-</p>
 
 </div>
 
 <div id="outline-container-1-2-1" class="outline-4">
-<h4 id="sec-1-2-1">configure</h4>
+<h4 id="sec-1-2-1">kernel编译</h4>
 <div class="outline-text-4" id="text-1-2-1">
 
-<p>仔细看systemtap源代码中java目录下的readme，这里有好几个坑：
+<p>导致ubuntu提供的kernel不能运行的systemtap的根本问题还是gcc，gcc的一些bug导致
+产生了错误的debuginfo，无法正确定位变量<sup><a class="footref" name="fnr-.2" href="#fn-.2">2</a></sup>，产生如下错误信息：
+</p>
+
+
+<pre class="example">semantic error: not accessible at this address [man error::dwarf] (0xffffffff811b42b0, dieoffset: 0x177422e): identifier '$file' at /usr/share/systemtap/tapset/linux/vfs.stp:855:9
+</pre>
+
+
+<p>
+当然systemtap对此问题进行了修正，但是它需要有gcc编译时使用的编译参数才行。gcc提
+供了一个参数来记录编译时参数，但是ubuntu编译kernel的时候并没有带上这个参数，导
+致systemtap无法正确定位参数的位置，另外gcc的这个参数只有在4.7以上版本才有，而
+12.04缺省带的gcc版本是4.6！
+</p>
+<p>
+所以基于上面这些问题，我们需要做两件事情，首先是升级gcc版本到4.7，接下来是编译
+kernel，同时加上gcc参数来记录编译项。
+</p>
+<p>
+升级gcc我就不详细介绍了，直接参考VK的文章<sup><a class="footref" name="fnr-.3" href="#fn-.3">3</a></sup>。
+</p>
+<p>
+编译kernel最关键的是修改gcc编译参数，这个问题搞了好几天，没办法，对kernel还是不
+熟。
+</p>
+<p>
+首先是你需要知道ubuntu下编译kernel的基本流程<sup><a class="footref" name="fnr-.4" href="#fn-.4">4</a></sup>。参考引用，我们先获取代码：
+</p>
+<pre class="example">
+apt-get source linux-image-`uname -r`
+</pre>
+
+
+<p>
+接下来你需要进入源码目录，修改最上层目录下的Makefile，我的目录如下：
+</p>
+<pre class="example">
+/home/tacy/Downloads/linux-lts-trusty-3.13.0/Makefile
+</pre>
+
+
+<p>
+修改内容如下：
+</p>
+
+
+<pre class="example">HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -grecord-gcc-switches -O2 -fno-omit-frame-pointer
+HOSTCXXFLAGS = -O2 -fno-omit-frame-pointer -grecord-gcc-switches
+。。。
+KBUILD_CFLAGS   += -O2 -grecord-gcc-switches
+</pre>
+
+
+<p>
+主要是添加‘-grecord-gcc-switches‘和’-fno-omit-frame-pointer‘参数。
+</p>
+<p>
+接下来就是编译了，如果你需要修改编译模块，直接用下面命令：
+</p>
+<pre class="example">
+fakeroot debian/rules editconfigs
+fakeroot debian/rules updateconfigs
+</pre>
+
+
+<p>
+编译：
+</p>
+<pre class="example">
+fakeroot debian/rules binary-generic skipdbg=false
+</pre>
+
+
+<p>
+然后安装编译包就行了，需要注意的时候编译过程会会占用16G左右的空间，并且编译过程
+非常漫长，在我机器上跑了将近一个半小时，考验耐性～
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2">systemtap</h4>
+<div class="outline-text-4" id="text-1-2-2">
+
+<p>没啥特殊的，注意elfutils版本就行，缺省的0.152好像没问题。我编译了systemtap 2.5版
+本，可以用，直接下载的源码包编译就行。
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3">使用</h3>
+<div class="outline-text-3" id="text-1-3">
+
+<p>看看使用效果：
+</p>
+
+
+
+<pre class="example">tacy@tacy:/usr/local/share/doc/systemtap/examples/io$ sudo stap disktop.stp
+
+Fri Jul  4 15:14:07 2014 , Average:  50Kb/sec, Read:     219Kb, Write:     32Kb
+
+     UID      PID     PPID                       CMD   DEVICE    T        BYTES
+    1000     2496     1861                    oracle     sda5    R       131072
+    1000     2832        1           unity-panel-ser     sda5    R        76217
+    1000     2496     1861                    oracle     sda5    W        32768
+    1000     2834        1               hud-service     dm-1    R        16192
+    1000     2689        1                   dropbox     sda5    R          894
+
+Fri Jul  4 15:14:12 2014 , Average:  42Kb/sec, Read:     192Kb, Write:     18Kb
+
+     UID      PID     PPID                       CMD   DEVICE    T        BYTES
+    1000     2496     1861                    oracle     sda5    R       131072
+    1000     8893     1861                    oracle     sda5    R        65944
+    1000     2496     1861                    oracle     sda5    W        16384
+    1000     5157        1           Chrome_CacheThr     dm-1    W         2033
+    1000     2953        1            gnome-terminal     sda5    W         1025
+    1000     5157        1           Chrome_CacheThr     dm-1    R           36
+</pre>
+
+
+<p>
+好了，ubuntu上也能systemtap啦～
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4">systemtap &amp; byteman</h3>
+<div class="outline-text-3" id="text-1-4">
+
+
+<p>
+另外需要注意的是systemtap可以配合byteman使用，但是～，基本上别抱啥希望，我尝试
+了一下，问题一堆，能正常编译，无法使用，当然你也可以试试，一些需要注意的点：
+</p>
+<p>
+仔细看systemtap源代码中java目录下的readme，这里有好几个坑：
 </p>
 <p>
 首先是编译的时候要指定&ndash;with-java选项，否则不支持。
@@ -126,7 +271,7 @@ process(\"/usr/local/libexec/systemtap/libHelperSDT_amd64.so\").
 程，不好意思，同样无视～～～
 </p>
 <p>
-解决上面问题之后，简单的例子能跑了<sup><a class="footref" name="fnr-.2" href="#fn-.2">2</a></sup>，但是我尝试了一下对weblogic做profile，
+解决上面问题之后，简单的例子能跑了<sup><a class="footref" name="fnr-.5" href="#fn-.5">5</a></sup>，但是我尝试了一下对weblogic做profile，
 不行，一直抛如下错误，放弃～
 </p>
 
@@ -180,9 +325,20 @@ process(\"/usr/local/libexec/systemtap/libHelperSDT_amd64.so\").
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn-.2" href="#fnr-.2">2</a></sup> <a href="http://developerblog.redhat.com/2014/01/10/probing-java-w-systemtap/">Probing java methods with systemtap</a>
+<p class="footnote"><sup><a class="footnum" name="fn-.2" href="#fnr-.2">2</a></sup> <a href="http://sourceware-org.1504.n7.nabble.com/semantic-error-not-accessible-at-this-address-td245602.html">semantic error: not accessible at this address</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.3" href="#fnr-.3">3</a></sup> <a href="http://www.swiftsoftwaregroup.com/upgrade-gcc-4-7-ubuntu-12-04/">How to upgrade GCC to 4.7+ on Ubuntu 12.04</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.4" href="#fnr-.4">4</a></sup> <a href="https://help.ubuntu.com/community/Kernel/Compile">Ubuntu Kernel Compile</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.5" href="#fnr-.5">5</a></sup> <a href="http://developerblog.redhat.com/2014/01/10/probing-java-w-systemtap/">Probing java methods with systemtap</a>
 </p></div>
-</div>
 </div>
 </div>
 
