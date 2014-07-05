@@ -170,6 +170,38 @@ fakeroot debian/rules updateconfigs
 
 
 <p>
+注意下面项需要打开<sup><a class="footref" name="fnr-.5" href="#fn-.5">5</a></sup>
+</p>
+
+
+<pre class="example"># for perf_events:
+CONFIG_PERF_EVENTS=y
+# for stack traces:
+CONFIG_FRAME_POINTER=y
+# kernel symbols:
+CONFIG_KALLSYMS=y
+# tracepoints:
+CONFIG_TRACEPOINTS=y
+# kernel function trace:
+CONFIG_FTRACE=y
+# kernel-level dynamic tracing:
+CONFIG_KPROBES=y
+CONFIG_KPROBE_EVENTS=y
+# user-level dynamic tracing:
+CONFIG_UPROBES=y
+CONFIG_UPROBE_EVENTS=y
+# full kernel debug info:
+CONFIG_DEBUG_INFO=y
+# kernel lock tracing:
+CONFIG_LOCKDEP=y
+# kernel lock tracing:
+CONFIG_LOCK_STAT=y
+# kernel dynamic tracepoint variables:
+CONFIG_DEBUG_INFO=y
+</pre>
+
+
+<p>
 编译：
 </p>
 <pre class="example">
@@ -271,7 +303,7 @@ process(\"/usr/local/libexec/systemtap/libHelperSDT_amd64.so\").
 程，不好意思，同样无视～～～
 </p>
 <p>
-解决上面问题之后，简单的例子能跑了<sup><a class="footref" name="fnr-.5" href="#fn-.5">5</a></sup>，但是我尝试了一下对weblogic做profile，
+解决上面问题之后，简单的例子能跑了<sup><a class="footref" name="fnr-.6" href="#fn-.6">6</a></sup>，但是我尝试了一下对weblogic做profile，
 不行，一直抛如下错误，放弃～
 </p>
 
@@ -337,7 +369,11 @@ process(\"/usr/local/libexec/systemtap/libHelperSDT_amd64.so\").
 </p>
 
 
-<p class="footnote"><sup><a class="footnum" name="fn-.5" href="#fnr-.5">5</a></sup> <a href="http://developerblog.redhat.com/2014/01/10/probing-java-w-systemtap/">Probing java methods with systemtap</a>
+<p class="footnote"><sup><a class="footnum" name="fn-.5" href="#fnr-.5">5</a></sup> <a href="http://www.brendangregg.com/perf.html#Building">perf Examples</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.6" href="#fnr-.6">6</a></sup> <a href="http://developerblog.redhat.com/2014/01/10/probing-java-w-systemtap/">Probing java methods with systemtap</a>
 </p></div>
 </div>
 </div>
