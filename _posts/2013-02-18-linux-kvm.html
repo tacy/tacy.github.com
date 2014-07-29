@@ -46,9 +46,14 @@ tags: [virtualization, hypervisor, kvm, spice]
 <li><a href="#sec-9-3">9.3 snapshot[16]</a></li>
 </ul>
 </li>
-<li><a href="#sec-10">10 其他相关</a>
+<li><a href="#sec-10">10 qemu概念</a>
 <ul>
-<li><a href="#sec-10-1">10.1 查看虚拟机ip地址</a></li>
+<li><a href="#sec-10-1">10.1 arm-softmmu和arm-linux-user区别</a></li>
+</ul>
+</li>
+<li><a href="#sec-11">11 其他相关</a>
+<ul>
+<li><a href="#sec-11-1">11.1 查看虚拟机ip地址</a></li>
 </ul>
 </li>
 </ul>
@@ -316,7 +321,7 @@ $kvm-img create -f raw centos.img 10G
   件系统支持holes。
 </li>
 <li>qcow2是功能丰富，精简配置无须文件系统支持holes，支持压缩和加密，支持快照和
-  backing<sub>file功能。</sub>
+  backing_file功能。
 </li>
 <li>vdi/vmdk/vpc，分别对应virtualbox/vmware/ms virtualpc
 </li>
@@ -439,14 +444,14 @@ kvm -cpu ?
 </p>
 <p>
   同时采用virtio半虚拟化驱动，相比模拟驱动性能提升明显，前提同样是guest os需要支
-  持virtio驱动。同时打开两者获取最好的网络性能。另外注意vhost需要加载vhost<sub>net模块：</sub>
+  持virtio驱动。同时打开两者获取最好的网络性能。另外注意vhost需要加载vhost_net模块：
 </p><pre class="example">
 modprobe vhost_net
 </pre>
 
 
 <p>
-  确保使用了vhost<sub>net特性，你只需在启动guest的时候，查看是否有vhost线程存在：</sub>
+  确保使用了vhost_net特性，你只需在启动guest的时候，查看是否有vhost线程存在：
 </p>
 
 
@@ -467,8 +472,8 @@ root      1563     2  0 Feb18 ?        00:00:00 [vhost-1561]
 
 
 <p>
-  上面是unix socket模式, 这样你可以直接发送system<sub>powerdown指令关机了，相当于按</sub>
-  power键；system<sub>reset相当于按reset键，这个要小心</sub>:
+  上面是unix socket模式, 这样你可以直接发送system_powerdown指令关机了，相当于按
+  power键；system_reset相当于按reset键，这个要小心:
 </p><pre class="example">
 socat - UNIX-CONNECT:/home/tacy/vm/monitor/centos.monitor
 </pre>
@@ -814,7 +819,7 @@ sudo make install
 <pre class="example">cd qemu
 ./configure --prefix=/usr/local \
     --target-list=x86_64-softmmu \
-    --extra-cflags="-march=native -O2 -pipe" \
+    --extra-cflags="-march=native -O2 -no-omit-framepoint -pipe" \
     --extra-ldflags="-Wl,-Bsymbolic-functions -Wl,-z,relro" \
     --audio-drv-list="pa,alsa,oss" \
     --enable-kvm --enable-linux-aio --enable-spice \
@@ -831,7 +836,7 @@ sudo make install
 
 
 <p>
-编译过程中，可能会出现动态库找不到的情况，确保LD<sub>LIBRARY</sub><sub>PATH包括</sub>/usr/local/lib
+编译过程中，可能会出现动态库找不到的情况，确保LD_LIBRARY_PATH包括/usr/local/lib
 目录，这样你就可以用spice了。<sup><a class="footref" name="fnr-.13" href="#fn-.13">13</a></sup>
 </p>
 </div>
@@ -1039,24 +1044,42 @@ kvm-img rebase -f qcow2 -u -b centos54.img -F raw centos-clone.qcow2
 <p>快照是虚拟机一个常用的功能，你可以利用快照功能来保留某个时间点的虚拟机状态，方便
 虚拟机回滚。离线快照参考man手册即可。在线快照通过monitor或者QMP实现。
 </p>
-
 </div>
 </div>
 
 </div>
 
 <div id="outline-container-10" class="outline-2">
-<h2 id="sec-10">其他相关</h2>
+<h2 id="sec-10">qemu概念</h2>
 <div class="outline-text-2" id="text-10">
+
+
+</div>
+
+<div id="outline-container-10-1" class="outline-3">
+<h3 id="sec-10-1">arm-softmmu和arm-linux-user区别</h3>
+<div class="outline-text-3" id="text-10-1">
+
+<p>前者是指模拟的硬件平台；后者是直接在宿主平台运行arm程序，无须安装android系统即
+可运行。
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-11" class="outline-2">
+<h2 id="sec-11">其他相关</h2>
+<div class="outline-text-2" id="text-11">
 
 
 <hr/>
 
 </div>
 
-<div id="outline-container-10-1" class="outline-3">
-<h3 id="sec-10-1">查看虚拟机ip地址</h3>
-<div class="outline-text-3" id="text-10-1">
+<div id="outline-container-11-1" class="outline-3">
+<h3 id="sec-11-1">查看虚拟机ip地址</h3>
+<div class="outline-text-3" id="text-11-1">
 
 <p>如果虚拟机很少，简单通过“arp -an”查看即可，如果虚拟机很多，你不容易找到ip和mac的
 对应关系，需要自己写脚本去实现了<sup><a class="footref" name="fnr-.17" href="#fn-.17">17</a></sup>

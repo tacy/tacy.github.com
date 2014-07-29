@@ -1,0 +1,94 @@
+---
+layout: post
+title: "android notes"
+description: "android相关知识笔记"
+categories: [tech]
+tags: [android, app]
+---
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Android</a>
+<ul>
+<li><a href="#sec-1-1">1.1 emulator</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1">Android</h2>
+<div class="outline-text-2" id="text-1">
+
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1">emulator</h3>
+<div class="outline-text-3" id="text-1-1">
+
+<p>为了模拟器性能<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup>，需选择x86的cpu，同时打开haxm（intel)支持，在ubuntu下打开hamx，
+只需加载kvm模块，同时启动命令上添加‘-qemu -enable-kvm’ 参数即可，启动命令：
+</p>
+<pre class="example">
+emulator64-x86 -avd test -data userdata.img -qemu -m 2048 -enable-kvm
+</pre>
+
+
+<p>
+其中的data如果没有指定，emulator好像每次都会初始化数据，也就是说重启之后，通过
+adb安装的应用就没有了。
+</p>
+<p>
+另外avd文件存放在home/.android目录下。
+</p>
+<p>
+你可以通过mksdcard创建sd镜像文件。
+</p>
+<p>
+通过adb安装app和拷贝文件：
+</p>
+
+
+<pre class="example">adb push localfile /sdcard/
+adb install test.apk
+</pre>
+
+
+<p>
+启动sdk manager：
+</p>
+<pre class="example">
+android sdk
+</pre>
+
+
+<p>
+启动avd manager：
+</p>
+<pre class="example">
+android avd
+</pre>
+
+
+<p>
+具体的其他子命令可以help，主要是abd和android两个。
+</p>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+<p class="footnote"><sup><a class="footnum" name="fn-.1" href="#fnr-.1">1</a></sup> <a href="http://stackoverflow.com/questions/1554099/why-is-the-android-emulator-so-slow">Why is the Android emulator so slow?</a>
+</p>
+
+
+</div>
+</div>
+</div>
+
+</div>
+</div>

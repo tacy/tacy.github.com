@@ -31,7 +31,7 @@ tags: [java, tools, performance, tuning]
 
 <p>
 火焰图<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup>，简单通过x轴横条宽度来度量时间指标，y轴代表线程栈的层次，简单明了，
-容易找出具体的可有化点，非常方便，当然前提是我们通过profiler工具获取到profiler
+容易找出具体的可优化点，非常方便，当然前提是我们通过profiler工具获取到profiler
 数据。
 </p>
 
@@ -47,7 +47,7 @@ profiler工具都是有问题的<sup><a class="footref" name="fnr-.2" href="#fn-
 执行效率。
 </p>
 <p>
-当然如果你不是通过上面方式实现，二是通过获取on-cpu线程的线程栈方式，这又会带来
+当然如果你不是通过上面方式实现，而是通过获取on-cpu线程的线程栈方式，这又会带来
 一个麻烦的问题：获取系统范围的线程栈，jvm必须处于safepoint<sup><a class="footref" name="fnr-.4" href="#fn-.4">4</a></sup>状态，只有当线
 程处于safepoint状态的时候，别的线程才能去获取它的线程栈，而这个safepoint是由jvm
 控制的，这对于profiler非常不利，有可能一个很热的代码块，jvm不会在该代码块中间放

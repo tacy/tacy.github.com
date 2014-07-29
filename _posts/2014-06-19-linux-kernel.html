@@ -43,8 +43,8 @@ tags: [linux, kernel, troubleshooting, tuning]
 <h4 id="sec-1-1-1">vfs_cache_pressure</h4>
 <div class="outline-text-4" id="text-1-1-1">
 
-<p>简单说，就是控制page cache的回收，是有限回收data block还是meta block，一般情况下
-建议还是保留meta block缓存。<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup>
+<p>简单说，就是控制page cache的回收，是优先回收data block还是meta block(page cache
+包括这两部分），一般情况下建议还是保留meta block缓存。<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup>
 </p>
 <p>
 kernel设置该值为100，也就是优先回收meta block，会导致文件浏览类的工具速度变慢，
