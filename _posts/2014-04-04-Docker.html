@@ -16,7 +16,12 @@ tags: [virtualization, linux, container]
 <li><a href="#sec-1-1">1.1 一个例子</a></li>
 <li><a href="#sec-1-2">1.2 运行一个DB2 Container</a></li>
 <li><a href="#sec-1-3">1.3 Docker仓库</a></li>
-<li><a href="#sec-1-4">1.4 删除一个本地image</a></li>
+<li><a href="#sec-1-4">1.4 tips</a>
+<ul>
+<li><a href="#sec-1-4-1">1.4.1 进入正在运行的容器</a></li>
+<li><a href="#sec-1-4-2">1.4.2 删除容器</a></li>
+<li><a href="#sec-1-4-3">1.4.3 删除一个本地image</a></li>
+</ul></li>
 </ul>
 </li>
 <li><a href="#sec-2">2 centos</a></li>
@@ -486,8 +491,65 @@ Process 369 attached with 36 threads - interrupt to quit
 </div>
 
 <div id="outline-container-1-4" class="outline-3">
-<h3 id="sec-1-4">删除一个本地image</h3>
+<h3 id="sec-1-4">tips</h3>
 <div class="outline-text-3" id="text-1-4">
+
+
+</div>
+
+<div id="outline-container-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1">进入正在运行的容器</h4>
+<div class="outline-text-4" id="text-1-4-1">
+
+<p>docker处于运行状态的容器如果在交互模式，你能通过screen/tmux等方式实现新开窗口运
+行，完成多任务操作，比如debug等。
+</p>
+<p>
+对于运行在前台的任务，比如java应用，如果你想进入该容器终端，有几种方式：
+</p><ul>
+<li>启动监听服务
+</li>
+</ul>
+
+<p>比如ssh，你可以通过ssh登入容器，但是该方式的缺点就是太重，管理复杂
+</p><ul>
+<li>使用lxc-attach
+</li>
+</ul>
+
+<pre class="example">
+docker ps --no-trunc
+</pre>
+
+<p>获取到container id，然后lxc-attach上去。不过0.9版本之后需要修改配置<sup><a class="footref" name="fnr-.13" href="#fn-.13">13</a></sup>
+</p><ul>
+<li>使用nsenter
+</li>
+</ul>
+
+<p>使用大神jpetazzo<sup><a class="footref" name="fnr-.14" href="#fn-.14">14</a></sup>开发的nsenter，很方便
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-4-2" class="outline-4">
+<h4 id="sec-1-4-2">删除容器</h4>
+<div class="outline-text-4" id="text-1-4-2">
+
+<pre class="example">
+sudo docker rm -v &lt;CONTAINER ID&gt;
+</pre>
+
+<p>注意，需要带上"-v"参数，否则不会删除aufs层文件，造成垃圾数据。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-4-3" class="outline-4">
+<h4 id="sec-1-4-3">删除一个本地image</h4>
+<div class="outline-text-4" id="text-1-4-3">
 
 <p>删除命令如下：
 </p><pre class="example">
@@ -518,6 +580,7 @@ sudo docker rmi &lt;IMAGE ID&gt;
 </pre>
 
 
+</div>
 </div>
 </div>
 
@@ -669,6 +732,14 @@ sudo docker rmi &lt;IMAGE ID&gt;
 
 
 <p class="footnote"><sup><a class="footnum" name="fn-.12" href="#fnr-.12">12</a></sup> <a href="http://muehe.org/posts/switching-docker-from-aufs-to-devicemapper/">Switching Docker from aufs to devicemapper</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.13" href="#fnr-.13">13</a></sup> <a href="http://jpetazzo.github.io/2014/03/23/lxc-attach-nsinit-nsenter-docker-0-9/">Attaching to a container with Docker 0.9 and libcontainer</a>
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.14" href="#fnr-.14">14</a></sup> <a href="https://github.com/jpetazzo">jpetazzo blog</a>
 </p>
 
 

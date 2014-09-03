@@ -13,7 +13,12 @@ tags: [mesos, docker, marathon, PaaS]
 <ul>
 <li><a href="#sec-1">1 mesos</a></li>
 <li><a href="#sec-2">2 marathon</a></li>
-<li><a href="#sec-3">3 marathon + mesos + docker</a></li>
+<li><a href="#sec-3">3 marathon + mesos + docker</a>
+<ul>
+<li><a href="#sec-3-1">3.1 安装注意事项</a></li>
+<li><a href="#sec-3-2">3.2 功能上需要注意的点</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -54,8 +59,14 @@ tags: [mesos, docker, marathon, PaaS]
 <p>部署测试了一下，还是比较理想，只是对于docker的支持还有一些问题，下面是一些需要
 注意的点：
 </p>
-<p>
-首先mesos 0.19版本之前，支持docker都是通过External Containerization特性来支持，
+
+</div>
+
+<div id="outline-container-3-1" class="outline-3">
+<h3 id="sec-3-1">安装注意事项</h3>
+<div class="outline-text-3" id="text-3-1">
+
+<p>首先mesos 0.19版本之前，支持docker都是通过External Containerization特性来支持，
 需要依赖Deimos项目，0.20版本（写本文的时候，刚刚发布几天）原声支持，这里用的是
 0.20版本
 </p>
@@ -63,13 +74,26 @@ tags: [mesos, docker, marathon, PaaS]
 其次marathon目前发布的版本是0.6.1，不能支持mesos 0.20的docker特性，你需要获取源
 码snapshot自己编译。
 </p>
-<p>
-另外一个需要注意的地方是mesos对于docker网络的支持，目前之支持host模式，也就意味
-着你的应用端口配置上有一些麻烦，你需要在应用启动阶段注入修改应用端口，下一个版
-本应该能支持更复杂的网络配置<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup>。
+</div>
+
+</div>
+
+<div id="outline-container-3-2" class="outline-3">
+<h3 id="sec-3-2">功能上需要注意的点</h3>
+<div class="outline-text-3" id="text-3-2">
+
+<p>首先一个需要注意的地方是mesos对于docker网络的支持，目前之支持host模式，也就意味
+着你的应用端口配置上有一些麻烦，你需要在应用启动阶段注入修改应用端口，mesos的下
+一个版本（0.20.1）能支持更复杂的网络配置<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup>。
 </p>
 <p>
-关于LB的问题也需要注意，目前给出的示例是通过cron方式非实时更新LB配置，不是太理
+关于网络举例来说，缺省是bridge，docker能做端口expose，docker容器内监听的80端口，
+如果外面想访问，只需把端口expose出来。这样对于运行在docker容器内的应用很方便，
+不会产生端口冲突问题，但是如果是host模式，docker容器内的监听端口直接监听在宿主
+机上，需要考虑同一宿主机的多实例应用端口冲突问题。
+</p>
+<p>
+其次是LB的问题也需要注意，目前给出的示例是通过cron方式非实时更新LB配置，不是太理
 想，应该可以通过callback方式来走，会比较理想。
 </p>
 <p>
@@ -97,6 +121,7 @@ will fail as well.
 
 
 
+</div>
 </div>
 </div>
 
