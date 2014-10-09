@@ -2,37 +2,32 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 第一阶段还是有一定收获，主要包括一下几个方面：</a>
+<li><a href="#sec-1">1. 第一阶段还是有一定收获，主要包括一下几个方面：</a>
 <ul>
-<li><a href="#sec-1-1">1.1 传统数据中心和云数据中心建设上的一些特性和区别</a></li>
-<li><a href="#sec-1-2">1.2 云数据中心网络规划的几点规则</a></li>
-<li><a href="#sec-1-3">1.3 存储网络规划</a></li>
+<li><a href="#sec-1-1">1.1. 传统数据中心和云数据中心建设上的一些特性和区别</a></li>
+<li><a href="#sec-1-2">1.2. 云数据中心网络规划的几点规则</a></li>
+<li><a href="#sec-1-3">1.3. 存储网络规划</a></li>
 </ul>
 </li>
-<li><a href="#sec-2">2 第一阶段存在的一些问题：</a>
+<li><a href="#sec-2">2. 第一阶段存在的一些问题：</a>
 <ul>
-<li><a href="#sec-2-1">2.1 主要由一个人完成，精力有限，建议任务分散，才能深入</a></li>
-<li><a href="#sec-2-2">2.2 材料比较粗糙，很多都是大段文字，也不是讲解人准备，临时理解，很难系统化讲解和延伸。</a></li>
+<li><a href="#sec-2-1">2.1. 主要由一个人完成，精力有限，建议任务分散，才能深入</a></li>
+<li><a href="#sec-2-2">2.2. 材料比较粗糙，很多都是大段文字，也不是讲解人准备，临时理解，很难系统化讲解和延伸。</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-
-<div id="outline-container-1" class="outline-2">
-<h2 id="sec-1">第一阶段还是有一定收获，主要包括一下几个方面：</h2>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> 第一阶段还是有一定收获，主要包括一下几个方面：</h2>
 <div class="outline-text-2" id="text-1">
-
-
-
-</div>
-
-<div id="outline-container-1-1" class="outline-3">
-<h3 id="sec-1-1">传统数据中心和云数据中心建设上的一些特性和区别</h3>
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> 传统数据中心和云数据中心建设上的一些特性和区别</h3>
 <div class="outline-text-3" id="text-1-1">
-
-<p>传统数据中心强调硬件高可用来保证应用高可用，有以下特征：
-</p><ul>
+<p>
+传统数据中心强调硬件高可用来保证应用高可用，有以下特征：
+</p>
+<ul class="org-ul">
 <li>硬件：大量采用小型机（ibm/hp)，专用存储（emc/hp/ibm)，强调硬件高可用
 </li>
 <li>应用：双机热备，oracle rac，硬件负载均衡等设施保证，不需要对硬件架构有过多要求
@@ -43,10 +38,10 @@
 </li>
 </ul>
 
-
 <p>
 云数据中心强调的是应用的自我高可用和采用廉价硬件
-</p><ul>
+</p>
+<ul class="org-ul">
 <li>硬件：采用廉价的硬件设备（x86/sata)，高密度配置（一个集装箱2000个节点），不采用硬件冗余技术
 </li>
 <li>应用：无状态（或者中心状态），水平扩展，动态伸缩，mysql/nosql/object storage
@@ -56,57 +51,40 @@
 <li>技术要求：高度自动化，人员配置少，技术要求高
 </li>
 </ul>
-
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2">云数据中心网络规划的几点规则</h3>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 云数据中心网络规划的几点规则</h3>
 <div class="outline-text-3" id="text-1-2">
-
-<p>传统数据中心网络规划强调聚合，南北向设计，网络间流量都需要经过core交换机，容易控制，网络层次多，常用的架构：
+<p>
+传统数据中心网络规划强调聚合，南北向设计，网络间流量都需要经过core交换机，容易控制，网络层次多，常用的架构：
 core-aggration-access-tor
 </p>
+
 <p>
 这类设计模式在低密度的数据中心问题不大，但是在高密度特征的云数据中心，对于core交换机带来巨大压力，导致网络瓶颈。所以云数据中心网络规划一般采用flat模式，尽量扁平设计，一般没有aggration层，在access层实现东西向流量，尽量控制进入core交换机的流量，另外采用中心防火墙设计，防止过多的防火墙影响网络性能。
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3">存储网络规划</h3>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 存储网络规划</h3>
 <div class="outline-text-3" id="text-1-3">
-
-<p>采用多层设计，本地硬盘&mdash;二级存储（rack/pod）&mdash;中心存储模式，原则尽量控制流量在tor/access，本地硬盘一般存放os/img，appdata可以存放在二级存储，二级存储可以和中心存储同步，中心存储一般接入core交换机，另外非常重要的一点，要绘制data placement和application dependence，保证数据尽量低的hop
+<p>
+采用多层设计，本地硬盘&#x2014;二级存储（rack/pod）&#x2014;中心存储模式，原则尽量控制流量在tor/access，本地硬盘一般存放os/img，appdata可以存放在二级存储，二级存储可以和中心存储同步，中心存储一般接入core交换机，另外非常重要的一点，要绘制data placement和application dependence，保证数据尽量低的hop
 </p>
 </div>
 </div>
-
 </div>
 
-<div id="outline-container-2" class="outline-2">
-<h2 id="sec-2">第一阶段存在的一些问题：</h2>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> 第一阶段存在的一些问题：</h2>
 <div class="outline-text-2" id="text-2">
-
-
-
+</div><div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> 主要由一个人完成，精力有限，建议任务分散，才能深入</h3>
 </div>
-
-<div id="outline-container-2-1" class="outline-3">
-<h3 id="sec-2-1">主要由一个人完成，精力有限，建议任务分散，才能深入</h3>
-<div class="outline-text-3" id="text-2-1">
-
-</div>
-
-</div>
-
-<div id="outline-container-2-2" class="outline-3">
-<h3 id="sec-2-2">材料比较粗糙，很多都是大段文字，也不是讲解人准备，临时理解，很难系统化讲解和延伸。</h3>
-<div class="outline-text-3" id="text-2-2">
-
-</div>
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> 材料比较粗糙，很多都是大段文字，也不是讲解人准备，临时理解，很难系统化讲解和延伸。</h3>
 </div>
 </div>

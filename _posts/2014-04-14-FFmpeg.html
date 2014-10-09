@@ -1,3 +1,14 @@
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. FFmpeg</a></li>
+<li><a href="#sec-2">2. 转码压缩</a></li>
+<li><a href="#sec-3">3. 旋转视频</a></li>
+<li><a href="#sec-4">4. 结尾</a></li>
+</ul>
+</div>
+</div>
 ---
 layout: post
 title: "FFmpeg使用笔记"
@@ -6,79 +17,68 @@ categories: [tech]
 tags: [multimedia, linux]
 ---
 
-
-<div id="table-of-contents">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents">
-<ul>
-<li><a href="#sec-1">1 FFmpeg</a></li>
-<li><a href="#sec-2">2 转码压缩</a></li>
-<li><a href="#sec-3">3 旋转视频</a></li>
-<li><a href="#sec-4">4 结尾</a></li>
-</ul>
-</div>
-</div>
-
-<div id="outline-container-1" class="outline-2">
-<h2 id="sec-1">FFmpeg</h2>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> FFmpeg</h2>
 <div class="outline-text-2" id="text-1">
-
-<p>视频压缩首先想到的自然是FFmpeg，我用的是Ubuntu，很不幸Ubuntu用Libav提到了FFmpeg
+<p>
+视频压缩首先想到的自然是FFmpeg，我用的是Ubuntu，很不幸Ubuntu用Libav提到了FFmpeg
 ，具体为啥有了Libav建议libav官网八卦去，反正就是一些开发人员对项目管理者不满另起
-炉灶啥的，这个暂且不提了<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup>。
+炉灶啥的，这个暂且不提了<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup>。
 </p>
+
 <p>
 关键是，Libav的资料太少了，去官网看了一下WIKI，直接就没兴趣用了，Google上搜索也
 没有太多使用经验，虽然和FFmpeg大致相同，但总觉的别扭。我想把视频转成X264加AAC格
 式，采用VBR方式（就是动态码率，更好的压缩比和视频质量），看了一下X264没问题，但
 是AAC有好几个实现，其中最好的libfdk_aac不是GPL的license，所以Libav提供的版本不支
-持，也就是说我需要自己编译<sup><a class="footref" name="fnr-.2" href="#fn-.2">2</a></sup>。关键是这玩意编译还依赖很多外部包，人家FFmpeg编
-译文档写的很清晰，Libav啥都没有。没办法，直接干掉，换FFmpeg来<sup><a class="footref" name="fnr-.3" href="#fn-.3">3</a></sup>。
+持，也就是说我需要自己编译<sup><a id="fnr.2" name="fnr.2" class="footref" href="#fn.2">2</a></sup>。关键是这玩意编译还依赖很多外部包，人家FFmpeg编
+译文档写的很清晰，Libav啥都没有。没办法，直接干掉，换FFmpeg来<sup><a id="fnr.3" name="fnr.3" class="footref" href="#fn.3">3</a></sup>。
 </p>
-
+</div>
 </div>
 
-</div>
 
-<div id="outline-container-2" class="outline-2">
-<h2 id="sec-2">转码压缩</h2>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> 转码压缩</h2>
 <div class="outline-text-2" id="text-2">
-
-<p>发现没啥可写的<sup><a class="footref" name="fnr-.4" href="#fn-.4">4</a></sup><sup>, </sup><sup><a class="footref" name="fnr-.5" href="#fn-.5">5</a></sup><sup>, </sup><sup><a class="footref" name="fnr-.6" href="#fn-.6">6</a></sup>，别人都写的太清楚了，这里直接上我的命令吧：
+<p>
+发现没啥可写的<sup><a id="fnr.4" name="fnr.4" class="footref" href="#fn.4">4</a></sup><sup>, </sup><sup><a id="fnr.5" name="fnr.5" class="footref" href="#fn.5">5</a></sup><sup>, </sup><sup><a id="fnr.6" name="fnr.6" class="footref" href="#fn.6">6</a></sup>，别人都写的太清楚了，这里直接上我的命令吧：
 </p>
+
 <pre class="example">
 ffmpeg -i IMG_2596.MOV -c:v libx264 -crf 28 -c:a libfdk_aac -vbr 4 output.mp4
 </pre>
-
 
 <p>
 最后压缩下来，一个7分42秒的视频大概114M左右，之前可是650M，播放了一下，看不出啥
 区别，效果不错，就是FFmpeg貌似不是那么高效，CPU都在nice状态，找个时间分析一下。
 </p>
+
 <p>
 这里唯一需要解释一下的就是crf参数，该参数取值范围在0～51，值越低质量越高，当然
 文件也越大，缺省值是23，一般18～28之间是比较合适的值，太低文件太大，太高图像质
 量不高。该值±6对文件大小的影响基本上是一倍关系，+6文件大小缩小一半，-6文件大小
-增加一倍<sup><a class="footref" name="fnr-.7" href="#fn-.7">7</a></sup>。
+增加一倍<sup><a id="fnr.7" name="fnr.7" class="footref" href="#fn.7">7</a></sup>。
 </p>
+
 <p>
 修正一下，用下面命令压缩更快（CPU利用率更高了），而且压缩比好像更高，压缩之后只
 有91M：
 </p>
+
 <pre class="example">
 ffmpeg -i IMG_2596.MOV -c:v libx264 -crf 28 -preset:v veryfast -c:a libfdk_aac -vbr 4 output.mp4
 </pre>
 
-
 <p>
 两者结果对比：
 </p>
+
 <p>
 命令一：
 </p>
-
-
-<pre class="example">Stream mapping:
+<pre class="example">
+Stream mapping:
   Stream #0:0 -&gt; #0:0 (h264 -&gt; libx264)
   Stream #0:1 -&gt; #0:1 (aac -&gt; libfdk_aac)
 Press [q] to stop, [?] for help
@@ -104,13 +104,11 @@ video:107236kB audio:4392kB subtitle:0kB other streams:0kB global headers:0kB mu
 [libx264 @ 0x27d10c0] kb/s:1899.73
 </pre>
 
-
 <p>
 命令二：
 </p>
-
-
-<pre class="example">Stream mapping:
+<pre class="example">
+Stream mapping:
   Stream #0:0 -&gt; #0:0 (h264 -&gt; libx264)
   Stream #0:1 -&gt; #0:1 (aac -&gt; libfdk_aac)
 Press [q] to stop, [?] for help
@@ -133,85 +131,84 @@ video:84434kB audio:4392kB subtitle:0kB other streams:0kB global headers:0kB mux
 [libx264 @ 0x367f940] kb/s:1495.79
 </pre>
 
-
 <p>
 批量处理目录下的视频：
 </p>
+
 <pre class="example">
 for i in $(ls *.MOV); do ffmpeg -i $i -c:v libx264 -crf 28 -preset:v veryfast -c:a libfdk_aac -vbr 4 $i.mp4; done
 </pre>
-
-
-
+</div>
 </div>
 
-</div>
 
-<div id="outline-container-3" class="outline-2">
-<h2 id="sec-3">旋转视频</h2>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> 旋转视频</h2>
 <div class="outline-text-2" id="text-3">
-
-<p>有时候你的视频排的时候弄反了，看起来很麻烦，你可以通过FFmpeg旋转你的视频<sup><a class="footref" name="fnr-.8" href="#fn-.8">8</a></sup>，
+<p>
+有时候你的视频排的时候弄反了，看起来很麻烦，你可以通过FFmpeg旋转你的视频<sup><a id="fnr.8" name="fnr.8" class="footref" href="#fn.8">8</a></sup>，
 我需要垂直旋转我的视频，命令如下：
-</p><pre class="example">
+</p>
+<pre class="example">
 fffmpeg -i IMG_0758.MOV -c:v libx264 -crf 28 -preset:v veryfast -c:a libfdk_aac -vbr 4 -vf "vflip" IMG_0758.MOV.mp4
 </pre>
-
-<p>垂直选择的参数是hflip，其他的90度旋转参考注脚8即可。
+<p>
+垂直选择的参数是hflip，其他的90度旋转参考注脚8即可。
 </p>
-
+</div>
 </div>
 
-</div>
 
-<div id="outline-container-4" class="outline-2">
-<h2 id="sec-4">结尾</h2>
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> 结尾</h2>
 <div class="outline-text-2" id="text-4">
-
-<p>总之，FFmpeg是一个非常强大的开源视频处理工具，你能做各种事情（参考ffmpeg-filters
+<p>
+总之，FFmpeg是一个非常强大的开源视频处理工具，你能做各种事情（参考ffmpeg-filters
 手册），使用它能对你的视频做各种处理，比如去logo，添加字幕，声轨，甚至合并声轨、
 裁剪尺寸等，等待你去挖掘了。
 </p>
+
 <p>
 最终我成功把我40G的视频压缩到5G，效果明显。
 </p>
+</div>
+</div>
 <div id="footnotes">
 <h2 class="footnotes">Footnotes: </h2>
 <div id="text-footnotes">
-<p class="footnote"><sup><a class="footnum" name="fn-.1" href="#fnr-.1">1</a></sup> <a href="http://superuser.com/questions/507386/libav-vs-ffmpeg-better-to-use-libav-avconv-today">libav vs ffmpeg - better to use libav (avconv) today</a>
-</p>
 
+<div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p class="footpara">
+<a href="http://superuser.com/questions/507386/libav-vs-ffmpeg-better-to-use-libav-avconv-today">libav vs ffmpeg - better to use libav (avconv) today</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.2" href="#fnr-.2">2</a></sup> <a href="http://unix.stackexchange.com/questions/77687/how-do-i-convert-flac-files-to-aac-preferrably-vbr-320k">How do I convert FLAC files to AAC</a>
-</p>
+<div class="footdef"><sup><a id="fn.2" name="fn.2" class="footnum" href="#fnr.2">2</a></sup> <p class="footpara">
+<a href="http://unix.stackexchange.com/questions/77687/how-do-i-convert-flac-files-to-aac-preferrably-vbr-320k">How do I convert FLAC files to AAC</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.3" name="fn.3" class="footnum" href="#fnr.3">3</a></sup> <p class="footpara">
+<a href="https://trac.ffmpeg.org/wiki/UbuntuCompilationGuide">Compile FFmpeg on Ubuntu, Debian, or Mint</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.3" href="#fnr-.3">3</a></sup> <a href="https://trac.ffmpeg.org/wiki/UbuntuCompilationGuide">Compile FFmpeg on Ubuntu, Debian, or Mint</a>
-</p>
+<div class="footdef"><sup><a id="fn.4" name="fn.4" class="footnum" href="#fnr.4">4</a></sup> <p class="footpara">
+<a href="http://slhck.info/video-encoding">Video Encoding</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.5" name="fn.5" class="footnum" href="#fnr.5">5</a></sup> <p class="footpara">
+<a href="http://trac.ffmpeg.org/wiki/AACEncodingGuide">FFmpeg and AAC Encoding Guide</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.4" href="#fnr-.4">4</a></sup> <a href="http://slhck.info/video-encoding">Video Encoding</a>
-</p>
+<div class="footdef"><sup><a id="fn.6" name="fn.6" class="footnum" href="#fnr.6">6</a></sup> <p class="footpara">
+<a href="http://trac.ffmpeg.org/wiki/x264EncodingGuide">FFmpeg and x264 Encoding Guide</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.7" name="fn.7" class="footnum" href="#fnr.7">7</a></sup> <p class="footpara">
+<a href="http://slhck.info/articles/crf">CRF Guide</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.5" href="#fnr-.5">5</a></sup> <a href="http://trac.ffmpeg.org/wiki/AACEncodingGuide">FFmpeg and AAC Encoding Guide</a>
-</p>
+<div class="footdef"><sup><a id="fn.8" name="fn.8" class="footnum" href="#fnr.8">8</a></sup> <p class="footpara">
+<a href="http://stackoverflow.com/questions/3937387/rotating-videos-with-ffmpeg">Rotating videos with FFmpeg</a>
+</p></div>
 
-
-<p class="footnote"><sup><a class="footnum" name="fn-.6" href="#fnr-.6">6</a></sup> <a href="http://trac.ffmpeg.org/wiki/x264EncodingGuide">FFmpeg and x264 Encoding Guide</a>
-</p>
-
-
-<p class="footnote"><sup><a class="footnum" name="fn-.7" href="#fnr-.7">7</a></sup> <a href="http://slhck.info/articles/crf">CRF Guide</a>
-</p>
-
-
-<p class="footnote"><sup><a class="footnum" name="fn-.8" href="#fnr-.8">8</a></sup> <a href="http://stackoverflow.com/questions/3937387/rotating-videos-with-ffmpeg">Rotating videos with FFmpeg</a>
-</p>
-
-
-</div>
-</div>
 
 </div>
 </div>

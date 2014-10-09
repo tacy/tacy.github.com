@@ -1,3 +1,20 @@
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. introduce</a></li>
+<li><a href="#sec-2">2. 一些特殊键的标准位置</a></li>
+<li><a href="#sec-3">3. 我期望的效果</a></li>
+<li><a href="#sec-4">4. 设置xmodmap的方法</a>
+<ul>
+<li><a href="#sec-4-1">4.1. 取消原先键映射</a></li>
+<li><a href="#sec-4-2">4.2. 设定新的映射关系</a></li>
+<li><a href="#sec-4-3">4.3. 绑定映射关系</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 ---
 layout: post
 categories: [tech]
@@ -5,25 +22,22 @@ title: "Xmodmap 配置介绍"
 description: "了解xmodmap纯粹是为了解决emacs的问题，这里是过程中的一些记录，包括xmodmap的简单介绍以及如何通过xmodmap重新映射键盘键的位置的配置方法，方便自己查看，如果你有同样问题，希望能对你有所帮助。"
 tags: [tech, ubuntu, emacs, configure]
 ---
-
-<div id="outline-container-1" class="outline-2">
-<h2 id="sec-1">introduce</h2>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> introduce</h2>
 <div class="outline-text-2" id="text-1">
-
-<p>xmodmap能够重新映射键盘上键的布局，通常情况下，你不会需要对键盘做重新映射，只有在特定情况下，比如emacs，需要频繁操作Ctrl键，但是偏偏US标准键盘上，Ctrl键的位置就很不合理，通常我们都会切换Caps_Lock和Ctrl_L的位置（以前的UNIX键盘Ctrl_R的位置就是在A键的旁边），达到方便操作的目的，下面文字主要是记录我自己的映射信息
-</p></div>
-
-</div>
-
-<div id="outline-container-2" class="outline-2">
-<h2 id="sec-2">一些特殊键的标准位置</h2>
-<div class="outline-text-2" id="text-2">
-
-<p>下面是我的ubuntu上几个特殊键的位置，包括shift，ctrl，alt，super/win，menu键：
+<p>
+xmodmap能够重新映射键盘上键的布局，通常情况下，你不会需要对键盘做重新映射，只有在特定情况下，比如emacs，需要频繁操作Ctrl键，但是偏偏US标准键盘上，Ctrl键的位置就很不合理，通常我们都会切换Caps_Lock和Ctrl_L的位置（以前的UNIX键盘Ctrl_R的位置就是在A键的旁边），达到方便操作的目的，下面文字主要是记录我自己的映射信息
 </p>
-
-
-<pre class="example">keycode 133 = Super_L NoSymbol Super_L$
+</div>
+</div>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> 一些特殊键的标准位置</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+下面是我的ubuntu上几个特殊键的位置，包括shift，ctrl，alt，super/win，menu键：
+</p>
+<pre class="example">
+keycode 133 = Super_L NoSymbol Super_L$
 keycode 134 = Super_R NoSymbol Super_R
 keycode 135 = Menu NoSymbol Menu
 keycode  50 = Shift_L NoSymbol Shift_L
@@ -33,20 +47,17 @@ keycode  37 = Control_L NoSymbol Control_L
 keycode  105 = Control_R NoSymbol Control_R
 </pre>
 
-
 <p>
 你可以通过如下命令获取：
 $xmodmap -pke &gt; xmodmap.out
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-3" class="outline-2">
-<h2 id="sec-3">我期望的效果</h2>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> 我期望的效果</h2>
 <div class="outline-text-2" id="text-3">
-
-<ul>
+<ul class="org-ul">
 <li>切换CapsLock和Ctrl-L
 </li>
 <li>映射menu键为Ctrl-R
@@ -56,28 +67,23 @@ $xmodmap -pke &gt; xmodmap.out
 <li>取消menu键（当然你也可以把Shift-R键映射为menu，我嫌这个键容易错误触发中断工作，所以取消）
 </li>
 </ul>
-
 </div>
-
 </div>
-
-<div id="outline-container-4" class="outline-2">
-<h2 id="sec-4">设置xmodmap的方法</h2>
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> 设置xmodmap的方法</h2>
 <div class="outline-text-2" id="text-4">
-
-<p>你只需要在你的home目录下建立一个.Xmodmap的文件，在这个文件里面完成你的映射即可，无须其他操作（我的ubuntu是12.04）。重新映射键的三个主要步骤：
+<p>
+你只需要在你的home目录下建立一个.Xmodmap的文件，在这个文件里面完成你的映射即可，无须其他操作（我的ubuntu是12.04）。重新映射键的三个主要步骤：
 </p>
 </div>
-
-<div id="outline-container-4-1" class="outline-3">
-<h3 id="sec-4-1">取消原先键映射</h3>
+<div id="outline-container-sec-4-1" class="outline-3">
+<h3 id="sec-4-1"><span class="section-number-3">4.1</span> 取消原先键映射</h3>
 <div class="outline-text-3" id="text-4-1">
-
-<p>  这里通过clear语法实现，下面是一些特殊键的表达<sup><a class="footref" name="fnr.1" href="#fn.1">1</a></sup>
+<p>
+这里通过clear语法实现，下面是一些特殊键的表达<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup>
 </p>
-
-
-<pre class="example">clear Shift
+<pre class="example">
+clear Shift
 clear Lock
 clear Control
 clear Mod1
@@ -86,30 +92,22 @@ clear Mod3
 clear Mod4
 clear Mod5
 </pre>
-
 <p>
-  我主要关注shift、lock、control、mod1和mod4，其中mod1表示alt，mod4表示super，这里我只需要取消下面几个：
+我主要关注shift、lock、control、mod1和mod4，其中mod1表示alt，mod4表示super，这里我只需要取消下面几个：
 </p>
-
-
-<pre class="example">clear Shift
+<pre class="example">
+clear Shift
 clear Lock
 clear Control
 clear Mod4
 </pre>
-
 </div>
-
 </div>
-
-<div id="outline-container-4-2" class="outline-3">
-<h3 id="sec-4-2">设定新的映射关系</h3>
+<div id="outline-container-sec-4-2" class="outline-3">
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> 设定新的映射关系</h3>
 <div class="outline-text-3" id="text-4-2">
-
-
-
-
-<pre class="example">keycode  66 = Control_L
+<pre class="example">
+keycode  66 = Control_L
 keycode  37 = Caps_Lock
 keycode 133 = Super_L
 keycode 134 = Control_R
@@ -119,40 +117,37 @@ keycode 62  = Shift_R
 !keycode 62  = Menu
 keycode 105 = Shift_R
 </pre>
-
 </div>
-
 </div>
-
-<div id="outline-container-4-3" class="outline-3">
-<h3 id="sec-4-3">绑定映射关系</h3>
+<div id="outline-container-sec-4-3" class="outline-3">
+<h3 id="sec-4-3"><span class="section-number-3">4.3</span> 绑定映射关系</h3>
 <div class="outline-text-3" id="text-4-3">
-
-
-
-
-<pre class="example">!add mod1    = Alt_R Alt_L Meta_R Meta_L
+<pre class="example">
+!add mod1    = Alt_R Alt_L Meta_R Meta_L
 add Shift   = Shift_R Shift_L
 add Lock    = Caps_Lock
 add Control = Control_R Control_L
 add Mod4    = Super_R Super_L Menu
 </pre>
 
-
 <p>
 完成之后，保存你的xmodmap文件，可以通过如下命令立即生效：
 </p>
+
 <p>
 $xmodmap ~/.Xmodmap
 </p>
-
+</div>
+</div>
+</div>
 <div id="footnotes">
 <h2 class="footnotes">Footnotes: </h2>
 <div id="text-footnotes">
-<p class="footnote"><sup><a class="footnum" name="fn.1" href="#fnr.1">1</a></sup> archlinux xmodmap setting <a href="https://wiki.archlinux.org/index.php/Xmodmap">https://wiki.archlinux.org/index.php/Xmodmap</a>
+
+<div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p class="footpara">
+archlinux xmodmap setting <a href="https://wiki.archlinux.org/index.php/Xmodmap">https://wiki.archlinux.org/index.php/Xmodmap</a>
 </p></div>
-</div>
-</div>
+
 
 </div>
 </div>

@@ -1,3 +1,61 @@
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Docker</a>
+<ul>
+<li><a href="#sec-1-1">1.1. 一个例子</a></li>
+<li><a href="#sec-1-2">1.2. 运行一个DB2 Container</a></li>
+<li><a href="#sec-1-3">1.3. Docker仓库</a></li>
+<li><a href="#sec-1-4">1.4. TIPS</a>
+<ul>
+<li><a href="#sec-1-4-1">1.4.1. 进入正在运行的容器</a></li>
+<li><a href="#sec-1-4-2">1.4.2. 监控docker cli和server的交互</a></li>
+<li><a href="#sec-1-4-3">1.4.3. 关于层的限制</a></li>
+<li><a href="#sec-1-4-4">1.4.4. 删除容器</a></li>
+<li><a href="#sec-1-4-5">1.4.5. 删除一个本地image</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#sec-2">2. Centos</a></li>
+<li><a href="#sec-3">3. Docker 重要的特性</a></li>
+<li><a href="#sec-4">4. Security</a></li>
+<li><a href="#sec-5">5. Storage backend</a></li>
+<li><a href="#sec-6">6. Migration</a></li>
+<li><a href="#sec-7">7. Monitor</a></li>
+<li><a href="#sec-8">8. Service Discovery</a></li>
+<li><a href="#sec-9">9. Clusetr Management</a></li>
+<li><a href="#sec-10">10. Docker PaaS</a></li>
+<li><a href="#sec-11">11. Coreos</a></li>
+<li><a href="#sec-12">12. PaaS</a></li>
+<li><a href="#sec-13">13. IBM Research Report 2014 for Container and VM</a>
+<ul>
+<li><a href="#sec-13-1">13.1. 背景知识</a>
+<ul>
+<li><a href="#sec-13-1-1">13.1.1. 软件虚拟化问题</a>
+<ul>
+<li><a href="#sec-13-1-1-1">13.1.1.1. 特权指令调用</a></li>
+<li><a href="#sec-13-1-1-2">13.1.1.2. 内存管理问题（MMU）</a></li>
+<li><a href="#sec-13-1-1-3">13.1.1.3. IO问题</a></li>
+</ul>
+</li>
+<li><a href="#sec-13-1-2">13.1.2. 硬件支持</a></li>
+<li><a href="#sec-13-1-3">13.1.3. KVM</a></li>
+<li><a href="#sec-13-1-4">13.1.4. linux container</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#sec-14">14. 一些需要注意的问题：</a>
+<ul>
+<li><a href="#sec-14-1">14.1. net=host安全问题[[][</a></li>
+</ul>
+</li>
+<li><a href="#sec-15">15. 好的文章</a></li>
+</ul>
+</div>
+</div>
 ---
 layout: post
 title: "Docker使用笔记"
@@ -6,105 +64,72 @@ categories: [tech]
 tags: [virtualization, linux, container]
 ---
 
-
-<div id="table-of-contents">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents">
-<ul>
-<li><a href="#sec-1">1 Docker</a>
-<ul>
-<li><a href="#sec-1-1">1.1 一个例子</a></li>
-<li><a href="#sec-1-2">1.2 运行一个DB2 Container</a></li>
-<li><a href="#sec-1-3">1.3 Docker仓库</a></li>
-<li><a href="#sec-1-4">1.4 tips</a>
-<ul>
-<li><a href="#sec-1-4-1">1.4.1 进入正在运行的容器</a></li>
-<li><a href="#sec-1-4-2">1.4.2 删除容器</a></li>
-<li><a href="#sec-1-4-3">1.4.3 删除一个本地image</a></li>
-</ul></li>
-</ul>
-</li>
-<li><a href="#sec-2">2 centos</a></li>
-<li><a href="#sec-3">3 docker 重要的特性</a></li>
-<li><a href="#sec-4">4 service discovery</a></li>
-<li><a href="#sec-5">5 clusetr management</a></li>
-<li><a href="#sec-6">6 docker paas</a></li>
-<li><a href="#sec-7">7 coreos</a></li>
-</ul>
-</div>
-</div>
-
-<div id="outline-container-1" class="outline-2">
-<h2 id="sec-1">Docker<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup></h2>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Docker<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup></h2>
 <div class="outline-text-2" id="text-1">
-
-<p>Docker是对LXC的一个抽象，依赖于LXC，相比KVM这种Hypervisor，LXC要轻量级很多<sup><a class="footref" name="fnr-.2" href="#fn-.2">2</a></sup>
+<p>
+Docker是对LXC的一个抽象，依赖于LXC，相比KVM这种Hypervisor，LXC要轻量级很多<sup><a id="fnr.2" name="fnr.2" class="footref" href="#fn.2">2</a></sup>
 ，但是LXC很难打包分发，Docker就是解决这个问题，当然还提供了一系列的辅助功能，本
 文是自己在使用Docker使用过程中的一些记录。
 </p>
-
 </div>
 
-<div id="outline-container-1-1" class="outline-3">
-<h3 id="sec-1-1">一个例子</h3>
+<div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> 一个例子</h3>
 <div class="outline-text-3" id="text-1-1">
-
-<p>先来感受一下，我想在我机器上跑一个Oracle，又不想跑在本地。之前都是通过KVM，然后
+<p>
+先来感受一下，我想在我机器上跑一个Oracle，又不想跑在本地。之前都是通过KVM，然后
 建一个Ubuntu虚拟机，安装OracleXE版本。用起来也挺方便，但还是觉得有些不爽，一个是
 占地方，另外就是耗资源，开销挺大，多开几个就受不了。
 </p>
+
 <p>
 现在我们来看看Docker怎么玩，首先我们在docker仓库查找一下，看看是否有活雷锋：
 </p>
-
-
-<pre class="example">tacy@tacy:~$ sudo docker search oracle
+<pre class="example">
+tacy@tacy:~$ sudo docker search oracle
 NAME                              DESCRIPTION                                     STARS     OFFICIAL   TRUSTED
 wnameless/oracle-xe-11g           SYS &amp; SYSTEM password: oracle https://inde...   5                    [OK]
 alexeiled/docker-oracle-xe-11g    This is a spin off from wnameless/docker-o...   2                    [OK]
 haroon/docker-oracle-jdk7         Trusted Oracle JDK7 on Ubuntu:12.10             1                    [OK]
 </pre>
-
 <p>
 很幸运，不用你自己费劲弄了，直接pull下来吧：
-</p><pre class="example">
+</p>
+<pre class="example">
 sudo docker pull wnameless/oracle-xe-11g
 </pre>
-
-<p>等待下载，时间比较长，接近1G的大小，完成之后来看看：
+<p>
+等待下载，时间比较长，接近1G的大小，完成之后来看看：
 </p>
-
-
-<pre class="example">tacy@tacy:~$ sudo docker images
+<pre class="example">
+tacy@tacy:~$ sudo docker images
 REPOSITORY                TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
 wnameless/oracle-xe-11g   latest              f8d224b82290        17 hours ago        2.389 GB
 ubuntu                    13.10               9f676bd305a4        8 weeks ago         178 MB
 </pre>
 
-
 <p>
 接下来按照该Image的<a href="https://index.docker.io/u/wnameless/oracle-xe-11g/">文档</a>操作，直接启动一个Container（我这里添加了-name参数）：
 </p>
-
-
-<pre class="example">tacy@tacy:~$ sudo docker run -name oraclexe -d -p 49160:22 -p 49161:1521 wnameless/oracle-xe-11g
+<pre class="example">
+tacy@tacy:~$ sudo docker run -name oraclexe -d -p 49160:22 -p 49161:1521 wnameless/oracle-xe-11g
 d14110dc542540c4b83a44d8ca7b9d393a9aa4be7a60cd1ca757463bc12df2a9
 tacy@tacy:~$ ps -ef|grep docker
 root      1599  1588  0 09:58 ?        00:02:43 /usr/bin/docker -d
 root     14977  1599  0 16:10 ?        00:00:00 lxc-start -n d14110dc542540c4b83a44d8ca7b9d393a9aa4be7a60cd1ca757463bc12df2a9 -f /var/lib/docker/containers/d14110dc542540c4b83a44d8ca7b9d393a9aa4be7a60cd1ca757463bc12df2a9/config.lxc -- /.dockerinit -g 172.17.42.1 -i 172.17.0.2/16 -mtu 1500 -- /bin/sh -c sed -i -E "s/HOST = [^)]+/HOST = $HOSTNAME/g" /u01/app/oracle/product/11.2.0/xe/network/admin/listener.ora; service oracle-xe start; /usr/sbin/sshd -D
 </pre>
-
 <p>
 秒级启动，数据库连接信息：
-</p><pre class="example">
+</p>
+<pre class="example">
 hostname: localhost port: 49161 sid: xe username: system password: oracle
 </pre>
-
-<p>sys用户密码是oracle，可以通过ssh连接到container，root密码是admin：
+<p>
+sys用户密码是oracle，可以通过ssh连接到container，root密码是admin：
 </p>
-
-
-<pre class="example">tacy@tacy:~$ ssh root@localhost -p 49160
+<pre class="example">
+tacy@tacy:~$ ssh root@localhost -p 49160
 root@localhost's password:
 Welcome to Ubuntu 12.04 LTS (GNU/Linux 3.11.0-15-generic x86_64)
 
@@ -112,13 +137,11 @@ Welcome to Ubuntu 12.04 LTS (GNU/Linux 3.11.0-15-generic x86_64)
 root@d14110dc5425:~#
 </pre>
 
-
 <p>
 连接数据库:
 </p>
-
-
-<pre class="example">root@d14110dc5425:~# su - oracle
+<pre class="example">
+root@d14110dc5425:~# su - oracle
 oracle@d14110dc5425:~$ sqlplus '/as sysdba'
 
 SQL*Plus: Release 11.2.0.2.0 Production on Fri Apr 4 08:19:36 2014
@@ -132,18 +155,17 @@ Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
 SQL&gt;
 </pre>
 
-
 <p>
 停止container：
-</p><pre class="example">
+</p>
+<pre class="example">
 tacy@tacy:~$ sudo docker stop oraclexe
 </pre>
-
-<p>或者：
+<p>
+或者：
 </p>
-
-
-<pre class="example">tacy@tacy:~$ sudo docker ps
+<pre class="example">
+tacy@tacy:~$ sudo docker ps
 CONTAINER ID        IMAGE                            COMMAND                CREATED             STATUS              PORTS                                                      NAMES
 d14110dc5425        wnameless/oracle-xe-11g:latest   /bin/sh -c sed -i -E   11 minutes ago      Up 11 minutes       0.0.0.0:49160-&gt;22/tcp, 0.0.0.0:49161-&gt;1521/tcp, 8080/tcp   oraclexe
 tacy@tacy:~$ sudo docker stop d14110dc5425
@@ -153,80 +175,77 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 tacy@tacy:~$
 </pre>
 
-
 <p>
 重新启动该容器：
-</p><pre class="example">
+</p>
+<pre class="example">
 tacy@tacy:~$ sudo docker start oraclexe
 </pre>
-
 
 <p>
 是不是很酷，还不赶紧去试试。
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2">运行一个DB2 Container</h3>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 运行一个DB2 Container</h3>
 <div class="outline-text-3" id="text-1-2">
-
-<p>上面是个简单的例子，让你先对Docker有个认识，现在我们来自己配置一个Container，我
+<p>
+上面是个简单的例子，让你先对Docker有个认识，现在我们来自己配置一个Container，我
 们一步一步来。
 </p>
+
 <p>
 假设说你希望有一个跑DB2 Express-C（DB2的免费版本）的Container，搜索一下，仓库里
 没有，只能自己配置一个。
 </p>
+
 <p>
 首先我们需要从BASE启动一个Container，我们这里的测试环境是Ubuntu12.04/Docker0.75
 ，首先我们下载BASE的Image：
-</p><pre class="example">
+</p>
+<pre class="example">
 sudo docker pull ubuntu
 </pre>
 
-
 <p>
-接下来创建并运行一个Container<sup><a class="footref" name="fnr-.3" href="#fn-.3">3</a></sup>：
+接下来创建并运行一个Container<sup><a id="fnr.3" name="fnr.3" class="footref" href="#fn.3">3</a></sup>：
 </p>
-
-
-<pre class="example">tacy@tacy:~$ sudo docker run -i -name db2exc -t ubuntu /bin/bash
+<pre class="example">
+tacy@tacy:~$ sudo docker run -i -name db2exc -t ubuntu /bin/bash
 root@4e476fda5fb5:/# uname -a
 Linux 4e476fda5fb5 3.11.0-15-generic #23~precise1-Ubuntu SMP Tue Dec 10 16:39:48 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux
 </pre>
-
 <p>
 Kernel版本和宿主机一致。
 </p>
+
 <p>
 DB2 Express-C在Ubuntu源里面提供了，这点比Oracle XE方便，你只需要apt安装就行,我
 们先来找找：
-</p><pre class="example">
+</p>
+<pre class="example">
 sudo apt-cache search db2exc
 </pre>
-
-<p>显示没有这个包，由于db2exc属于Canonical Partner软件，查看一下apt源配置文件：
+<p>
+显示没有这个包，由于db2exc属于Canonical Partner软件，查看一下apt源配置文件：
 </p>
-
-
-<pre class="example">root@4e476fda5fb5:/etc/apt# pwd
+<pre class="example">
+root@4e476fda5fb5:/etc/apt# pwd
 /etc/apt
 root@4e476fda5fb5:/etc/apt# cat sources.list
 deb http://archive.ubuntu.com/ubuntu precise main universe
 deb http://archive.ubuntu.com/ubuntu precise-updates main universe
 deb http://archive.ubuntu.com/ubuntu precise-security main universe
 </pre>
-
 <p>
 源没有包括Partner源，我们从宿主机拷贝配置文件过来（简单编辑一下文件也行），但是
 找了一圈，没发现什么好办法直接从Host拷贝文件到Container，不行咱们先装SSH，通过
 scp来：
 </p>
-
-
-<pre class="example">root@4e476fda5fb5:/etc/apt# apt-get install ssh
+<pre class="example">
+root@4e476fda5fb5:/etc/apt# apt-get install ssh
 root@4e476fda5fb5:/etc/apt# scp tacy@172.17.42.1:/etc/apt/sources.list .
 tacy@172.17.42.1's password:
 sources.list                                                                                                    100% 2278     2.2KB/s   00:00
@@ -235,37 +254,34 @@ root@4e476fda5fb5:/etc/apt# apt-cache search db2exc
 db2exc - DB2 Express-C 9.7 Fix Pack 5 for Linux
 </pre>
 
-
 <p>
 安装一下：
-</p><pre class="example">
+</p>
+<pre class="example">
 apt-get install db2exc
 </pre>
-
 
 <p>
 完成之后，切换到db2inst1用户就可以创建数据库了（缺省没有建库），到这里貌似问题
 就解决了？事情还没完呢，现在我希望能自动启动SSH服务和DB2，并且可以从外面管理数
 据库和访问它。
 </p>
+
 <p>
 尝试启动一下SSH服务：
 </p>
-
-
-<pre class="example">root@4e476fda5fb5:/usr/sbin# service ssh start
+<pre class="example">
+root@4e476fda5fb5:/usr/sbin# service ssh start
 root@4e476fda5fb5:/usr/sbin# ps -ef|grep ssh
 root@4e476fda5fb5:/usr/sbin#
 </pre>
-
 <p>
 没反应，其实很正常，Container并没有启动upstart服务，为了保证Container的轻量级，
 当你创建一个Container的时候，它只会启动你命令行指定的命令（一般在dockerfile），
 我们的Container启动的是/bin/bash，所以如果你要启动ssh，可以通过下面方式启动：
 </p>
-
-
-<pre class="example">root@4e476fda5fb5:/usr/sbin# /usr/sbin/sshd -D
+<pre class="example">
+root@4e476fda5fb5:/usr/sbin# /usr/sbin/sshd -D
 Missing privilege separation directory: /var/run/sshd
 root@4e476fda5fb5:/usr/sbin# mkdir /var/run/sshd
 root@4e476fda5fb5:/usr/sbin# /usr/sbin/sshd -D &amp;
@@ -275,29 +291,26 @@ root        14     1  0 06:36 ?        00:00:00 /usr/sbin/sshd -D
 root        16     1  0 06:36 ?        00:00:00 grep sshd
 </pre>
 
-
 <p>
 能正常启动了，如果你想从外部连接进去，尝试一下：
 </p>
-
-
-<pre class="example">tacy@tacy:/var/cache/apt/archives$ ssh root@172.17.0.26
+<pre class="example">
+tacy@tacy:/var/cache/apt/archives$ ssh root@172.17.0.26
 ssh: connect to host 172.17.0.26 port 22: Connection refused
 </pre>
-
 
 <p>
 无法连接，你需要先把端口映射到Host上，另外你也不知道root密码，我们先设置一下密
 码，接下来你希望能修改启动参数，但是很不幸，Container启动之后，无法变更命令，你
-需要新建一个Container。<sup><a class="footref" name="fnr-.4" href="#fn-.4">4</a></sup>
+需要新建一个Container。<sup><a id="fnr.4" name="fnr.4" class="footref" href="#fn.4">4</a></sup>
 </p>
+
 <p>
 由于你需要基于当前Container的配置新建一个，但是Container只能从Image创建，因此你
 需要把当前的工作提交一下，生成一个新的Image，提交Image：
 </p>
-
-
-<pre class="example">tacy@tacy:/etc/init.d$ sudo docker commit db2exc tacylee/db2exc
+<pre class="example">
+tacy@tacy:/etc/init.d$ sudo docker commit db2exc tacylee/db2exc
 250b78860e291ebd71948bbb596f7dfc1a7d61563184a433bb44a8f2363079cb
 tacy@tacy:/etc/init.d$ sudo docker images
 REPOSITORY                TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
@@ -305,45 +318,40 @@ tacylee/db2exc            latest              250b78860e29        24 seconds ago
 wnameless/oracle-xe-11g   latest              f8d224b82290        5 days ago          2.389 GB
 </pre>
 
-
 <p>
 基于我们提交的Image运行一个Container：
 </p>
-
-
-<pre class="example">tacy@tacy:/etc/init.d$ sudo docker run -d -p 49170:22 -p 49171:50000 -name tt tacylee/db2exc /bin/bash -c '/etc/init.d/db2exc start &amp;&amp; /usr/sbin/sshd -D'
+<pre class="example">
+tacy@tacy:/etc/init.d$ sudo docker run -d -p 49170:22 -p 49171:50000 -name tt tacylee/db2exc /bin/bash -c '/etc/init.d/db2exc start &amp;&amp; /usr/sbin/sshd -D'
 c71ac7f85e167850552809ec12a12e50e064d30dddfeb4d71302d16d0ac34502
 </pre>
-
 
 <p>
 这个命令行有几个地方要注意，首先我们通过‘-d’参数让我们的Container运行在detached
 模式（也就是后台模式），其次我们通过‘-p’参数把Container端口22和50000映射到Host，
-另外就是CMD，这地方比较晕，弄了好久才明白<sup><a class="footref" name="fnr-.5" href="#fn-.5">5</a></sup><sup>, </sup><sup><a class="footref" name="fnr-.6" href="#fn-.6">6</a></sup>。关键点是，每个Container必须
-有一个前台服务在运行，如果这个前台服务停止了，Container就停止了<sup><a class="footref" name="fnr-.7" href="#fn-.7">7</a></sup>，例如：
+另外就是CMD，这地方比较晕，弄了好久才明白<sup><a id="fnr.5" name="fnr.5" class="footref" href="#fn.5">5</a></sup><sup>, </sup><sup><a id="fnr.6" name="fnr.6" class="footref" href="#fn.6">6</a></sup>。关键点是，每个Container必须
+有一个前台服务在运行，如果这个前台服务停止了，Container就停止了<sup><a id="fnr.7" name="fnr.7" class="footref" href="#fn.7">7</a></sup>，例如：
 </p>
-
-
-<pre class="example">tacy@tacy:~$ sudo docker run -d ubuntu echo 'helloworld'
+<pre class="example">
+tacy@tacy:~$ sudo docker run -d ubuntu echo 'helloworld'
 3088fce883ece6e04282ea965af84ddd4165b67873811e949b543f8930aebe82
 tacy@tacy:~$ sudo docker ps -a
 CONTAINER ID        IMAGE                            COMMAND                CREATED             STATUS              PORTS                                                      NAMES
 3088fce883ec        ubuntu:12.04                     echo helloworld        20 seconds ago      Exit 0
 </pre>
-
 <p>
 可以看到，这个Container已经停止了，因为他没有前台进程在跑了，所以如果你需要你的
 Container提供服务，你需要一个前台进程，很多时候我们用sshd来实现。接下来是要让我
 们的Container启动DB2，使用命令组合实现即可。注意不能让sshd放在前面执行，因为他不
 会结束，所以在它后面的命令无法执行。
 </p>
+
 <p>
 到这里，我们貌似已经已经有了一个跑DB2的Container了。但是，这个世界总是没那么美好
 ，我们先看看Container的启动日志：
 </p>
-
-
-<pre class="example">tacy@tacy:~$ sudo docker logs tt
+<pre class="example">
+tacy@tacy:~$ sudo docker logs tt
 tput: No value for $TERM and no -T specified
 tput: No value for $TERM and no -T specified
 tput: No value for $TERM and no -T specified
@@ -354,13 +362,12 @@ error: permission denied on key 'kernel.msgmni'
 error: permission denied on key 'kernel.msgmnb'
 error: permission denied on key 'kernel.msgmax'
 error: permission denied on key 'fs.file-max'
-  * Starting DAS:                       failed.
+  * Starting DAS:			failed.
 
 Message: SQL4401C  The DB2 Administration Server encountered an error during startup.
 
-  * Instance db2inst1 ( db2c_db2inst1 ):        done.
+  * Instance db2inst1 ( db2c_db2inst1 ):	done.
 </pre>
-
 
 <p>
 进去看看/etc/init.d/db2exc脚本，发现它会去修改kernel参数，而Docker为了保证安全
@@ -368,23 +375,21 @@ Message: SQL4401C  The DB2 Administration Server encountered an error during sta
 参数的设置操作，另外如果你不想去配置，可以让你的Container运行在特权模式，只需在
 创建Container的时候加上‘-privileged‘参数，这样Container就能执行任何权限指令了。
 </p>
+
 <p>
 Kernel参数问题解决了之后，你通过SSH连接到Container，切换到db2inst1用户，尝试建
 立数据库，很不幸，你会碰到下面错误：
 </p>
-
-
-<pre class="example">db2inst1@c71ac7f85e16:~$ db2 create db dd
+<pre class="example">
+db2inst1@c71ac7f85e16:~$ db2 create db dd
 SQL1042C  An unexpected system error occurred.  SQLSTATE=58004
 </pre>
-
 
 <p>
 查看DB2日志文件，你会发现如下错误信息：
 </p>
-
-
-<pre class="example">2014-04-11-11.44.10.392525+000 E100588E1093        LEVEL: Error (OS)
+<pre class="example">
+2014-04-11-11.44.10.392525+000 E100588E1093        LEVEL: Error (OS)
 PID     : 369                  TID  : 140502687016704PROC : db2sysc
 INSTANCE: db2inst1             NODE : 000          DB   : DD
 EDUID   : 79                   EDUNAME: db2loggr (DD)
@@ -408,55 +413,53 @@ DATA #7 : String, 105 bytes
 Search for ossError*Analysis probe point after this log entry for further
 </pre>
 
-
 <p>
 这个问题折腾了我两天，对Linux编程不了解的恶果。导致该问题的原因是Docker在mount
-rootfs的时候，用的aufs，但是不支持O_DIRECT<sup><a class="footref" name="fnr-.8" href="#fn-.8">8</a></sup><sup>, </sup><sup><a class="footref" name="fnr-.9" href="#fn-.9">9</a></sup><sup>, </sup><sup><a class="footref" name="fnr-.10" href="#fn-.10">10</a></sup><sup>, </sup><sup><a class="footref" name="fnr-.11" href="#fn-.11">11</a></sup>，而DB2对有
+rootfs的时候，用的aufs，但是不支持O_DIRECT[fn:8]<sup><a id="fnr.8" name="fnr.8" class="footref" href="#fn.8">8</a></sup><sup>, </sup><sup><a id="fnr.9" name="fnr.9" class="footref" href="#fn.9">9</a></sup><sup>, </sup><sup><a id="fnr.10" name="fnr.10" class="footref" href="#fn.10">10</a></sup>，而DB2对有
 些文件的操作用到O_DIRECT，比如日志，这就导致了该问题。上面的链接中提到0.7版本已
 经mount为ext4，并且支持O_DIRECT，但实际情况看貌似没有。解决办法上面的链接里面都
 提到了，我这里采用的办法是直接bind-mount了Host的一个目录到Container，该目录位于
 ext4文件系统，并且支持O_DIRECT，最终的Container创建命令如下：
-</p><pre class="example">
+</p>
+<pre class="example">
 sudo docker run -d -p 49170:22 -p 49171:50000 -v /home/tacy/Docker/db2db:/home/db2inst1/db2db -name db2exc -privileged tacylee/db2exc /bin/bash -c '/etc/init.d/db2exc start &amp;&amp; /usr/sbin/sshd -D'
 </pre>
-
-<p>然后把数据库创建在/home/db2inst1/db2db目录中即可。
+<p>
+然后把数据库创建在/home/db2inst1/db2db目录中即可。
 </p>
+
 <p>
 如果你不想bind-mount Host的目录到Container（毕竟很不灵活），也可以考虑替换Docker
-的后台存储为Devicemapper<sup><a class="footref" name="fnr-.12" href="#fn-.12">12</a></sup>。
+的后台存储为Devicemapper<sup><a id="fnr.11" name="fnr.11" class="footref" href="#fn.11">11</a></sup>。
 </p>
+
 <p>
 对于这类问题的诊断方法可以通过strace来实现，例如上面的例子：从DB2的日志里面我们
 知道是db2sysc需要执行系统的OPEN操作出现问题，你可以通过stace来捕获具体的错误。
 </p>
+
 <p>
 我们先获取db2sysc的进程ID：
 </p>
-
-
-<pre class="example">root@314f5d6aa350:~# ps -ef|grep db2sysc
+<pre class="example">
+root@314f5d6aa350:~# ps -ef|grep db2sysc
 db2inst1   369   367  0 11:30 ?        00:00:23 db2sysc
 root      2894  2881  0 15:12 pts/1    00:00:00 grep --color=auto db2sysc
 </pre>
 
-
 <p>
 然后用下面命令trace db2sysc的所有open操作：
 </p>
-
-
-<pre class="example">root@314f5d6aa350:~# strace -Ff -e open -o trace.out -p 369
+<pre class="example">
+root@314f5d6aa350:~# strace -Ff -e open -o trace.out -p 369
 Process 369 attached with 36 threads - interrupt to quit
 </pre>
-
 
 <p>
 在另一个终端执行数据库创建操作，完成之后，分析trace.out文件：
 </p>
-
-
-<pre class="example">2973  open("/home/db2inst1/sqllib/profile.env", O_RDONLY) = -1 ENOENT (No such file or directory)
+<pre class="example">
+2973  open("/home/db2inst1/sqllib/profile.env", O_RDONLY) = -1 ENOENT (No such file or directory)
 2973  open("/etc/passwd", O_RDONLY|O_CLOEXEC) = 42
 2973  open("/var/db2/global.reg", O_RDONLY|O_CREAT, 0644) = 42
 2973  open("/home/db2inst1/db2inst1/NODE0000/SQL00001/SQLOGCTL.LFH.1", O_RDWR|O_DSYNC) = 42
@@ -465,180 +468,343 @@ Process 369 attached with 36 threads - interrupt to quit
 2973  open("/home/db2inst1/db2inst1/NODE0000/SQL00001/SQLOGDIR/S0000000.LOG", O_RDWR|O_DSYNC|O_DIRECT) = -1 EINVAL (Invalid argument)
 </pre>
 
-
 <p>
 看截取部分的最后一行，提示open操作的参数错误，基本你就能判断是O_DIRECT无法执行
 导致，这属于换个思路解决问题，也很有效果。
 </p>
+
 <p>
 到这里，一个能跑DB2 Express-C的Container才算完成了，唯一的遗憾就是挂着个外部目
 录，不方便迁移，等待Docker解决吧。
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3">Docker仓库</h3>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Docker仓库</h3>
 <div class="outline-text-3" id="text-1-3">
-
-<p>前面我们提到Docker的仓库，里面有各种Image提供，你也可以把你的Image提交到仓库，供
+<p>
+前面我们提到Docker的仓库，里面有各种Image提供，你也可以把你的Image提交到仓库，供
 别人使用，你需要先去<a href="https://index.docker.io/">Docker Index</a>注册一个帐号，然后通过docker login命令登入，再通
 过docker push即可，具体我也没有试过，等我把DB2的Image弄好了，或许去提交一个玩玩。
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-1-4" class="outline-3">
-<h3 id="sec-1-4">tips</h3>
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> TIPS</h3>
 <div class="outline-text-3" id="text-1-4">
-
-
-</div>
-
-<div id="outline-container-1-4-1" class="outline-4">
-<h4 id="sec-1-4-1">进入正在运行的容器</h4>
+</div><div id="outline-container-sec-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> 进入正在运行的容器</h4>
 <div class="outline-text-4" id="text-1-4-1">
-
-<p>docker处于运行状态的容器如果在交互模式，你能通过screen/tmux等方式实现新开窗口运
+<p>
+docker处于运行状态的容器如果在交互模式，你能通过screen/tmux等方式实现新开窗口运
 行，完成多任务操作，比如debug等。
 </p>
+
 <p>
 对于运行在前台的任务，比如java应用，如果你想进入该容器终端，有几种方式：
-</p><ul>
+</p>
+<ul class="org-ul">
 <li>启动监听服务
 </li>
 </ul>
-
-<p>比如ssh，你可以通过ssh登入容器，但是该方式的缺点就是太重，管理复杂
-</p><ul>
+<p>
+比如ssh，你可以通过ssh登入容器，但是该方式的缺点就是太重，管理复杂
+</p>
+<ul class="org-ul">
 <li>使用lxc-attach
 </li>
 </ul>
-
 <pre class="example">
 docker ps --no-trunc
 </pre>
-
-<p>获取到container id，然后lxc-attach上去。不过0.9版本之后需要修改配置<sup><a class="footref" name="fnr-.13" href="#fn-.13">13</a></sup>
-</p><ul>
+<p>
+获取到container id，然后lxc-attach上去。不过0.9版本之后需要修改配置<sup><a id="fnr.12" name="fnr.12" class="footref" href="#fn.12">12</a></sup>
+</p>
+<ul class="org-ul">
 <li>使用nsenter
 </li>
 </ul>
-
-<p>使用大神jpetazzo<sup><a class="footref" name="fnr-.14" href="#fn-.14">14</a></sup>开发的nsenter，很方便
+<p>
+使用大神jpetazzo<sup><a id="fnr.13" name="fnr.13" class="footref" href="#fn.13">13</a></sup>开发的nsenter，很方便
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-1-4-2" class="outline-4">
-<h4 id="sec-1-4-2">删除容器</h4>
+<div id="outline-container-sec-1-4-2" class="outline-4">
+<h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> 监控docker cli和server的交互</h4>
 <div class="outline-text-4" id="text-1-4-2">
+<p>
+docker进程启动的时候创建了unix domain socket文件在/var/run/docker.sock,你可以通
+过socat/nc之类的工具连接上去,和docker服务进程交互,docker cli也是通过该socket和服
+务进程进行交互。
+</p>
 
+<p>
+如果你想写一个自己的客户端，除了参考REST API之外，你也可以通过监控docker cli和
+docker服务进程之间的交互来学习。
+</p>
+
+<p>
+要实现这个，你只需要通过socat实现一个docker socket的代理：
+</p>
+<pre class="example">
+sudo socat -t100 -v UNIX-LISTEN:/tmp/docker.sock,mode=777,reuseaddr,fork UNIX-CONNECT:/var/run/docker.sock
+</pre>
+
+<p>
+然后在另一个终端像如下操作cli：
+</p>
+<pre class="example">
+docker -H unix:///tmp/docker.sock ps
+</pre>
+
+<p>
+你就可以在socat窗口看到交互的内容，你将看到例如下面的输出：
+</p>
+<pre class="example">
+&gt; 2014/09/05 14:04:45.169982  length=130 from=0 to=129
+GET /v1.13/containers/json?all=1 HTTP/1.1\r
+Host: /tmp/proxysocket.sock\r
+User-Agent: Docker-Client/1.1.0\r
+Accept-Encoding: gzip\r
+\r
+&lt; 2014/09/05 14:04:45.171377  length=991 from=0 to=990
+HTTP/1.1 200 OK\r
+Content-Type: application/json\r
+Date: Fri, 05 Sep 2014 06:04:45 GMT\r
+Content-Length: 882\r
+\r
+[{"Command":"/bin/bash","Created":1405345176,"Id":"044f8cb3e0d6522ec36e09
+c3df0e7ff4bbf2d963d67be6d7faade6c88b5cbbb8","Image":"tianon/centos:5.8","
+Names":["/sad_turing"],"Ports":[],"Status":"Exited (1) 6 weeks ago"}
+,{"Command":"/bin/bash -c '/etc/init.d/db2exc start \\u0026\\u0026 /usr/s
+bin/sshd -D'","Created":1397215845,"Id":"314f5d6aa350976b8c9071958ee0c8fd
+0e2c700b8b348410be50e1ba77db4a07","Image":"tacylee/db2exc:latest","Names"
+:["/db2exc"],"Ports":[],"Status":"Exited (137) 4 months ago"}
+,{"Command":"\\"/bin/sh -c 'sed -i -E \\"s/HOST = [^)]+/HOST = $HOSTNAME/
+g\\" /u01/app/oracle/product/11.2.0/xe/network/admin/listener.ora; servic
+e oracle-xe start; /usr/sbin/sshd -D'\\"","Created":1397014650,"Id":"1379
+9635f5ee898e38c0f300475a1eaf3ad3da6e18fc8ea978f54176a96d44c9","Image":"wn
+ameless/oracle-xe-11g:latest","Names":["/oraclexe"],"Ports":[],"Status":"
+Exited (-1) 6 weeks ago"}
+]
+</pre>
+
+<p>
+你也可以建立tcp代理，这样远程客户端也能连接上来：
+</p>
+<pre class="example">
+sudo socat -t100 -v tcp-listen:5050,reuseaddr,fork UNIX-CONNECT:/var/run/docker.sock
+</pre>
+
+<p>
+现在你可以通过curl发起请求：
+</p>
+<pre class="example">
+curl http://localhost:5050/v1.13/containers/json?all=1
+</pre>
+
+<p>
+效果和unix domain socket一样，当然你也可以通过docker cli请求：
+</p>
+<pre class="example">
+docker -H tcp://localhost:5050 ps -a
+</pre>
+
+<p>
+另外的方式就是把docker服务进程启动的时候指定tcp监听，然后通过sniffer方式去获取
+交互内容。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-sec-1-4-3" class="outline-4">
+<h4 id="sec-1-4-3"><span class="section-number-4">1.4.3</span> 关于层的限制</h4>
+<div class="outline-text-4" id="text-1-4-3">
+<p>
+注意,docker image限制层高127,也就是说一个image的layer不能超过127,你在build image
+的时候必须注意,run和add都会产生层,另外docker存在冗余文件问题,比如你在build文件
+里面先做了一个删除,然后在下一个run里面有做了添加操作,这个文件就会存在两份,导致
+image非常臃肿.
+</p>
+
+<p>
+关于这个问题的一些参考issue<sup><a id="fnr.14" name="fnr.14" class="footref" href="#fn.14">14</a></sup><sup>, </sup><sup><a id="fnr.15" name="fnr.15" class="footref" href="#fn.15">15</a></sup><sup>, </sup><sup><a id="fnr.16" name="fnr.16" class="footref" href="#fn.16">16</a></sup>
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4-4" class="outline-4">
+<h4 id="sec-1-4-4"><span class="section-number-4">1.4.4</span> 删除容器</h4>
+<div class="outline-text-4" id="text-1-4-4">
 <pre class="example">
 sudo docker rm -v &lt;CONTAINER ID&gt;
 </pre>
-
-<p>注意，需要带上"-v"参数，否则不会删除aufs层文件，造成垃圾数据。
+<p>
+注意，需要带上"-v"参数，否则不会删除aufs层文件，造成垃圾数据。
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-1-4-3" class="outline-4">
-<h4 id="sec-1-4-3">删除一个本地image</h4>
-<div class="outline-text-4" id="text-1-4-3">
-
-<p>删除命令如下：
-</p><pre class="example">
+<div id="outline-container-sec-1-4-5" class="outline-4">
+<h4 id="sec-1-4-5"><span class="section-number-4">1.4.5</span> 删除一个本地image</h4>
+<div class="outline-text-4" id="text-1-4-5">
+<p>
+删除命令如下：
+</p>
+<pre class="example">
 sudo docker rmi &lt;IMAGE ID&gt;
 </pre>
-
 
 <p>
 如果你碰到如下错误：
 </p>
-
-
-<pre class="example">tacy@tacy:~$ sudo docker rmi 8dbd9e392a96
+<pre class="example">
+tacy@tacy:~$ sudo docker rmi 8dbd9e392a96
 Error: Conflict, 8dbd9e392a96 wasn't deleted
 2014/04/04 14:07:55 Error: failed to remove one or more images
 </pre>
 
-
 <p>
 很可能是由于该image正在被使用，你可以通过下面命令查看和操作
 </p>
-
-
-<pre class="example">sudo docker ps
+<pre class="example">
+sudo docker ps
 sudo docker stop &lt;CONTAINER ID&gt;
 sudo docker rm &lt;CONTAINER ID&gt;
 sudo docker rmi &lt;IMAGE ID&gt;
 </pre>
-
-
 </div>
 </div>
 </div>
-
 </div>
 
-<div id="outline-container-2" class="outline-2">
-<h2 id="sec-2">centos</h2>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Centos</h2>
 <div class="outline-text-2" id="text-2">
-
-
 <p>
 <a href="http://wiki.centos.org/Cloud/Docker">Cloud/Doker - Centos Wiki</a>
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-3" class="outline-2">
-<h2 id="sec-3">docker 重要的特性</h2>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Docker 重要的特性</h2>
 <div class="outline-text-2" id="text-3">
-
-<ul>
+<ul class="org-ul">
 <li>支持版本管理
 </li>
 <li>docker hub 支持自动build image
 </li>
 </ul>
-
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-4" class="outline-2">
-<h2 id="sec-4">service discovery</h2>
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Security</h2>
 <div class="outline-text-2" id="text-4">
+<p>
+Docker的安全还是需要完善，理论上VM的安全性高于Container，Container只要被escalate，就没法幸免，攻击面很大，而VM相对来说又多一层保护，毕竟escalate出去了，依然还有VMM保护，不会危及到整个host，比较所有和底层的交互都需要通过hypercall来实现，攻击面相对较小。
+</p>
 
-<ul>
+<p>
+总的来说，要保证docker的安全，有几件事情需要注意：
+</p>
+<ul class="org-ul">
+<li>首先尽量别别运行container在root下，docker目前没有支持user namespace，container里面的root权限和host下的root一致，很危险，而且目前user namespace也是出来不就<sup><a id="fnr.17" name="fnr.17" class="footref" href="#fn.17">17</a></sup>，有待稳定。
+</li>
+<li>如果你需要运行root权限应用，需要使用SELinux/Apparmor配合，控制container root权限。
+</li>
+<li>net=host不安全，root权限用户可以直接重启host，需要注意。
+</li>
+<li>不要从不可信网站下载image
+</li>
+<li>禁止不必要的权限，比如non-root升级到root问题可以通过移除文件的suid位
+</li>
+<li>使用user namespace（参考docker issue #7906<sup><a id="fnr.18" name="fnr.18" class="footref" href="#fn.18">18</a></sup>，支持user map
+</li>
+</ul>
+
+<p>
+关于docker安全的一些参考：
+</p>
+<ul class="org-ul">
+<li><a href="http://blog.docker.com/2013/08/containers-docker-how-secure-are-they/">Containers &amp; Docker: How Secure Are They?</a>
+</li>
+<li><a href="https://news.ycombinator.com/item?id=6252182">Hacker News discuss - Containers and Docker: how secure are they?</a>
+</li>
+<li><a href="http://www.projectatomic.io/blog/">Project Atomic News (blog)</a>
+</li>
+<li><a href="http://opensource.com/business/14/7/docker-security-selinux">Are Docker containers really secure?</a>
+</li>
+<li><a href="https://fedorapeople.org/~dwalsh/SELinux/Presentations/DockerSecurity">Docker Security</a>
+</li>
+<li><a href="http://www.slideshare.net/jpetazzo/docker-linux-containers-lxc-and-security">Docker, Linux Containers (LXC), and security</a>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> Storage backend</h2>
+<div class="outline-text-2" id="text-5">
+<ul class="org-ul">
+<li>aufs
+使用上注意，这个不能用在产品上，基于文件目录的层，不是COW方式。
+</li>
+<li>device mapper
+缺省用的是loop device，从性能考虑，需要用block device<sup><a id="fnr.19" name="fnr.19" class="footref" href="#fn.19">19</a></sup>
+</li>
+<li></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> Migration</h2>
+<div class="outline-text-2" id="text-6">
+<ul class="org-ul">
+<li>CRIU<sup><a id="fnr.20" name="fnr.20" class="footref" href="#fn.20">20</a></sup>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-7" class="outline-2">
+<h2 id="sec-7"><span class="section-number-2">7</span> Monitor</h2>
+<div class="outline-text-2" id="text-7">
+<ul class="org-ul">
+<li>cAdvisor
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-8" class="outline-2">
+<h2 id="sec-8"><span class="section-number-2">8</span> Service Discovery</h2>
+<div class="outline-text-2" id="text-8">
+<ul class="org-ul">
 <li>etcd
 </li>
 <li>consul
+<ul class="org-ul">
+<li>Consul will use a load-balancing strategy similar to round-robin when it returns DNS answers
+</li>
+</ul>
 </li>
 <li>self
 </li>
 <li>zookeeper
 </li>
 </ul>
-
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-5" class="outline-2">
-<h2 id="sec-5">clusetr management</h2>
-<div class="outline-text-2" id="text-5">
-
-<ul>
+<div id="outline-container-sec-9" class="outline-2">
+<h2 id="sec-9"><span class="section-number-2">9</span> Clusetr Management</h2>
+<div class="outline-text-2" id="text-9">
+<ul class="org-ul">
 <li>fleet
 </li>
 <li>mesos/marathon
@@ -648,33 +814,25 @@ sudo docker rmi &lt;IMAGE ID&gt;
 <li>yarn
 </li>
 </ul>
-
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-6" class="outline-2">
-<h2 id="sec-6">docker paas</h2>
-<div class="outline-text-2" id="text-6">
-
-<ul>
+<div id="outline-container-sec-10" class="outline-2">
+<h2 id="sec-10"><span class="section-number-2">10</span> Docker PaaS</h2>
+<div class="outline-text-2" id="text-10">
+<ul class="org-ul">
 <li>flynn
 </li>
 <li>deis
 </li>
 </ul>
-
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-7" class="outline-2">
-<h2 id="sec-7">coreos</h2>
-<div class="outline-text-2" id="text-7">
-
-<ul>
+<div id="outline-container-sec-11" class="outline-2">
+<h2 id="sec-11"><span class="section-number-2">11</span> Coreos</h2>
+<div class="outline-text-2" id="text-11">
+<ul class="org-ul">
 <li>etcd
 </li>
 <li>fleet
@@ -682,69 +840,324 @@ sudo docker rmi &lt;IMAGE ID&gt;
 <li>docker
 </li>
 </ul>
+</div>
+</div>
+
+<div id="outline-container-sec-12" class="outline-2">
+<h2 id="sec-12"><span class="section-number-2">12</span> PaaS</h2>
+<div class="outline-text-2" id="text-12">
+<ul class="org-ul">
+<li>marathon
+</li>
+<li>flynn
+</li>
+<li>deis
+</li>
+<li>zenoss control center
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-13" class="outline-2">
+<h2 id="sec-13"><span class="section-number-2">13</span> IBM Research Report 2014 for Container and VM</h2>
+<div class="outline-text-2" id="text-13">
+<p>
+IBM的一个关于容器和虚拟机的对比报告，主要是性能关注，包括CPU、内存、存储、网络
+资源，测试结果显示容器的性能表现全面高于或等于虚拟机，对于IO敏感的应用，两个技
+术都需要进行优化
+</p>
+
+<p>
+隔离和资源控制是两个关键的需求对于多种负载类型的应用共享资源池，不能让他们相互
+之间影响彼此，同时控制每个应用使用资源的多少，不至于出现资源争抢。
+</p>
+</div>
+
+<div id="outline-container-sec-13-1" class="outline-3">
+<h3 id="sec-13-1"><span class="section-number-3">13.1</span> 背景知识</h3>
+<div class="outline-text-3" id="text-13-1">
+<p>
+首先了解虚拟化的难点（这里谈论的都是x86）。传统的x86系统都是基于裸硬件设计的，
+也就是说OS缺省默认是自己拥有所有的底层硬件资源，CPU在设计的时候，都会把指令按照
+安全级别分类，也就是通常说的protection ring<sup><a id="fnr.21" name="fnr.21" class="footref" href="#fn.21">21</a></sup>，intel用2bit实现，也就是有
+ring 0 ~ ring 3四个级别：ring 0权限最大，可以执行所有操作，ring 1 和ring 2 没有
+权限操作硬件，ring 3权限最小。主流的x86操作系统都只使用了ring 0 和ring 3，ring 0
+也被称为kernel mode，ring 3为user mode，kernel mode封装了一系列的system call，当
+user mode需要做特权指令调用的时候，只能通过system call实现，产生ContextSwitch，
+带来重的系统开销。
+</p>
+
+<p>
+由于x86操作系统都直接占用了ring 0，对硬件设计没有考虑虚拟化的支持，那么虚拟化软件
+厂商就各显神通，早期的虚拟化VMM的实现都是把VMM放到ring 0，guest os放在ring 1执行
+，应用跑在ring 3，这样就带来一系列问题：
+</p>
+</div>
+
+<div id="outline-container-sec-13-1-1" class="outline-4">
+<h4 id="sec-13-1-1"><span class="section-number-4">13.1.1</span> 软件虚拟化问题</h4>
+<div class="outline-text-4" id="text-13-1-1">
+</div><div id="outline-container-sec-13-1-1-1" class="outline-5">
+<h5 id="sec-13-1-1-1"><span class="section-number-5">13.1.1.1</span> 特权指令调用</h5>
+<div class="outline-text-5" id="text-13-1-1-1">
+<p>
+最早的vmware采用binary translation解决这个问题，在vmm层模拟所有的系统调用，当
+guest os执行systemcall时，vmm捕获执行模拟操作，然后返回结果给guest os kernel，
+继续返回给应用。软件实现方式带来很大开销，早期的虚拟化软件性能有很大问题，但是
+他又一个好处就是对上层guest os透明，不需要对guest os进行任何修改。
+</p>
+
+<p>
+XEN采用一种不同的方式：Paravitualization<sup><a id="fnr.22" name="fnr.22" class="footref" href="#fn.22">22</a></sup>，也被称作半虚拟化技术，这种方式
+的好处就是性能提升，但是问题就在于需要上层的guest os感知，也就是需要对guest os
+就行修改，在芯片厂商的虚拟化支持没有出来之前，这个成为一种主流的方式，使得虚拟
+化技术在服务器上运行（后期的vmware应该是个混合体）。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-13-1-1-2" class="outline-5">
+<h5 id="sec-13-1-1-2"><span class="section-number-5">13.1.1.2</span> 内存管理问题（MMU）</h5>
+<div class="outline-text-5" id="text-13-1-1-2">
+<p>
+由于cpu只有一个MMU，guest os上的内存寻址带来问题，需要从GVA-》GPA-》HVA-》HPA，
+带来严重的性能开销，解决办法就是Shadow Page Table，vmm维护一个虚拟的TLB，直接
+映射GVA-》HPA，但是这样的方式依然有很大开销，需要用软件方式额外维护一个频繁更
+新的页表。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-13-1-1-3" class="outline-5">
+<h5 id="sec-13-1-1-3"><span class="section-number-5">13.1.1.3</span> IO问题</h5>
+<div class="outline-text-5" id="text-13-1-1-3">
+<p>
+早期的实现都是基于模拟方式，主流的QEMU实现了全虚拟的驱动设备，但是效率非常地下。
+后期主流都采用Paravirtualization实现，但是需要在guest os上安装具体驱动。vmware
+需要在guest os上安装vmtools就是这个原因。xen为了支持windows也开发了一套
+GPLPV驱动。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-13-1-2" class="outline-4">
+<h4 id="sec-13-1-2"><span class="section-number-4">13.1.2</span> 硬件支持</h4>
+<div class="outline-text-4" id="text-13-1-2">
+<p>
+x86芯片虚拟化自然也是不干落后，首先是vt-x（只说intel，AMD有相应技术）<sup><a id="fnr.23" name="fnr.23" class="footref" href="#fn.23">23</a></sup>，
+第一代的vt-x解决的是特权指令问题，引入了ring -1（也叫Root mode）,VMM跑在Root
+mode，但是第一代的vt-x并没有大规模使用，大量的vmexit和vmenter以及太高的消耗（
+几百到几千的cycles），导致性能比软件实现还差，只是简化了VMM开发。<sup><a id="fnr.24" name="fnr.24" class="footref" href="#fn.24">24</a></sup>
+</p>
+
+<p>
+第二代的vt-x优化了实现，并且引入了EMT，硬件上解决内存寻址问题，芯片内置了嵌套
+页表，直接缓存GVA-》HPA映射，但是依然会带来一些问题，比如TLB Miss相比非虚拟化
+方式开销巨大，芯片的解决办法是引入更大的TLB。虚拟软件厂商也通过采用大页的方式
+来缓解这个问题。
+</p>
+
+<p>
+对于IO问题的解决方案intel引入vt-d技术（也被称作IOMMU），直接passthrough硬件到
+guest os，但是这种方式带来的问题是虚拟机无法迁移。
+</p>
+
+<p>
+其他的解决方案比如PCIe的SR-IOV，直接支持pci卡的虚拟多设备绑定到guest os，都有
+迁移问题。
+</p>
+
+<p>
+IO这块通用的方式更多还是paravirtualization。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-13-1-3" class="outline-4">
+<h4 id="sec-13-1-3"><span class="section-number-4">13.1.3</span> KVM</h4>
+<div class="outline-text-4" id="text-13-1-3">
+<p>
+kvm采用的是HVM方式，也就是必须硬件虚拟化支持（vt-x）。IO实现两种模式，一种是通
+过QEMU emulator模拟驱动设备，性能很差，基本只做测试，另外一种就是paravirtual（
+Virtio），损耗比较低，IO性能能达到95%左右，但是这只是测试，具体使用中会有各种
+问题，比如IO对齐，缓存等。
+</p>
+
+<p>
+kvm也支持guest os的vcpu、vram在线伸缩，这些在现有的IaaS中几乎没有看见使用，需
+要上层软件支持。
+</p>
+
+<p>
+另外kvm直接利用了linux的已有的资源调度和管理，每一个guest os就是一个process，这
+简化了kvm实现，但是也带来的复杂度，比如内存，如果overcommitted，内存管理就无法
+很好的swapout，guest os的性能就无法保证。所以很多IaaS也会提供cpu pin和资源不超
+售，以及vRAM锁定到RAM的方式提高性能。
+</p>
+
+<p>
+对于VM的安全，由于只能通过hypercalls和虚拟驱动设备和外界交互，而二者都需要通过
+VMM，保证了VM的安全隔离，当然也不是说没有安全问题，vmm的安全漏洞也时有发现。
+</p>
+
+<p>
+VM的隔离也带来了其他开销：系统内存，文件系统等，虚拟化厂商也在提供技术解决方案
+，比如内存的ballooning，但是这些都会带来其他开销。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-13-1-4" class="outline-4">
+<h4 id="sec-13-1-4"><span class="section-number-4">13.1.4</span> linux container</h4>
+<div class="outline-text-4" id="text-13-1-4">
+<p>
+linux container底层技术就是两个：kernel namespace和control groups。
+</p>
+
+<p>
+linux实现了fs、pid、network、user、ipc和hostname的名称空间，可以实现隔离。例如
+每个fs名称空间都有自己的根系统，mount表，表现的就是一个独立的文件系统。每个网络
+名称空间能有自己的网卡，自己的路由表等。
+</p>
+
+<p>
+cgroups
+</p>
+</div>
+</div>
+</div>
+</div>
 
 
+
+
+
+
+
+<div id="outline-container-sec-14" class="outline-2">
+<h2 id="sec-14"><span class="section-number-2">14</span> 一些需要注意的问题：</h2>
+<div class="outline-text-2" id="text-14">
+</div><div id="outline-container-sec-14-1" class="outline-3">
+<h3 id="sec-14-1"><span class="section-number-3">14.1</span> net=host安全问题[[<a href="https://github.com/docker/docker/issues/6401">https://github.com/docker/docker/issues/6401</a>][</h3>
+<div class="outline-text-3" id="text-14-1">
+<p>
+Rebooting within docker container actually reboots the host #6401 ]]
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-15" class="outline-2">
+<h2 id="sec-15"><span class="section-number-2">15</span> 好的文章</h2>
+<div class="outline-text-2" id="text-15">
+<ul class="org-ul">
+<li><a href="http://stackoverflow.com/questions/18285212/how-to-scale-docker-containers-in-production">How to scale Docker containers in production</a>
+</li>
+</ul>
+</div>
+</div>
 <div id="footnotes">
 <h2 class="footnotes">Footnotes: </h2>
 <div id="text-footnotes">
-<p class="footnote"><sup><a class="footnum" name="fn-.1" href="#fnr-.1">1</a></sup> <a href="http://docs.docker.io/en/latest/faq/">Docker FAQ</a>
-</p>
 
+<div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p class="footpara">
+<a href="http://docs.docker.io/en/latest/faq/">Docker FAQ</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.2" href="#fnr-.2">2</a></sup> <a href="http://stackoverflow.com/questions/16047306/how-is-docker-io-different-from-a-normal-virtual-machine?rq=1">How is Docker.io different from a normal virtual machine?</a>
-</p>
+<div class="footdef"><sup><a id="fn.2" name="fn.2" class="footnum" href="#fnr.2">2</a></sup> <p class="footpara">
+<a href="http://stackoverflow.com/questions/16047306/how-is-docker-io-different-from-a-normal-virtual-machine?rq=1">How is Docker.io different from a normal virtual machine?</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.3" name="fn.3" class="footnum" href="#fnr.3">3</a></sup> <p class="footpara">
+<a href="http://docs.docker.io/en/latest/reference/run/">Docker Run Reference</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.3" href="#fnr-.3">3</a></sup> <a href="http://docs.docker.io/en/latest/reference/run/">Docker Run Reference</a>
-</p>
+<div class="footdef"><sup><a id="fn.4" name="fn.4" class="footnum" href="#fnr.4">4</a></sup> <p class="footpara">
+<a href="https://github.com/dotcloud/docker/issues/1228">running a different command on an existing container</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.5" name="fn.5" class="footnum" href="#fnr.5">5</a></sup> <p class="footpara">
+<a href="https://github.com/dotcloud/docker/issues/1826">After importing an image, run gives "no command specified</a>"
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.4" href="#fnr-.4">4</a></sup> <a href="https://github.com/dotcloud/docker/issues/1228">running a different command on an existing container</a>
-</p>
+<div class="footdef"><sup><a id="fn.6" name="fn.6" class="footnum" href="#fnr.6">6</a></sup> <p class="footpara">
+<a href="https://groups.google.com/forum/#!topic/docker-user/yv2RAnaXvpk">Using sudo inside Docker image</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.7" name="fn.7" class="footnum" href="#fnr.7">7</a></sup> <p class="footpara">
+<a href="http://blog.trifork.com/2014/03/11/using-supervisor-with-docker-to-manage-processes-supporting-image-inheritance/">Using Supervisor with Docker to manage processes</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.5" href="#fnr-.5">5</a></sup> <a href="https://github.com/dotcloud/docker/issues/1826">After importing an image, run gives "no command specified</a>"
-</p>
+<div class="footdef"><sup><a id="fn.8" name="fn.8" class="footnum" href="#fnr.8">8</a></sup> <p class="footpara">
+<a href="https://github.com/dotcloud/docker/issues/3433">User defined layer mount options</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.9" name="fn.9" class="footnum" href="#fnr.9">9</a></sup> <p class="footpara">
+<a href="https://groups.google.com/forum/#!topic/docker-user/1pFhqlfbqQI">DB2 in container can't start unless I mount non-aufs volume from host</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.6" href="#fnr-.6">6</a></sup> <a href="https://groups.google.com/forum/#!topic/docker-user/yv2RAnaXvpk">Using sudo inside Docker image</a>
-</p>
+<div class="footdef"><sup><a id="fn.10" name="fn.10" class="footnum" href="#fnr.10">10</a></sup> <p class="footpara">
+<a href="http://webcache.googleusercontent.com/search?q=cache:tp3o-xrNBycJ:permalink.gmane.org/gmane.comp.sysutils.docker.user/950+&cd=4&hl=en&ct=clnk">Re: Oracle Database won't run in docker container</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.11" name="fn.11" class="footnum" href="#fnr.11">11</a></sup> <p class="footpara">
+<a href="http://muehe.org/posts/switching-docker-from-aufs-to-devicemapper/">Switching Docker from aufs to devicemapper</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.7" href="#fnr-.7">7</a></sup> <a href="http://blog.trifork.com/2014/03/11/using-supervisor-with-docker-to-manage-processes-supporting-image-inheritance/">Using Supervisor with Docker to manage processes</a>
-</p>
+<div class="footdef"><sup><a id="fn.12" name="fn.12" class="footnum" href="#fnr.12">12</a></sup> <p class="footpara">
+<a href="http://jpetazzo.github.io/2014/03/23/lxc-attach-nsinit-nsenter-docker-0-9/">Attaching to a container with Docker 0.9 and libcontainer</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.13" name="fn.13" class="footnum" href="#fnr.13">13</a></sup> <p class="footpara">
+<a href="https://github.com/jpetazzo">jpetazzo blog</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.8" href="#fnr-.8">8</a></sup> <a href="https://github.com/dotcloud/docker/issues/1916">docker build should support privileged operations</a>
-</p>
+<div class="footdef"><sup><a id="fn.14" name="fn.14" class="footnum" href="#fnr.14">14</a></sup> <p class="footpara">
+<a href="https://github.com/docker/docker/issues/332">flatten images - merge multiple layers into a single one</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.15" name="fn.15" class="footnum" href="#fnr.15">15</a></sup> <p class="footpara">
+<a href="https://github.com/docker/docker/issues/2439">Dockerfiles should have a way to perform multiple build actions in one commit</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.9" href="#fnr-.9">9</a></sup> <a href="https://github.com/dotcloud/docker/issues/3433">User defined layer mount options</a>
-</p>
+<div class="footdef"><sup><a id="fn.16" name="fn.16" class="footnum" href="#fnr.16">16</a></sup> <p class="footpara">
+<a href="https://github.com/docker/docker/pull/4232">Add docker squash command</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.17" name="fn.17" class="footnum" href="#fnr.17">17</a></sup> <p class="footpara">
+<a href="http://lwn.net/Articles/532593/">Namespaces in operation, part 5: User namespaces</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.10" href="#fnr-.10">10</a></sup> <a href="https://groups.google.com/forum/#!topic/docker-user/1pFhqlfbqQI">DB2 in container can't start unless I mount non-aufs volume from host</a>
-</p>
+<div class="footdef"><sup><a id="fn.18" name="fn.18" class="footnum" href="#fnr.18">18</a></sup> <p class="footpara">
+<a href="https://github.com/docker/docker/issues/7906">Proposal: Support for user namespaces</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.19" name="fn.19" class="footnum" href="#fnr.19">19</a></sup> <p class="footpara">
+<a href="http://jpetazzo.github.io/2014/01/29/docker-device-mapper-resize/">Resizing Docker containers with the Device Mapper plugin</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.11" href="#fnr-.11">11</a></sup> <a href="http://webcache.googleusercontent.com/search?q=cache:tp3o-xrNBycJ:permalink.gmane.org/gmane.comp.sysutils.docker.user/950+&amp;cd=4&amp;hl=en&amp;ct=clnk">Re: Oracle Database won't run in docker container</a>
-</p>
+<div class="footdef"><sup><a id="fn.20" name="fn.20" class="footnum" href="#fnr.20">20</a></sup> <p class="footpara">
+<a href="http://en.wikipedia.org/wiki/CRIU">CRIU</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.21" name="fn.21" class="footnum" href="#fnr.21">21</a></sup> <p class="footpara">
+<a href="http://en.wikipedia.org/wiki/Protection_ring">Protection ring</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.12" href="#fnr-.12">12</a></sup> <a href="http://muehe.org/posts/switching-docker-from-aufs-to-devicemapper/">Switching Docker from aufs to devicemapper</a>
-</p>
+<div class="footdef"><sup><a id="fn.22" name="fn.22" class="footnum" href="#fnr.22">22</a></sup> <p class="footpara">
+<a href="http://en.wikipedia.org/wiki/Paravirtualization">Paravirtualization</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.23" name="fn.23" class="footnum" href="#fnr.23">23</a></sup> <p class="footpara">
+<a href="http://en.wikipedia.org/wiki/X86_virtualization">x86 virtualization</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.13" href="#fnr-.13">13</a></sup> <a href="http://jpetazzo.github.io/2014/03/23/lxc-attach-nsinit-nsenter-docker-0-9/">Attaching to a container with Docker 0.9 and libcontainer</a>
-</p>
+<div class="footdef"><sup><a id="fn.24" name="fn.24" class="footnum" href="#fnr.24">24</a></sup> <p class="footpara">
+<a href="http://www.anandtech.com/print/2480/">Hardware Virtualization: the Nuts and Bolts</a>
+</p></div>
 
-
-<p class="footnote"><sup><a class="footnum" name="fn-.14" href="#fnr-.14">14</a></sup> <a href="https://github.com/jpetazzo">jpetazzo blog</a>
-</p>
-
-
-</div>
-</div>
 
 </div>
 </div>

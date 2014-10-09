@@ -1,3 +1,17 @@
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. FlameGraph</a>
+<ul>
+<li><a href="#sec-1-1">1.1. java profiler</a></li>
+<li><a href="#sec-1-2">1.2. lightweight-java-profiler</a></li>
+<li><a href="#sec-1-3">1.3. 生成火焰图</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 ---
 layout: post
 title: "Java性能分析之火焰图"
@@ -8,51 +22,34 @@ categories: [tech]
 tags: [java, tools, performance, tuning]
 ---
 
-
-<div id="table-of-contents">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents">
-<ul>
-<li><a href="#sec-1">1 FlameGraph</a>
-<ul>
-<li><a href="#sec-1-1">1.1 java profiler</a></li>
-<li><a href="#sec-1-2">1.2 lightweight-java-profiler</a></li>
-<li><a href="#sec-1-3">1.3 生成火焰图</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
-
-<div id="outline-container-1" class="outline-2">
-<h2 id="sec-1">FlameGraph</h2>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> FlameGraph</h2>
 <div class="outline-text-2" id="text-1">
-
-
 <p>
-火焰图<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup>，简单通过x轴横条宽度来度量时间指标，y轴代表线程栈的层次，简单明了，
+火焰图<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup>，简单通过x轴横条宽度来度量时间指标，y轴代表线程栈的层次，简单明了，
 容易找出具体的可优化点，非常方便，当然前提是我们通过profiler工具获取到profiler
 数据。
 </p>
-
 </div>
 
-<div id="outline-container-1-1" class="outline-3">
-<h3 id="sec-1-1">java profiler</h3>
+<div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> java profiler</h3>
 <div class="outline-text-3" id="text-1-1">
-
-<p>java性能调优时，我们经常会用到profiler工具，但是很多时候你可能不知道，大部分的
-profiler工具都是有问题的<sup><a class="footref" name="fnr-.2" href="#fn-.2">2</a></sup><sup>, </sup><sup><a class="footref" name="fnr-.3" href="#fn-.3">3</a></sup>，简单来说，profiler：增加开销；修改了你的
+<p>
+java性能调优时，我们经常会用到profiler工具，但是很多时候你可能不知道，大部分的
+profiler工具都是有问题的<sup><a id="fnr.2" name="fnr.2" class="footref" href="#fn.2">2</a></sup><sup>, </sup><sup><a id="fnr.3" name="fnr.3" class="footref" href="#fn.3">3</a></sup>，简单来说，profiler：增加开销；修改了你的
 代码，导致java编译器的优化行为不确定；同时影响了代码的层次，层次越深自然也影响
 执行效率。
 </p>
+
 <p>
 当然如果你不是通过上面方式实现，而是通过获取on-cpu线程的线程栈方式，这又会带来
-一个麻烦的问题：获取系统范围的线程栈，jvm必须处于safepoint<sup><a class="footref" name="fnr-.4" href="#fn-.4">4</a></sup>状态，只有当线
+一个麻烦的问题：获取系统范围的线程栈，jvm必须处于safepoint<sup><a id="fnr.4" name="fnr.4" class="footref" href="#fn.4">4</a></sup>状态，只有当线
 程处于safepoint状态的时候，别的线程才能去获取它的线程栈，而这个safepoint是由jvm
 控制的，这对于profiler非常不利，有可能一个很热的代码块，jvm不会在该代码块中间放
 置safepoint，导致profiler无法获得该线程栈，导致错误的profiler结果。
 </p>
+
 <p>
 上面的问题几个商用的profiler工具都存在，Oracle Solaris studio利用的是jvmti的一
 个非标准接口AsyncGetCallTrace来实现，不存在上面问题，Jeremy Manson也利用该接口
@@ -60,112 +57,112 @@ profiler工具都是有问题的<sup><a class="footref" name="fnr-.2" href="#fn-
 的火焰图的数据来源就是通过它来获取的。
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2">lightweight-java-profiler</h3>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> lightweight-java-profiler</h3>
 <div class="outline-text-3" id="text-1-2">
-
-<p>当然，这个工具只支持hotspot的vm，需要你自己编译，有些问题需要注意：
-</p><ul>
-<li>如果你需要在rhel上编译，需要安装4.6以上版本gcc<sup><a class="footref" name="fnr-.5" href="#fn-.5">5</a></sup>，4.4版本不支持。
+<p>
+当然，这个工具只支持hotspot的vm，需要你自己编译，有些问题需要注意：
+</p>
+<ul class="org-ul">
+<li>如果你需要在rhel上编译，需要安装4.6以上版本gcc<sup><a id="fnr.5" name="fnr.5" class="footref" href="#fn.5">5</a></sup>，4.4版本不支持。
 </li>
-<li>如果你需要在ubunt上编译，可能会碰到编译错误<sup><a class="footref" name="fnr-.6" href="#fn-.6">6</a></sup>。
+<li>如果你需要在ubunt上编译，可能会碰到编译错误<sup><a id="fnr.6" name="fnr.6" class="footref" href="#fn.6">6</a></sup>。
 </li>
 </ul>
 
-
 <p>
 编译的时候，需要主要修改BITS参数，如果你要编译64Bit，使用命令：
-</p><pre class="example">
+</p>
+<pre class="example">
 make BITS=64 all
 </pre>
 
-
 <p>
 使用方法很简单，直接在你的启动命令上添加如下参数：
-</p><pre class="example">
+</p>
+<pre class="example">
 -agentpath:path/to/liblagent.so[:file=name]
 </pre>
-
 
 <p>
 启动之后，会在启动目录下生成trace.txt文件（缺省），该文件就是我们需要的采样数据。
 </p>
+
 <p>
 另外有几个参数可在编译时修改，都在global.h文件中。首先是采样的频率，缺省是100次
 每秒；另外是最大采样的线程栈，缺省3000，超过3000就忽略（对于复杂的应用明显不够）
 ；最后是栈的深度，缺省是128（对于调用层次深的应用调大）。当然你记录的东西越多，
 也会有性能损耗，我调成30000+256，一刻钟生成200M文件。
 </p>
+
 <p>
 另外特别需要注意，trace不是实时写入，而是在应用shutdown的时候才写入的，别kill应
 用，否则trace里面什么都没有。
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3">生成火焰图</h3>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 生成火焰图</h3>
 <div class="outline-text-3" id="text-1-3">
-
-<p>大神Brendan Gregg<sup><a class="footref" name="fnr-.7" href="#fn-.7">7</a></sup>已经帮你做好了，直接check大神的项目：
+<p>
+大神Brendan Gregg<sup><a id="fnr.7" name="fnr.7" class="footref" href="#fn.7">7</a></sup>已经帮你做好了，直接check大神的项目：
 </p>
-
-
-<pre class="example">git clone http://github.com/brendangregg/FlameGraph
+<pre class="example">
+git clone http://github.com/brendangregg/FlameGraph
 cd FlameGraph
 ./stackcollapse-ljp.awk &lt; ../traces.txt | ./flamegraph.pl &gt; ../traces.svg
 </pre>
-
 
 <p>
 效果图截屏参考：
 <img src="/images/flamegraph.png" alt="火焰图"/>
 </p>
+
 <p>
 真正火焰图指上去会显示栈信息。
 </p>
+
 <p>
 看火焰图，找到那些长条分析，基本上就有方向了。
 </p>
+</div>
+</div>
+</div>
 <div id="footnotes">
 <h2 class="footnotes">Footnotes: </h2>
 <div id="text-footnotes">
-<p class="footnote"><sup><a class="footnum" name="fn-.1" href="#fnr-.1">1</a></sup> <a href="http://www.brendangregg.com/flamegraphs.html">Flame Graphs</a>
-</p>
 
+<div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p class="footpara">
+<a href="http://www.brendangregg.com/flamegraphs.html">Flame Graphs</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.2" href="#fnr-.2">2</a></sup> <a href="http://pl.cs.colorado.edu/papers/profilers-pldi10.html">T Mytkowicz, A Diwan, M Hauswirth, PF Sweeney. "Evaluating the Accuracy of Java Profilers,"</a>
-</p>
+<div class="footdef"><sup><a id="fn.2" name="fn.2" class="footnum" href="#fnr.2">2</a></sup> <p class="footpara">
+<a href="http://pl.cs.colorado.edu/papers/profilers-pldi10.html">T Mytkowicz, A Diwan, M Hauswirth, PF Sweeney. "Evaluating the Accuracy of Java Profilers,"</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.3" name="fn.3" class="footnum" href="#fnr.3">3</a></sup> <p class="footpara">
+<a href="http://jeremymanson.blogspot.jp/2010/07/why-many-profilers-have-serious.html">Why Many Profilers have Serious Problems </a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.3" href="#fnr-.3">3</a></sup> <a href="http://jeremymanson.blogspot.jp/2010/07/why-many-profilers-have-serious.html">Why Many Profilers have Serious Problems </a>
-</p>
+<div class="footdef"><sup><a id="fn.4" name="fn.4" class="footnum" href="#fnr.4">4</a></sup> <p class="footpara">
+<a href="http://chriskirk.blogspot.jp/2013/09/what-is-java-safepoint.html">What is java safepoint</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.5" name="fn.5" class="footnum" href="#fnr.5">5</a></sup> <p class="footpara">
+<a href="http://superuser.com/questions/381160/how-to-install-gcc-4-7-x-4-8-x-on-centos">How to Install gcc 4.7.x/4.8.x on CentOS</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.4" href="#fnr-.4">4</a></sup> <a href="http://chriskirk.blogspot.jp/2013/09/what-is-java-safepoint.html">What is java safepoint</a>
-</p>
+<div class="footdef"><sup><a id="fn.6" name="fn.6" class="footnum" href="#fnr.6">6</a></sup> <p class="footpara">
+<a href="https://code.google.com/p/lightweight-java-profiler/issues/detail?id=3">build error on Ubuntu 13.10 (Saucy)</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.7" name="fn.7" class="footnum" href="#fnr.7">7</a></sup> <p class="footpara">
+<a href="http://brendan.gregg.usesthis.com/">Brendan Gregg</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.5" href="#fnr-.5">5</a></sup> <a href="http://superuser.com/questions/381160/how-to-install-gcc-4-7-x-4-8-x-on-centos">How to Install gcc 4.7.x/4.8.x on CentOS</a>
-</p>
-
-
-<p class="footnote"><sup><a class="footnum" name="fn-.6" href="#fnr-.6">6</a></sup> <a href="https://code.google.com/p/lightweight-java-profiler/issues/detail?id=3">build error on Ubuntu 13.10 (Saucy)</a>
-</p>
-
-
-<p class="footnote"><sup><a class="footnum" name="fn-.7" href="#fnr-.7">7</a></sup> <a href="http://brendan.gregg.usesthis.com/">Brendan Gregg</a>
-</p>
-
-
-
-</div>
-</div>
-</div>
 
 </div>
 </div>

@@ -1,3 +1,48 @@
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. HotSpot GC</a>
+<ul>
+<li><a href="#sec-1-1">1.1. 几个概念</a>
+<ul>
+<li><a href="#sec-1-1-1">1.1.1. Serial &amp; Parallel</a></li>
+<li><a href="#sec-1-1-2">1.1.2. Concurrent &amp; Stop-the-world</a></li>
+<li><a href="#sec-1-1-3">1.1.3. Compacting &amp; Non-compacting &amp; Copying</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-2">1.2. HotSpot JVM组成</a></li>
+<li><a href="#sec-1-3">1.3. GC的策略</a>
+<ul>
+<li><a href="#sec-1-3-1">1.3.1. SerialGC</a></li>
+<li><a href="#sec-1-3-2">1.3.2. Parallel Scavenge</a></li>
+<li><a href="#sec-1-3-3">1.3.3. Parallel Mark-Sweep-Compact</a></li>
+<li><a href="#sec-1-3-4">1.3.4. Concurrent-Mark-Sweep</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-4">1.4. GC</a>
+<ul>
+<li><a href="#sec-1-4-1">1.4.1. Minor GC</a></li>
+<li><a href="#sec-1-4-2">1.4.2. Full GC</a></li>
+<li><a href="#sec-1-4-3">1.4.3. Concurrent GC</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-5">1.5. 几个相关参数</a>
+<ul>
+<li><a href="#sec-1-5-1">1.5.1. GC日志</a></li>
+<li><a href="#sec-1-5-2">1.5.2. VM参数查看</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-6">1.6. 其他推荐阅读</a>
+<ul>
+<li><a href="#sec-1-6-1">1.6.1. 一些值得阅读的blog，待补全</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 ---
 layout: post
 title: "HotSpot GC日志解读"
@@ -6,86 +51,33 @@ categories: [tech]
 tags: [java, tuning]
 ---
 
-
-<div id="table-of-contents">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents">
-<ul>
-<li><a href="#sec-1">1 HotSpot GC</a>
-<ul>
-<li><a href="#sec-1-1">1.1 几个概念</a>
-<ul>
-<li><a href="#sec-1-1-1">1.1.1 Serial &amp; Parallel</a></li>
-<li><a href="#sec-1-1-2">1.1.2 Concurrent &amp; Stop-the-world</a></li>
-<li><a href="#sec-1-1-3">1.1.3 Compacting &amp; Non-compacting &amp; Copying</a></li>
-</ul>
-</li>
-<li><a href="#sec-1-2">1.2 HotSpot JVM组成</a></li>
-<li><a href="#sec-1-3">1.3 GC的策略</a>
-<ul>
-<li><a href="#sec-1-3-1">1.3.1 SerialGC</a></li>
-<li><a href="#sec-1-3-2">1.3.2 Parallel Scavenge</a></li>
-<li><a href="#sec-1-3-3">1.3.3 Parallel Mark-Sweep-Compact</a></li>
-<li><a href="#sec-1-3-4">1.3.4 Concurrent-Mark-Sweep</a></li>
-</ul>
-</li>
-<li><a href="#sec-1-4">1.4 GC</a>
-<ul>
-<li><a href="#sec-1-4-1">1.4.1 Minor GC</a></li>
-<li><a href="#sec-1-4-2">1.4.2 Full GC</a></li>
-<li><a href="#sec-1-4-3">1.4.3 Concurrent GC</a></li>
-</ul>
-</li>
-<li><a href="#sec-1-5">1.5 几个相关参数</a>
-<ul>
-<li><a href="#sec-1-5-1">1.5.1 GC日志</a></li>
-<li><a href="#sec-1-5-2">1.5.2 VM参数查看</a></li>
-</ul>
-</li>
-<li><a href="#sec-1-6">1.6 其他推荐阅读</a>
-<ul>
-<li><a href="#sec-1-6-1">1.6.1 一些值得阅读的blog，待补全</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
-
-<div id="outline-container-1" class="outline-2">
-<h2 id="sec-1">HotSpot GC</h2>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> HotSpot GC</h2>
 <div class="outline-text-2" id="text-1">
-
-<p>对于Java应用的优化，GC是重要的一环，而读懂GC日志是调优GC的关键，本文尝试对GC
+<p>
+对于Java应用的优化，GC是重要的一环，而读懂GC日志是调优GC的关键，本文尝试对GC
 做一些解读，测试使用的JVM版本是1.6.0_45-b06（64Bit）。
 </p>
-
 </div>
 
-<div id="outline-container-1-1" class="outline-3">
-<h3 id="sec-1-1">几个概念</h3>
+<div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> 几个概念</h3>
 <div class="outline-text-3" id="text-1-1">
-
-
-</div>
-
-<div id="outline-container-1-1-1" class="outline-4">
-<h4 id="sec-1-1-1">Serial &amp; Parallel</h4>
+</div><div id="outline-container-sec-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> Serial &amp; Parallel</h4>
 <div class="outline-text-4" id="text-1-1-1">
-
-<p>Serial收集意味着单线程操作，而Parallel是尽可能的并行，在多CPU机器上，切分收集
+<p>
+Serial收集意味着单线程操作，而Parallel是尽可能的并行，在多CPU机器上，切分收集
 任务到多个CPU运行，能够更快的完成收集操作，相对更复杂。
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-1-1-2" class="outline-4">
-<h4 id="sec-1-1-2">Concurrent &amp; Stop-the-world</h4>
+<div id="outline-container-sec-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> Concurrent &amp; Stop-the-world</h4>
 <div class="outline-text-4" id="text-1-1-2">
-
-<p>STW收集策略指在GC期间，应用挂起，完成GC操作之后，应用继续运行，Concurrent策略
+<p>
+STW收集策略指在GC期间，应用挂起，完成GC操作之后，应用继续运行，Concurrent策略
 是指GC操作和应用并行，只是在做一些必要操作的时候挂起应用。STP相比Concurrent简
 单，因为STW冻结了VM Heap，收集期间对象不会改变，能更快的完成GC操作，缺点是带来
 比较长时间的应用挂起，有些应用无法接受；而Concurrent在收集期间应用同时运行，会
@@ -93,14 +85,13 @@ tags: [java, tuning]
 复杂。
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-1-1-3" class="outline-4">
-<h4 id="sec-1-1-3">Compacting &amp; Non-compacting &amp; Copying</h4>
+<div id="outline-container-sec-1-1-3" class="outline-4">
+<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> Compacting &amp; Non-compacting &amp; Copying</h4>
 <div class="outline-text-4" id="text-1-1-3">
-
-<p>Compacting是指GC之后，移动所有的活着的对象到一起，形成连续的空闲空间，能够高效
+<p>
+Compacting是指GC之后，移动所有的活着的对象到一起，形成连续的空闲空间，能够高效
 的完成后续的对象分配任务，只需简单的移动指针。Non-compacting则是就地释放对象，
 也不会移动活着的对象，相对Compacting能更快完成，缺点是分配对象复杂，需要管理
 碎片空间。Copying是指拷贝存活对象到另外的内存空间，清空源内存空间，后续对象分配
@@ -108,27 +99,29 @@ tags: [java, tuning]
 </p>
 </div>
 </div>
-
 </div>
 
-<div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2">HotSpot JVM组成</h3>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> HotSpot JVM组成</h3>
 <div class="outline-text-3" id="text-1-2">
-
-<p>包括两块，一块是JVM heap，另一块是Permanent Generation，主要我们关注JVM heap，
+<p>
+包括两块，一块是JVM heap，另一块是Permanent Generation，主要我们关注JVM heap，
 JVM heap又分为两块：Young Generation和Old Generation（Tenured）。新分配对象和
 短生命周期对象一般都在Young Generation（大对象会直接分配到Old Generation中）,
 Old Generation主要是长生命周期的对象。
 </p>
+
 <p>
 JVM heap大小通过-Xms和-Xmx控制，一般生产环境会设置相同的值，如果不是设置相同
 大小，每一次JVM调整heap时候都会导致Full GC，对系统运行产生一定影响。
 </p>
+
 <p>
 Permanent Generation大小通过-XX:PermSize和-XX：MaxPermSize控制，大小主要看
 项目jar包的多少，这里主要存放的是class元数据和VM自己运行的数据，设置大小一致
 能避免Permanent空间调整导致的Full GC。
 </p>
+
 <p>
 Young Generation分为三块，一块是Eden space，另外两块是大小相等的Survivor space，
 我们这里简称S0、S1。Young Generation大小的控制有下面参数：
@@ -138,6 +131,7 @@ Young Generation分为三块，一块是Eden space，另外两块是大小相等
 JVM也提供了自适应的调整策略，如果你没有明确指定这些值，JVM会自己调整大小（搜索
 HotSport VM Adaptive）。
 </p>
+
 <p>
 Eden space和Survivor space大小通过-XX:SurvivorRatio=6参数可以控制，等于6表示
 Survivor space大小是Eden Space的1/6，是整个Young Generation的1/8（注意是两个
@@ -147,15 +141,15 @@ Survivor space）。一般这个参数不会设置，JVM会自动计算最优比
 行为可以通过-XX:+PrintTenuringDistribution观察。
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3">GC的策略</h3>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> GC的策略</h3>
 <div class="outline-text-3" id="text-1-3">
-
-<p>记住几点：
-</p><ul>
+<p>
+记住几点：
+</p>
+<ul class="org-ul">
 <li>GC的回收策略有不同的作用区域；
 </li>
 <li>所有的Serial和Parallel策略都是STW的；
@@ -166,62 +160,111 @@ Survivor space）。一般这个参数不会设置，JVM会自动计算最优比
 </li>
 </ul>
 
-
 <p>
-作用域和参数参考下表<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup>：
+作用域和参数参考下表<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup>：
 </p>
+
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-<colgroup><col class="left" /><col class="left" /><col class="left" />
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
 </colgroup>
 <thead>
-<tr><th scope="col" class="left">Young Collector</th><th scope="col" class="left">Old Collector</th><th scope="col" class="left">JVM Option</th></tr>
+<tr>
+<th scope="col" class="left">Young Collector</th>
+<th scope="col" class="left">Old Collector</th>
+<th scope="col" class="left">JVM Option</th>
+</tr>
 </thead>
 <tbody>
-<tr><td class="left">Serial(DefNew)</td><td class="left">Serial Mark-Sweep-Compact</td><td class="left">-XX:+UseSerialGC</td></tr>
+<tr>
+<td class="left">Serial(DefNew)</td>
+<td class="left">Serial Mark-Sweep-Compact</td>
+<td class="left">-XX:+UseSerialGC</td>
+</tr>
 </tbody>
 <tbody>
-<tr><td class="left">Parallel scavenge</td><td class="left">Serial Mark-Sweep-Compact</td><td class="left">-XX:+UseParallelGC</td></tr>
-<tr><td class="left">(PSYoungGen)</td><td class="left">(PSOldGen)</td><td class="left"></td></tr>
+<tr>
+<td class="left">Parallel scavenge</td>
+<td class="left">Serial Mark-Sweep-Compact</td>
+<td class="left">-XX:+UseParallelGC</td>
+</tr>
+
+<tr>
+<td class="left">(PSYoungGen)</td>
+<td class="left">(PSOldGen)</td>
+<td class="left">&#xa0;</td>
+</tr>
 </tbody>
 <tbody>
-<tr><td class="left">Parallel scavenge</td><td class="left">Parallel Mark-Sweep-Compact</td><td class="left">-XX:+UseParallelOldGC</td></tr>
-<tr><td class="left">(PSYoungGen)</td><td class="left">(ParOldGen)</td><td class="left"></td></tr>
+<tr>
+<td class="left">Parallel scavenge</td>
+<td class="left">Parallel Mark-Sweep-Compact</td>
+<td class="left">-XX:+UseParallelOldGC</td>
+</tr>
+
+<tr>
+<td class="left">(PSYoungGen)</td>
+<td class="left">(ParOldGen)</td>
+<td class="left">&#xa0;</td>
+</tr>
 </tbody>
 <tbody>
-<tr><td class="left">Parallel(ParNew)</td><td class="left">Serial Mark-Sweep-Compact</td><td class="left">-XX:+UseParNewGC</td></tr>
+<tr>
+<td class="left">Parallel(ParNew)</td>
+<td class="left">Serial Mark-Sweep-Compact</td>
+<td class="left">-XX:+UseParNewGC</td>
+</tr>
 </tbody>
 <tbody>
-<tr><td class="left">Serial(DefNew)</td><td class="left">Concurrent Mark Sweep</td><td class="left">-XX:UseConcMarkSweepGC</td></tr>
+<tr>
+<td class="left">Serial(DefNew)</td>
+<td class="left">Concurrent Mark Sweep</td>
+<td class="left">-XX:UseConcMarkSweepGC</td>
+</tr>
 </tbody>
 <tbody>
-<tr><td class="left">Parallel(ParNew)</td><td class="left">Concurrent Mark Sweep</td><td class="left">-XX:UseConcMarkSweepGC</td></tr>
-<tr><td class="left"></td><td class="left"></td><td class="left">-XX:+UseParNewGC</td></tr>
+<tr>
+<td class="left">Parallel(ParNew)</td>
+<td class="left">Concurrent Mark Sweep</td>
+<td class="left">-XX:UseConcMarkSweepGC</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">-XX:+UseParNewGC</td>
+</tr>
 </tbody>
 <tbody>
-<tr><td class="left">G1</td><td class="left">G1</td><td class="left">-XX:+UseG1</td></tr>
+<tr>
+<td class="left">G1</td>
+<td class="left">G1</td>
+<td class="left">-XX:+UseG1</td>
+</tr>
 </tbody>
 </table>
-
-
-
 </div>
 
-<div id="outline-container-1-3-1" class="outline-4">
-<h4 id="sec-1-3-1">SerialGC</h4>
+<div id="outline-container-sec-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> SerialGC</h4>
 <div class="outline-text-4" id="text-1-3-1">
-
-<p>YoungGen和OldGen回收策略，GC使用单线程，回收期间STP，适用于单处理器服务器和小的
+<p>
+YoungGen和OldGen回收策略，GC使用单线程，回收期间STP，适用于单处理器服务器和小的
 堆（一两百兆）。
 </p>
-
-
-<pre class="example">10.590: [GC 10.590: [DefNew: 34944K-&gt;3140K(39296K), 0.0171370 secs] 95253K-&gt;63449K(126720K), 0.0171930 secs] [Times: user=0.02 sys=0.00, real=0.02 secs]
+<pre class="example">
+10.590: [GC 10.590: [DefNew: 34944K-&gt;3140K(39296K), 0.0171370 secs] 95253K-&gt;63449K(126720K), 0.0171930 secs] [Times: user=0.02 sys=0.00, real=0.02 secs]
 10.787: [GC 10.787: [DefNew: 38084K-&gt;1913K(39296K), 0.0242650 secs] 98393K-&gt;65358K(126720K), 0.0243320 secs] [Times: user=0.02 sys=0.00, real=0.02 secs]
 10.842: [GC 10.842: [DefNew: 36857K-&gt;3477K(39296K), 0.0134890 secs] 100302K-&gt;66922K(126720K), 0.0136120 secs] [Times: user=0.01 sys=0.00, real=0.02 secs]
 11.012: [Full GC 11.012: [Tenured: 63445K-&gt;67278K(87424K), 0.2908000 secs] 82061K-&gt;67278K(126720K), [Perm : 64767K-&gt;64760K(64768K)], 0.2908740 secs] [Times: user=0.29 sys=0.00, real=0.29 secs]
 11.954: [Full GC 11.954: [Tenured: 67278K-&gt;69894K(87424K), 0.2313190 secs] 91392K-&gt;69894K(126720K), [Perm : 70207K-&gt;70207K(70208K)], 0.2313890 secs] [Times: user=0.24 sys=0.00, real=0.23 secs]
 </pre>
-
 <p>
 日志中的DefNew表示Serial回收，OldGen回收也是采用Serial Mark-Sweep-Compact。从日
 志里面能获取到很多信息：
@@ -230,73 +273,68 @@ Survivor space）。一般这个参数不会设置，JVM会自动计算最优比
 时0.017930S，95253K表示回收之前JVM Heap对象占用空间大小，63449K表示回收之后堆内对
 象大小，126720K表示整个堆大小。（126720K-39296K）=87424K是Old Gen大小，被回收的
 垃圾对象为（95253K-63449K）=31804K，移动到OldGen对象（34944K-3140K-31804K）=0K，
-回收所用的User时间为0.02S，系统调用时间0S，时间周期0.02S，三个值区别参考<sup><a class="footref" name="fnr-.2" href="#fn-.2">2</a></sup>。
+回收所用的User时间为0.02S，系统调用时间0S，时间周期0.02S，三个值区别参考<sup><a id="fnr.2" name="fnr.2" class="footref" href="#fn.2">2</a></sup>。
 看第四行，你会发现Old Gen还有空间，触发GC的是Perm Gen，已经满了，尝试回收，发现
 回收不了64767K -&gt; 64760K，扩容Perm Gen，触发Full GC。
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-1-3-2" class="outline-4">
-<h4 id="sec-1-3-2">Parallel Scavenge</h4>
+<div id="outline-container-sec-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> Parallel Scavenge</h4>
 <div class="outline-text-4" id="text-1-3-2">
-
-<p>Young Gen回收策略，并发回收，回收期间STW。
+<p>
+Young Gen回收策略，并发回收，回收期间STW。
 </p>
-
-
-<pre class="example">13.782: [GC [PSYoungGen: 18768K-&gt;3368K(29632K)] 93584K-&gt;80361K(117056K), 0.0082680 secs] [Times: user=0.03 sys=0.00, real=0.01 secs]
+<pre class="example">
+13.782: [GC [PSYoungGen: 18768K-&gt;3368K(29632K)] 93584K-&gt;80361K(117056K), 0.0082680 secs] [Times: user=0.03 sys=0.00, real=0.01 secs]
 14.015: [GC [PSYoungGen: 19944K-&gt;5449K(31424K)] 96937K-&gt;85551K(118848K), 0.0097840 secs] [Times: user=0.03 sys=0.00, real=0.01 secs]
 14.024: [Full GC [PSYoungGen: 5449K-&gt;0K(31424K)] [PSOldGen: 80101K-&gt;85415K(87424K)] 85551K-&gt;85415K(118848K) [PSPermGen: 76528K-&gt;76528K(153344K)], 0.2642610 secs] [Times: user=0.27 sys=0.00, real=0.27 secs]
 </pre>
-
 <p>
 日志中的PSYoungGen表示Parallel Scavenge，并行对YoungGen回收，PSOldGen表示Serial
 Mark-Sweep-Compact，单线程对OldGen进行回收。这里Minor GC中的user时间大于real时
 间是由于多线程并行导致。
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-1-3-3" class="outline-4">
-<h4 id="sec-1-3-3">Parallel Mark-Sweep-Compact</h4>
+<div id="outline-container-sec-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> Parallel Mark-Sweep-Compact</h4>
 <div class="outline-text-4" id="text-1-3-3">
-
-<p>Old Gen回收策略，并发回收，回收期间STW。
+<p>
+Old Gen回收策略，并发回收，回收期间STW。
 </p>
-
-
-<pre class="example">14.488: [GC [PSYoungGen: 19568K-&gt;7759K(29760K)] 96421K-&gt;87358K(117184K), 0.0180290 secs] [Times: user=0.06 sys=0.00, real=0.02 secs]
+<pre class="example">
+14.488: [GC [PSYoungGen: 19568K-&gt;7759K(29760K)] 96421K-&gt;87358K(117184K), 0.0180290 secs] [Times: user=0.06 sys=0.00, real=0.02 secs]
 14.632: [GC [PSYoungGen: 25551K-&gt;288K(30720K)] 105150K-&gt;87492K(118144K), 0.0135020 secs] [Times: user=0.03 sys=0.00, real=0.02 secs]
 14.646: [Full GC [PSYoungGen: 288K-&gt;0K(30720K)] [ParOldGen: 87204K-&gt;66401K(87424K)] 87492K-&gt;66401K(118144K) [PSPermGen: 76492K-&gt;76370K(153408K)], 0.8717190 secs] [Times: user=2.76 sys=0.00, real=0.87 secs]
 </pre>
-
 <p>
 日志中的ParOldGen表示Paralle Mark-Sweep-Compact，并行对OldGen进行回收。
 </p>
+
 <p>
 两个Parallel策略也被称为Throught回收策略，由于并行进行GC操作，提高GC效率，获取
 更高的应用吞吐量，但是Parallel同时会导致比较长的STW，对延迟敏感的应用不适用。
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-1-3-4" class="outline-4">
-<h4 id="sec-1-3-4">Concurrent-Mark-Sweep</h4>
+<div id="outline-container-sec-1-3-4" class="outline-4">
+<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> Concurrent-Mark-Sweep</h4>
 <div class="outline-text-4" id="text-1-3-4">
-
-<p>Old Gen回收策略，也被称为低延迟的GC策略，很少的STP操作，但是需要Old Gen保持一定
+<p>
+Old Gen回收策略，也被称为低延迟的GC策略，很少的STP操作，但是需要Old Gen保持一定
 的空闲空间来防止碎片问题（没有Compact，YoungGen promotion进来的对象需要连续的空
-间，容易导致fragmentation）。它分为六个步骤执行<sup><a class="footref" name="fnr-.3" href="#fn-.3">3</a></sup>：
-</p><ul>
+间，容易导致fragmentation）。它分为六个步骤执行<sup><a id="fnr.3" name="fnr.3" class="footref" href="#fn.3">3</a></sup>：
+</p>
+<ul class="org-ul">
 <li>Initial Mark (STW)
-  标记root object直接引用的对象
+标记root object直接引用的对象
 </li>
 <li>Concurrent Mark
-  应用线程继续响应，标记第一步标记对象引用的所有对象。
+应用线程继续响应，标记第一步标记对象引用的所有对象。
 </li>
 <li>Concurrent Preclean
 </li>
@@ -307,15 +345,14 @@ Mark-Sweep-Compact，单线程对OldGen进行回收。这里Minor GC中的user�
 <li>Concurrent Reset
 </li>
 </ul>
-
-<p>打开CMS同时缺省打开ParNewGC策略对YoungGen进行并行回收。
-下面日志是一个完整的CMS周期，详细解释请参考<sup><a class="footref" name="fnr-.4" href="#fn-.4">4</a></sup>，注意这里的日志是JDK8的，
+<p>
+打开CMS同时缺省打开ParNewGC策略对YoungGen进行并行回收。
+下面日志是一个完整的CMS周期，详细解释请参考<sup><a id="fnr.4" name="fnr.4" class="footref" href="#fn.4">4</a></sup>，注意这里的日志是JDK8的，
 主要是大牛写的很详细，我就懒得自己整理了。
 </p>
 
-
-
-<pre class="example">1.[GC [1 CMS-initial-mark: 463236K(515960K)] 464178K(522488K), 0.0018216 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]
+<pre class="example">
+1.[GC [1 CMS-initial-mark: 463236K(515960K)] 464178K(522488K), 0.0018216 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]
 2.[GC[ParNew: 6528K-&gt;702K(6528K), 0.0130227 secs] 469764K-&gt;465500K(522488K), 0.0130578 secs] [Times: user=0.05 sys=0.00,real=0.01 secs]
 3.[GC[ParNew: 6526K-&gt;702K(6528K), 0.0136447 secs] 471324K-&gt;467077K(522488K), 0.0136804 secs] [Times: user=0.04 sys=0.01,real=0.01 secs]
 4.[GC[ParNew: 6526K-&gt;702K(6528K), 0.0161873 secs] 472901K-&gt;468830K(522488K), 0.0162411 secs] [Times: user=0.05 sys=0.00,real=0.02 secs]
@@ -336,12 +373,12 @@ Mark-Sweep-Compact，单线程对OldGen进行回收。这里Minor GC中的user�
 17.[CMS-concurrent-reset: 0.009/0.009 secs] [Times: user=0.01 sys=0.00, real=0.01 secs]
 </pre>
 
-
 <p>
 这里时间统计多说一句，比如倒数第二行中的0.756/0.833 secs，0.756表示运行sweep
 时间，0.833表示时钟运行的时间（等于real），由于sweep操作是并行的，所以user大
 于real。
 </p>
+
 <p>
 CMS周期期间，因为Minor GC会继续运行（Minor GC进入会挂起CMS的concurrent操作），
 会出现Minor GC promotion failure的情况（YoungOld中的长生命周期对象需要移动到
@@ -349,9 +386,8 @@ Old Gen中，但是Old Gen空间不足或者没有连续的空间块来容纳移
 致CMS中断，同时触发Full GC操作，参考下面日志：
 </p>
 
-
-
-<pre class="example">64.528: [GC 64.528: [ParNew: 19128K-&gt;2112K(19136K), 0.0088010 secs] 108133K-&gt;94575K(128960K), 0.0088840 secs] [Times: user=0.02 sys=0.01, real=0.01 secs]
+<pre class="example">
+64.528: [GC 64.528: [ParNew: 19128K-&gt;2112K(19136K), 0.0088010 secs] 108133K-&gt;94575K(128960K), 0.0088840 secs] [Times: user=0.02 sys=0.01, real=0.01 secs]
 64.538: [GC [1 CMS-initial-mark: 92463K(109824K)] 94693K(128960K), 0.0057310 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]
 64.544: [CMS-concurrent-mark-start]
 64.732: [GC 64.732: [ParNew: 19122K-&gt;2112K(19136K), 0.0158700 secs] 111585K-&gt;98845K(128960K), 0.0159520 secs] [Times: user=0.06 sys=0.00, real=0.02 secs]
@@ -369,7 +405,6 @@ Old Gen中，但是Old Gen空间不足或者没有连续的空间块来容纳移
 66.816: [GC 66.816: [ParNew: 17024K-&gt;2112K(19136K), 0.0097300 secs] 109409K-&gt;95636K(128960K), 0.0098010 secs] [Times: user=0.03 sys=0.00, real=0.01 secs]
 </pre>
 
-
 <p>
 在CMS周期内，Minor GC发现无法promotion对象，导致concurrent mode failure，中断CMS
 同时触发Full GC。注意所有的Full GC都是STW（CMS用的好像是SerialMarkSweepCompact）
@@ -377,10 +412,10 @@ Old Gen中，但是Old Gen空间不足或者没有连续的空间块来容纳移
 由于对象移动到OldGen太快，可以提前触发CMS，CMS触发通过OccupancyFraction控制，该
 值JVM会动态调整，你可以通过观察日志计算它，比如下面日志中：
 </p>
+
 <pre class="example">
 29.542: [GC [1 CMS-initial-mark: 56351K(109824K)] 58400K(128960K), 0.0031880 secs] [Times: user=0.00 sys=0.00, real=0.01 secs]
 </pre>
-
 
 <p>
 该值在51左右（56351/109824=0.51），如果需要提前触发CMS，通过下面两个参数：
@@ -388,19 +423,21 @@ CMSInitiatingOccupancyFraction和UseCMSInitiatingOccupancyOnly（需要两个都
 否则只是第一次生效，后续JVM还是会自己调整）。另外就是避免对象移动过快，通过调优
 Young Gen参数实现，当然治标的办法自然是减少对象分配速度。当然你也能增加OldGen。
 </p>
+
 <p>
 下面的例子不在CMS周期之内，Minor GC发现无法promotin，触发Full GC，解决办法和
 前面一样：
 </p>
+
 <pre class="example">
 62.231: [GC 62.231: [ParNew (promotion failed): 19137K-&gt;19136K(19136K), 0.0403870 secs]62.271: [CMS: 99459K-&gt;77486K(109824K), 0.4331580 secs] 116817K-&gt;77486K(128960K), [CMS Perm : 80178K-&gt;79817K(132164K)], 0.4737430 secs] [Times: user=0.50 sys=0.01, real=0.47 secs]
 </pre>
-
 
 <p>
 另外一个触发Full GC的是PermGen，CMS缺省不会收集PermGen，容易导致Perm空间满，你
 可以设置参数CMSClassUnloadingEnabled，让CMS也对PermGen进行收集：
 </p>
+
 <p>
 还有一个参数‑XX:+ExplicitGCInvokesConcurrent，该参数可以让System.gc()不会触发
 Full GC，这个比较有用。貌似-XX:+DisableExplicitGC会带来DirectByteMemory OOM问
@@ -408,29 +445,28 @@ Full GC，这个比较有用。貌似-XX:+DisableExplicitGC会带来DirectByteMe
 </p>
 </div>
 </div>
-
 </div>
 
-<div id="outline-container-1-4" class="outline-3">
-<h3 id="sec-1-4">GC</h3>
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> GC</h3>
 <div class="outline-text-3" id="text-1-4">
-
-<p>GC分为Minor GC、Full GC（Major GC）。
+<p>
+GC分为Minor GC、Full GC（Major GC）。
 </p>
-
 </div>
 
-<div id="outline-container-1-4-1" class="outline-4">
-<h4 id="sec-1-4-1">Minor GC</h4>
+<div id="outline-container-sec-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> Minor GC</h4>
 <div class="outline-text-4" id="text-1-4-1">
-
-<p>主要对Young Generation进行回收，Minor GC之后，eden space和一块survivor
+<p>
+主要对Young Generation进行回收，Minor GC之后，eden space和一块survivor
 space清空，一些生命周期长的对象会移动到Old Generation，另外的对象都会移动到另一
 块Survivor space中（如果之前是S0清空，那么所有活着的对象都会被移动到S1，反之同
 理），理解这一点对于分析GC log非常关键。
 </p>
+
 <p>
-多长生命周期的对象会被移动<sup><a class="footref" name="fnr-.5" href="#fn-.5">5</a></sup>，通俗点来说就是通过年龄控制。对象经历一次Minor GC增
+多长生命周期的对象会被移动<sup><a id="fnr.5" name="fnr.5" class="footref" href="#fn.5">5</a></sup>，通俗点来说就是通过年龄控制。对象经历一次Minor GC增
 加一岁。至于说多大年龄的对象会被移动，通过几个参数控制：TargetSurvivorRatio、
 Survivor space size、MaxTenuringThreshold。每次Minor GC都会计算Survivor space
 中期望保留的对象多少，通过（TargetSurvivorRatio * Survivor space size）计算得出
@@ -440,23 +476,24 @@ survivor size。如果保留的对象大小超出期望的值，TenuringThreshol
 不变。TenuringThreshold最大值通过MaxTenuringThreshold控制，范围是0～15。
 TargetSurvivorRatio缺省是50，MaxTenuringThreshold缺省是15（ParalleGC,CMS是4）。
 </p>
+
 <p>
 VM中的对象分配都在Eden中进行，由于每次Minor GC都会清空Eden，所以Eden中的
-空间都是连续的（没有碎片），为了保证分配对象的高效<sup><a class="footref" name="fnr-.6" href="#fn-.6">6</a></sup><sup>, </sup><sup><a class="footref" name="fnr-.7" href="#fn-.7">7</a></sup>，VM使用了两个技术：
-</p><ul>
+空间都是连续的（没有碎片），为了保证分配对象的高效<sup><a id="fnr.6" name="fnr.6" class="footref" href="#fn.6">6</a></sup><sup>, </sup><sup><a id="fnr.7" name="fnr.7" class="footref" href="#fn.7">7</a></sup>，VM使用了两个技术：
+</p>
+<ul class="org-ul">
 <li>bump-the-pointer
-  由于是连续的空间，VM只需记住最晚分配对象的空间地址（在Eden顶上），下次分配的时
-  候，只需变更地址就行。
+由于是连续的空间，VM只需记住最晚分配对象的空间地址（在Eden顶上），下次分配的时
+候，只需变更地址就行。
 </li>
 <li>Thread-Local Allocation Buffers (TLAB)
-  考虑到多线程的情况，如果多个线程去更新保存的地址，需要加锁，为了避免锁VM引入了
-  TLAB技术，每个线程都会有一块自己的空间（TLAB）来分配对象（也采用BTP技术，TLAB
-  位于Eden），这样就不需要引入锁。当一个TLAB分配满了之后（或者Minor GC来临），
-  TLAB释放，GC完成之后，线程会在需要分配对象的时候申请TLAB。如果线程的TLAB满了需
-  要继续申请对象，同时Eden还有空间的时候，那就要锁了。关于TLAB相关细节可以参考<sup><a class="footref" name="fnr-.8" href="#fn-.8">8</a></sup>
+考虑到多线程的情况，如果多个线程去更新保存的地址，需要加锁，为了避免锁VM引入了
+TLAB技术，每个线程都会有一块自己的空间（TLAB）来分配对象（也采用BTP技术，TLAB
+位于Eden），这样就不需要引入锁。当一个TLAB分配满了之后（或者Minor GC来临），
+TLAB释放，GC完成之后，线程会在需要分配对象的时候申请TLAB。如果线程的TLAB满了需
+要继续申请对象，同时Eden还有空间的时候，那就要锁了。关于TLAB相关细节可以参考<sup><a id="fnr.8" name="fnr.8" class="footref" href="#fn.8">8</a></sup>
 </li>
 </ul>
-
 
 <p>
 考虑到有些Young Gen中的对象会被Old Gen引用，Minor GC也需要扫描Old Gen，未了避免
@@ -465,166 +502,153 @@ VM中的对象分配都在Eden中进行，由于每次Minor GC都会清空Eden�
 到Young Gen对象，标示该card为dirty，这样Minor GC的时候只需要扫描dirty的table。
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-1-4-2" class="outline-4">
-<h4 id="sec-1-4-2">Full GC</h4>
+<div id="outline-container-sec-1-4-2" class="outline-4">
+<h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> Full GC</h4>
 <div class="outline-text-4" id="text-1-4-2">
-
-<p>会对整个JVM Heap进行回收，包括YoungGen、OldGen、PermGen。主要是由Old Generation
+<p>
+会对整个JVM Heap进行回收，包括YoungGen、OldGen、PermGen。主要是由Old Generation
 空间不足触发（当然有很多种触发因素，比如system.gc()调用、Remote distributed GC
 等），耗时会比较长，而且是STW操作（停止应用响应）。
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-1-4-3" class="outline-4">
-<h4 id="sec-1-4-3">Concurrent GC</h4>
+<div id="outline-container-sec-1-4-3" class="outline-4">
+<h4 id="sec-1-4-3"><span class="section-number-4">1.4.3</span> Concurrent GC</h4>
 <div class="outline-text-4" id="text-1-4-3">
-
-<p>另外这里特别说明一下，Concurrent应该算是一个独立的GC类型，只对OldGen收集（可以包
+<p>
+另外这里特别说明一下，Concurrent应该算是一个独立的GC类型，只对OldGen收集（可以包
 括PernGen，目的就是尽量减少FullGC操作（对延迟敏感的应用无法忍受这么长的STP）。
 </p>
-
 </div>
 </div>
-
 </div>
 
-<div id="outline-container-1-5" class="outline-3">
-<h3 id="sec-1-5">几个相关参数</h3>
+
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> 几个相关参数</h3>
 <div class="outline-text-3" id="text-1-5">
-
-
-</div>
-
-<div id="outline-container-1-5-1" class="outline-4">
-<h4 id="sec-1-5-1">GC日志</h4>
+</div><div id="outline-container-sec-1-5-1" class="outline-4">
+<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> GC日志</h4>
 <div class="outline-text-4" id="text-1-5-1">
-
-<p>打印GC日志，建议在线上环境打开，开销很小，调优GC必不可少：
-</p><pre class="example">
+<p>
+打印GC日志，建议在线上环境打开，开销很小，调优GC必不可少：
+</p>
+<pre class="example">
 -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -Xloggc:file
 </pre>
-
-<p>更多的信息：
-</p><pre class="example">
+<p>
+更多的信息：
+</p>
+<pre class="example">
 -XX:+PrintHeapAtGC -XX:+PrintTLAB
 </pre>
-
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-5-2" class="outline-4">
-<h4 id="sec-1-5-2">VM参数查看</h4>
+<div id="outline-container-sec-1-5-2" class="outline-4">
+<h4 id="sec-1-5-2"><span class="section-number-4">1.5.2</span> VM参数查看</h4>
 <div class="outline-text-4" id="text-1-5-2">
-
-<p>打印VM参数，可以通过几个命令，这里直接抄R大<sup><a class="footref" name="fnr-.9" href="#fn-.9">9</a></sup>的内容，R大的blog绝对值得仔细
-研究，也可以参考这篇blog<sup><a class="footref" name="fnr-.10" href="#fn-.10">10</a></sup>，说明了输出的一些细节：
-</p><pre class="example">
+<p>
+打印VM参数，可以通过几个命令，这里直接抄R大<sup><a id="fnr.9" name="fnr.9" class="footref" href="#fn.9">9</a></sup>的内容，R大的blog绝对值得仔细
+研究，也可以参考这篇blog<sup><a id="fnr.10" name="fnr.10" class="footref" href="#fn.10">10</a></sup>，说明了输出的一些细节：
+</p>
+<pre class="example">
 -XX:+PrintCommandLineFlags
 </pre>
-
-<p>这个参数的作用是显示出VM初始化完毕后所有跟最初的默认值不同的参数及它们的值。这
+<p>
+这个参数的作用是显示出VM初始化完毕后所有跟最初的默认值不同的参数及它们的值。这
 个参数至少在Sun JDK 5上已经开始支持，Oracle/Sun JDK 6以及Oracle JDK 7上也可以使
 用。Sun JDK 1.4.2还不支持这个参数。
 </p>
+
 <pre class="example">
 -XX:+PrintFlagsFinal
 </pre>
-
-<p>前一个参数只显示跟默认值不同的，而这个参数则可以显示所有可设置的参数及它们的值。
+<p>
+前一个参数只显示跟默认值不同的，而这个参数则可以显示所有可设置的参数及它们的值。
 不过这个参数本身只从JDK 6 update 21开始才可以用，之前的Oracle/Sun JDK则用不了。
 可以设置的参数默认是不包括diagnostic或experimental系的。要在-XX:+PrintFlagsFinal
 的输出里看到这两种参数的信息，分别需要显式指定-XX:+UnlockDiagnosticVMOptions /
 -XX:+UnlockExperimentalVMOptions 。
 </p>
+
 <pre class="example">
 -XX:+PrintFlagsInitial
 </pre>
-
-<p>这个参数显示在处理参数之前所有可设置的参数及它们的值，然后直接退出程序。“参数
+<p>
+这个参数显示在处理参数之前所有可设置的参数及它们的值，然后直接退出程序。“参数
 处理”包括许多步骤，例如说检查参数之间是否有冲突，通过ergonomics调整某些参数的值
 ，之类的。结合-XX:+PrintFlagsInitial与-XX:+PrintFlagsFinal，对比两者的差异，就可
 以知道ergonomics对哪些参数做了怎样的调整。
 </p>
-
 </div>
 </div>
-
 </div>
 
-<div id="outline-container-1-6" class="outline-3">
-<h3 id="sec-1-6">其他推荐阅读</h3>
+
+<div id="outline-container-sec-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> 其他推荐阅读</h3>
 <div class="outline-text-3" id="text-1-6">
-
-
-</div>
-
-<div id="outline-container-1-6-1" class="outline-4">
-<h4 id="sec-1-6-1">一些值得阅读的blog，待补全</h4>
+</div><div id="outline-container-sec-1-6-1" class="outline-4">
+<h4 id="sec-1-6-1"><span class="section-number-4">1.6.1</span> 一些值得阅读的blog，待补全</h4>
 <div class="outline-text-4" id="text-1-6-1">
-
-<ul>
+<ul class="org-ul">
 <li><a href="https://blogs.oracle.com/jonthecollector/">Jon Masamitsu's Weblog</a>
 </li>
 <li><a href="http://rednaxelafx.iteye.com">Script Ahead, Code Behind</a>
 </li>
 </ul>
-
-
+</div>
+</div>
+</div>
+</div>
 <div id="footnotes">
 <h2 class="footnotes">Footnotes: </h2>
 <div id="text-footnotes">
-<p class="footnote"><sup><a class="footnum" name="fn-.1" href="#fnr-.1">1</a></sup> <a href="http://blog.ragozin.info/2011/09/hotspot-jvm-garbage-collection-options.html">HotSpot JVM garbage collection options cheat sheet</a>
-</p>
 
+<div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p class="footpara">
+<a href="http://blog.ragozin.info/2011/09/hotspot-jvm-garbage-collection-options.html">HotSpot JVM garbage collection options cheat sheet</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.2" href="#fnr-.2">2</a></sup> <a href="http://stackoverflow.com/questions/556405/what-do-real-user-and-sys-mean-in-the-output-of-time1">What do 'real', 'user' and 'sys' mean</a>
-</p>
+<div class="footdef"><sup><a id="fn.2" name="fn.2" class="footnum" href="#fnr.2">2</a></sup> <p class="footpara">
+<a href="http://stackoverflow.com/questions/556405/what-do-real-user-and-sys-mean-in-the-output-of-time1">What do 'real', 'user' and 'sys' mean</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.3" name="fn.3" class="footnum" href="#fnr.3">3</a></sup> <p class="footpara">
+<a href="https://blogs.oracle.com/jonthecollector/entry/hey_joe_phases_of_cms">The Unspoken - Phases of CMS</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.3" href="#fnr-.3">3</a></sup> <a href="https://blogs.oracle.com/jonthecollector/entry/hey_joe_phases_of_cms">The Unspoken - Phases of CMS</a>
-</p>
+<div class="footdef"><sup><a id="fn.4" name="fn.4" class="footnum" href="#fnr.4">4</a></sup> <p class="footpara">
+<a href="https://blogs.oracle.com/jonthecollector/entry/the_unspoken_cms_and_printgcdetails">The Unspoken - CMS and PrintGCDetails</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.5" name="fn.5" class="footnum" href="#fnr.5">5</a></sup> <p class="footpara">
+Java performance by Charlie Hunt, Binu John
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.4" href="#fnr-.4">4</a></sup> <a href="https://blogs.oracle.com/jonthecollector/entry/the_unspoken_cms_and_printgcdetails">The Unspoken - CMS and PrintGCDetails</a>
-</p>
+<div class="footdef"><sup><a id="fn.6" name="fn.6" class="footnum" href="#fnr.6">6</a></sup> <p class="footpara">
+<a href="http://www.cubrid.org/blog/dev-platform/understanding-java-garbage-collection/">Understanding Java Garbage Collection</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.7" name="fn.7" class="footnum" href="#fnr.7">7</a></sup> <p class="footpara">
+<a href="http://www.oracle.com/technetwork/java/javase/tech/memorymanagement-whitepaper-1-150020.pdf">Memory Management in the Java Hotspot VM</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.5" href="#fnr-.5">5</a></sup> Java performance by Charlie Hunt, Binu John
-</p>
+<div class="footdef"><sup><a id="fn.8" name="fn.8" class="footnum" href="#fnr.8">8</a></sup> <p class="footpara">
+<a href="https://blogs.oracle.com/jonthecollector/entry/the_real_thing">The real thing</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.9" name="fn.9" class="footnum" href="#fnr.9">9</a></sup> <p class="footpara">
+<a href="http://hllvm.group.iteye.com/group/topic/27945">JVM调优的"标准参数"的各种陷阱</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.6" href="#fnr-.6">6</a></sup> <a href="http://www.cubrid.org/blog/dev-platform/understanding-java-garbage-collection/">Understanding Java Garbage Collection</a>
-</p>
+<div class="footdef"><sup><a id="fn.10" name="fn.10" class="footnum" href="#fnr.10">10</a></sup> <p class="footpara">
+<a href="https://blog.codecentric.de/en/2012/07/useful-jvm-flags-part-3-printing-all-xx-flags-and-their-values/">Useful JVM Flags – Part 3 (Printing all XX Flags and their Values)</a>
+</p></div>
 
-
-<p class="footnote"><sup><a class="footnum" name="fn-.7" href="#fnr-.7">7</a></sup> <a href="http://www.oracle.com/technetwork/java/javase/tech/memorymanagement-whitepaper-1-150020.pdf">Memory Management in the Java Hotspot VM</a>
-</p>
-
-
-<p class="footnote"><sup><a class="footnum" name="fn-.8" href="#fnr-.8">8</a></sup> <a href="https://blogs.oracle.com/jonthecollector/entry/the_real_thing">The real thing</a>
-</p>
-
-
-<p class="footnote"><sup><a class="footnum" name="fn-.9" href="#fnr-.9">9</a></sup> <a href="http://hllvm.group.iteye.com/group/topic/27945">JVM调优的"标准参数"的各种陷阱</a>
-</p>
-
-
-<p class="footnote"><sup><a class="footnum" name="fn-.10" href="#fnr-.10">10</a></sup> <a href="https://blog.codecentric.de/en/2012/07/useful-jvm-flags-part-3-printing-all-xx-flags-and-their-values/">Useful JVM Flags – Part 3 (Printing all XX Flags and their Values)</a>
-</p>
-
-
-
-</div>
-</div>
-</div>
-</div>
 
 </div>
 </div>

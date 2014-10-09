@@ -1,3 +1,52 @@
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. enviroment</a>
+<ul>
+<li><a href="#sec-1-1">1.1. virtualenv</a></li>
+</ul>
+</li>
+<li><a href="#sec-2">2. Core type</a></li>
+<li><a href="#sec-3">3. String</a>
+<ul>
+<li><a href="#sec-3-1">3.1. encoding</a></li>
+<li><a href="#sec-3-2">3.2. p2k &amp; p3k</a></li>
+<li><a href="#sec-3-3">3.3. unicode &amp; encode</a></li>
+<li><a href="#sec-3-4">3.4. utf-8</a></li>
+<li><a href="#sec-3-5">3.5. 关于print和重定向</a></li>
+</ul>
+</li>
+<li><a href="#sec-4">4. Regex</a>
+<ul>
+<li><a href="#sec-4-1">4.1. MyDemo</a></li>
+<li><a href="#sec-4-2">4.2. findall group  - return tuple</a></li>
+<li><a href="#sec-4-3">4.3. Options</a></li>
+<li><a href="#sec-4-4">4.4. Substitution</a></li>
+</ul>
+</li>
+<li><a href="#sec-5">5. function &amp; method</a></li>
+<li><a href="#sec-6">6. descriptor protocol</a></li>
+<li><a href="#sec-7">7. scopes &amp; closure</a></li>
+<li><a href="#sec-8">8. Management Attribute</a></li>
+<li><a href="#sec-9">9. Python分支</a>
+<ul>
+<li><a href="#sec-9-1">9.1. Stackless Python</a></li>
+<li><a href="#sec-9-2">9.2. PyPy</a></li>
+</ul>
+</li>
+<li><a href="#sec-10">10. Django &amp; Flask</a></li>
+<li><a href="#sec-11">11. Twisted &amp; Tornado &amp; gevent &amp; eventlet</a></li>
+<li><a href="#sec-12">12. Emacs &amp; Python</a>
+<ul>
+<li><a href="#sec-12-1">12.1. ipdb</a></li>
+</ul>
+</li>
+<li><a href="#sec-13">13. 一些必读的文章</a></li>
+<li><a href="#sec-14">14. 自己看的书</a></li>
+</ul>
+</div>
+</div>
 ---
 layout: post
 title: "python notes"
@@ -5,235 +54,156 @@ description: "python学习点滴"
 categories: [tech]
 tags: [python, program]
 ---
-
-<div id="table-of-contents">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents">
-<ul>
-<li><a href="#sec-1">1 enviroment</a>
-<ul>
-<li><a href="#sec-1-1">1.1 virtualenv</a></li>
-</ul>
-</li>
-<li><a href="#sec-2">2 Core type</a></li>
-<li><a href="#sec-3">3 String</a>
-<ul>
-<li><a href="#sec-3-1">3.1 encoding</a></li>
-<li><a href="#sec-3-2">3.2 p2k &amp; p3k</a></li>
-<li><a href="#sec-3-3">3.3 unicode &amp; encode</a></li>
-<li><a href="#sec-3-4">3.4 utf-8</a></li>
-</ul>
-</li>
-<li><a href="#sec-4">4 Regex</a>
-<ul>
-<li><a href="#sec-4-1">4.1 MyDemo</a></li>
-<li><a href="#sec-4-2">4.2 findall group  - return tuple</a></li>
-<li><a href="#sec-4-3">4.3 Options</a></li>
-<li><a href="#sec-4-4">4.4 Substitution</a></li>
-</ul>
-</li>
-<li><a href="#sec-5">5 function &amp; method</a></li>
-<li><a href="#sec-6">6 descriptor protocol</a></li>
-<li><a href="#sec-7">7 scopes &amp; closure</a></li>
-<li><a href="#sec-8">8 Management Attribute</a></li>
-<li><a href="#sec-9">9 Python分支</a>
-<ul>
-<li><a href="#sec-9-1">9.1 Stackless Python</a></li>
-<li><a href="#sec-9-2">9.2 PyPy</a></li>
-</ul>
-</li>
-<li><a href="#sec-10">10 Django &amp; Flask</a></li>
-<li><a href="#sec-11">11 Twisted &amp; Tornado &amp; gevent &amp; eventlet</a></li>
-<li><a href="#sec-12">12 Emacs &amp; Python</a>
-<ul>
-<li><a href="#sec-12-1">12.1 ipdb</a></li>
-</ul>
-</li>
-<li><a href="#sec-13">13 一些必读的文章</a></li>
-<li><a href="#sec-14">14 自己看的书</a></li>
-</ul>
-</div>
-</div>
-
-<div id="outline-container-1" class="outline-2">
-<h2 id="sec-1">enviroment</h2>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> enviroment</h2>
 <div class="outline-text-2" id="text-1">
-
-
-</div>
-
-<div id="outline-container-1-1" class="outline-3">
-<h3 id="sec-1-1">virtualenv</h3>
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> virtualenv</h3>
 <div class="outline-text-3" id="text-1-1">
-
-
-
-
-<pre class="example">virtualenv myenv
+<pre class="example">
+virtualenv myenv
 source .myenv/bin/activate
 deactivate
 </pre>
-
 </div>
 </div>
-
 </div>
-
-<div id="outline-container-2" class="outline-2">
-<h2 id="sec-2">Core type</h2>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Core type</h2>
 <div class="outline-text-2" id="text-2">
-
-<ul>
+<ul class="org-ul">
 <li>integer, string, tuple is immutable, can't by change in-place
 </li>
 <li>keep in mind that the mutable type is share reference, if you need to change
-    them
+them
 </li>
 <li>You can copy sequence type by slice, but it only copy top-level, if you want
-    to completely copy the object, use deepcopy
+to completely copy the object, use deepcopy
+<div class="org-src-container">
 
-
-
-<pre class="src src-python">&gt;&gt;&gt;<span style="color: #268bd2;">x</span> = [1, 2, [3, 4]]
-&gt;&gt;&gt;<span style="color: #268bd2;">y</span> = [<span style="color: #2aa198;">'aa'</span>, x[:]]
-&gt;&gt;&gt;<span style="color: #268bd2;">x</span>[0] = 11
-&gt;&gt;&gt;x[2][0] = 33
+<pre class="src src-python">&gt;&gt;&gt;<span style="color: #D8FA3C;">x</span> = <span style="color: #8b0000;">[</span>1, 2, <span style="color: #006400;">[</span>3, 4<span style="color: #006400;">]</span><span style="color: #8b0000;">]</span>
+&gt;&gt;&gt;<span style="color: #D8FA3C;">y</span> = <span style="color: #8b0000;">[</span><span style="color: #61CE3C;">'aa'</span>, x<span style="color: #006400;">[</span>:<span style="color: #006400;">]</span><span style="color: #8b0000;">]</span>
+&gt;&gt;&gt;<span style="color: #D8FA3C;">x</span><span style="color: #8b0000;">[</span>0<span style="color: #8b0000;">]</span> = 11
+&gt;&gt;&gt;x<span style="color: #8b0000;">[</span>2<span style="color: #8b0000;">][</span>0<span style="color: #8b0000;">]</span> = 33
 &gt;&gt;&gt;x
-[11, 2, [33, 4]]
+<span style="color: #8b0000;">[</span>11, 2, <span style="color: #006400;">[</span>33, 4<span style="color: #006400;">]</span><span style="color: #8b0000;">]</span>
 &gt;&gt;&gt;y
-[<span style="color: #2aa198;">'aa'</span>, [1, 2, [33, 4]]
+<span style="color: #8b0000;">[</span><span style="color: #61CE3C;">'aa'</span>, <span style="color: #006400;">[</span>1, 2, <span style="color: #ff1493;">[</span>33, 4<span style="color: #ff1493;">]</span><span style="color: #006400;">]</span>
 </pre>
-
+</div>
 </li>
 <li>comprehensions
 <pre class="example">
 [x*2 for x in range(10)]
 </pre>
-
 </li>
 <li>sorted
-    sorted dict by value
+sorted dict by value
+<div class="org-src-container">
 
-
-
-<pre class="src src-python"><span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">method 1</span>
-<span style="color: #859900;">sorted</span>(d.iteritems(), key=<span style="color: #859900;">lambda</span> x: x[1])   <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">d.items() return list</span>
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">method 2</span>
-<span style="color: #859900;">import</span> operator
-<span style="color: #268bd2;">x</span> = {1: 2, 3: 4, 4:3, 2:1, 0:0}
-<span style="color: #268bd2;">sorted_x</span> = <span style="color: #859900;">sorted</span>(x.iteritems(), key=operator.itemgetter(1))
+<pre class="src src-python"><span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">method 1</span>
+<span style="color: #FF6400;">sorted</span><span style="color: #8b0000;">(</span>d.iteritems<span style="color: #006400;">()</span>, key=<span style="color: #FBDE2D;">lambda</span> x: x<span style="color: #006400;">[</span>1<span style="color: #006400;">]</span><span style="color: #8b0000;">)</span>   <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">d.items() return list</span>
+<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">method 2</span>
+<span style="color: #FBDE2D;">import</span> operator
+<span style="color: #D8FA3C;">x</span> = <span style="color: #8b0000;">{</span>1: 2, 3: 4, 4:3, 2:1, 0:0<span style="color: #8b0000;">}</span>
+<span style="color: #D8FA3C;">sorted_x</span> = <span style="color: #FF6400;">sorted</span><span style="color: #8b0000;">(</span>x.iteritems<span style="color: #006400;">()</span>, key=operator.itemgetter<span style="color: #006400;">(</span>1<span style="color: #006400;">)</span><span style="color: #8b0000;">)</span>
 </pre>
-
+</div>
 </li>
 <li>pickle &amp; struct
-    object serialization &amp; C structs represented as Python strings
+object serialization &amp; C structs represented as Python strings
 </li>
 </ul>
-
-
-
+</div>
 </div>
 
-</div>
 
-<div id="outline-container-3" class="outline-2">
-<h2 id="sec-3">String</h2>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> String</h2>
 <div class="outline-text-2" id="text-3">
+</div><div id="outline-container-sec-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> encoding<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup></h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+python内部都用unicode做中介。当你需要对一个字符串转换编码时，如果它本身不是
+unicode编码，python会隐式转换它成unicode编码，转换时采用的缺省编码是ASCII，
+这样I18N字符串就会出错，比如你要把一个utf8字符串转换成gbk：
+</p>
+<div class="org-src-container">
 
-
+<pre class="src src-python"><span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">-*- coding: utf-8 -*-</span>
+<span style="color: #D8FA3C;">name</span> = <span style="color: #61CE3C;">'&#26031;&#22374;&#31119;'</span>
+</pre>
 </div>
 
-<div id="outline-container-3-1" class="outline-3">
-<h3 id="sec-3-1">encoding<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup></h3>
-<div class="outline-text-3" id="text-3-1">
-
-<p>   python内部都用unicode做中介。当你需要对一个字符串转换编码时，如果它本身不是
-   unicode编码，python会隐式转换它成unicode编码，转换时采用的缺省编码是ASCII，
-   这样I18N字符串就会出错，比如你要把一个utf8字符串转换成gbk：
-</p>
-
-
-<pre class="src src-python"><span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">-*- coding: utf-8 -*-</span>
-<span style="color: #268bd2;">name</span> = <span style="color: #2aa198;">'&#26031;&#22374;&#31119;'</span>
-</pre>
-
-
-
-<pre class="example">&gt;name.encode('gbk')
+<pre class="example">
+&gt;name.encode('gbk')
 UnicodeDecodeError: 'ascii' codec can't decode byte 0xe6 in position 0:
 ordinal not in range(128)
 </pre>
-
 <p>
-   上面例子中，name在做encode的时候，会先隐式去做unicode()，转换成unicode编码，
-   然后再转成gbk，问题就出在隐式unicode()这个步骤上，python隐式做unicode()用的
-   编码是ASCII，而‘斯坦福’是不能用ASCII表达的，这就出现了上面的错误。要解决上
-   面的问题，必须先用正确的编码把name转换成unicode格式:
+上面例子中，name在做encode的时候，会先隐式去做unicode()，转换成unicode编码，
+然后再转成gbk，问题就出在隐式unicode()这个步骤上，python隐式做unicode()用的
+编码是ASCII，而‘斯坦福’是不能用ASCII表达的，这就出现了上面的错误。要解决上
+面的问题，必须先用正确的编码把name转换成unicode格式:
 </p>
-
-
-<pre class="example">&gt;uname = unicode(name, 'utf-8')    #或者也可以uname = name.decode('utf-8')
+<pre class="example">
+&gt;uname = unicode(name, 'utf-8')    #或者也可以uname = name.decode('utf-8')
 &gt;uname.encode('gb18030')
 '\xcb\xb9\xcc\xb9\xb8\xa3'
 </pre>
 
-
 <p>
-   另外注意我们上面指定的unicode()编码，这个也不能随便写，python编码规范要求你指
-   定源代码编码<sup><a class="footref" name="fnr-.2" href="#fn-.2">2</a></sup>，例如你指定coding为”# -*- coding: utf-8 -*-“，那么你在
-   对字符串做unicode()的时候就不能用gbk去做，会出错：
+另外注意我们上面指定的unicode()编码，这个也不能随便写，python编码规范要求你指
+定源代码编码<sup><a id="fnr.2" name="fnr.2" class="footref" href="#fn.2">2</a></sup>，例如你指定coding为”# -*- coding: utf-8 -*-“，那么你在
+对字符串做unicode()的时候就不能用gbk去做，会出错：
 </p>
-
-
-<pre class="example">&gt;unicode(name, 'gb18030')
+<pre class="example">
+&gt;unicode(name, 'gb18030')
 UnicodeDecodeError: 'gb18030' codec can't decode byte 0x8f in position 8:
 incomplete multibyte sequence
 </pre>
 
-
 <p>
-   上面的问题都是由于缺省编码导致的，p3k之后的缺省编码格式变成了utf8，这样你只
-   需要注意非utf8编码格式的字符串转换。
-</p>
-<p>
-   转换一个str成为url也必须小心，如果你代码的编码是utf8，而目标网站编码是gbk，
-   你在转换的时候需要先转换str编码为gbk，然后做quote:
+上面的问题都是由于缺省编码导致的，p3k之后的缺省编码格式变成了utf8，这样你只
+需要注意非utf8编码格式的字符串转换。
 </p>
 
-
-<pre class="example">&gt;uname = name.decode('utf-8')
+<p>
+转换一个str成为url也必须小心，如果你代码的编码是utf8，而目标网站编码是gbk，
+你在转换的时候需要先转换str编码为gbk，然后做quote:
+</p>
+<pre class="example">
+&gt;uname = name.decode('utf-8')
 &gt;urllib2.quote(uname.encode('gb18030'))
 '%CB%B9%CC%B9%B8%A3'
 </pre>
-
 </div>
-
 </div>
-
-<div id="outline-container-3-2" class="outline-3">
-<h3 id="sec-3-2">p2k &amp; p3k</h3>
+<div id="outline-container-sec-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> p2k &amp; p3k</h3>
 <div class="outline-text-3" id="text-3-2">
-
-<p>两个版本的python中，string的实现有很大区别，p2k中，string表示单字节字符和byte，
+<p>
+两个版本的python中，string的实现有很大区别，p2k中，string表示单字节字符和byte，
 unicode表示多字节字符，有byte类型，主要是为了向前兼容，其实和string是同义词；而
 在p3k中，string代表unicode（含ascii），byte表示字节，bytearray为字节数组。p3k
 中明确的分为两个类型str和byte，使用中要求你明确，不能混用。转换同样通过decode
 和encode实现，你可以把str encode成byte，也能把byte decode成str。str在3.3之后
 内存占用也进行了优化，ascii采用单字节表示，减少转换成本和内存占用。
-</p></div>
-
+</p>
 </div>
-
-<div id="outline-container-3-3" class="outline-3">
-<h3 id="sec-3-3">unicode &amp; encode</h3>
+</div>
+<div id="outline-container-sec-3-3" class="outline-3">
+<h3 id="sec-3-3"><span class="section-number-3">3.3</span> unicode &amp; encode</h3>
 <div class="outline-text-3" id="text-3-3">
-
-<p>这里两个概念不要搞混淆了，unicode是用一组code points表示字符序列，codepoints就
+<p>
+这里两个概念不要搞混淆了，unicode是用一组code points表示字符序列，codepoints就
 是一个整形，比如26446，代表‘李’，在unicode中是唯一的。由于他不能使用一个字节表
 示，那么他在内存、持久化、传输的时候，转换成bytes序列必须有某种格式，这样以后才
 能重新解码回来，这样就有了字符encode，常见的encode包括ascii、iso-8859-1、utf-8
 下面是我在理解过程中，几篇重要的文章：
-</p><ul>
+</p>
+<ul class="org-ul">
 <li><a href="http://nedbatchelder.com/text/unipain.html">Pragmatic Unicode</a>
 </li>
 <li><a href="http://www.joelonsoftware.com/articles/Unicode.html">Joel About Unicode and Character Sets</a>
@@ -241,370 +211,427 @@ unicode表示多字节字符，有byte类型，主要是为了向前兼容，其
 <li><a href="http://docs.python.org/2/howto/unicode.html">Unicode HOWTO</a>
 </li>
 </ul>
-
 </div>
-
 </div>
-
-<div id="outline-container-3-4" class="outline-3">
-<h3 id="sec-3-4">utf-8</h3>
+<div id="outline-container-sec-3-4" class="outline-3">
+<h3 id="sec-3-4"><span class="section-number-3">3.4</span> utf-8</h3>
 <div class="outline-text-3" id="text-3-4">
+<p>
+最常用的编码之一，python建议采用的编码格式，采用变长方式编码:
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
-<p>最常用的编码之一，python建议采用的编码格式，采用变长方式编码:
-</p><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-<colgroup><col class="right" /><col class="left" /><col class="left" />
+
+<colgroup>
+<col  class="right" />
+
+<col  class="left" />
+
+<col  class="left" />
 </colgroup>
 <tbody>
-<tr><td class="right">+</td><td class="left">+</td><td class="left">+</td></tr>
-<tr><td class="right">Hex Min</td><td class="left">Hex Max</td><td class="left">Byte Sequence in Binary</td></tr>
-<tr><td class="right">00000000</td><td class="left">0000007f</td><td class="left">0vvvvvvv</td></tr>
-<tr><td class="right">00000080</td><td class="left">000007ff</td><td class="left">110vvvvv 10vvvvvv</td></tr>
-<tr><td class="right">00000800</td><td class="left">0000ffff</td><td class="left">1110vvvv 10vvvvvv 10vvvvvv</td></tr>
-<tr><td class="right">00010000</td><td class="left">001fffff</td><td class="left">11110vvv 10vvvvvv 10vvvvvv 10vvvvvv</td></tr>
-<tr><td class="right">00200000</td><td class="left">03ffffff</td><td class="left">111110vv 10vvvvvv 10vvvvvv 10vvvvvv 10vvvvvv</td></tr>
-<tr><td class="right">04000000</td><td class="left">7fffffff</td><td class="left">1111110v 10vvvvvv 10vvvvvv 10vvvvvv 10vvvvvv 10vvvvvv</td></tr>
+<tr>
+<td class="right">+</td>
+<td class="left">+</td>
+<td class="left">+</td>
+</tr>
+
+<tr>
+<td class="right">Hex Min</td>
+<td class="left">Hex Max</td>
+<td class="left">Byte Sequence in Binary</td>
+</tr>
+
+<tr>
+<td class="right">00000000</td>
+<td class="left">0000007f</td>
+<td class="left">0vvvvvvv</td>
+</tr>
+
+<tr>
+<td class="right">00000080</td>
+<td class="left">000007ff</td>
+<td class="left">110vvvvv 10vvvvvv</td>
+</tr>
+
+<tr>
+<td class="right">00000800</td>
+<td class="left">0000ffff</td>
+<td class="left">1110vvvv 10vvvvvv 10vvvvvv</td>
+</tr>
+
+<tr>
+<td class="right">00010000</td>
+<td class="left">001fffff</td>
+<td class="left">11110vvv 10vvvvvv 10vvvvvv 10vvvvvv</td>
+</tr>
+
+<tr>
+<td class="right">00200000</td>
+<td class="left">03ffffff</td>
+<td class="left">111110vv 10vvvvvv 10vvvvvv 10vvvvvv 10vvvvvv</td>
+</tr>
+
+<tr>
+<td class="right">04000000</td>
+<td class="left">7fffffff</td>
+<td class="left">1111110v 10vvvvvv 10vvvvvv 10vvvvvv 10vvvvvv 10vvvvvv</td>
+</tr>
+
+<tr>
+<td class="right">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+</tr>
 </tbody>
 </table>
-
+<p>
 如果字节是10开头，说明他不是一个字符，而是字符的组成字节；字节如果不是0开头，表
 示该字符是多字节字符，有几个1，该字符就由几个字节组成，比如'\xc2'，表示该字符由
 两字节组成。另外需要注意的是，很多字节是非法的，比如'\xc0\x80'，这个字节数组
 在utf8中就是非法的，因为按照编码规则，他代表0，所以假如你做如下操作：
+</p>
 <pre class="example">
 '\xc0\x80'.encode('utf-8')
 </pre>
-
-<p>会报0xc0为非法字符，无法转换，'0x80'在utf8中表示为'\xc2\x80'
+<p>
+会报0xc0为非法字符，无法转换，'0x80'在utf8中表示为'\xc2\x80'
 </p>
-
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-4" class="outline-2">
-<h2 id="sec-4">Regex<sup><a class="footref" name="fnr-.3" href="#fn-.3">3</a></sup></h2>
-<div class="outline-text-2" id="text-4">
-
-
-</div>
-
-<div id="outline-container-4-1" class="outline-3">
-<h3 id="sec-4-1">MyDemo</h3>
-<div class="outline-text-3" id="text-4-1">
-
-
-
-
-<pre class="src src-python"><span style="color: #859900;">str</span> = <span style="color: #2aa198;">'atestaa,btestbb,'</span>
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#19981;&#21305;&#37197;&#65292;match&#26159;&#20174;&#31532;&#19968;&#20010;&#23383;&#31526;&#24320;&#22987;&#21305;&#37197;</span>
-<span style="color: #268bd2;">rs</span> = re.match(r<span style="color: #2aa198;">'test.*'</span>, <span style="color: #859900;">str</span>)
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;&#65292;rs.group()&#36755;&#20986; 'atestaa,btestbb,'</span>
-<span style="color: #268bd2;">rs</span> = re.match(r<span style="color: #2aa198;">'.test.*'</span>, <span style="color: #859900;">str</span>)
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;&#65292;&#27880;&#24847;patten&#21518;&#38754;&#22810;&#20102;&#19968;&#20010;&#36887;&#21495;&#23383;&#31526;&#65292;&#20294;&#26159;&#21305;&#37197;&#32467;&#26524;&#21516;&#19978;&#65292;&#22240;&#32570;&#30465;&#26159;&#36138;&#21507;&#27169;&#24335;,</span>
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21407;&#21017;&#26159;&#26368;&#38271;&#21305;&#37197;</span>
-<span style="color: #268bd2;">rs</span> = re.match(r<span style="color: #2aa198;">'.test.*,'</span>, <span style="color: #859900;">str</span>)
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;&#65292;&#27880;&#24847;patten&#20013;&#22810;&#20102;&#20010;&#38382;&#21495;&#65292;&#21305;&#37197;&#32467;&#26524;&#21464;&#25104;&#20102;'atestaa,',&#25913;&#21464;&#27169;&#24335;&#20026;&#26368;&#30701;&#21305;&#37197;</span>
-<span style="color: #268bd2;">rs</span> = re.match(r<span style="color: #2aa198;">'.test.*?,'</span>, <span style="color: #859900;">str</span>)
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;&#65292;group&#27169;&#24335;&#65292;patten&#20013;&#22810;&#20102;&#19968;&#23545;&#25324;&#21495;&#65292;&#21305;&#37197;&#32467;&#26524;&#21516;&#19978;&#65292;&#21482;&#26159;&#25324;&#21495;&#20013;&#34920;&#36798;&#24335;&#21305;</span>
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#37197;&#30340;&#23383;&#31526;&#20250;&#21333;&#29420;&#23384;&#25918;&#22312;re.group(1)&#20013;&#65292;&#26412;&#20363;&#20013;&#20026;'aa'</span>
-<span style="color: #268bd2;">rs</span> = re.match(r<span style="color: #2aa198;">'.test(.*?),'</span>, <span style="color: #859900;">str</span>)
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;&#65292;&#22810;&#20102;&#19968;&#20010;re.group(2)&#65292;&#26412;&#20363;&#20013;&#23384;&#25918;'bb'</span>
-<span style="color: #268bd2;">rs</span> = re.match(r<span style="color: #2aa198;">'.test(.*?),.test(.*?),'</span>, <span style="color: #859900;">str</span>)
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#20351;&#29992;&#26041;&#24335;&#21516;match&#65292;&#21807;&#19968;&#21306;&#21035;&#23601;&#26159;search&#20174;&#20219;&#24847;&#20301;&#32622;&#24320;&#22987;&#21305;&#37197;&#65292;&#32780;match&#24517;&#39035;&#20174;&#31532;&#19968;&#20010;</span>
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#23383;&#31526;&#24320;&#22987;&#21305;&#37197;&#65292;&#21478;&#22806;match&#21644;search&#37117;&#26159;&#19968;&#27425;&#21305;&#37197;</span>
-<span style="color: #268bd2;">rs</span> = re.search
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;&#65292;&#22810;&#27425;&#21305;&#37197;&#27169;&#24335;&#65292;rs&#36755;&#20986;['aa', 'bb']&#65292;return list</span>
-<span style="color: #268bd2;">rs</span> = re.findall(r<span style="color: #2aa198;">'test(.*?),'</span>, <span style="color: #859900;">str</span>)
+<div id="outline-container-sec-3-5" class="outline-3">
+<h3 id="sec-3-5"><span class="section-number-3">3.5</span> 关于print和重定向</h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+这里需要注意，如果你的代码明确了编码，例如:“# -*- coding: utf-8 -*-”，那么你在中文的windows平台上执行print时需要小心，str类型的变量需要明确做转码，比如：
+</p>
+<pre class="example">
+a = '测试'
+print a.decode('utf-8')
 </pre>
-
 
 <p>
-   复杂的例子：
+但是如果你把上面的代码输出重定向到一个文件，无法执行成功，会出现编码错误。出现这个问题的原因是由于重定向之后，python无法知道stdout的encoding，只能使用ASCII来进行转码输出<sup><a id="fnr.3" name="fnr.3" class="footref" href="#fn.3">3</a></sup>，可以用下面方法解决：
 </p>
-
-
-<pre class="src src-python"><span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#36825;&#37324;&#21305;&#37197;xx&#65292;xy&#65292;yx&#65292;yy&#65292;&#20294;&#26159;&#22914;&#26524;&#20320;&#21482;&#24819;&#21305;&#37197;xy&#21644;yx&#30340;&#26102;&#20505;&#24590;&#20040;&#21150;&#21602;</span>
-<span style="color: #268bd2;">re</span> = re.search(r<span style="color: #2aa198;">'(x|y)(x|y)'</span>, <span style="color: #2aa198;">'xy'</span>)
-
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21305;&#37197;xy&#25110;&#32773;yx&#65292;&#19981;&#21305;&#37197;xx&#65292;yy&#65292;&#35299;&#37322;&#19968;&#19979;&#65292;&#31532;&#19968;&#20010;&#22823;&#25324;&#21495;&#37324;&#38754;&#26159;&#34920;&#31034;&#24403;&#25214;&#21040;x&#30340;&#26102;</span>
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#20505;&#65292;&#23384;&#20837;group&#65288;1&#65289;&#37324;&#38754;&#65292;&#22914;&#26524;&#26159;y&#21017;&#19981;&#23384;&#20837;group&#65288;1&#65289;&#65292;&#21518;&#38754;&#19968;&#20010;&#25324;&#21495;&#37324;&#38754;&#34920;&#31034;&#22914;</span>
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#26524;group&#65288;1&#65289;&#23384;&#22312;&#65292;&#21017;&#32487;&#32493;&#21305;&#37197;y&#65292;&#21542;&#21017;&#21305;&#37197;x</span>
-<span style="color: #268bd2;">rs</span> = re.search(r<span style="color: #2aa198;">'(?:(x)|y)(?(1)y|x)'</span>, <span style="color: #2aa198;">'xy'</span>)
-
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">OR&#20851;&#31995;&#21305;&#37197;</span>
-<span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#20551;&#22914;&#20320;&#35201;&#21305;&#37197;&#30340;&#20869;&#23481;&#21069;&#38754;&#30340;&#38480;&#23450;&#31526;&#26377;&#21464;&#21270;&#65292;&#27604;&#22914;&#19979;&#38754;&#20363;&#23376;&#65292;</span>
-<span style="color: #268bd2;">s</span> = <span style="color: #2aa198;">'''&lt;div class="data"&gt;12-11&lt;a href="http://www.google.com"&gt;&lt;/a&gt;&lt;/div&gt;</span>
-<span style="color: #2aa198;">       &lt;div class ="phase"&gt;1102&lt;a href="http://www.yahoo.com"&gt;&lt;/a&gt;&lt;/div&gt;'''</span>
-<span style="color: #268bd2;">rs</span> = re.findall(r<span style="color: #2aa198;">'class="(?:(?:data)|(?:phase))"&gt;([\d-]+)&lt;a.*?"(.*?)"&gt;'</span>, s)
-
+<pre class="example">
+import sys, codecs, locale
+sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
+a = '测试'
+print a.decode('utf-8')
 </pre>
-
-
+</div>
+</div>
 </div>
 
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Regex<sup><a id="fnr.4" name="fnr.4" class="footref" href="#fn.4">4</a></sup></h2>
+<div class="outline-text-2" id="text-4">
+</div><div id="outline-container-sec-4-1" class="outline-3">
+<h3 id="sec-4-1"><span class="section-number-3">4.1</span> MyDemo</h3>
+<div class="outline-text-3" id="text-4-1">
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #FF6400;">str</span> = <span style="color: #61CE3C;">'atestaa,btestbb,'</span>
+<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#19981;&#21305;&#37197;&#65292;match&#26159;&#20174;&#31532;&#19968;&#20010;&#23383;&#31526;&#24320;&#22987;&#21305;&#37197;</span>
+<span style="color: #D8FA3C;">rs</span> = re.match<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'test.*'</span>, <span style="color: #FF6400;">str</span><span style="color: #8b0000;">)</span>
+<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#21305;&#37197;&#65292;rs.group()&#36755;&#20986; 'atestaa,btestbb,'</span>
+<span style="color: #D8FA3C;">rs</span> = re.match<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'.test.*'</span>, <span style="color: #FF6400;">str</span><span style="color: #8b0000;">)</span>
+<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#21305;&#37197;&#65292;&#27880;&#24847;patten&#21518;&#38754;&#22810;&#20102;&#19968;&#20010;&#36887;&#21495;&#23383;&#31526;&#65292;&#20294;&#26159;&#21305;&#37197;&#32467;&#26524;&#21516;&#19978;&#65292;&#22240;&#32570;&#30465;&#26159;&#36138;&#21507;&#27169;&#24335;,</span>
+<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#21407;&#21017;&#26159;&#26368;&#38271;&#21305;&#37197;</span>
+<span style="color: #D8FA3C;">rs</span> = re.match<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'.test.*,'</span>, <span style="color: #FF6400;">str</span><span style="color: #8b0000;">)</span>
+<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#21305;&#37197;&#65292;&#27880;&#24847;patten&#20013;&#22810;&#20102;&#20010;&#38382;&#21495;&#65292;&#21305;&#37197;&#32467;&#26524;&#21464;&#25104;&#20102;'atestaa,',&#25913;&#21464;&#27169;&#24335;&#20026;&#26368;&#30701;&#21305;&#37197;</span>
+<span style="color: #D8FA3C;">rs</span> = re.match<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'.test.*?,'</span>, <span style="color: #FF6400;">str</span><span style="color: #8b0000;">)</span>
+<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#21305;&#37197;&#65292;group&#27169;&#24335;&#65292;patten&#20013;&#22810;&#20102;&#19968;&#23545;&#25324;&#21495;&#65292;&#21305;&#37197;&#32467;&#26524;&#21516;&#19978;&#65292;&#21482;&#26159;&#25324;&#21495;&#20013;&#34920;&#36798;&#24335;&#21305;</span>
+<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#37197;&#30340;&#23383;&#31526;&#20250;&#21333;&#29420;&#23384;&#25918;&#22312;re.group(1)&#20013;&#65292;&#26412;&#20363;&#20013;&#20026;'aa'</span>
+<span style="color: #D8FA3C;">rs</span> = re.match<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'.test(.*?),'</span>, <span style="color: #FF6400;">str</span><span style="color: #8b0000;">)</span>
+<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#21305;&#37197;&#65292;&#22810;&#20102;&#19968;&#20010;re.group(2)&#65292;&#26412;&#20363;&#20013;&#23384;&#25918;'bb'</span>
+<span style="color: #D8FA3C;">rs</span> = re.match<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'.test(.*?),.test(.*?),'</span>, <span style="color: #FF6400;">str</span><span style="color: #8b0000;">)</span>
+<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#20351;&#29992;&#26041;&#24335;&#21516;match&#65292;&#21807;&#19968;&#21306;&#21035;&#23601;&#26159;search&#20174;&#20219;&#24847;&#20301;&#32622;&#24320;&#22987;&#21305;&#37197;&#65292;&#32780;match&#24517;&#39035;&#20174;&#31532;&#19968;&#20010;</span>
+<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#23383;&#31526;&#24320;&#22987;&#21305;&#37197;&#65292;&#21478;&#22806;match&#21644;search&#37117;&#26159;&#19968;&#27425;&#21305;&#37197;</span>
+<span style="color: #D8FA3C;">rs</span> = re.search
+<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#21305;&#37197;&#65292;&#22810;&#27425;&#21305;&#37197;&#27169;&#24335;&#65292;rs&#36755;&#20986;['aa', 'bb']&#65292;return list</span>
+<span style="color: #D8FA3C;">rs</span> = re.findall<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'test(.*?),'</span>, <span style="color: #FF6400;">str</span><span style="color: #8b0000;">)</span>
+</pre>
 </div>
 
-<div id="outline-container-4-2" class="outline-3">
-<h3 id="sec-4-2">findall group  - return tuple</h3>
+<p>
+复杂的例子：
+</p>
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#36825;&#37324;&#21305;&#37197;xx&#65292;xy&#65292;yx&#65292;yy&#65292;&#20294;&#26159;&#22914;&#26524;&#20320;&#21482;&#24819;&#21305;&#37197;xy&#21644;yx&#30340;&#26102;&#20505;&#24590;&#20040;&#21150;&#21602;</span>
+<span style="color: #D8FA3C;">re</span> = re.search<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'(x|y)(x|y)'</span>, <span style="color: #61CE3C;">'xy'</span><span style="color: #8b0000;">)</span>
+
+<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#21305;&#37197;xy&#25110;&#32773;yx&#65292;&#19981;&#21305;&#37197;xx&#65292;yy&#65292;&#35299;&#37322;&#19968;&#19979;&#65292;&#31532;&#19968;&#20010;&#22823;&#25324;&#21495;&#37324;&#38754;&#26159;&#34920;&#31034;&#24403;&#25214;&#21040;x&#30340;&#26102;</span>
+<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#20505;&#65292;&#23384;&#20837;group&#65288;1&#65289;&#37324;&#38754;&#65292;&#22914;&#26524;&#26159;y&#21017;&#19981;&#23384;&#20837;group&#65288;1&#65289;&#65292;&#21518;&#38754;&#19968;&#20010;&#25324;&#21495;&#37324;&#38754;&#34920;&#31034;&#22914;</span>
+<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#26524;group&#65288;1&#65289;&#23384;&#22312;&#65292;&#21017;&#32487;&#32493;&#21305;&#37197;y&#65292;&#21542;&#21017;&#21305;&#37197;x</span>
+<span style="color: #D8FA3C;">rs</span> = re.search<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'(?:(x)|y)(?(1)y|x)'</span>, <span style="color: #61CE3C;">'xy'</span><span style="color: #8b0000;">)</span>
+
+<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">OR&#20851;&#31995;&#21305;&#37197;</span>
+<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#20551;&#22914;&#20320;&#35201;&#21305;&#37197;&#30340;&#20869;&#23481;&#21069;&#38754;&#30340;&#38480;&#23450;&#31526;&#26377;&#21464;&#21270;&#65292;&#27604;&#22914;&#19979;&#38754;&#20363;&#23376;&#65292;</span>
+<span style="color: #D8FA3C;">s</span> = <span style="color: #61CE3C;">'''&lt;div class="data"&gt;12-11&lt;a href="http://www.google.com"&gt;&lt;/a&gt;&lt;/div&gt;</span>
+<span style="color: #61CE3C;">       &lt;div class ="phase"&gt;1102&lt;a href="http://www.yahoo.com"&gt;&lt;/a&gt;&lt;/div&gt;'''</span>
+<span style="color: #D8FA3C;">rs</span> = re.findall<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'class="(?:(?:data)|(?:phase))"&gt;([\d-]+)&lt;a.*?"(.*?)"&gt;'</span>, s<span style="color: #8b0000;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-4-2" class="outline-3">
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> findall group  - return tuple</h3>
 <div class="outline-text-3" id="text-4-2">
+<div class="org-src-container">
 
-
-
-
-<pre class="src src-python"><span style="color: #859900;">str</span> = <span style="color: #2aa198;">'purple alice@google.com, blah monkey bob@abc.com blah dishwasher'</span>
-<span style="color: #268bd2;">tuples</span> = re.findall(r<span style="color: #2aa198;">'([\w\.-]+)@([\w\.-]+)'</span>, <span style="color: #859900;">str</span>)
-<span style="color: #859900;">print</span> tuples  <span style="color: #586e75; font-style: italic;">## </span><span style="color: #586e75; font-style: italic;">[('alice', 'google.com'), ('bob', 'abc.com')]</span>
-<span style="color: #859900;">for</span> <span style="color: #859900;">tuple</span> <span style="color: #859900;">in</span> tuples:
-  <span style="color: #859900;">print</span> <span style="color: #859900;">tuple</span>[0]  <span style="color: #586e75; font-style: italic;">## </span><span style="color: #586e75; font-style: italic;">username</span>
-  <span style="color: #859900;">print</span> <span style="color: #859900;">tuple</span>[1]  <span style="color: #586e75; font-style: italic;">## </span><span style="color: #586e75; font-style: italic;">host</span>
+<pre class="src src-python"><span style="color: #FF6400;">str</span> = <span style="color: #61CE3C;">'purple alice@google.com, blah monkey bob@abc.com blah dishwasher'</span>
+<span style="color: #D8FA3C;">tuples</span> = re.findall<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'([\w\.-]+)@([\w\.-]+)'</span>, <span style="color: #FF6400;">str</span><span style="color: #8b0000;">)</span>
+<span style="color: #FBDE2D;">print</span> tuples  <span style="color: #8B8989; font-style: italic;">## </span><span style="color: #8B8989; font-style: italic;">[('alice', 'google.com'), ('bob', 'abc.com')]</span>
+<span style="color: #FBDE2D;">for</span> <span style="color: #FF6400;">tuple</span> <span style="color: #FBDE2D;">in</span> tuples:
+  <span style="color: #FBDE2D;">print</span> <span style="color: #FF6400;">tuple</span><span style="color: #8b0000;">[</span>0<span style="color: #8b0000;">]</span>  <span style="color: #8B8989; font-style: italic;">## </span><span style="color: #8B8989; font-style: italic;">username</span>
+  <span style="color: #FBDE2D;">print</span> <span style="color: #FF6400;">tuple</span><span style="color: #8b0000;">[</span>1<span style="color: #8b0000;">]</span>  <span style="color: #8B8989; font-style: italic;">## </span><span style="color: #8B8989; font-style: italic;">host</span>
 </pre>
-
-
+</div>
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-4-3" class="outline-3">
-<h3 id="sec-4-3">Options</h3>
+<div id="outline-container-sec-4-3" class="outline-3">
+<h3 id="sec-4-3"><span class="section-number-3">4.3</span> Options</h3>
 <div class="outline-text-3" id="text-4-3">
-
-<p>   The re functions take options to modify the behavior of the pattern match.
-   The option flag is added as an extra argument to the search() or findall()
-   etc., e.g. re.search(pat, str, re.IGNORECASE).
+<p>
+The re functions take options to modify the behavior of the pattern match.
+The option flag is added as an extra argument to the search() or findall()
+etc., e.g. re.search(pat, str, re.IGNORECASE).
 </p>
-<ul>
-<li>IGNORECASE &ndash; ignore upper/lowercase differences for matching, so 'a'
-     matches both 'a' and 'A'.
+
+<ul class="org-ul">
+<li>IGNORECASE &#x2013; ignore upper/lowercase differences for matching, so 'a'
+matches both 'a' and 'A'.
 </li>
-<li>DOTALL &ndash; allow dot (.) to match newline &ndash; normally it matches anything
-     but newline. This can trip you up &ndash; you think .* matches everything, but
-     by default it does not go past the end of a line. Note that \s (whitespace)
-     includes newlines, so if you want to match a run of whitespace that may
-     include a newline, you can just use \s*
+<li>DOTALL &#x2013; allow dot (.) to match newline &#x2013; normally it matches anything
+but newline. This can trip you up &#x2013; you think .* matches everything, but
+by default it does not go past the end of a line. Note that \s (whitespace)
+includes newlines, so if you want to match a run of whitespace that may
+include a newline, you can just use \s*
 </li>
-<li>MULTILINE &ndash; Within a string made of many lines, allow ^ and $ to match the
-     start and end of each line. Normally ^/$ would just match the start and end
-     of the whole string.
+<li>MULTILINE &#x2013; Within a string made of many lines, allow ^ and $ to match the
+start and end of each line. Normally ^/$ would just match the start and end
+of the whole string.
 </li>
 </ul>
-
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-4-4" class="outline-3">
-<h3 id="sec-4-4">Substitution</h3>
+<div id="outline-container-sec-4-4" class="outline-3">
+<h3 id="sec-4-4"><span class="section-number-3">4.4</span> Substitution</h3>
 <div class="outline-text-3" id="text-4-4">
-
-<p>   The re.sub(pat, replacement, str) function searches for all the instances of
-   pattern in the given string, and replaces them. The replacement string can
-   include '\1', '\2' which refer to the text from group(1), group(2), and so on
-   from the original matching text.
-</p>
 <p>
-   Here's an example which searches for all the email addresses, and changes
-   them to keep the user (\1) but have yo-yo-dyne.com as the host.
+The re.sub(pat, replacement, str) function searches for all the instances of
+pattern in the given string, and replaces them. The replacement string can
+include '\1', '\2' which refer to the text from group(1), group(2), and so on
+from the original matching text.
 </p>
 
+<p>
+Here's an example which searches for all the email addresses, and changes
+them to keep the user (\1) but have yo-yo-dyne.com as the host.
+</p>
+<div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #859900;">str</span> = <span style="color: #2aa198;">'purple alice@google.com, blah monkey bob@abc.com blah dishwasher'</span>
-<span style="color: #586e75; font-style: italic;">## </span><span style="color: #586e75; font-style: italic;">re.sub(pat, replacement, str) -returns new string with all replacements,</span>
-<span style="color: #586e75; font-style: italic;">## </span><span style="color: #586e75; font-style: italic;">\1 is group(1), \2 group(2) in the replacement</span>
-<span style="color: #859900;">print</span> re.sub(r<span style="color: #2aa198;">'([\w\.-]+)@([\w\.-]+)'</span>, r<span style="color: #2aa198;">'\1@yo-yo-dyne.com'</span>, <span style="color: #859900;">str</span>)
-<span style="color: #586e75; font-style: italic;">## </span><span style="color: #586e75; font-style: italic;">purple alice@yo-yo-dyne.com, blah monkey bob@yo-yo-dyne.com blah</span>
-<span style="color: #586e75; font-style: italic;">##</span><span style="color: #586e75; font-style: italic;">dishwasher</span>
+<pre class="src src-python"><span style="color: #FF6400;">str</span> = <span style="color: #61CE3C;">'purple alice@google.com, blah monkey bob@abc.com blah dishwasher'</span>
+<span style="color: #8B8989; font-style: italic;">## </span><span style="color: #8B8989; font-style: italic;">re.sub(pat, replacement, str) -returns new string with all replacements,</span>
+<span style="color: #8B8989; font-style: italic;">## </span><span style="color: #8B8989; font-style: italic;">\1 is group(1), \2 group(2) in the replacement</span>
+<span style="color: #FBDE2D;">print</span> re.sub<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'([\w\.-]+)@([\w\.-]+)'</span>, r<span style="color: #61CE3C;">'\1@yo-yo-dyne.com'</span>, <span style="color: #FF6400;">str</span><span style="color: #8b0000;">)</span>
+<span style="color: #8B8989; font-style: italic;">## </span><span style="color: #8B8989; font-style: italic;">purple alice@yo-yo-dyne.com, blah monkey bob@yo-yo-dyne.com blah</span>
+<span style="color: #8B8989; font-style: italic;">##</span><span style="color: #8B8989; font-style: italic;">dishwasher</span>
 </pre>
-
-
-
+</div>
+</div>
 </div>
 </div>
 
-</div>
 
-<div id="outline-container-5" class="outline-2">
-<h2 id="sec-5">function &amp; method</h2>
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> function &amp; method</h2>
 <div class="outline-text-2" id="text-5">
-
-<p>简单来说，function可以通过def和lambda定义，当function定义在class内部时，它通过
+<p>
+简单来说，function可以通过def和lambda定义，当function定义在class内部时，它通过
 descriptor protocol转换成method（这么说也不准确，理论上你依然可以通过__dict__方
 式绕开descriptor protocol访问到function）。
 </p>
+
 <p>
-同时method又分为unbound method和bound method<sup><a class="footref" name="fnr-.4" href="#fn-.4">4</a></sup>，当我们直接通过class访问method时，
+同时method又分为unbound method和bound method<sup><a id="fnr.5" name="fnr.5" class="footref" href="#fn.5">5</a></sup>，当我们直接通过class访问method时，
 它是unbound method；当我们通过该class的instance访问method时，他是bound method。
 </p>
+<div class="org-src-container">
 
+<pre class="src src-python"><span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">foo</span><span style="color: #8b0000;">(</span>x<span style="color: #8b0000;">)</span>:
+    <span style="color: #FBDE2D;">print</span> <span style="color: #61CE3C;">'call foo'</span>, x
 
-<pre class="src src-python"><span style="color: #859900;">def</span> <span style="color: #268bd2;">foo</span>(x):
-    <span style="color: #859900;">print</span> <span style="color: #2aa198;">'call foo'</span>, x
+<span style="color: #FBDE2D;">class</span> <span style="color: #D8FA3C;">MyClass</span><span style="color: #8b0000;">(</span><span style="color: #FF6400;">object</span><span style="color: #8b0000;">)</span>:
+    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">m1</span><span style="color: #8b0000;">(</span>x<span style="color: #8b0000;">)</span>:
+        <span style="color: #FBDE2D;">print</span> <span style="color: #61CE3C;">'call m1'</span>, x
 
-<span style="color: #859900;">class</span> <span style="color: #b58900;">MyClass</span>(<span style="color: #859900;">object</span>):
-    <span style="color: #859900;">def</span> <span style="color: #268bd2;">m1</span>(x):
-        <span style="color: #859900;">print</span> <span style="color: #2aa198;">'call m1'</span>, x
+    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">m2</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span>, y<span style="color: #8b0000;">)</span>:
+        <span style="color: #FBDE2D;">print</span> <span style="color: #61CE3C;">'call m2'</span>, y
 
-    <span style="color: #859900;">def</span> <span style="color: #268bd2;">m2</span>(<span style="color: #859900;">self</span>, y):
-        <span style="color: #859900;">print</span> <span style="color: #2aa198;">'call m2'</span>, y
+In <span style="color: #8b0000;">[</span>259<span style="color: #8b0000;">]</span>: foo
+Out<span style="color: #8b0000;">[</span>259<span style="color: #8b0000;">]</span>: &lt;function __main__.foo&gt;
 
-In [259]: foo
-Out[259]: &lt;function __main__.foo&gt;
+In <span style="color: #8b0000;">[</span>260<span style="color: #8b0000;">]</span>: MyClass.m1
+Out<span style="color: #8b0000;">[</span>260<span style="color: #8b0000;">]</span>: &lt;unbound method MyClass.m1&gt;
 
-In [260]: MyClass.m1
-Out[260]: &lt;unbound method MyClass.m1&gt;
+In <span style="color: #8b0000;">[</span>261<span style="color: #8b0000;">]</span>: <span style="color: #D8FA3C;">m</span> = MyClass<span style="color: #8b0000;">()</span>
 
-In [261]: <span style="color: #268bd2;">m</span> = MyClass()
-
-In [264]: m.m1
-Out[264]: &lt;bound method MyClass.m1 of &lt;__main__.MyClass <span style="color: #859900;">object</span> at 0x1e49c10&gt;&gt;
+In <span style="color: #8b0000;">[</span>264<span style="color: #8b0000;">]</span>: m.m1
+Out<span style="color: #8b0000;">[</span>264<span style="color: #8b0000;">]</span>: &lt;bound method MyClass.m1 of &lt;__main__.MyClass <span style="color: #FF6400;">object</span> at 0x1e49c10&gt;&gt;
 </pre>
-
+</div>
 <p>
 疑问自然产生，为啥m1是method，明明也是一个function，怎么就变成method了呢，为啥
 同样是method还有unbound和bound之分呢，他们之间到底是如何转换的。
 </p>
+
 <p>
 其实背后的魔法都来自于descriptor protocol，在解释descriptor之前，我们先来看看
 方法m1到底是啥?
 </p>
+<div class="org-src-container">
 
+<pre class="src src-python">In <span style="color: #8b0000;">[</span>281<span style="color: #8b0000;">]</span>: foo
+Out<span style="color: #8b0000;">[</span>281<span style="color: #8b0000;">]</span>: &lt;function __main__.foo&gt;
 
-<pre class="src src-python">In [281]: foo
-Out[281]: &lt;function __main__.foo&gt;
+In <span style="color: #8b0000;">[</span>282<span style="color: #8b0000;">]</span>: MyClass.__dict__.get<span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'m1'</span><span style="color: #8b0000;">)</span>
+Out<span style="color: #8b0000;">[</span>284<span style="color: #8b0000;">]</span>: &lt;function __main__.m1&gt;
 
-In [282]: MyClass.__dict__.get(<span style="color: #2aa198;">'m1'</span>)
-Out[284]: &lt;function __main__.m1&gt;
-
-In [285]: MyClass.m1
-Out[285]: &lt;unbound method MyClass.m1&gt;
+In <span style="color: #8b0000;">[</span>285<span style="color: #8b0000;">]</span>: MyClass.m1
+Out<span style="color: #8b0000;">[</span>285<span style="color: #8b0000;">]</span>: &lt;unbound method MyClass.m1&gt;
 </pre>
-
+</div>
 <p>
 参考上面的输出，你可以发现m1依然是一个function，你可以通__dict__访问到它，那为
 啥通过MyClass.m1访问时，返回的又是method呢？
 </p>
+
 <p>
 其实问题就在于方法m1是descriptor，要理解这个得费点功夫，建议参考Peter Inglesby
-的Discovering Descriptors<sup><a class="footref" name="fnr-.5" href="#fn-.5">5</a></sup>。我这里简单解释一下，首先你需要知道的是，Python
+的Discovering Descriptors<sup><a id="fnr.6" name="fnr.6" class="footref" href="#fn.6">6</a></sup>。我这里简单解释一下，首先你需要知道的是，Python
 中一切都是对象，m1是一个对象，foo是一个对象，MyClass和m都是对象，而m1是一个实现
 了descriptor protocol的对象(实现了__get__,__set__,__del__三个方法中的任意一个）
 ，当访问descriptor对象时，直接调用__get__方法返回了一个method。
 </p>
+<div class="org-src-container">
 
-
-<pre class="src src-python">In [328]: <span style="color: #2aa198;">'#'</span>.join(<span style="color: #859900;">dir</span>(MyClass.m1))
-Out[330]: <span style="color: #2aa198;">'__call__#__class__#__cmp__#__delattr__#__doc__#__format__#__func__#</span>
-<span style="color: #2aa198;">__get__#__getattribute__#__hash__#__init__#__new__#__reduce__#__reduce_ex__#</span>
-<span style="color: #2aa198;">__repr__#__self__#__setattr__#__sizeof__#__str__#__subclasshook__#im_class#</span>
-<span style="color: #2aa198;">im_func#im_self'</span>
+<pre class="src src-python">In <span style="color: #8b0000;">[</span>328<span style="color: #8b0000;">]</span>: <span style="color: #61CE3C;">'#'</span>.join<span style="color: #8b0000;">(</span><span style="color: #FF6400;">dir</span><span style="color: #006400;">(</span>MyClass.m1<span style="color: #006400;">)</span><span style="color: #8b0000;">)</span>
+Out<span style="color: #8b0000;">[</span>330<span style="color: #8b0000;">]</span>: <span style="color: #61CE3C;">'__call__#__class__#__cmp__#__delattr__#__doc__#__format__#__func__#</span>
+<span style="color: #61CE3C;">__get__#__getattribute__#__hash__#__init__#__new__#__reduce__#__reduce_ex__#</span>
+<span style="color: #61CE3C;">__repr__#__self__#__setattr__#__sizeof__#__str__#__subclasshook__#im_class#</span>
+<span style="color: #61CE3C;">im_func#im_self'</span>
 </pre>
-
+</div>
 <p>
 当你通过class访问m1的时候，Python其实是调用MyClass.m1.__get__(None, MyClass)，
 当你通过instance访问m1的是，调用MyClass.m1.__get__(m, MyClass)。
 </p>
+<div class="org-src-container">
 
+<pre class="src src-python">In <span style="color: #8b0000;">[</span>346<span style="color: #8b0000;">]</span>: MyClass.m1.__get__<span style="color: #8b0000;">(</span><span style="color: #4c83ff;">None</span>, MyClass<span style="color: #8b0000;">)</span>
+Out<span style="color: #8b0000;">[</span>346<span style="color: #8b0000;">]</span>: &lt;unbound method MyClass.m1&gt;
 
-<pre class="src src-python">In [346]: MyClass.m1.__get__(<span style="color: #2aa198;">None</span>, MyClass)
-Out[346]: &lt;unbound method MyClass.m1&gt;
-
-In [347]: MyClass.m1.__get__(m, MyClass)
-Out[354]: &lt;bound method MyClass.m1 of &lt;__main__.MyClass <span style="color: #859900;">object</span> at 0x1e49c10&gt;&gt;
+In <span style="color: #8b0000;">[</span>347<span style="color: #8b0000;">]</span>: MyClass.m1.__get__<span style="color: #8b0000;">(</span>m, MyClass<span style="color: #8b0000;">)</span>
+Out<span style="color: #8b0000;">[</span>354<span style="color: #8b0000;">]</span>: &lt;bound method MyClass.m1 of &lt;__main__.MyClass <span style="color: #FF6400;">object</span> at 0x1e49c10&gt;&gt;
 </pre>
-
+</div>
 
 <p>
 另外，如果你想调用m1，你会发现你总是失败。
 </p>
+<div class="org-src-container">
 
-
-<pre class="src src-python">In [357]: m.m1(1)
+<pre class="src src-python">In <span style="color: #8b0000;">[</span>357<span style="color: #8b0000;">]</span>: m.m1<span style="color: #8b0000;">(</span>1<span style="color: #8b0000;">)</span>
 ---------------------------------------------------------------------------
-<span style="color: #b58900;">TypeError</span>                                 Traceback (most recent call last)
-&lt;ipython-<span style="color: #859900;">input</span>-357-329146df192e&gt; <span style="color: #859900;">in</span> &lt;module&gt;()
-----&gt; 1 m.m1(1)
+<span style="color: #D8FA3C;">TypeError</span>                                 Traceback <span style="color: #8b0000;">(</span>most recent call last<span style="color: #8b0000;">)</span>
+&lt;ipython-<span style="color: #FF6400;">input</span>-357-329146df192e&gt; <span style="color: #FBDE2D;">in</span> &lt;module&gt;<span style="color: #8b0000;">()</span>
+----&gt; 1 m.m1<span style="color: #8b0000;">(</span>1<span style="color: #8b0000;">)</span>
 
-<span style="color: #b58900;">TypeError</span>: m1() takes exactly 1 argument (2 given)
+<span style="color: #D8FA3C;">TypeError</span>: m1<span style="color: #8b0000;">()</span> takes exactly 1 argument <span style="color: #8b0000;">(</span>2 given<span style="color: #8b0000;">)</span>
 
-In [358]: MyClass.m1(1)
+In <span style="color: #8b0000;">[</span>358<span style="color: #8b0000;">]</span>: MyClass.m1<span style="color: #8b0000;">(</span>1<span style="color: #8b0000;">)</span>
 ---------------------------------------------------------------------------
-<span style="color: #b58900;">TypeError</span>                                 Traceback (most recent call last)
-&lt;ipython-<span style="color: #859900;">input</span>-360-f35a4576c1b2&gt; <span style="color: #859900;">in</span> &lt;module&gt;()
-----&gt; 1 MyClass.m1(1)
+<span style="color: #D8FA3C;">TypeError</span>                                 Traceback <span style="color: #8b0000;">(</span>most recent call last<span style="color: #8b0000;">)</span>
+&lt;ipython-<span style="color: #FF6400;">input</span>-360-f35a4576c1b2&gt; <span style="color: #FBDE2D;">in</span> &lt;module&gt;<span style="color: #8b0000;">()</span>
+----&gt; 1 MyClass.m1<span style="color: #8b0000;">(</span>1<span style="color: #8b0000;">)</span>
 
-<span style="color: #b58900;">TypeError</span>: unbound method m1() must be called <span style="color: #859900;">with</span> MyClass instance <span style="color: #859900;">as</span> first
-argument (got <span style="color: #859900;">int</span> instance instead)
+<span style="color: #D8FA3C;">TypeError</span>: unbound method m1<span style="color: #8b0000;">()</span> must be called <span style="color: #FBDE2D;">with</span> MyClass instance <span style="color: #FBDE2D;">as</span> first
+argument <span style="color: #8b0000;">(</span>got <span style="color: #FF6400;">int</span> instance instead<span style="color: #8b0000;">)</span>
 </pre>
-
+</div>
 <p>
 当你需要访问一个method，必须满足两个条件，首先必须bound，另外必须在定义的时候
 明确定义self参数。Python在调用method的时候会隐式传递instance作为参数，如果你没
 有明确声明self参数，调用就无法成功。如果你需要调用没有声明self参数的方法，参考
 如下方式。
 </p>
+<div class="org-src-container">
 
-
-<pre class="src src-python">In [382]: MyClass.__dict__.get(<span style="color: #2aa198;">'m1'</span>)(1)
+<pre class="src src-python">In <span style="color: #8b0000;">[</span>382<span style="color: #8b0000;">]</span>: MyClass.__dict__.get<span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'m1'</span><span style="color: #8b0000;">)(</span>1<span style="color: #8b0000;">)</span>
 call m1 1
 
-In [393]: m.m2(1)
+In <span style="color: #8b0000;">[</span>393<span style="color: #8b0000;">]</span>: m.m2<span style="color: #8b0000;">(</span>1<span style="color: #8b0000;">)</span>
 call m2 1
 
-In [394]: m.__class__.__dict__.get(<span style="color: #2aa198;">'m1'</span>)(1)
+In <span style="color: #8b0000;">[</span>394<span style="color: #8b0000;">]</span>: m.__class__.__dict__.get<span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'m1'</span><span style="color: #8b0000;">)(</span>1<span style="color: #8b0000;">)</span>
 call m1 1
 
-In [25]: m.m1.im_func(1)
+In <span style="color: #8b0000;">[</span>25<span style="color: #8b0000;">]</span>: m.m1.im_func<span style="color: #8b0000;">(</span>1<span style="color: #8b0000;">)</span>
 call m1 1
 
-In [26]: MyClass.m1.im_func(1)
+In <span style="color: #8b0000;">[</span>26<span style="color: #8b0000;">]</span>: MyClass.m1.im_func<span style="color: #8b0000;">(</span>1<span style="color: #8b0000;">)</span>
 call m1 1
 </pre>
-
+</div>
 <p>
 其他的方法是通过把m1声明为staticmethod或classmethod方法实现。
 </p>
-
+</div>
 </div>
 
-</div>
 
-<div id="outline-container-6" class="outline-2">
-<h2 id="sec-6">descriptor protocol</h2>
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> descriptor protocol</h2>
 <div class="outline-text-2" id="text-6">
-
-<p>TODO &amp; staticmethod &amp; classmethod &amp; instancemethod &amp; super
+<p>
+TODO &amp; staticmethod &amp; classmethod &amp; instancemethod &amp; super
 </p>
-
+</div>
 </div>
 
-</div>
 
-<div id="outline-container-7" class="outline-2">
-<h2 id="sec-7">scopes &amp; closure</h2>
+<div id="outline-container-sec-7" class="outline-2">
+<h2 id="sec-7"><span class="section-number-2">7</span> scopes &amp; closure</h2>
 <div class="outline-text-2" id="text-7">
-
-<p>先看下面的代码片段
+<p>
+先看下面的代码片段
 </p>
+<div class="org-src-container">
 
+<pre class="src src-python"><span style="color: #D8FA3C;">funcs</span> = <span style="color: #8b0000;">[]</span>
+<span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">outer</span><span style="color: #8b0000;">()</span>:
+    <span style="color: #FBDE2D;">for</span> i <span style="color: #FBDE2D;">in</span> <span style="color: #FF6400;">range</span><span style="color: #8b0000;">(</span>4<span style="color: #8b0000;">)</span>:
+        <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">inner</span><span style="color: #8b0000;">()</span>:
+            <span style="color: #FBDE2D;">print</span> i
+        funcs.append<span style="color: #8b0000;">(</span>inner<span style="color: #8b0000;">)</span>
+    <span style="color: #FBDE2D;">return</span> funcs
 
-<pre class="src src-python"><span style="color: #268bd2;">funcs</span> = []
-<span style="color: #859900;">def</span> <span style="color: #268bd2;">outer</span>():
-    <span style="color: #859900;">for</span> i <span style="color: #859900;">in</span> <span style="color: #859900;">range</span>(4):
-        <span style="color: #859900;">def</span> <span style="color: #268bd2;">inner</span>():
-            <span style="color: #859900;">print</span> i
-        funcs.append(inner)
-    <span style="color: #859900;">return</span> funcs
+<span style="color: #FBDE2D;">for</span> f <span style="color: #FBDE2D;">in</span> outer<span style="color: #8b0000;">()</span>:
+    f<span style="color: #8b0000;">()</span>
 
-<span style="color: #859900;">for</span> f <span style="color: #859900;">in</span> outer():
-    f()
-
-In [126]: 3
+In <span style="color: #8b0000;">[</span>126<span style="color: #8b0000;">]</span>: 3
 3
 3
 3
 </pre>
-
+</div>
 <p>
 看到这个结果，是不是有点惊讶，我们期望的输出是“0，2，3，4”，这里输出的确全是3，
 其要理解这个首先你必须明白变量的范围和查找规则，变量可以定义在module、function
@@ -614,11 +641,13 @@ local-》enclosing-》global-》builtin。这里奇怪的冒出来一个enclosin
 这个概念其实是由于Python支持nest function，enclosing module内的变量对于nest
 function就是enclosing的概念。
 </p>
+
 <p>
 回到上面的例子，funcs是global，outer是global，i对于outer是local（不准确说法），
 但是对于inner来说是enclosing，当执行‘print i‘的时候，inner先找自己的local，没有
 i定义，然后找enclosing，发现i，就终止查找，使用enclosing中的i。
 </p>
+
 <p>
 但是一番解释之后，依然没有回答我们上面的问题，虽然找到了i，但是照理来说，i只有在
 outter运行时才存在，而现在outer已经执行结束了，为啥inner还能使用i的值，并且都是3
@@ -627,88 +656,91 @@ outter运行时才存在，而现在outer已经执行结束了，为啥inner还�
 对于i值的变化，他并不关心，他只能保存i的最终状态，当outter执行完的时候i的值已经
 是3了，所以inner执行的时候答应的都是3。
 </p>
+
 <p>
 避免上面类似的问题，你可以通过显示声明nest function变量
 </p>
+<div class="org-src-container">
 
+<pre class="src src-python"><span style="color: #D8FA3C;">funcs</span> = <span style="color: #8b0000;">[]</span>
+<span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">outer</span><span style="color: #8b0000;">()</span>:
+    <span style="color: #FBDE2D;">for</span> i <span style="color: #FBDE2D;">in</span> <span style="color: #FF6400;">range</span><span style="color: #8b0000;">(</span>4<span style="color: #8b0000;">)</span>:
+        <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">inner</span><span style="color: #8b0000;">(</span>i=i<span style="color: #8b0000;">)</span>:
+            <span style="color: #FBDE2D;">print</span> i
+        funcs.append<span style="color: #8b0000;">(</span>inner<span style="color: #8b0000;">)</span>
+    <span style="color: #FBDE2D;">return</span> funcs
 
-<pre class="src src-python"><span style="color: #268bd2;">funcs</span> = []
-<span style="color: #859900;">def</span> <span style="color: #268bd2;">outer</span>():
-    <span style="color: #859900;">for</span> i <span style="color: #859900;">in</span> <span style="color: #859900;">range</span>(4):
-        <span style="color: #859900;">def</span> <span style="color: #268bd2;">inner</span>(i=i):
-            <span style="color: #859900;">print</span> i
-        funcs.append(inner)
-    <span style="color: #859900;">return</span> funcs
+<span style="color: #FBDE2D;">for</span> f <span style="color: #FBDE2D;">in</span> outer<span style="color: #8b0000;">()</span>:
+    f<span style="color: #8b0000;">()</span>
 
-<span style="color: #859900;">for</span> f <span style="color: #859900;">in</span> outer():
-    f()
-
-In [127]: 0
+In <span style="color: #8b0000;">[</span>127<span style="color: #8b0000;">]</span>: 0
 1
 2
 3
 </pre>
-
+</div>
 <p>
 这样对于inner来说，他有了一个local的i，当他执行的时候，就不再找enclosing了。
 </p>
+
 <p>
 我们还需要注意的是global，看下面代码：
 </p>
-
+<div class="org-src-container">
 
 <pre class="src src-python">demo_global.py
-<span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">-*- coding: utf-8 -*-</span>
-<span style="color: #268bd2;">x</span> = 10
-<span style="color: #859900;">def</span> <span style="color: #268bd2;">f1</span>():
-    <span style="color: #859900;">def</span> <span style="color: #268bd2;">inner</span>():
-        <span style="color: #859900;">print</span> x
-    <span style="color: #859900;">return</span> inner
+<span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">-*- coding: utf-8 -*-</span>
+<span style="color: #D8FA3C;">x</span> = 10
+<span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">f1</span><span style="color: #8b0000;">()</span>:
+    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">inner</span><span style="color: #8b0000;">()</span>:
+        <span style="color: #FBDE2D;">print</span> x
+    <span style="color: #FBDE2D;">return</span> inner
 
 demo_test.py
-<span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">-*- coding: utf-8 -*-</span>
-<span style="color: #859900;">import</span> demo_global
+<span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">-*- coding: utf-8 -*-</span>
+<span style="color: #FBDE2D;">import</span> demo_global
 
-<span style="color: #268bd2;">x</span> = 30
-<span style="color: #268bd2;">f2</span> = demo_global.f1()
-f2()
+<span style="color: #D8FA3C;">x</span> = 30
+<span style="color: #D8FA3C;">f2</span> = demo_global.f1<span style="color: #8b0000;">()</span>
+f2<span style="color: #8b0000;">()</span>
 </pre>
-
+</div>
 <p>
 这里的输出是10，注意，global的范围就是module，所以在这里我们可以看到对于inner来
 说，他的global限制在demo_global.py里面，如果你没有在demo_global中定义x，程序执
 行会出错。
 </p>
+
 <p>
 另外，Python是先编译再执行，如果你在一个function里面定义了一个变量，不论是在什
 么位置，他都被申明为本地变量，下面情况需要注意
 </p>
+<div class="org-src-container">
 
+<pre class="src src-python"><span style="color: #D8FA3C;">x</span> = 10
 
-<pre class="src src-python"><span style="color: #268bd2;">x</span> = 10
-
-<span style="color: #859900;">def</span> <span style="color: #268bd2;">f</span>():
-  <span style="color: #859900;">print</span> x
-  <span style="color: #268bd2;">x</span> = x + 1
+<span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">f</span><span style="color: #8b0000;">()</span>:
+  <span style="color: #FBDE2D;">print</span> x
+  <span style="color: #D8FA3C;">x</span> = x + 1
 </pre>
-
+</div>
 <p>
 如果你调用f，系统会告诉你x是一个没有赋值的本地变量，调用失败
 </p>
-
+</div>
 </div>
 
-</div>
 
-<div id="outline-container-8" class="outline-2">
-<h2 id="sec-8">Management Attribute</h2>
+<div id="outline-container-sec-8" class="outline-2">
+<h2 id="sec-8"><span class="section-number-2">8</span> Management Attribute</h2>
 <div class="outline-text-2" id="text-8">
-
-<p>python的attribute管理比较复杂，涉及到不同的方法，包括下面4类：
-</p><ul>
-<li>"__getattr__ / __getattribute__"
+<p>
+python的attribute管理比较复杂，涉及到不同的方法，包括下面4类：
+</p>
+<ul class="org-ul">
+<li>"<span class="underline"><span class="underline">getattr</span></span> / <span class="underline"><span class="underline">getattribute</span></span>"
 </li>
-<li>"__setattr__ / __delattr__"
+<li>"<span class="underline"><span class="underline">setattr</span></span> / <span class="underline"><span class="underline">delattr</span></span>"
 </li>
 <li>properties
 </li>
@@ -716,100 +748,100 @@ f2()
 </li>
 </ul>
 
-
 <p>
 其中前两者一般情况下用于代理实现，比如delegation proxy，影响到每个attribute的
 行为，而后两者应用于特定的attribute。
 </p>
+
 <p>
-"__getattr__"和"__getattribute__"的主要区别在于，前者主要针对未定义的attribute
+"<span class="underline"><span class="underline">getattr</span></span>"和"<span class="underline"><span class="underline">getattribute</span></span>"的主要区别在于，前者主要针对未定义的attribute
 ，而后者针对所有attribute（包括未定义的），使用后者的时候必须小心死循环，因为
 你对所有attribute的fetch操作都会触发它的执行，一般情况下如果你需要在它里面获取
 attribute的时候，一般可以通过使用superclass的方法实现，比如：
-</p><pre class="example">
+</p>
+<pre class="example">
 object.__getattribute__(self, attr)
 </pre>
 
-
 <p>
 需要特别注意的是，隐式调用在new class里面是不会触发这两个方法的，比如说你在代码
-里面定义了方法"__add__(self, value)"，当你执行"instance + value"时候就不会触发。
-old class中任何attribute fetch操作都会触发"__getattr__"，没有__getattribute__。
+里面定义了方法"<span class="underline"><span class="underline">add__(self, value)"，当你执行"instance + value"时候就不会触发。
+old class中任何attribute fetch操作都会触发"__getattr</span></span>"，没有__getattribute__。
 </p>
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">-*- coding: utf-8 -*-</span>
+<span style="color: #FBDE2D;">class</span> <span style="color: #D8FA3C;">GetAttr</span><span style="color: #8b0000;">(</span><span style="color: #FF6400;">object</span><span style="color: #8b0000;">)</span>:
+    <span style="color: #D8FA3C;">eggs</span> = 88
+    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">__init__</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span><span style="color: #8b0000;">)</span>:
+        <span style="color: #FBDE2D;">self</span>.spam = 77
+    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">__len__</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span><span style="color: #8b0000;">)</span>:
+        <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'__len__:42'</span><span style="color: #8b0000;">)</span>
+        <span style="color: #FBDE2D;">return</span> 42
+    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">__getattr__</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span>, attr<span style="color: #8b0000;">)</span>:
+        <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'getattr:'</span> + attr<span style="color: #8b0000;">)</span>
+        <span style="color: #FBDE2D;">if</span> attr == <span style="color: #61CE3C;">'__str__'</span>:
+            <span style="color: #FBDE2D;">return</span> <span style="color: #FBDE2D;">lambda</span> *args: <span style="color: #61CE3C;">'[Getattr str]'</span>
+        <span style="color: #FBDE2D;">else</span>:
+            <span style="color: #FBDE2D;">return</span> <span style="color: #FBDE2D;">lambda</span> *args: <span style="color: #4c83ff;">None</span>
 
 
-<pre class="src src-python"><span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">-*- coding: utf-8 -*-</span>
-<span style="color: #859900;">class</span> <span style="color: #b58900;">GetAttr</span>(<span style="color: #859900;">object</span>):
-    <span style="color: #268bd2;">eggs</span> = 88
-    <span style="color: #859900;">def</span> <span style="color: #268bd2;">__init__</span>(<span style="color: #859900;">self</span>):
-        <span style="color: #859900;">self</span>.spam = 77
-    <span style="color: #859900;">def</span> <span style="color: #268bd2;">__len__</span>(<span style="color: #859900;">self</span>):
-        <span style="color: #859900;">print</span>(<span style="color: #2aa198;">'__len__:42'</span>)
-        <span style="color: #859900;">return</span> 42
-    <span style="color: #859900;">def</span> <span style="color: #268bd2;">__getattr__</span>(<span style="color: #859900;">self</span>, attr):
-        <span style="color: #859900;">print</span>(<span style="color: #2aa198;">'getattr:'</span> + attr)
-        <span style="color: #859900;">if</span> attr == <span style="color: #2aa198;">'__str__'</span>:
-            <span style="color: #859900;">return</span> <span style="color: #859900;">lambda</span> *args: <span style="color: #2aa198;">'[Getattr str]'</span>
-        <span style="color: #859900;">else</span>:
-            <span style="color: #859900;">return</span> <span style="color: #859900;">lambda</span> *args: <span style="color: #2aa198;">None</span>
+<span style="color: #FBDE2D;">class</span> <span style="color: #D8FA3C;">GetAttrOld</span>:
+    <span style="color: #D8FA3C;">eggs</span> = 88
+    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">__init__</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span><span style="color: #8b0000;">)</span>:
+        <span style="color: #FBDE2D;">self</span>.spam = 77
+    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">__len__</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span><span style="color: #8b0000;">)</span>:
+        <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'__len__:42'</span><span style="color: #8b0000;">)</span>
+        <span style="color: #FBDE2D;">return</span> 42
+    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">__getattr__</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span>, attr<span style="color: #8b0000;">)</span>:
+        <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'getattr:'</span> + attr<span style="color: #8b0000;">)</span>
+        <span style="color: #FBDE2D;">if</span> attr == <span style="color: #61CE3C;">'__str__'</span>:
+            <span style="color: #FBDE2D;">return</span> <span style="color: #FBDE2D;">lambda</span> *args: <span style="color: #61CE3C;">'[Getattr str]'</span>
+        <span style="color: #FBDE2D;">else</span>:
+            <span style="color: #FBDE2D;">return</span> <span style="color: #FBDE2D;">lambda</span> *args: <span style="color: #4c83ff;">None</span>
 
 
-<span style="color: #859900;">class</span> <span style="color: #b58900;">GetAttrOld</span>:
-    eggs = 88
-    <span style="color: #859900;">def</span> <span style="color: #268bd2;">__init__</span>(<span style="color: #859900;">self</span>):
-        <span style="color: #859900;">self</span>.spam = 77
-    <span style="color: #859900;">def</span> <span style="color: #268bd2;">__len__</span>(<span style="color: #859900;">self</span>):
-        <span style="color: #859900;">print</span>(<span style="color: #2aa198;">'__len__:42'</span>)
-        <span style="color: #859900;">return</span> 42
-    <span style="color: #859900;">def</span> <span style="color: #268bd2;">__getattr__</span>(<span style="color: #859900;">self</span>, attr):
-        <span style="color: #859900;">print</span>(<span style="color: #2aa198;">'getattr:'</span> + attr)
-        <span style="color: #859900;">if</span> attr == <span style="color: #2aa198;">'__str__'</span>:
-            <span style="color: #859900;">return</span> <span style="color: #859900;">lambda</span> *args: <span style="color: #2aa198;">'[Getattr str]'</span>
-        <span style="color: #859900;">else</span>:
-            <span style="color: #859900;">return</span> <span style="color: #859900;">lambda</span> *args: <span style="color: #2aa198;">None</span>
+<span style="color: #FBDE2D;">class</span> <span style="color: #D8FA3C;">GetAttribute</span><span style="color: #8b0000;">(</span><span style="color: #FF6400;">object</span><span style="color: #8b0000;">)</span>:
+    <span style="color: #D8FA3C;">eggs</span> = 88
+    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">__init__</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span><span style="color: #8b0000;">)</span>:
+        <span style="color: #FBDE2D;">self</span>.spam = 77
+    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">__len__</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span><span style="color: #8b0000;">)</span>:
+        <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'__len__:42'</span><span style="color: #8b0000;">)</span>
+        <span style="color: #FBDE2D;">return</span> 42
+    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">__getattribute__</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span>, attr<span style="color: #8b0000;">)</span>:
+        <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'getattribute:'</span> + attr<span style="color: #8b0000;">)</span>
+        <span style="color: #FBDE2D;">if</span> attr == <span style="color: #61CE3C;">'__str__'</span>:
+            <span style="color: #FBDE2D;">return</span> <span style="color: #FBDE2D;">lambda</span> *args: <span style="color: #61CE3C;">'[GetAttribute str]'</span>
+        <span style="color: #FBDE2D;">else</span>:
+            <span style="color: #FBDE2D;">return</span> <span style="color: #FBDE2D;">lambda</span> *args: <span style="color: #4c83ff;">None</span>
 
 
-<span style="color: #859900;">class</span> <span style="color: #b58900;">GetAttribute</span>(<span style="color: #859900;">object</span>):
-    eggs = 88
-    <span style="color: #859900;">def</span> <span style="color: #268bd2;">__init__</span>(<span style="color: #859900;">self</span>):
-        <span style="color: #859900;">self</span>.spam = 77
-    <span style="color: #859900;">def</span> <span style="color: #268bd2;">__len__</span>(<span style="color: #859900;">self</span>):
-        <span style="color: #859900;">print</span>(<span style="color: #2aa198;">'__len__:42'</span>)
-        <span style="color: #859900;">return</span> 42
-    <span style="color: #859900;">def</span> <span style="color: #268bd2;">__getattribute__</span>(<span style="color: #859900;">self</span>, attr):
-        <span style="color: #859900;">print</span>(<span style="color: #2aa198;">'getattribute:'</span> + attr)
-        <span style="color: #859900;">if</span> attr == <span style="color: #2aa198;">'__str__'</span>:
-            <span style="color: #859900;">return</span> <span style="color: #859900;">lambda</span> *args: <span style="color: #2aa198;">'[GetAttribute str]'</span>
-        <span style="color: #859900;">else</span>:
-            <span style="color: #859900;">return</span> <span style="color: #859900;">lambda</span> *args: <span style="color: #2aa198;">None</span>
-
-
-<span style="color: #859900;">for</span> Class <span style="color: #859900;">in</span> GetAttr, GetAttrOld, GetAttribute:
-    <span style="color: #859900;">print</span>(<span style="color: #2aa198;">'\n'</span> + Class.<span style="color: #859900;">__name__</span>.ljust(50, <span style="color: #2aa198;">'='</span>))
-    x = Class()
+<span style="color: #FBDE2D;">for</span> Class <span style="color: #FBDE2D;">in</span> GetAttr, GetAttrOld, GetAttribute:
+    <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'\n'</span> + Class.<span style="color: #FF6400;">__name__</span>.ljust<span style="color: #006400;">(</span>50, <span style="color: #61CE3C;">'='</span><span style="color: #006400;">)</span><span style="color: #8b0000;">)</span>
+    <span style="color: #D8FA3C;">x</span> = Class<span style="color: #8b0000;">()</span>
     x.eggs
     x.spam
     x.other
-    <span style="color: #859900;">len</span>(x)
+    <span style="color: #FF6400;">len</span><span style="color: #8b0000;">(</span>x<span style="color: #8b0000;">)</span>
 
-    <span style="color: #859900;">try</span>: x[0]
-    <span style="color: #859900;">except</span>: <span style="color: #859900;">print</span>(<span style="color: #2aa198;">'fail []'</span>)
+    <span style="color: #FBDE2D;">try</span>: x<span style="color: #8b0000;">[</span>0<span style="color: #8b0000;">]</span>
+    <span style="color: #FBDE2D;">except</span>: <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'fail []'</span><span style="color: #8b0000;">)</span>
 
-    <span style="color: #859900;">try</span>: x + 99
-    <span style="color: #859900;">except</span>: <span style="color: #859900;">print</span>(<span style="color: #2aa198;">'fail +'</span>)
+    <span style="color: #FBDE2D;">try</span>: x + 99
+    <span style="color: #FBDE2D;">except</span>: <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'fail +'</span><span style="color: #8b0000;">)</span>
 
-    <span style="color: #859900;">try</span>: x()
-    <span style="color: #859900;">except</span>: <span style="color: #859900;">print</span> (<span style="color: #2aa198;">'fail ()'</span>)
+    <span style="color: #FBDE2D;">try</span>: x<span style="color: #8b0000;">()</span>
+    <span style="color: #FBDE2D;">except</span>: <span style="color: #FBDE2D;">print</span> <span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'fail ()'</span><span style="color: #8b0000;">)</span>
 
-    x.b()
-    x.__call__()
-    <span style="color: #859900;">print</span>(x.__str__())
-    <span style="color: #859900;">print</span>(x)
+    x.b<span style="color: #8b0000;">()</span>
+    x.__call__<span style="color: #8b0000;">()</span>
+    <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span>x.__str__<span style="color: #006400;">()</span><span style="color: #8b0000;">)</span>
+    <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span>x<span style="color: #8b0000;">)</span>
 </pre>
+</div>
 
-
-
-<pre class="example">In [168]:
+<pre class="example">
+In [168]:
 GetAttr===========================================
 getattr:other
 __len__:42
@@ -849,14 +881,15 @@ getattribute:__str__
 [GetAttribute str]
 &lt;__main__.GetAttribute object at 0x7fe770053550&gt;
 </pre>
-
 <p>
 关键要注意一点，比如"x.b()"这行代码，在python中是先运行"x.b"这个表达式，注意是
 表达式，然后才是执行调用，它会触发__getattr__和__getattribute__方法。
 </p>
+
 <p>
-"__setattr__"和"__delattr__"影响所有的attribute赋值和删除操作，也必须注意死循环
+"<span class="underline"><span class="underline">setattr</span></span>"和"<span class="underline"><span class="underline">delattr</span></span>"影响所有的attribute赋值和删除操作，也必须注意死循环
 </p>
+
 <p>
 properties其实底层就是通过descriptors实现，properties对于简单的attribute get/set
 操作处理起来比较方便，不需要实现其他的类，descriptors需要自定义类实现（也可以是
@@ -867,41 +900,35 @@ properties其实底层就是通过descriptors实现，properties对于简单的a
 类型的attribute，必须是class attribute。
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-9" class="outline-2">
-<h2 id="sec-9">Python分支</h2>
+<div id="outline-container-sec-9" class="outline-2">
+<h2 id="sec-9"><span class="section-number-2">9</span> Python分支</h2>
 <div class="outline-text-2" id="text-9">
-
-
-</div>
-
-<div id="outline-container-9-1" class="outline-3">
-<h3 id="sec-9-1">Stackless Python<sup><a class="footref" name="fnr-.6" href="#fn-.6">6</a></sup></h3>
+</div><div id="outline-container-sec-9-1" class="outline-3">
+<h3 id="sec-9-1"><span class="section-number-3">9.1</span> Stackless Python<sup><a id="fnr.7" name="fnr.7" class="footref" href="#fn.7">7</a></sup></h3>
 <div class="outline-text-3" id="text-9-1">
-
-<p>   先看看wikipedia上的解释：<br/>
+<p>
+先看看wikipedia上的解释：<br  />
    "Stackless microthreads are managed by the language interpreter itself,
-   not the operating system kernel—context switching and task scheduling is
-   done purely in the interpreter (these are thus also regarded as a form of
-   green thread). This avoids many of the overheads of threads, because no mode
-   switching between user mode and kernel mode needs to be done, and can
-   significantly reduce CPU load in some high-concurrency situations.Due to the
-   considerable number of changes in the source, Stackless Python cannot be
-   installed on a preexisting Python installation as an extension or library.
-   It is instead a complete Python distribution in itself. The majority of
-   Stackless's features have also been implemented in PyPy, a self-hosting
-   Python interpreter and JIT compiler." <br/>
+not the operating system kernel—context switching and task scheduling is
+done purely in the interpreter (these are thus also regarded as a form of
+green thread). This avoids many of the overheads of threads, because no mode
+switching between user mode and kernel mode needs to be done, and can
+significantly reduce CPU load in some high-concurrency situations.Due to the
+considerable number of changes in the source, Stackless Python cannot be
+installed on a preexisting Python installation as an extension or library.
+It is instead a complete Python distribution in itself. The majority of
+Stackless's features have also been implemented in PyPy, a self-hosting
+Python interpreter and JIT compiler." <br  />
    stackless是一个python的分支实现，主要的优势就是microthread，其实就是协程
-   （coroutines / green threads），轻量级别的伪线程，采用栈方式实现协程切换，不
-   会带来ContextSwitch，缺点是需要自己管理协程调用栈，stackless能实现10，0000级
-   别的连接.
+（coroutines / green threads），轻量级别的伪线程，采用栈方式实现协程切换，不
+会带来ContextSwitch，缺点是需要自己管理协程调用栈，stackless能实现10，0000级
+别的连接.
 </p>
 
-
-
-<pre class="example">from greenlet import greenlet
+<pre class="example">
+from greenlet import greenlet
 def test1():
     print 12
     gr2.switch()
@@ -916,70 +943,64 @@ gr1 = greenlet(test1)
 gr2 = greenlet(test2)
 gr1.switch()
 </pre>
-
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-9-2" class="outline-3">
-<h3 id="sec-9-2">PyPy</h3>
+<div id="outline-container-sec-9-2" class="outline-3">
+<h3 id="sec-9-2"><span class="section-number-3">9.2</span> PyPy</h3>
 <div class="outline-text-3" id="text-9-2">
-
-<p>   实现了一个JIT，运行时转换python代码到机器码，主要关注在运行效率的提升，和原生
-   python兼容，采用RPython（python的一个子集）实现，目前好像还没有看到那里有大规
-   模的使用。关于PyPy和CPython的性能讨论可以看这里<sup><a class="footref" name="fnr-.7" href="#fn-.7">7</a></sup>
+<p>
+实现了一个JIT，运行时转换python代码到机器码，主要关注在运行效率的提升，和原生
+python兼容，采用RPython（python的一个子集）实现，目前好像还没有看到那里有大规
+模的使用。关于PyPy和CPython的性能讨论可以看这里<sup><a id="fnr.8" name="fnr.8" class="footref" href="#fn.8">8</a></sup>
 </p>
-
 </div>
 </div>
-
 </div>
 
-<div id="outline-container-10" class="outline-2">
-<h2 id="sec-10">Django &amp; Flask</h2>
+
+<div id="outline-container-sec-10" class="outline-2">
+<h2 id="sec-10"><span class="section-number-2">10</span> Django &amp; Flask</h2>
 <div class="outline-text-2" id="text-10">
-
-<p>  Django是一个整体解决方案，Python Web framework，实现快速开发网站，你不用做什么
-  其他技术选择，比如templage engine、ORM等，社区很活跃。
-  Flask是一个microframework，基于Werkzeug和Jinja2，Flash核心非常简单，不像Django
-  帮你做了所有技术决策，缺省template engine用的是jinja。
+<p>
+Django是一个整体解决方案，Python Web framework，实现快速开发网站，你不用做什么
+其他技术选择，比如templage engine、ORM等，社区很活跃。
+Flask是一个microframework，基于Werkzeug和Jinja2，Flash核心非常简单，不像Django
+帮你做了所有技术决策，缺省template engine用的是jinja。
 </p>
-
+</div>
 </div>
 
-</div>
 
-<div id="outline-container-11" class="outline-2">
-<h2 id="sec-11">Twisted &amp; Tornado &amp; gevent &amp; eventlet</h2>
+<div id="outline-container-sec-11" class="outline-2">
+<h2 id="sec-11"><span class="section-number-2">11</span> Twisted &amp; Tornado &amp; gevent &amp; eventlet</h2>
 <div class="outline-text-2" id="text-11">
-
-<p>  Twisted是一个经典的非阻塞I/O框架，采用Callback方式实现异步调用，用户最广
-  gevent和eventlet都是基于协程的异步框架（底下是greenlet），gevent是eventlet之后
-  的一个项目，作者当时的一些需求不能被eventlet满足而重新设计的<sup><a class="footref" name="fnr-.8" href="#fn-.8">8</a></sup>，gevent底下
-  的I/O异步框架是libevent/livev（epoll on linux / kqueue on FreeBSD / iocp on
-  windows)，evenlet自己实现的。
+<p>
+Twisted是一个经典的非阻塞I/O框架，采用Callback方式实现异步调用，用户最广
+gevent和eventlet都是基于协程的异步框架（底下是greenlet），gevent是eventlet之后
+的一个项目，作者当时的一些需求不能被eventlet满足而重新设计的<sup><a id="fnr.9" name="fnr.9" class="footref" href="#fn.9">9</a></sup>，gevent底下
+的I/O异步框架是libevent/livev（epoll on linux / kqueue on FreeBSD / iocp on
+windows)，evenlet自己实现的。
 </p>
-
+</div>
 </div>
 
-</div>
 
-<div id="outline-container-12" class="outline-2">
-<h2 id="sec-12">Emacs &amp; Python</h2>
+<div id="outline-container-sec-12" class="outline-2">
+<h2 id="sec-12"><span class="section-number-2">12</span> Emacs &amp; Python</h2>
 <div class="outline-text-2" id="text-12">
-
-<p>  设置python-shell-extra-pythonpaths变量来增加额外的PYTHONPATH环境变量
+<p>
+设置python-shell-extra-pythonpaths变量来增加额外的PYTHONPATH环境变量
 </p>
 </div>
-
-<div id="outline-container-12-1" class="outline-3">
-<h3 id="sec-12-1">ipdb</h3>
+<div id="outline-container-sec-12-1" class="outline-3">
+<h3 id="sec-12-1"><span class="section-number-3">12.1</span> ipdb</h3>
 <div class="outline-text-3" id="text-12-1">
-
-<p>   emacs里面的ipython需要运行%pdb打开断点模式，否则好像即使设置了断点也进不去，
-   不清楚为什么，另外一些简单的命令记录一下：
-</p><ul>
+<p>
+emacs里面的ipython需要运行%pdb打开断点模式，否则好像即使设置了断点也进不去，
+不清楚为什么，另外一些简单的命令记录一下：
+</p>
+<ul class="org-ul">
 <li>s: step into
 </li>
 <li>n: step over
@@ -993,19 +1014,15 @@ gr1.switch()
 <li>?s: help for command s
 </li>
 </ul>
-
-
-
+</div>
 </div>
 </div>
 
-</div>
 
-<div id="outline-container-13" class="outline-2">
-<h2 id="sec-13">一些必读的文章</h2>
+<div id="outline-container-sec-13" class="outline-2">
+<h2 id="sec-13"><span class="section-number-2">13</span> 一些必读的文章</h2>
 <div class="outline-text-2" id="text-13">
-
-<ul>
+<ul class="org-ul">
 <li><a href="http://docs.python.org/2/reference/index.html">The Python Language Reference</a>
 </li>
 <li><a href="http://docs.python-guide.org/en/latest/">The Hitchhiker’s Guide to Python!</a>
@@ -1027,65 +1044,65 @@ gr1.switch()
 <li><a href="http://docs.python.org/release/2.5/whatsnew/pep-343.html">PEP 343: The 'with' statement</a>
 </li>
 </ul>
-
-
-
+</div>
 </div>
 
-</div>
 
-<div id="outline-container-14" class="outline-2">
-<h2 id="sec-14">自己看的书</h2>
+<div id="outline-container-sec-14" class="outline-2">
+<h2 id="sec-14"><span class="section-number-2">14</span> 自己看的书</h2>
 <div class="outline-text-2" id="text-14">
-
-<p>建议还是系统的看一本书，自己感觉看书能比较系统的了解一门语言，相比边学边用或者
+<p>
+建议还是系统的看一本书，自己感觉看书能比较系统的了解一门语言，相比边学边用或者
 碰到问题再去找答案，前者效率会更高
-</p><ul>
+</p>
+<ul class="org-ul">
 <li>Learning Python
 </li>
 <li>Python Essential Reference
 </li>
 </ul>
-
-
+</div>
+</div>
 <div id="footnotes">
 <h2 class="footnotes">Footnotes: </h2>
 <div id="text-footnotes">
-<p class="footnote"><sup><a class="footnum" name="fn-.1" href="#fnr-.1">1</a></sup> <a href="http://docs.python.org/2/howto/unicode.html">Unicode HOWTO</a>
-</p>
 
+<div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p class="footpara">
+<a href="http://docs.python.org/2/howto/unicode.html">Unicode HOWTO</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.2" href="#fnr-.2">2</a></sup> <a href="http://www.python.org/dev/peps/pep-0263/">PEP 0263</a>
-</p>
+<div class="footdef"><sup><a id="fn.2" name="fn.2" class="footnum" href="#fnr.2">2</a></sup> <p class="footpara">
+<a href="http://www.python.org/dev/peps/pep-0263/">PEP 0263</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.3" name="fn.3" class="footnum" href="#fnr.3">3</a></sup> <p class="footpara">
+<a href="https://wiki.python.org/moin/PrintFails">PrintFails</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.3" href="#fnr-.3">3</a></sup> <a href="https://developers.google.com/edu/python/regular-expressions">Google Python Regex</a>
-</p>
+<div class="footdef"><sup><a id="fn.4" name="fn.4" class="footnum" href="#fnr.4">4</a></sup> <p class="footpara">
+<a href="https://developers.google.com/edu/python/regular-expressions">Google Python Regex</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.5" name="fn.5" class="footnum" href="#fnr.5">5</a></sup> <p class="footpara">
+<a href="http://stackoverflow.com/questions/114214/class-method-differences-in-python-bound-unbound-and-static">Class method differences in Python: bound, unbound and static</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.4" href="#fnr-.4">4</a></sup> <a href="http://stackoverflow.com/questions/114214/class-method-differences-in-python-bound-unbound-and-static">Class method differences in Python: bound, unbound and static</a>
-</p>
+<div class="footdef"><sup><a id="fn.6" name="fn.6" class="footnum" href="#fnr.6">6</a></sup> <p class="footpara">
+<a href="https://ep2012.europython.eu/conference/talks/discovering-descriptors">Discovering Descriptors</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.7" name="fn.7" class="footnum" href="#fnr.7">7</a></sup> <p class="footpara">
+<a href="http://en.wikipedia.org/wiki/Stackless_Python">Stackless</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.5" href="#fnr-.5">5</a></sup> <a href="https://ep2012.europython.eu/conference/talks/discovering-descriptors">Discovering Descriptors</a>
-</p>
+<div class="footdef"><sup><a id="fn.8" name="fn.8" class="footnum" href="#fnr.8">8</a></sup> <p class="footpara">
+<a href="http://stackoverflow.com/questions/2591879/pypy-how-can-it-possibly-beat-cpython">Pypy - How can it possibly beat CPython</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.9" name="fn.9" class="footnum" href="#fnr.9">9</a></sup> <p class="footpara">
+<a href="http://blog.gevent.org/2010/02/27/why-gevent/">Comparing gevent to eventlet</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.6" href="#fnr-.6">6</a></sup> <a href="http://en.wikipedia.org/wiki/Stackless_Python">Stackless</a>
-</p>
-
-
-<p class="footnote"><sup><a class="footnum" name="fn-.7" href="#fnr-.7">7</a></sup> <a href="http://stackoverflow.com/questions/2591879/pypy-how-can-it-possibly-beat-cpython">Pypy - How can it possibly beat CPython</a>
-</p>
-
-
-<p class="footnote"><sup><a class="footnum" name="fn-.8" href="#fnr-.8">8</a></sup> <a href="http://blog.gevent.org/2010/02/27/why-gevent/">Comparing gevent to eventlet</a>
-</p>
-
-
-
-</div>
-</div>
 
 </div>
 </div>

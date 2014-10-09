@@ -1,3 +1,34 @@
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. DB2的锁</a>
+<ul>
+<li><a href="#sec-1-1">1.1. 锁列表</a></li>
+<li><a href="#sec-1-2">1.2. 锁兼容表</a></li>
+<li><a href="#sec-1-3">1.3. 执行计划、锁和隔离级别之间的关系</a>
+<ul>
+<li><a href="#sec-1-3-1">1.3.1. Lock Modes for Table Scans with No Predicates</a></li>
+<li><a href="#sec-1-3-2">1.3.2. Lock Modes for Table Scans with Predicates</a></li>
+<li><a href="#sec-1-3-3">1.3.3. Lock Modes for RID Index Scans with No Predicates</a></li>
+<li><a href="#sec-1-3-4">1.3.4. Lock Modes for RID Index Scans with a Single Qualifying Row</a></li>
+<li><a href="#sec-1-3-5">1.3.5. Lock Modes for RID Index Scans with Start and Stop Predicates Only</a></li>
+<li><a href="#sec-1-3-6">1.3.6. Lock Modes for RID Index Scans with Index and Other Predicates (sargs, resids) Only</a></li>
+<li><a href="#sec-1-3-7">1.3.7. Lock Modes for Index Scans Used for Deferred Data Page Access: RID Index Scan with No Predicates</a></li>
+<li><a href="#sec-1-3-8">1.3.8. Lock Modes for Index Scans Used for Deferred Data Page Access: After a RID Index Scan with No Predicates</a></li>
+<li><a href="#sec-1-3-9">1.3.9. Lock Modes for Index Scans Used for Deferred Data Page Access: RID Index Scan with Predicates (sargs, resids)</a></li>
+<li><a href="#sec-1-3-10">1.3.10. Lock Modes for Index Scans Used for Deferred Data Page Access: After a RID Index Scan with Predicates (sargs, resids)</a></li>
+<li><a href="#sec-1-3-11">1.3.11. Lock Modes for Index Scans Used for Deferred Data Page Access: RID Index Scan with Start and Stop Predicates Only</a></li>
+<li><a href="#sec-1-3-12">1.3.12. Lock Modes for Index Scans Used for Deferred Data Page Access: After a RID Index Scan with Start and Stop Predicates Only</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-4">1.4. 研究锁的一些方法</a></li>
+<li><a href="#sec-1-5">1.5. 结尾</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 ---
 layout: post
 title: "DB2锁和隔离级别"
@@ -6,60 +37,27 @@ categories: [tech]
 tags: [database, db2]
 ---
 
-
-<div id="table-of-contents">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents">
-<ul>
-<li><a href="#sec-1">1 DB2的锁</a>
-<ul>
-<li><a href="#sec-1-1">1.1 锁列表</a></li>
-<li><a href="#sec-1-2">1.2 锁兼容表</a></li>
-<li><a href="#sec-1-3">1.3 执行计划、锁和隔离级别之间的关系</a>
-<ul>
-<li><a href="#sec-1-3-1">1.3.1 Lock Modes for Table Scans with No Predicates</a></li>
-<li><a href="#sec-1-3-2">1.3.2 Lock Modes for Table Scans with Predicates</a></li>
-<li><a href="#sec-1-3-3">1.3.3 Lock Modes for RID Index Scans with No Predicates</a></li>
-<li><a href="#sec-1-3-4">1.3.4 Lock Modes for RID Index Scans with a Single Qualifying Row</a></li>
-<li><a href="#sec-1-3-5">1.3.5 Lock Modes for RID Index Scans with Start and Stop Predicates Only</a></li>
-<li><a href="#sec-1-3-6">1.3.6 Lock Modes for RID Index Scans with Index and Other Predicates (sargs, resids) Only</a></li>
-<li><a href="#sec-1-3-7">1.3.7 Lock Modes for Index Scans Used for Deferred Data Page Access: RID Index Scan with No Predicates</a></li>
-<li><a href="#sec-1-3-8">1.3.8 Lock Modes for Index Scans Used for Deferred Data Page Access: After a RID Index Scan with No Predicates</a></li>
-<li><a href="#sec-1-3-9">1.3.9 Lock Modes for Index Scans Used for Deferred Data Page Access: RID Index Scan with Predicates (sargs, resids)</a></li>
-<li><a href="#sec-1-3-10">1.3.10 Lock Modes for Index Scans Used for Deferred Data Page Access: After a RID Index Scan with Predicates (sargs, resids)</a></li>
-<li><a href="#sec-1-3-11">1.3.11 Lock Modes for Index Scans Used for Deferred Data Page Access: RID Index Scan with Start and Stop Predicates Only</a></li>
-<li><a href="#sec-1-3-12">1.3.12 Lock Modes for Index Scans Used for Deferred Data Page Access: After a RID Index Scan with Start and Stop Predicates Only</a></li>
-</ul>
-</li>
-<li><a href="#sec-1-4">1.4 研究锁的一些方法</a></li>
-<li><a href="#sec-1-5">1.5 结尾</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
-
-<div id="outline-container-1" class="outline-2">
-<h2 id="sec-1">DB2的锁</h2>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> DB2的锁</h2>
 <div class="outline-text-2" id="text-1">
-
-<p>DB2的锁实现机制很复杂，它没有实现类似Oracle的undo机制，导致操作之间容易阻塞，
+<p>
+DB2的锁实现机制很复杂，它没有实现类似Oracle的undo机制，导致操作之间容易阻塞，
 比如你经常会听到有人说DB2查询阻塞更新，更新不同记录导致阻塞等！这其中到底是
 如何导致的？是否有迹可循？Oracle的应用迁移到DB2是否就是简单的SQL兼容测试？同
 样的应用逻辑为何在DB2上会发生死锁？如何能够提高DB2的并发能力？针对这些问题，
 本文尝试做一些解读。
 </p>
-
 </div>
 
-<div id="outline-container-1-1" class="outline-3">
-<h3 id="sec-1-1">锁列表<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup></h3>
+<div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> 锁列表<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup></h3>
 <div class="outline-text-3" id="text-1-1">
-
-<p>首先我们先来看看DB2的锁列表，下表里面列出了DB2使用到的所有锁。表中的Lock Mode
+<p>
+首先我们先来看看DB2的锁列表，下表里面列出了DB2使用到的所有锁。表中的Lock Mode
 一列是锁的名称；第二列Applicable Object Type表示锁适用的对象范围，例如IN不是
 一个Row锁；第三列Description是对锁的一个简单描述。
 </p>
+
 <p>
 首先我们来看锁名称，DB2将锁分为Intent Locks和Non-intent Locks，也就是人们通常
 所说的意向锁和非意向锁，锁名称中带“I”子母的都是意向锁，剩下的都是非意向锁，
@@ -69,6 +67,7 @@ tags: [database, db2]
 向锁（IS，IX，SIX）都需要结合行级锁实现具体操作。IN锁是一个特例，基本可以理解
 为不锁（只是排他Z锁，后续的兼容列表可以看到，UR隔离级别使用）。
 </p>
+
 <p>
 非意向锁中，NS、S、U为读请求锁，其中：NS是行级别锁，只使用在RS和CS隔离级别，RR
 隔离级别直接加S锁；select for update语句对行加U锁，表级U锁使用于比如LOAD、REORG
@@ -77,143 +76,536 @@ NW锁应该不常发生，只有在RR隔离级别做索引扫描的时候，同�
 ，这时插入操作无法完成，需要等待事物完成，这时候，插入操作会在插入Key的下一个
 Key加NW锁。
 </p>
+
 <p>
 锁适用的对象范围表示锁能加在哪些对象上。对于锁的描述我也不重复了。
 </p>
+
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-<colgroup><col class="left" /><col class="left" /><col class="left" />
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
 </colgroup>
 <thead>
-<tr><th scope="col" class="left">Lock Mode</th><th scope="col" class="left">Applicable Object Type</th><th scope="col" class="left">Description</th></tr>
+<tr>
+<th scope="col" class="left">Lock Mode</th>
+<th scope="col" class="left">Applicable Object Type</th>
+<th scope="col" class="left">Description</th>
+</tr>
 </thead>
 <tbody>
-<tr><td class="left">IN(Intent None)</td><td class="left">Table spaces, blocks,</td><td class="left">The lock owner can read any data in the</td></tr>
-<tr><td class="left"></td><td class="left">tables, data partitions</td><td class="left">object, including uncommitted data, but</td></tr>
-<tr><td class="left"></td><td class="left"></td><td class="left">cannot update any of it. Other concurrent</td></tr>
-<tr><td class="left"></td><td class="left"></td><td class="left">applications can read or update the table.</td></tr>
+<tr>
+<td class="left">IN(Intent None)</td>
+<td class="left">Table spaces, blocks,</td>
+<td class="left">The lock owner can read any data in the</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">tables, data partitions</td>
+<td class="left">object, including uncommitted data, but</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">cannot update any of it. Other concurrent</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">applications can read or update the table.</td>
+</tr>
 </tbody>
 <tbody>
-<tr><td class="left">IS (Intent Share)</td><td class="left">Table spaces, blocks,</td><td class="left">The lock owner can read data in the locked</td></tr>
-<tr><td class="left"></td><td class="left">tables, data partitions</td><td class="left">table. but cannot update this data. Other</td></tr>
-<tr><td class="left"></td><td class="left"></td><td class="left">applications can read or update the table.</td></tr>
+<tr>
+<td class="left">IS (Intent Share)</td>
+<td class="left">Table spaces, blocks,</td>
+<td class="left">The lock owner can read data in the locked</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">tables, data partitions</td>
+<td class="left">table. but cannot update this data. Other</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">applications can read or update the table.</td>
+</tr>
 </tbody>
 <tbody>
-<tr><td class="left">IX (Intent Exclusive)</td><td class="left">Table spaces, blocks,</td><td class="left">The lock owner and concurrent applications</td></tr>
-<tr><td class="left"></td><td class="left">tables, data partitions</td><td class="left">can read and update data. Other concurrent</td></tr>
-<tr><td class="left"></td><td class="left"></td><td class="left">applications can both read and update the</td></tr>
-<tr><td class="left"></td><td class="left"></td><td class="left">table.</td></tr>
+<tr>
+<td class="left">IX (Intent Exclusive)</td>
+<td class="left">Table spaces, blocks,</td>
+<td class="left">The lock owner and concurrent applications</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">tables, data partitions</td>
+<td class="left">can read and update data. Other concurrent</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">applications can both read and update the</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">table.</td>
+</tr>
 </tbody>
 <tbody>
-<tr><td class="left">NS (Scan Share)</td><td class="left">Rows</td><td class="left">The lock owner and all concurrent applica-</td></tr>
-<tr><td class="left"></td><td class="left"></td><td class="left">-tions can read, but not update, the locked</td></tr>
-<tr><td class="left"></td><td class="left"></td><td class="left">row. This lock is acquired on rows of a ta-</td></tr>
-<tr><td class="left"></td><td class="left"></td><td class="left">-ble, instead of an S lock, where the isol-</td></tr>
-<tr><td class="left"></td><td class="left"></td><td class="left">-ation level of the application is either RS</td></tr>
-<tr><td class="left"></td><td class="left"></td><td class="left">or CS.</td></tr>
+<tr>
+<td class="left">NS (Scan Share)</td>
+<td class="left">Rows</td>
+<td class="left">The lock owner and all concurrent applica-</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">-tions can read, but not update, the locked</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">row. This lock is acquired on rows of a ta-</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">-ble, instead of an S lock, where the isol-</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">-ation level of the application is either RS</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">or CS.</td>
+</tr>
 </tbody>
 <tbody>
-<tr><td class="left">NW (Next Key Weak</td><td class="left">Rows</td><td class="left">When a row is inserted into an index, an NW</td></tr>
-<tr><td class="left">Exclusive)</td><td class="left"></td><td class="left">lock is acquired on the next row. This occurs</td></tr>
-<tr><td class="left"></td><td class="left"></td><td class="left">only if the next row is currently locked by an</td></tr>
-<tr><td class="left"></td><td class="left"></td><td class="left">RR scan. The lock owner can read but not update</td></tr>
-<tr><td class="left"></td><td class="left"></td><td class="left">the locked row. This lock mode is similar to an</td></tr>
-<tr><td class="left"></td><td class="left"></td><td class="left">X lock, except that it is also compatible with</td></tr>
-<tr><td class="left"></td><td class="left"></td><td class="left">NS locks.</td></tr>
+<tr>
+<td class="left">NW (Next Key Weak</td>
+<td class="left">Rows</td>
+<td class="left">When a row is inserted into an index, an NW</td>
+</tr>
+
+<tr>
+<td class="left">Exclusive)</td>
+<td class="left">&#xa0;</td>
+<td class="left">lock is acquired on the next row. This occurs</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">only if the next row is currently locked by an</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">RR scan. The lock owner can read but not update</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">the locked row. This lock mode is similar to an</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">X lock, except that it is also compatible with</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">NS locks.</td>
+</tr>
 </tbody>
 <tbody>
-<tr><td class="left">S (Share)</td><td class="left">Rows, blocks, tables,</td><td class="left">The lock owner and all concurrent applications</td></tr>
-<tr><td class="left"></td><td class="left">data partitions</td><td class="left">can read, but not update, the locked data.</td></tr>
+<tr>
+<td class="left">S (Share)</td>
+<td class="left">Rows, blocks, tables,</td>
+<td class="left">The lock owner and all concurrent applications</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">data partitions</td>
+<td class="left">can read, but not update, the locked data.</td>
+</tr>
 </tbody>
 <tbody>
-<tr><td class="left">SIX (Share with intent</td><td class="left">Tables, blocks, data</td><td class="left">The lock owner can read and update data. Other</td></tr>
-<tr><td class="left">Exclusive)</td><td class="left">partitions</td><td class="left">concurrent applications can read the table.</td></tr>
+<tr>
+<td class="left">SIX (Share with intent</td>
+<td class="left">Tables, blocks, data</td>
+<td class="left">The lock owner can read and update data. Other</td>
+</tr>
+
+<tr>
+<td class="left">Exclusive)</td>
+<td class="left">partitions</td>
+<td class="left">concurrent applications can read the table.</td>
+</tr>
 </tbody>
 <tbody>
-<tr><td class="left">U (Update)</td><td class="left">Rows, blocks, tables,</td><td class="left">The lock owner can update data. Other units of</td></tr>
-<tr><td class="left"></td><td class="left">data partitions</td><td class="left">work can read the data in the locked object,</td></tr>
-<tr><td class="left"></td><td class="left"></td><td class="left">but cannot update it.</td></tr>
+<tr>
+<td class="left">U (Update)</td>
+<td class="left">Rows, blocks, tables,</td>
+<td class="left">The lock owner can update data. Other units of</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">data partitions</td>
+<td class="left">work can read the data in the locked object,</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">but cannot update it.</td>
+</tr>
 </tbody>
 <tbody>
-<tr><td class="left">X (Exclusive)</td><td class="left">Rows, blocks, tables,</td><td class="left">The lock owner can both read and update data in</td></tr>
-<tr><td class="left"></td><td class="left">buffer pools, data</td><td class="left">the locked object. Only uncommitted read (UR)</td></tr>
-<tr><td class="left"></td><td class="left">partitions</td><td class="left">applications can access the locked object.</td></tr>
+<tr>
+<td class="left">X (Exclusive)</td>
+<td class="left">Rows, blocks, tables,</td>
+<td class="left">The lock owner can both read and update data in</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">buffer pools, data</td>
+<td class="left">the locked object. Only uncommitted read (UR)</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">partitions</td>
+<td class="left">applications can access the locked object.</td>
+</tr>
 </tbody>
 <tbody>
-<tr><td class="left">Z (Supper Exclusive)</td><td class="left">Tables spaces, tables,</td><td class="left">This lock is acquired on a table under certain</td></tr>
-<tr><td class="left"></td><td class="left">data partitions, blocks</td><td class="left">conditions, such as when the table is altered</td></tr>
-<tr><td class="left"></td><td class="left"></td><td class="left">or dropped, an index on the table is created or</td></tr>
-<tr><td class="left"></td><td class="left"></td><td class="left">dropped, or for some types of table reorganiza-</td></tr>
-<tr><td class="left"></td><td class="left"></td><td class="left">-tion. No other concurrent application can read</td></tr>
-<tr><td class="left"></td><td class="left"></td><td class="left">or update the table.</td></tr>
+<tr>
+<td class="left">Z (Supper Exclusive)</td>
+<td class="left">Tables spaces, tables,</td>
+<td class="left">This lock is acquired on a table under certain</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">data partitions, blocks</td>
+<td class="left">conditions, such as when the table is altered</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">or dropped, an index on the table is created or</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">dropped, or for some types of table reorganiza-</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">-tion. No other concurrent application can read</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">or update the table.</td>
+</tr>
 </tbody>
 </table>
-
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2">锁兼容表<sup><a class="footref" name="fnr-.2" href="#fn-.2">2</a></sup></h3>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 锁兼容表<sup><a id="fnr.2" name="fnr.2" class="footref" href="#fn.2">2</a></sup></h3>
 <div class="outline-text-3" id="text-1-2">
-
-<p>当A请求获取了某个对象的锁，B请求同时需要对该对象申请加锁的时候，如果两个锁不
+<p>
+当A请求获取了某个对象的锁，B请求同时需要对该对象申请加锁的时候，如果两个锁不
 兼容，B请求需要等待，直到A请求释放该锁。
 </p>
+
 <p>
 下表列出了锁之间的兼容关系，横轴表示对象上已有的锁，纵轴表示申请在该对象上加锁
 </p>
+
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-<colgroup><col class="left" /><col class="left" /><col class="left" /><col class="left" /><col class="left" /><col class="left" /><col class="left" /><col class="left" /><col class="left" /><col class="left" /><col class="left" /><col class="left" />
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
 </colgroup>
 <thead>
-<tr><th scope="col" class="left"></th><th scope="col" class="left">None</th><th scope="col" class="left">IN</th><th scope="col" class="left">IS</th><th scope="col" class="left">NS</th><th scope="col" class="left">S</th><th scope="col" class="left">IX</th><th scope="col" class="left">SIX</th><th scope="col" class="left">U</th><th scope="col" class="left">X</th><th scope="col" class="left">Z</th><th scope="col" class="left">NW</th></tr>
+<tr>
+<th scope="col" class="left">&#xa0;</th>
+<th scope="col" class="left">None</th>
+<th scope="col" class="left">IN</th>
+<th scope="col" class="left">IS</th>
+<th scope="col" class="left">NS</th>
+<th scope="col" class="left">S</th>
+<th scope="col" class="left">IX</th>
+<th scope="col" class="left">SIX</th>
+<th scope="col" class="left">U</th>
+<th scope="col" class="left">X</th>
+<th scope="col" class="left">Z</th>
+<th scope="col" class="left">NW</th>
+</tr>
 </thead>
 <tbody>
-<tr><td class="left">None</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td></tr>
-<tr><td class="left">IN</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">N</td><td class="left">Y</td></tr>
-<tr><td class="left">IS</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">N</td><td class="left">N</td><td class="left">N</td></tr>
-<tr><td class="left">NS</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">N</td><td class="left">N</td><td class="left">Y</td><td class="left">N</td><td class="left">N</td><td class="left">Y</td></tr>
-<tr><td class="left">S</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">N</td><td class="left">N</td><td class="left">Y</td><td class="left">N</td><td class="left">N</td><td class="left">N</td></tr>
-<tr><td class="left">IX</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">N</td><td class="left">N</td><td class="left">Y</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td></tr>
-<tr><td class="left">SIX</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td></tr>
-<tr><td class="left">U</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">Y</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td></tr>
-<tr><td class="left">X</td><td class="left">Y</td><td class="left">Y</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td></tr>
-<tr><td class="left">Z</td><td class="left">Y</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td></tr>
-<tr><td class="left">NW</td><td class="left">Y</td><td class="left">Y</td><td class="left">N</td><td class="left">Y</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td><td class="left">N</td></tr>
+<tr>
+<td class="left">None</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+</tr>
+
+<tr>
+<td class="left">IN</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">N</td>
+<td class="left">Y</td>
+</tr>
+
+<tr>
+<td class="left">IS</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+</tr>
+
+<tr>
+<td class="left">NS</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">Y</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">Y</td>
+</tr>
+
+<tr>
+<td class="left">S</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">Y</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+</tr>
+
+<tr>
+<td class="left">IX</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">Y</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+</tr>
+
+<tr>
+<td class="left">SIX</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+</tr>
+
+<tr>
+<td class="left">U</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+</tr>
+
+<tr>
+<td class="left">X</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+</tr>
+
+<tr>
+<td class="left">Z</td>
+<td class="left">Y</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+</tr>
+
+<tr>
+<td class="left">NW</td>
+<td class="left">Y</td>
+<td class="left">Y</td>
+<td class="left">N</td>
+<td class="left">Y</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+<td class="left">N</td>
+</tr>
 </tbody>
 </table>
-
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3">执行计划、锁和隔离级别之间的关系<sup><a class="footref" name="fnr-.3" href="#fn-.3">3</a></sup></h3>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 执行计划、锁和隔离级别之间的关系<sup><a id="fnr.3" name="fnr.3" class="footref" href="#fn.3">3</a></sup></h3>
 <div class="outline-text-3" id="text-1-3">
-
-<p>对于DB2开发人员来说，掌握执行计划、锁和隔离级别之间的关系，可以很好的避免应用程
+<p>
+对于DB2开发人员来说，掌握执行计划、锁和隔离级别之间的关系，可以很好的避免应用程
 序deadlock/timeout wait(SQLCODE -911 reason 2 和SQLCODE -911 reason 68)，增加应
 用程序并发能力。
 </p>
+
 <p>
 首先DB2的隔离级别分为RR、RS、CS、UR四种，具体的区别这里不做详细描述，有兴趣的人
 可以自己搜索相关资料了解。
 </p>
+
 <p>
 对于同样一条SQL语句，隔离级别和SQL执行计划都能影响到锁的使用，下面列出了相互之
 间的关系表。
 </p>
+
 <p>
 下面列表中斜杠前面的是表锁，斜杠后面的是行锁，'-'表示不加锁。
 </p>
+
 <p>
 在说明的时候，会用到TEST表，表数据如下：
 </p>
-
-
-<pre class="example">db2inst1@tacy:~$ db2 'select * from test'
+<pre class="example">
+db2inst1@tacy:~$ db2 'select * from test'
 A           B
 ----------- -----------
           1           1
@@ -228,36 +620,39 @@ A           B
 
   9 record(s) selected.
 </pre>
-
-
-
 </div>
 
-<div id="outline-container-1-3-1" class="outline-4">
-<h4 id="sec-1-3-1">Lock Modes for Table Scans with No Predicates</h4>
+<div id="outline-container-sec-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> Lock Modes for Table Scans with No Predicates</h4>
 <div class="outline-text-4" id="text-1-3-1">
-
-<p>DB2使用扫描表的方式执行SQL，同时SQL没有谓词，例如：
+<p>
+DB2使用扫描表的方式执行SQL，同时SQL没有谓词，例如：
 </p>
+
 <pre class="example">
 select * from test 或者 update test set a=1
 </pre>
 
-
 <p>
 锁的使用情况如下表：
 </p>
+
 <p>
 <img src="/images/db2-locks-1.png" alt="db2locks table 1"/>
 </p>
-<p>
-<img src="../images/db2-locks-1.png"  alt="../images/db2-locks-1.png" />
+
+
+<div class="figure">
+<p><img src="../images/db2-locks-1.png" alt="db2-locks-1.png" />
 </p>
+</div>
+
 <p>
 如果是只读的操作，比如Select，RR隔离级别时，直接对表加S锁；RS/CS是先对表加IS锁
 ，然后对行加NS锁。UR隔离级别只对表加IN锁，兼容除Z以外的所有锁，并发性很高，但是
 要慎用，有脏读问题。
 </p>
+
 <p>
 如果是修改操作，比如Update，需要指出的是，数据库在执行Update操作的时候，会分为
 Scan和Update两部分：先是找到需要更新的行，然后对行做更新操作。Scan阶段，DB2会对
@@ -267,297 +662,294 @@ Scan和Update两部分：先是找到需要更新的行，然后对行做更新�
 。由于没有谓词，是对全表操作，RR隔离级别直接对表加X锁，RS/CS/UR先对表加IX锁，然
 后对行加X锁，两阶段锁一致。
 </p>
+
 <p>
 如果是Cursored操作，你在写存储过程的时候经常会用，Where current of是个写操作，
 例如下面语句：
 </p>
+
 <pre class="example">
 update test set a=1 where current of cursor_name
 </pre>
 
-
 <p>
 效果类似select for update操作，他们两者加锁的情况一致。
 </p>
+
 <p>
 针对上表的情况，建议你在事务中尽量不要对表做没有谓词的查询，如果你做了类似的操
 作，DB2会对表中的每条记录加NS/S锁，那么其他对该表的修改请求全部阻塞，因为X锁和
 NS/S锁不兼容，除非你使用UR隔离级别（IN兼容X）。
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-1-3-2" class="outline-4">
-<h4 id="sec-1-3-2">Lock Modes for Table Scans with Predicates</h4>
+<div id="outline-container-sec-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> Lock Modes for Table Scans with Predicates</h4>
 <div class="outline-text-4" id="text-1-3-2">
-
-<p>DB2使用表扫描方式执行SQL，带谓词，条件字段无索引，例如:
+<p>
+DB2使用表扫描方式执行SQL，带谓词，条件字段无索引，例如:
 </p>
+
 <pre class="example">
 select * from test where a=1 或者 update test set b=4 where a=1
 </pre>
 
-
 <p>
 针对test表的操作，a字段上无索引。
 </p>
+
 <p>
 <img src="/images/db2-locks-2.png" alt="db2locks table 2"/>
 </p>
-<p>
-<img src="../images/db2-locks-2.png"  alt="../images/db2-locks-2.png" />
+
+
+<div class="figure">
+<p><img src="../images/db2-locks-2.png" alt="db2-locks-2.png" />
 </p>
+</div>
+
 <p>
 对比和表一的区别，针对更新操作，锁的模式有所变化，扫描阶段不再直接在被扫描行上
 加X锁了，而是加U锁，U锁相对于X锁有更好的并发性，例如下面场景在RS/CS隔离级别是可
 以并行的（UR当然更没问题，但是RR不行）：
 事务一先执行操作：
-</p><pre class="example">
+</p>
+<pre class="example">
 select * from test where a=1
 </pre>
-
-<p>事物二后执行操作：
-</p><pre class="example">
+<p>
+事物二后执行操作：
+</p>
+<pre class="example">
 update test set b=10 where a=3
 </pre>
-
-<p>由于NS锁兼容U锁，当事物一在test表中”a=1“的行上加NS锁之后，允许事物二的Update语
+<p>
+由于NS锁兼容U锁，当事物一在test表中”a=1“的行上加NS锁之后，允许事物二的Update语
 句对事物一锁定的行加U锁，当他发现这些行不是它需要更新的行时，就不会升级成X锁，这
 样他们相安无事。
 </p>
+
 <p>
 但是你思考一下，反过来这里可就不行了。如果是事物二先执行，事物一后执行，情况就
 不妙了。由于没有索引条件，两条语句必须扫描表，如果Update先执行，会对符合条件的
 行加X锁，Select后续扫描这些行的时候，虽然不是它的目标行，但是它需要先尝试加NS
 锁，X锁和NS锁不兼容，只能等待。
 </p>
+
 <p>
 下面一种情况你留待你思考一下，我就不重复了（无法并发）：
 事物一执行：
-</p><pre class="example">
+</p>
+<pre class="example">
 update test set b=11 where a=1
 </pre>
-
-<p>事物二执行：
-</p><pre class="example">
+<p>
+事物二执行：
+</p>
+<pre class="example">
 update test set b=12 where a=2
 </pre>
-
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-3-3" class="outline-4">
-<h4 id="sec-1-3-3">Lock Modes for RID Index Scans with No Predicates</h4>
+<div id="outline-container-sec-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> Lock Modes for RID Index Scans with No Predicates</h4>
 <div class="outline-text-4" id="text-1-3-3">
-
-<p>DB2使用索引扫描方式执行SQL，不带谓词，例如：
+<p>
+DB2使用索引扫描方式执行SQL，不带谓词，例如：
 </p>
+
 <pre class="example">
 select a from test 或者 update test set a=1
 </pre>
 
-
 <p>
 这里，我们的test表上，对a字段有索引。
 </p>
+
 <p>
 <img src="/images/db2-locks-3.png" alt="db2locks table 3"/>
-<img src="../images/db2-locks-3.png"  alt="../images/db2-locks-3.png" />
+<img src="../images/db2-locks-3.png" alt="db2-locks-3.png" />
 </p>
+
 <p>
 和前两者的区别在于，这里不再是扫表了，而是扫描索引，但是由于没有任何条件，都是
 全表操作，并发能力和表一类似。
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-1-3-4" class="outline-4">
-<h4 id="sec-1-3-4">Lock Modes for RID Index Scans with a Single Qualifying Row</h4>
+<div id="outline-container-sec-1-3-4" class="outline-4">
+<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> Lock Modes for RID Index Scans with a Single Qualifying Row</h4>
 <div class="outline-text-4" id="text-1-3-4">
-
-<p>DB2使用索引扫描方式执行SQL，带谓词，例如：
+<p>
+DB2使用索引扫描方式执行SQL，带谓词，例如：
 </p>
+
 <pre class="example">
 select a from test where a=2 或者 update test set b=1 where a=4
 </pre>
 
-
 <p>
 这里，我们的test表上，对a字段有索引。
 </p>
+
 <p>
 <img src="/images/db2-locks-4.png" alt="db2locks table 4"/>
-<img src="../images/db2-locks-4.png"  alt="../images/db2-locks-4.png" />
+<img src="../images/db2-locks-4.png" alt="db2-locks-4.png" />
 </p>
+
 <p>
 这种情况下，表二中的情况都能并行，但是别太乐观，如果我们往表里面增加一条记录：
-</p><pre class="example">
+</p>
+<pre class="example">
 insert into test values(6,0)
 </pre>
-
-<p>这个时候你再尝试先在事务一执行：
-</p><pre class="example">
+<p>
+这个时候你再尝试先在事务一执行：
+</p>
+<pre class="example">
 update test set b=11 where a=5 with rs
 </pre>
-
-<p>然后在事务二执行：
-</p><pre class="example">
+<p>
+然后在事务二执行：
+</p>
+<pre class="example">
 update test set b=11 where a=9 and a=3 with rs
 </pre>
-
-<p>不幸的是，事务二被阻塞了，你可以通过db2top获取事务二SQL的执行计划就知道原因，该
+<p>
+不幸的是，事务二被阻塞了，你可以通过db2top获取事务二SQL的执行计划就知道原因，该
 update没有走索引，而是使用了全表扫描。
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-1-3-5" class="outline-4">
-<h4 id="sec-1-3-5">Lock Modes for RID Index Scans with Start and Stop Predicates Only</h4>
+<div id="outline-container-sec-1-3-5" class="outline-4">
+<h4 id="sec-1-3-5"><span class="section-number-4">1.3.5</span> Lock Modes for RID Index Scans with Start and Stop Predicates Only</h4>
 <div class="outline-text-4" id="text-1-3-5">
-
-<p>DB2使用索引扫描方式执行SQL，带谓词，类似语句：
-</p><pre class="example">
+<p>
+DB2使用索引扫描方式执行SQL，带谓词，类似语句：
+</p>
+<pre class="example">
 select * from test where a&gt;1 and a&lt;5
 </pre>
-
 
 <p>
 基本情况都和上面类似，就不详述了，关键点就是执行计划会影响锁的使用。
 </p>
+
 <p>
 <img src="/images/db2-locks-5.png" alt="db2locks table 5"/>
-<img src="../images/db2-locks-5.png"  alt="../images/db2-locks-5.png" />
+<img src="../images/db2-locks-5.png" alt="db2-locks-5.png" />
 </p>
-
+</div>
 </div>
 
-</div>
 
-<div id="outline-container-1-3-6" class="outline-4">
-<h4 id="sec-1-3-6">Lock Modes for RID Index Scans with Index and Other Predicates (sargs, resids) Only</h4>
+<div id="outline-container-sec-1-3-6" class="outline-4">
+<h4 id="sec-1-3-6"><span class="section-number-4">1.3.6</span> Lock Modes for RID Index Scans with Index and Other Predicates (sargs, resids) Only</h4>
 <div class="outline-text-4" id="text-1-3-6">
-
-
 <p>
 <img src="/images/db2-locks-6.png" alt="db2locks table 6"/>
-<img src="../images/db2-locks-6.png"  alt="../images/db2-locks-6.png" />
+<img src="../images/db2-locks-6.png" alt="db2-locks-6.png" />
 </p>
-
+</div>
 </div>
 
-</div>
 
-<div id="outline-container-1-3-7" class="outline-4">
-<h4 id="sec-1-3-7">Lock Modes for Index Scans Used for Deferred Data Page Access: RID Index Scan with No Predicates</h4>
+<div id="outline-container-sec-1-3-7" class="outline-4">
+<h4 id="sec-1-3-7"><span class="section-number-4">1.3.7</span> Lock Modes for Index Scans Used for Deferred Data Page Access: RID Index Scan with No Predicates</h4>
 <div class="outline-text-4" id="text-1-3-7">
-
-<p>后续的表主要理解Deferred Data Page Access这个概念，说的应该是多索引情况，感觉和
+<p>
+后续的表主要理解Deferred Data Page Access这个概念，说的应该是多索引情况，感觉和
 前面的情况没有明显区别，可能情况更复杂点，比如先扫描A索引，获取ROW的bitmap和后
 续索引的bitmap做逻辑运算，获取最后结果，有可能更复杂，有待深入了解。
 </p>
+
 <p>
 <img src="/images/db2-locks-7.png" alt="db2locks table 7"/>
-<img src="../images/db2-locks-7.png"  alt="../images/db2-locks-7.png" />
+<img src="../images/db2-locks-7.png" alt="db2-locks-7.png" />
 </p>
-
+</div>
 </div>
 
-</div>
 
-<div id="outline-container-1-3-8" class="outline-4">
-<h4 id="sec-1-3-8">Lock Modes for Index Scans Used for Deferred Data Page Access: After a RID Index Scan with No Predicates</h4>
+<div id="outline-container-sec-1-3-8" class="outline-4">
+<h4 id="sec-1-3-8"><span class="section-number-4">1.3.8</span> Lock Modes for Index Scans Used for Deferred Data Page Access: After a RID Index Scan with No Predicates</h4>
 <div class="outline-text-4" id="text-1-3-8">
-
-
 <p>
 <img src="/images/db2-locks-8.png" alt="db2locks table 8"/>
-<img src="../images/db2-locks-8.png"  alt="../images/db2-locks-8.png" />
+<img src="../images/db2-locks-8.png" alt="db2-locks-8.png" />
 </p>
-
+</div>
 </div>
 
-</div>
 
-<div id="outline-container-1-3-9" class="outline-4">
-<h4 id="sec-1-3-9">Lock Modes for Index Scans Used for Deferred Data Page Access: RID Index Scan with Predicates (sargs, resids)</h4>
+<div id="outline-container-sec-1-3-9" class="outline-4">
+<h4 id="sec-1-3-9"><span class="section-number-4">1.3.9</span> Lock Modes for Index Scans Used for Deferred Data Page Access: RID Index Scan with Predicates (sargs, resids)</h4>
 <div class="outline-text-4" id="text-1-3-9">
-
-
 <p>
 <img src="/images/db2-locks-9.png" alt="db2locks table 9"/>
-<img src="../images/db2-locks-9.png"  alt="../images/db2-locks-9.png" />
+<img src="../images/db2-locks-9.png" alt="db2-locks-9.png" />
 </p>
-
+</div>
 </div>
 
-</div>
 
-<div id="outline-container-1-3-10" class="outline-4">
-<h4 id="sec-1-3-10">Lock Modes for Index Scans Used for Deferred Data Page Access: After a RID Index Scan with Predicates (sargs, resids)</h4>
+<div id="outline-container-sec-1-3-10" class="outline-4">
+<h4 id="sec-1-3-10"><span class="section-number-4">1.3.10</span> Lock Modes for Index Scans Used for Deferred Data Page Access: After a RID Index Scan with Predicates (sargs, resids)</h4>
 <div class="outline-text-4" id="text-1-3-10">
-
-
 <p>
 <img src="/images/db2-locks-10.png" alt="db2locks table 10"/>
-<img src="../images/db2-locks-10.png"  alt="../images/db2-locks-10.png" />
+<img src="../images/db2-locks-10.png" alt="db2-locks-10.png" />
 </p>
-
+</div>
 </div>
 
-</div>
 
-<div id="outline-container-1-3-11" class="outline-4">
-<h4 id="sec-1-3-11">Lock Modes for Index Scans Used for Deferred Data Page Access: RID Index Scan with Start and Stop Predicates Only</h4>
+<div id="outline-container-sec-1-3-11" class="outline-4">
+<h4 id="sec-1-3-11"><span class="section-number-4">1.3.11</span> Lock Modes for Index Scans Used for Deferred Data Page Access: RID Index Scan with Start and Stop Predicates Only</h4>
 <div class="outline-text-4" id="text-1-3-11">
-
-
 <p>
 <img src="/images/db2-locks-11.png" alt="db2locks table 11"/>
-<img src="../images/db2-locks-11.png"  alt="../images/db2-locks-11.png" />
+<img src="../images/db2-locks-11.png" alt="db2-locks-11.png" />
 </p>
-
+</div>
 </div>
 
-</div>
 
-<div id="outline-container-1-3-12" class="outline-4">
-<h4 id="sec-1-3-12">Lock Modes for Index Scans Used for Deferred Data Page Access: After a RID Index Scan with Start and Stop Predicates Only</h4>
+<div id="outline-container-sec-1-3-12" class="outline-4">
+<h4 id="sec-1-3-12"><span class="section-number-4">1.3.12</span> Lock Modes for Index Scans Used for Deferred Data Page Access: After a RID Index Scan with Start and Stop Predicates Only</h4>
 <div class="outline-text-4" id="text-1-3-12">
-
-
 <p>
 <img src="/images/db2-locks-12.png" alt="db2locks table 12"/>
-<img src="../images/db2-locks-12.png"  alt="../images/db2-locks-12.png" />
+<img src="../images/db2-locks-12.png" alt="db2-locks-12.png" />
 </p>
 </div>
 </div>
-
 </div>
 
-<div id="outline-container-1-4" class="outline-3">
-<h3 id="sec-1-4">研究锁的一些方法</h3>
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> 研究锁的一些方法</h3>
 <div class="outline-text-3" id="text-1-4">
-
-<p>如果有兴趣，可以通过自己构造更复杂的情况来验证锁的情况，验证方法很简单，打开两
+<p>
+如果有兴趣，可以通过自己构造更复杂的情况来验证锁的情况，验证方法很简单，打开两
 个DB2连接，运行sql的时候带上‘+c’选项即可，同时SQL语句申明隔离级别，比如我想
 验证RS隔离级别下两个SQL的并发情况，只需要写类似如下的SQL：
-</p><pre class="example">
+</p>
+<pre class="example">
 db2 +c 'select * from test where a=1 with rs'
 </pre>
-
-<p>该SQL表明不自动提交，同时使用RS隔离级别。
+<p>
+该SQL表明不自动提交，同时使用RS隔离级别。
 </p>
+
 <p>
 观察锁的情况，通过db2pd即可，比如我要观察阻塞的锁：
 </p>
-
-
-<pre class="example">db2inst1@tacy:~$ db2pd -d tacy -wlocks
+<pre class="example">
+db2inst1@tacy:~$ db2pd -d tacy -wlocks
 Database Partition 0 -- Database TACY -- Active -- Up 0 days 02:21:36 -- Date 04/03/2014 22:16:53
 
 Locks being waited on :
@@ -565,95 +957,95 @@ AppHandl [nod-index] TranHdl    Lockname                   Type       Mode Conv 
 552      [000-00552] 12         02000400080000000000000052 Row        ..X       G   78         db2bp    DB2INST1 *LOCAL.db2inst1.140403115529
 541      [000-00541] 2          02000400080000000000000052 Row        ..U       W   20         db2bp    DB2INST1 *LOCAL.db2inst1.140403115517
 </pre>
-
 <p>
 简单解读一下，Lockname一致，表明他们希望是同样对象的锁，TranHdl表明事务ID，事务
 12持有Row上的X锁（Sts状态为G，表明获得锁），事务2等待（Sts状态未W，表明等待锁）
 。更详细信息可以通过下面命令：
 </p>
-
-
-<pre class="example">db2inst1@tacy:~$ db2pd -db tacy -locks showlock wait
+<pre class="example">
+db2inst1@tacy:~$ db2pd -db tacy -locks showlock wait
 
 Database Partition 0 -- Database TACY -- Active -- Up 0 days 02:31:33 -- Date 04/03/2014 22:26:50
 
 Locks:
 Address            TranHdl    Lockname                   Type       Mode Sts Owner      Dur HoldCount  Att        ReleaseFlg rrIID
-0x00007F0B562B1780 2          02000400080000000000000052 Row        ..U  W   12         1   0          0x00000000 0x40000000 0          TbspaceID 2     TableID 4      PartitionID 0 Page 0 Slot 8
-0x00007F0B562B5A00 12         02000400080000000000000052 Row        ..X  G   12         1   0          0x00000000 0x40000000 0          TbspaceID 2     TableID 4      PartitionID 0 Page 0 Slot 8
+0x00007F0B562B1780 2          02000400080000000000000052 Row        ..U  W   12         1   0          0x00000000 0x40000000 0     	TbspaceID 2     TableID 4      PartitionID 0 Page 0 Slot 8
+0x00007F0B562B5A00 12         02000400080000000000000052 Row        ..X  G   12         1   0          0x00000000 0x40000000 0     	TbspaceID 2     TableID 4      PartitionID 0 Page 0 Slot 8
 </pre>
-
 <p>
 他们锁在了表空间ID为2上的一个表上的一行，该表的ID是4，行的位置在Page 0的Slot 8
 上。从锁的情况看，可能是一个Update语句阻塞了另一个Update语句，后一个Update语句
 走了全表扫描。
 </p>
+
 <p>
 如果你想看看具体该SQL语句的执行计划，你可以通过db2top工具，使用方法是：
-</p><pre class="example">
+</p>
+<pre class="example">
 db2top -d tacy
 </pre>
-
-<p>首先进入Dyanmic sql视图；按‘/’键，输入‘test’，会列出所有包含‘test’关键字的SQL；
+<p>
+首先进入Dyanmic sql视图；按‘/’键，输入‘test’，会列出所有包含‘test’关键字的SQL；
 键入‘L’键，输入对应SQL的‘SQL_Statement HashValue‘，会显示该SQL全文；键入‘e’键
 ，能够得到该SQL的执行计划。如果想更详细了解db2top，请参考官方文档。
 </p>
+
 <p>
 更进一步，如果你想了解他们锁的对象以及锁在哪一行上，前者比较简单，通过下面SQL语
 句即可：
-</p><pre class="example">
+</p>
+<pre class="example">
 select tabname,tbspace from syscat.tables where tableid=? and tbspaceid=?
 </pre>
-
-<p>后者需要通过db2dart工具来实现，不过db2dart一般无法在生产环境使用，因为他要求数
+<p>
+后者需要通过db2dart工具来实现，不过db2dart一般无法在生产环境使用，因为他要求数
 据库上不能有任何连接。如果你想知道上面的SQL到底阻塞在哪一行，可以使用下面命令：
-</p><pre class="example">
+</p>
+<pre class="example">
 db2dart tacy /dd /oi 4 /tsi 2 /ps 0 /np 1 /v y
 </pre>
-
-<p>工具会生成一个RPT文件，直接文本编辑器打开，找到‘Slot 8‘条目即可。
+<p>
+工具会生成一个RPT文件，直接文本编辑器打开，找到‘Slot 8‘条目即可。
 </p>
+
 <p>
 如果你不熟悉db2的系统表，用下面命令做个简单了解：
 </p>
-
-
-<pre class="example">db2 list tables for all
+<pre class="example">
+db2 list tables for all
 db2 describe table syscat.tables
 </pre>
-
-
-
+</div>
 </div>
 
-</div>
 
-<div id="outline-container-1-5" class="outline-3">
-<h3 id="sec-1-5">结尾</h3>
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> 结尾</h3>
 <div class="outline-text-3" id="text-1-5">
-
-<p>到这里结束本文，希望能对你了解DB2有一点帮助，当然了解的最好方法还是自己动手实验
+<p>
+到这里结束本文，希望能对你了解DB2有一点帮助，当然了解的最好方法还是自己动手实验
 ，DB2提供免费的C-Express版本，在Ubuntu上直接安装db2exc包即可，非常方便，做测试
 这个版本就够了。最后需要强调一点，不清楚的地方找DB2的InformationCenter。
 </p>
+</div>
+</div>
+</div>
 <div id="footnotes">
 <h2 class="footnotes">Footnotes: </h2>
 <div id="text-footnotes">
-<p class="footnote"><sup><a class="footnum" name="fn-.1" href="#fnr-.1">1</a></sup> <a href="https://www.dropbox.com/sh/1wse9pmgvl81eay/35A7yi_49L/Lock%20attributes.pdf">Lock attributes</a>
-</p>
 
+<div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p class="footpara">
+<a href="https://www.dropbox.com/sh/1wse9pmgvl81eay/35A7yi_49L/Lock%2520attributes.pdf">Lock attributes</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.2" href="#fnr-.2">2</a></sup> <a href="https://www.dropbox.com/sh/1wse9pmgvl81eay/52lfCfqavV/Lock%20type%20compatibility.pdf">Lock type compatibility</a>
-</p>
+<div class="footdef"><sup><a id="fn.2" name="fn.2" class="footnum" href="#fnr.2">2</a></sup> <p class="footpara">
+<a href="https://www.dropbox.com/sh/1wse9pmgvl81eay/52lfCfqavV/Lock%2520type%2520compatibility.pdf">Lock type compatibility</a>
+</p></div>
 
+<div class="footdef"><sup><a id="fn.3" name="fn.3" class="footnum" href="#fnr.3">3</a></sup> <p class="footpara">
+<a href="https://www.dropbox.com/sh/1wse9pmgvl81eay/DQeN41RvmW/Lock%25C2%25A0modes%25C2%25A0and%25C2%25A0access%25C2%25A0plans%25C2%25A0for%25C2%25A0standard%25C2%25A0tables.pdf">Lock modes and access plans for standard tables</a>
+</p></div>
 
-<p class="footnote"><sup><a class="footnum" name="fn-.3" href="#fnr-.3">3</a></sup> <a href="https://www.dropbox.com/sh/1wse9pmgvl81eay/DQeN41RvmW/Lock%C2%A0modes%C2%A0and%C2%A0access%C2%A0plans%C2%A0for%C2%A0standard%C2%A0tables.pdf">Lock modes and access plans for standard tables</a>
-</p>
-
-
-</div>
-</div>
-</div>
 
 </div>
 </div>

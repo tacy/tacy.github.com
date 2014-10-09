@@ -1,3 +1,26 @@
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Swift</a>
+<ul>
+<li><a href="#sec-1-1">1.1. Ring builder</a>
+<ul>
+<li><a href="#sec-1-1-1">1.1.1. Add device</a></li>
+<li><a href="#sec-1-1-2">1.1.2. Rebalance</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#sec-2">2. 经典文章</a></li>
+<li><a href="#sec-3">3. Nova</a>
+<ul>
+<li><a href="#sec-3-1">3.1. Develop environment</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 ---
 layout: post
 title: "openstack notes"
@@ -5,406 +28,363 @@ description: "Openstack的一些基本信息，自己的了解，认为好的一
 categories: [tech]
 tags: [openstack]
 ---
-
-<div id="table-of-contents">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents">
-<ul>
-<li><a href="#sec-1">1 Swift</a>
-<ul>
-<li><a href="#sec-1-1">1.1 Ring builder</a>
-<ul>
-<li><a href="#sec-1-1-1">1.1.1 Add device</a></li>
-<li><a href="#sec-1-1-2">1.1.2 Rebalance</a></li>
-</ul></li>
-</ul>
-</li>
-<li><a href="#sec-2">2 经典文章</a></li>
-<li><a href="#sec-3">3 Nova</a>
-<ul>
-<li><a href="#sec-3-1">3.1 Develop environment</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
-
-<div id="outline-container-1" class="outline-2">
-<h2 id="sec-1">Swift</h2>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Swift</h2>
 <div class="outline-text-2" id="text-1">
-
-
-</div>
-
-<div id="outline-container-1-1" class="outline-3">
-<h3 id="sec-1-1">Ring builder</h3>
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Ring builder</h3>
 <div class="outline-text-3" id="text-1-1">
-
-<p>  读了一下ringbuilder代码，简单记录一下，免的忘了
+<p>
+读了一下ringbuilder代码，简单记录一下，免的忘了
 </p>
 </div>
-
-<div id="outline-container-1-1-1" class="outline-4">
-<h4 id="sec-1-1-1">Add device</h4>
+<div id="outline-container-sec-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> Add device</h4>
 <div class="outline-text-4" id="text-1-1-1">
-
-<p>   添加device的时候可以指定每个device的meta信息和replication ip，Swift会给每
-   个device一个id，这个id会一直递增，也就是说新增加的device的id总是比device的id
-   大，不重用id
-</p>
-
-
-<pre class="src src-python"><span style="color: #859900;">if</span> <span style="color: #2aa198;">'id'</span> <span style="color: #859900;">not</span> <span style="color: #859900;">in</span> dev:
-    <span style="color: #268bd2;">dev</span>[<span style="color: #2aa198;">'id'</span>] = 0
-    <span style="color: #859900;">if</span> <span style="color: #859900;">self</span>.devs:
-        <span style="color: #268bd2;">dev</span>[<span style="color: #2aa198;">'id'</span>] = <span style="color: #859900;">max</span>(d[<span style="color: #2aa198;">'id'</span>] <span style="color: #859900;">for</span> d <span style="color: #859900;">in</span> <span style="color: #859900;">self</span>.devs <span style="color: #859900;">if</span> d) + 1
-<span style="color: #859900;">if</span> dev[<span style="color: #2aa198;">'id'</span>] &lt; <span style="color: #859900;">len</span>(<span style="color: #859900;">self</span>.devs) <span style="color: #859900;">and</span> <span style="color: #859900;">self</span>.devs[dev[<span style="color: #2aa198;">'id'</span>]] <span style="color: #859900;">is</span> <span style="color: #859900;">not</span> <span style="color: #2aa198;">None</span>:
-    <span style="color: #859900;">raise</span> exceptions.DuplicateDeviceError(
-        <span style="color: #2aa198;">'Duplicate device id: %d'</span> % dev[<span style="color: #2aa198;">'id'</span>])
-<span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">Add holes to self.devs to ensure self.devs[dev['id']] will be the dev</span>
-<span style="color: #859900;">while</span> dev[<span style="color: #2aa198;">'id'</span>] &gt;= <span style="color: #859900;">len</span>(<span style="color: #859900;">self</span>.devs):
-    <span style="color: #859900;">self</span>.devs.append(<span style="color: #2aa198;">None</span>)
-</pre>
-
-
 <p>
-   weight和Part之间的关系计算很简单
+添加device的时候可以指定每个device的meta信息和replication ip，Swift会给每
+个device一个id，这个id会一直递增，也就是说新增加的device的id总是比device的id
+大，不重用id
 </p>
+<div class="org-src-container">
 
-
-<pre class="src src-python"><span style="color: #859900;">return</span> <span style="color: #859900;">self</span>.parts * <span style="color: #859900;">self</span>.replicas / \
-    <span style="color: #859900;">sum</span>(d[<span style="color: #2aa198;">'weight'</span>] <span style="color: #859900;">for</span> d <span style="color: #859900;">in</span> <span style="color: #859900;">self</span>._iter_devs())
+<pre class="src src-python"><span style="color: #FBDE2D;">if</span> <span style="color: #61CE3C;">'id'</span> <span style="color: #FBDE2D;">not</span> <span style="color: #FBDE2D;">in</span> dev:
+    <span style="color: #D8FA3C;">dev</span><span style="color: #8b0000;">[</span><span style="color: #61CE3C;">'id'</span><span style="color: #8b0000;">]</span> = 0
+    <span style="color: #FBDE2D;">if</span> <span style="color: #FBDE2D;">self</span>.devs:
+        <span style="color: #D8FA3C;">dev</span><span style="color: #8b0000;">[</span><span style="color: #61CE3C;">'id'</span><span style="color: #8b0000;">]</span> = <span style="color: #FF6400;">max</span><span style="color: #8b0000;">(</span>d<span style="color: #006400;">[</span><span style="color: #61CE3C;">'id'</span><span style="color: #006400;">]</span> <span style="color: #FBDE2D;">for</span> d <span style="color: #FBDE2D;">in</span> <span style="color: #FBDE2D;">self</span>.devs <span style="color: #FBDE2D;">if</span> d<span style="color: #8b0000;">)</span> + 1
+<span style="color: #FBDE2D;">if</span> dev<span style="color: #8b0000;">[</span><span style="color: #61CE3C;">'id'</span><span style="color: #8b0000;">]</span> &lt; <span style="color: #FF6400;">len</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span>.devs<span style="color: #8b0000;">)</span> <span style="color: #FBDE2D;">and</span> <span style="color: #FBDE2D;">self</span>.devs<span style="color: #8b0000;">[</span>dev<span style="color: #006400;">[</span><span style="color: #61CE3C;">'id'</span><span style="color: #006400;">]</span><span style="color: #8b0000;">]</span> <span style="color: #FBDE2D;">is</span> <span style="color: #FBDE2D;">not</span> <span style="color: #4c83ff;">None</span>:
+    <span style="color: #FBDE2D;">raise</span> exceptions.DuplicateDeviceError<span style="color: #8b0000;">(</span>
+        <span style="color: #61CE3C;">'Duplicate device id: %d'</span> % dev<span style="color: #006400;">[</span><span style="color: #61CE3C;">'id'</span><span style="color: #006400;">]</span><span style="color: #8b0000;">)</span>
+<span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">Add holes to self.devs to ensure self.devs[dev['id']] will be the dev</span>
+<span style="color: #FBDE2D;">while</span> dev<span style="color: #8b0000;">[</span><span style="color: #61CE3C;">'id'</span><span style="color: #8b0000;">]</span> &gt;= <span style="color: #FF6400;">len</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span>.devs<span style="color: #8b0000;">)</span>:
+    <span style="color: #FBDE2D;">self</span>.devs.append<span style="color: #8b0000;">(</span><span style="color: #4c83ff;">None</span><span style="color: #8b0000;">)</span>
 </pre>
-
-
-<p>
-   在添加device的时候，会重新计算device所期望的Part（原有device需要减去已分配）
-   ，这个值很关键，后面part和device的映射会根据这个值确定分配优先级（
-   parts<sub>wanted大优先级高）</sub>
-</p>
-
-
-<pre class="src src-python"><span style="color: #859900;">for</span> dev <span style="color: #859900;">in</span> <span style="color: #859900;">self</span>._iter_devs():
-    <span style="color: #859900;">if</span> <span style="color: #859900;">not</span> dev[<span style="color: #2aa198;">'weight'</span>]:
-        <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">With no weight, that means we wish to "drain" the device. So</span>
-        <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">we set the parts_wanted to a really large negative number to</span>
-        <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">indicate its strong desire to give up everything it has.</span>
-        <span style="color: #268bd2;">dev</span>[<span style="color: #2aa198;">'parts_wanted'</span>] = -<span style="color: #859900;">self</span>.parts * <span style="color: #859900;">self</span>.replicas
-    <span style="color: #859900;">else</span>:
-        <span style="color: #268bd2;">dev</span>[<span style="color: #2aa198;">'parts_wanted'</span>] = \
-            <span style="color: #859900;">int</span>(weight_of_one_part * dev[<span style="color: #2aa198;">'weight'</span>]) - dev[<span style="color: #2aa198;">'parts'</span>]
-</pre>
-
-
-<p>
-   添加device并不会导致数据迁移，必须显示调用rebalance才会执行平衡操作。
-</p>
 </div>
 
+<p>
+weight和Part之间的关系计算很简单
+</p>
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #FBDE2D;">return</span> <span style="color: #FBDE2D;">self</span>.parts * <span style="color: #FBDE2D;">self</span>.replicas / \
+    <span style="color: #FF6400;">sum</span><span style="color: #8b0000;">(</span>d<span style="color: #006400;">[</span><span style="color: #61CE3C;">'weight'</span><span style="color: #006400;">]</span> <span style="color: #FBDE2D;">for</span> d <span style="color: #FBDE2D;">in</span> <span style="color: #FBDE2D;">self</span>._iter_devs<span style="color: #006400;">()</span><span style="color: #8b0000;">)</span>
+</pre>
 </div>
 
-<div id="outline-container-1-1-2" class="outline-4">
-<h4 id="sec-1-1-2">Rebalance</h4>
+<p>
+在添加device的时候，会重新计算device所期望的Part（原有device需要减去已分配）
+，这个值很关键，后面part和device的映射会根据这个值确定分配优先级（
+parts_wanted大优先级高）
+</p>
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #FBDE2D;">for</span> dev <span style="color: #FBDE2D;">in</span> <span style="color: #FBDE2D;">self</span>._iter_devs<span style="color: #8b0000;">()</span>:
+    <span style="color: #FBDE2D;">if</span> <span style="color: #FBDE2D;">not</span> dev<span style="color: #8b0000;">[</span><span style="color: #61CE3C;">'weight'</span><span style="color: #8b0000;">]</span>:
+        <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">With no weight, that means we wish to "drain" the device. So</span>
+        <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">we set the parts_wanted to a really large negative number to</span>
+        <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">indicate its strong desire to give up everything it has.</span>
+        <span style="color: #D8FA3C;">dev</span><span style="color: #8b0000;">[</span><span style="color: #61CE3C;">'parts_wanted'</span><span style="color: #8b0000;">]</span> = -<span style="color: #FBDE2D;">self</span>.parts * <span style="color: #FBDE2D;">self</span>.replicas
+    <span style="color: #FBDE2D;">else</span>:
+        <span style="color: #D8FA3C;">dev</span><span style="color: #8b0000;">[</span><span style="color: #61CE3C;">'parts_wanted'</span><span style="color: #8b0000;">]</span> = \
+            <span style="color: #FF6400;">int</span><span style="color: #8b0000;">(</span>weight_of_one_part * dev<span style="color: #006400;">[</span><span style="color: #61CE3C;">'weight'</span><span style="color: #006400;">]</span><span style="color: #8b0000;">)</span> - dev<span style="color: #8b0000;">[</span><span style="color: #61CE3C;">'parts'</span><span style="color: #8b0000;">]</span>
+</pre>
+</div>
+
+<p>
+添加device并不会导致数据迁移，必须显示调用rebalance才会执行平衡操作。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> Rebalance</h4>
 <div class="outline-text-4" id="text-1-1-2">
-
-<p>   relalance入口
+<p>
+relalance入口
 </p>
+<div class="org-src-container">
 
+<pre class="src src-python"><span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">rebalance</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span>, seed=<span style="color: #4c83ff;">None</span><span style="color: #8b0000;">)</span>:
+    <span style="color: #61CE3C;">"""</span>
+<span style="color: #61CE3C;">    Rebalance the ring.</span>
 
-<pre class="src src-python"><span style="color: #859900;">def</span> <span style="color: #268bd2;">rebalance</span>(<span style="color: #859900;">self</span>, seed=<span style="color: #2aa198;">None</span>):
-    <span style="color: #2aa198;">"""</span>
-<span style="color: #2aa198;">    Rebalance the ring.</span>
+<span style="color: #61CE3C;">    This is the main work function of the builder, as it will assign and</span>
+<span style="color: #61CE3C;">    reassign partitions to devices in the ring based on weights, distinct</span>
+<span style="color: #61CE3C;">    zones, recent reassignments, etc.</span>
 
-<span style="color: #2aa198;">    This is the main work function of the builder, as it will assign and</span>
-<span style="color: #2aa198;">    reassign partitions to devices in the ring based on weights, distinct</span>
-<span style="color: #2aa198;">    zones, recent reassignments, etc.</span>
+<span style="color: #61CE3C;">    The process doesn't always perfectly assign partitions (that'd take a</span>
+<span style="color: #61CE3C;">    lot more analysis and therefore a lot more time -- I had code that did</span>
+<span style="color: #61CE3C;">    that before). Because of this, it keeps rebalancing until the device</span>
+<span style="color: #61CE3C;">    skew (number of partitions a device wants compared to what it has) gets</span>
+<span style="color: #61CE3C;">    below 1% or doesn't change by more than 1% (only happens with ring that</span>
+<span style="color: #61CE3C;">    can't be balanced no matter what -- like with 3 zones of differing</span>
+<span style="color: #61CE3C;">    weights with replicas set to 3).</span>
 
-<span style="color: #2aa198;">    The process doesn't always perfectly assign partitions (that'd take a</span>
-<span style="color: #2aa198;">    lot more analysis and therefore a lot more time -- I had code that did</span>
-<span style="color: #2aa198;">    that before). Because of this, it keeps rebalancing until the device</span>
-<span style="color: #2aa198;">    skew (number of partitions a device wants compared to what it has) gets</span>
-<span style="color: #2aa198;">    below 1% or doesn't change by more than 1% (only happens with ring that</span>
-<span style="color: #2aa198;">    can't be balanced no matter what -- like with 3 zones of differing</span>
-<span style="color: #2aa198;">    weights with replicas set to 3).</span>
+<span style="color: #61CE3C;">    :returns: (number_of_partitions_altered, resulting_balance)</span>
+<span style="color: #61CE3C;">    """</span>
 
-<span style="color: #2aa198;">    :returns: (number_of_partitions_altered, resulting_balance)</span>
-<span style="color: #2aa198;">    """</span>
-
-    <span style="color: #859900;">if</span> seed:
-        random.seed(seed)
-    <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#22914;&#26524;&#20026;&#31354;&#65292;&#34920;&#31034;&#31532;&#19968;&#27425;&#20570;balance,&#36825;&#37324;&#30340;&#25805;&#20316;&#21644;&#37325;&#20570;balance&#24046;&#19981;&#22810;</span>
-    <span style="color: #859900;">self</span>._ring = <span style="color: #2aa198;">None</span>
-    <span style="color: #859900;">if</span> <span style="color: #859900;">self</span>._last_part_moves_epoch <span style="color: #859900;">is</span> <span style="color: #2aa198;">None</span>:
-        <span style="color: #859900;">self</span>._initial_balance()
-        <span style="color: #859900;">self</span>.devs_changed = <span style="color: #2aa198;">False</span>
-        <span style="color: #859900;">return</span> <span style="color: #859900;">self</span>.parts, <span style="color: #859900;">self</span>.get_balance()
-    <span style="color: #268bd2;">retval</span> = 0
-    <span style="color: #859900;">self</span>._update_last_part_moves()
-    <span style="color: #268bd2;">last_balance</span> = 0
-    <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#25910;&#38598;&#21738;&#20123;part&#38656;&#35201;&#20998;&#37197;dev</span>
-    <span style="color: #268bd2;">new_parts</span>, <span style="color: #268bd2;">removed_part_count</span> = <span style="color: #859900;">self</span>._adjust_replica2part2dev_size()
-    <span style="color: #268bd2;">retval</span> += removed_part_count
-    <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#25191;&#34892;&#20998;&#37197;&#25805;&#20316;</span>
-    <span style="color: #859900;">self</span>._reassign_parts(new_parts)
-    <span style="color: #268bd2;">retval</span> += <span style="color: #859900;">len</span>(new_parts)
-    <span style="color: #859900;">while</span> <span style="color: #2aa198;">True</span>:
-        <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#32479;&#35745;&#31227;&#38500;&#30340;device&#25345;&#26377;&#30340;part,&#21644;&#36229;&#36733;&#30340;device&#65292;&#25191;&#34892;&#20998;&#37197;&#25805;&#20316;,&#37325;&#22797;&#25191;&#34892;</span>
-        <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">balance&#65292;&#30452;&#21040;&#24179;&#34913;</span>
-        <span style="color: #268bd2;">reassign_parts</span> = <span style="color: #859900;">self</span>._gather_reassign_parts()
-        <span style="color: #859900;">self</span>._reassign_parts(reassign_parts)
-        <span style="color: #268bd2;">retval</span> += <span style="color: #859900;">len</span>(reassign_parts)
-        <span style="color: #859900;">while</span> <span style="color: #859900;">self</span>._remove_devs:
-            <span style="color: #859900;">self</span>.devs[<span style="color: #859900;">self</span>._remove_devs.pop()[<span style="color: #2aa198;">'id'</span>]] = <span style="color: #2aa198;">None</span>
-        <span style="color: #268bd2;">balance</span> = <span style="color: #859900;">self</span>.get_balance()
-        <span style="color: #859900;">if</span> balance &lt; 1 <span style="color: #859900;">or</span> <span style="color: #859900;">abs</span>(last_balance - balance) &lt; 1 <span style="color: #859900;">or</span> \
-                retval == <span style="color: #859900;">self</span>.parts:
-            <span style="color: #859900;">break</span>
-        last_balance = balance
-    <span style="color: #859900;">self</span>.devs_changed = <span style="color: #2aa198;">False</span>
-    <span style="color: #859900;">self</span>.version += 1
-    <span style="color: #859900;">return</span> retval, balance
+    <span style="color: #FBDE2D;">if</span> seed:
+        random.seed<span style="color: #8b0000;">(</span>seed<span style="color: #8b0000;">)</span>
+    <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#22914;&#26524;&#20026;&#31354;&#65292;&#34920;&#31034;&#31532;&#19968;&#27425;&#20570;balance,&#36825;&#37324;&#30340;&#25805;&#20316;&#21644;&#37325;&#20570;balance&#24046;&#19981;&#22810;</span>
+    <span style="color: #FBDE2D;">self</span>._ring = <span style="color: #4c83ff;">None</span>
+    <span style="color: #FBDE2D;">if</span> <span style="color: #FBDE2D;">self</span>._last_part_moves_epoch <span style="color: #FBDE2D;">is</span> <span style="color: #4c83ff;">None</span>:
+        <span style="color: #FBDE2D;">self</span>._initial_balance<span style="color: #8b0000;">()</span>
+        <span style="color: #FBDE2D;">self</span>.devs_changed = <span style="color: #4c83ff;">False</span>
+        <span style="color: #FBDE2D;">return</span> <span style="color: #FBDE2D;">self</span>.parts, <span style="color: #FBDE2D;">self</span>.get_balance<span style="color: #8b0000;">()</span>
+    <span style="color: #D8FA3C;">retval</span> = 0
+    <span style="color: #FBDE2D;">self</span>._update_last_part_moves<span style="color: #8b0000;">()</span>
+    <span style="color: #D8FA3C;">last_balance</span> = 0
+    <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#25910;&#38598;&#21738;&#20123;part&#38656;&#35201;&#20998;&#37197;dev</span>
+    <span style="color: #D8FA3C;">new_parts</span>, <span style="color: #D8FA3C;">removed_part_count</span> = <span style="color: #FBDE2D;">self</span>._adjust_replica2part2dev_size<span style="color: #8b0000;">()</span>
+    <span style="color: #D8FA3C;">retval</span> += removed_part_count
+    <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#25191;&#34892;&#20998;&#37197;&#25805;&#20316;</span>
+    <span style="color: #FBDE2D;">self</span>._reassign_parts<span style="color: #8b0000;">(</span>new_parts<span style="color: #8b0000;">)</span>
+    <span style="color: #D8FA3C;">retval</span> += <span style="color: #FF6400;">len</span><span style="color: #8b0000;">(</span>new_parts<span style="color: #8b0000;">)</span>
+    <span style="color: #FBDE2D;">while</span> <span style="color: #4c83ff;">True</span>:
+        <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#32479;&#35745;&#31227;&#38500;&#30340;device&#25345;&#26377;&#30340;part,&#21644;&#36229;&#36733;&#30340;device&#65292;&#25191;&#34892;&#20998;&#37197;&#25805;&#20316;,&#37325;&#22797;&#25191;&#34892;</span>
+        <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">balance&#65292;&#30452;&#21040;&#24179;&#34913;</span>
+        <span style="color: #D8FA3C;">reassign_parts</span> = <span style="color: #FBDE2D;">self</span>._gather_reassign_parts<span style="color: #8b0000;">()</span>
+        <span style="color: #FBDE2D;">self</span>._reassign_parts<span style="color: #8b0000;">(</span>reassign_parts<span style="color: #8b0000;">)</span>
+        <span style="color: #D8FA3C;">retval</span> += <span style="color: #FF6400;">len</span><span style="color: #8b0000;">(</span>reassign_parts<span style="color: #8b0000;">)</span>
+        <span style="color: #FBDE2D;">while</span> <span style="color: #FBDE2D;">self</span>._remove_devs:
+            <span style="color: #FBDE2D;">self</span>.devs<span style="color: #8b0000;">[</span><span style="color: #FBDE2D;">self</span>._remove_devs.pop<span style="color: #006400;">()[</span><span style="color: #61CE3C;">'id'</span><span style="color: #006400;">]</span><span style="color: #8b0000;">]</span> = <span style="color: #4c83ff;">None</span>
+        <span style="color: #D8FA3C;">balance</span> = <span style="color: #FBDE2D;">self</span>.get_balance<span style="color: #8b0000;">()</span>
+        <span style="color: #FBDE2D;">if</span> balance &lt; 1 <span style="color: #FBDE2D;">or</span> <span style="color: #FF6400;">abs</span><span style="color: #8b0000;">(</span>last_balance - balance<span style="color: #8b0000;">)</span> &lt; 1 <span style="color: #FBDE2D;">or</span> \
+                retval == <span style="color: #FBDE2D;">self</span>.parts:
+            <span style="color: #FBDE2D;">break</span>
+        <span style="color: #D8FA3C;">last_balance</span> = balance
+    <span style="color: #FBDE2D;">self</span>.devs_changed = <span style="color: #4c83ff;">False</span>
+    <span style="color: #FBDE2D;">self</span>.version += 1
+    <span style="color: #FBDE2D;">return</span> retval, balance
 </pre>
-
+</div>
 
 <p>
-   <sub>reassign</sub><sub>parts</sub>()完成核心的part到dev的映射
+_reassign_parts()完成核心的part到dev的映射
 </p>
+<div class="org-src-container">
 
+<pre class="src src-python"><span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">_reassign_parts</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span>, reassign_parts<span style="color: #8b0000;">)</span>:
+    <span style="color: #61CE3C;">"""</span>
+<span style="color: #61CE3C;">    For an existing ring data set, partitions are reassigned similarly to</span>
+<span style="color: #61CE3C;">    the initial assignment. The devices are ordered by how many partitions</span>
+<span style="color: #61CE3C;">    they still want and kept in that order throughout the process. The</span>
+<span style="color: #61CE3C;">    gathered partitions are iterated through, assigning them to devices</span>
+<span style="color: #61CE3C;">    according to the "most wanted" while keeping the replicas as "far</span>
+<span style="color: #61CE3C;">    apart" as possible. Two different regions are considered the</span>
+<span style="color: #61CE3C;">    farthest-apart things, followed by zones, then different ip/port pairs</span>
+<span style="color: #61CE3C;">    within a zone; the least-far-apart things are different devices with</span>
+<span style="color: #61CE3C;">    the same ip/port pair in the same zone.</span>
 
-<pre class="src src-python"><span style="color: #859900;">def</span> <span style="color: #268bd2;">_reassign_parts</span>(<span style="color: #859900;">self</span>, reassign_parts):
-    <span style="color: #2aa198;">"""</span>
-<span style="color: #2aa198;">    For an existing ring data set, partitions are reassigned similarly to</span>
-<span style="color: #2aa198;">    the initial assignment. The devices are ordered by how many partitions</span>
-<span style="color: #2aa198;">    they still want and kept in that order throughout the process. The</span>
-<span style="color: #2aa198;">    gathered partitions are iterated through, assigning them to devices</span>
-<span style="color: #2aa198;">    according to the "most wanted" while keeping the replicas as "far</span>
-<span style="color: #2aa198;">    apart" as possible. Two different regions are considered the</span>
-<span style="color: #2aa198;">    farthest-apart things, followed by zones, then different ip/port pairs</span>
-<span style="color: #2aa198;">    within a zone; the least-far-apart things are different devices with</span>
-<span style="color: #2aa198;">    the same ip/port pair in the same zone.</span>
+<span style="color: #61CE3C;">    If you want more replicas than devices, you won't get all your</span>
+<span style="color: #61CE3C;">    replicas.</span>
 
-<span style="color: #2aa198;">    If you want more replicas than devices, you won't get all your</span>
-<span style="color: #2aa198;">    replicas.</span>
+<span style="color: #61CE3C;">    :param reassign_parts: An iterable of (part, replicas_to_replace)</span>
+<span style="color: #61CE3C;">                           pairs. replicas_to_replace is an iterable of the</span>
+<span style="color: #61CE3C;">                           replica (an int) to replace for that partition.</span>
+<span style="color: #61CE3C;">                           replicas_to_replace may be shared for multiple</span>
+<span style="color: #61CE3C;">                           partitions, so be sure you do not modify it.</span>
+<span style="color: #61CE3C;">    """</span>
+    <span style="color: #FBDE2D;">for</span> dev <span style="color: #FBDE2D;">in</span> <span style="color: #FBDE2D;">self</span>._iter_devs<span style="color: #8b0000;">()</span>:
+        <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#29983;&#25104;&#25353;&#29031;parts_wanted&#25490;&#24207;&#30340;key</span>
+        <span style="color: #D8FA3C;">dev</span><span style="color: #8b0000;">[</span><span style="color: #61CE3C;">'sort_key'</span><span style="color: #8b0000;">]</span> = <span style="color: #FBDE2D;">self</span>._sort_key_for<span style="color: #8b0000;">(</span>dev<span style="color: #8b0000;">)</span>
 
-<span style="color: #2aa198;">    :param reassign_parts: An iterable of (part, replicas_to_replace)</span>
-<span style="color: #2aa198;">                           pairs. replicas_to_replace is an iterable of the</span>
-<span style="color: #2aa198;">                           replica (an int) to replace for that partition.</span>
-<span style="color: #2aa198;">                           replicas_to_replace may be shared for multiple</span>
-<span style="color: #2aa198;">                           partitions, so be sure you do not modify it.</span>
-<span style="color: #2aa198;">    """</span>
-    <span style="color: #859900;">for</span> dev <span style="color: #859900;">in</span> <span style="color: #859900;">self</span>._iter_devs():
-        <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#29983;&#25104;&#25353;&#29031;parts_wanted&#25490;&#24207;&#30340;key</span>
-        <span style="color: #268bd2;">dev</span>[<span style="color: #2aa198;">'sort_key'</span>] = <span style="color: #859900;">self</span>._sort_key_for(dev)
+    <span style="color: #D8FA3C;">available_devs</span> = \
+        <span style="color: #FF6400;">sorted</span><span style="color: #8b0000;">(</span><span style="color: #006400;">(</span>d <span style="color: #FBDE2D;">for</span> d <span style="color: #FBDE2D;">in</span> <span style="color: #FBDE2D;">self</span>._iter_devs<span style="color: #ff1493;">()</span> <span style="color: #FBDE2D;">if</span> d<span style="color: #ff1493;">[</span><span style="color: #61CE3C;">'weight'</span><span style="color: #ff1493;">]</span><span style="color: #006400;">)</span>,
+               key=<span style="color: #FBDE2D;">lambda</span> x: x<span style="color: #006400;">[</span><span style="color: #61CE3C;">'sort_key'</span><span style="color: #006400;">]</span><span style="color: #8b0000;">)</span>
 
-    <span style="color: #268bd2;">available_devs</span> = \
-        <span style="color: #859900;">sorted</span>((d <span style="color: #859900;">for</span> d <span style="color: #859900;">in</span> <span style="color: #859900;">self</span>._iter_devs() <span style="color: #859900;">if</span> d[<span style="color: #2aa198;">'weight'</span>]),
-               key=<span style="color: #859900;">lambda</span> x: x[<span style="color: #2aa198;">'sort_key'</span>])
+    <span style="color: #D8FA3C;">tier2devs</span> = defaultdict<span style="color: #8b0000;">(</span><span style="color: #FF6400;">list</span><span style="color: #8b0000;">)</span>
+    <span style="color: #D8FA3C;">tier2sort_key</span> = defaultdict<span style="color: #8b0000;">(</span><span style="color: #FF6400;">list</span><span style="color: #8b0000;">)</span>
+    <span style="color: #D8FA3C;">max_tier_depth</span> = 0
+    <span style="color: #FBDE2D;">for</span> dev <span style="color: #FBDE2D;">in</span> available_devs:
+        <span style="color: #FBDE2D;">for</span> tier <span style="color: #FBDE2D;">in</span> tiers_for_dev<span style="color: #8b0000;">(</span>dev<span style="color: #8b0000;">)</span>:
+            <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#29983;&#25104;tier&#21644;dev&#30340;&#20851;&#31995;&#32467;&#26500;&#65292;&#21253;&#25324;</span>
+            <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">{(region)[dev]}&#65292;{(region,zone):[dev]}</span>
+            <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">{(region,zone,machine):[dev]}</span>
+            <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">{(region,zone,machine,id):[dev]}</span>
+            tier2devs<span style="color: #8b0000;">[</span>tier<span style="color: #8b0000;">]</span>.append<span style="color: #8b0000;">(</span>dev<span style="color: #8b0000;">)</span>  <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">&lt;-- starts out sorted!</span>
+            tier2sort_key<span style="color: #8b0000;">[</span>tier<span style="color: #8b0000;">]</span>.append<span style="color: #8b0000;">(</span>dev<span style="color: #006400;">[</span><span style="color: #61CE3C;">'sort_key'</span><span style="color: #006400;">]</span><span style="color: #8b0000;">)</span>
+            <span style="color: #FBDE2D;">if</span> <span style="color: #FF6400;">len</span><span style="color: #8b0000;">(</span>tier<span style="color: #8b0000;">)</span> &gt; max_tier_depth:
+                <span style="color: #D8FA3C;">max_tier_depth</span> = <span style="color: #FF6400;">len</span><span style="color: #8b0000;">(</span>tier<span style="color: #8b0000;">)</span>
 
-    <span style="color: #268bd2;">tier2devs</span> = defaultdict(<span style="color: #859900;">list</span>)
-    <span style="color: #268bd2;">tier2sort_key</span> = defaultdict(<span style="color: #859900;">list</span>)
-    <span style="color: #268bd2;">max_tier_depth</span> = 0
-    <span style="color: #859900;">for</span> dev <span style="color: #859900;">in</span> available_devs:
-        <span style="color: #859900;">for</span> tier <span style="color: #859900;">in</span> tiers_for_dev(dev):
-            <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#29983;&#25104;tier&#21644;dev&#30340;&#20851;&#31995;&#32467;&#26500;&#65292;&#21253;&#25324;</span>
-            <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">{(region)[dev]}&#65292;{(region,zone):[dev]}</span>
-            <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">{(region,zone,machine):[dev]}</span>
-            <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">{(region,zone,machine,id):[dev]}</span>
-            tier2devs[tier].append(dev)  <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">&lt;-- starts out sorted!</span>
-            tier2sort_key[tier].append(dev[<span style="color: #2aa198;">'sort_key'</span>])
-            <span style="color: #859900;">if</span> <span style="color: #859900;">len</span>(tier) &gt; max_tier_depth:
-                <span style="color: #268bd2;">max_tier_depth</span> = <span style="color: #859900;">len</span>(tier)
+    <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#29983;&#25104;tiger&#21644;children&#20851;&#31995;&#65292;{():[region]}</span>
+    <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">{(region):[(region,zone)]}</span>
+    <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">{(region,zone):[(region,zone,machine)]</span>
+    <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">{(region,zone,machine):[region,zone,machine,devid]}</span>
+    <span style="color: #D8FA3C;">tier2children_sets</span> = build_tier_tree<span style="color: #8b0000;">(</span>available_devs<span style="color: #8b0000;">)</span>
+    <span style="color: #D8FA3C;">tier2children</span> = defaultdict<span style="color: #8b0000;">(</span><span style="color: #FF6400;">list</span><span style="color: #8b0000;">)</span>
+    <span style="color: #D8FA3C;">tier2children_sort_key</span> = <span style="color: #8b0000;">{}</span>
+    <span style="color: #D8FA3C;">tiers_list</span> = <span style="color: #8b0000;">[</span><span style="color: #006400;">()</span><span style="color: #8b0000;">]</span>
+    <span style="color: #D8FA3C;">depth</span> = 1
+    <span style="color: #FBDE2D;">while</span> depth &lt;= max_tier_depth:
+        <span style="color: #D8FA3C;">new_tiers_list</span> = <span style="color: #8b0000;">[]</span>
+        <span style="color: #FBDE2D;">for</span> tier <span style="color: #FBDE2D;">in</span> tiers_list:
+            <span style="color: #D8FA3C;">child_tiers</span> = <span style="color: #FF6400;">list</span><span style="color: #8b0000;">(</span>tier2children_sets<span style="color: #006400;">[</span>tier<span style="color: #006400;">]</span><span style="color: #8b0000;">)</span>
+            child_tiers.sort<span style="color: #8b0000;">(</span>key=<span style="color: #FBDE2D;">lambda</span> t: tier2sort_key<span style="color: #006400;">[</span>t<span style="color: #006400;">][</span>-1<span style="color: #006400;">]</span><span style="color: #8b0000;">)</span>
+            <span style="color: #D8FA3C;">tier2children</span><span style="color: #8b0000;">[</span>tier<span style="color: #8b0000;">]</span> = child_tiers
+            <span style="color: #D8FA3C;">tier2children_sort_key</span><span style="color: #8b0000;">[</span>tier<span style="color: #8b0000;">]</span> = <span style="color: #FF6400;">map</span><span style="color: #8b0000;">(</span>
+                <span style="color: #FBDE2D;">lambda</span> t: tier2sort_key<span style="color: #006400;">[</span>t<span style="color: #006400;">][</span>-1<span style="color: #006400;">]</span>, child_tiers<span style="color: #8b0000;">)</span>
+            new_tiers_list.extend<span style="color: #8b0000;">(</span>child_tiers<span style="color: #8b0000;">)</span>
+        <span style="color: #D8FA3C;">tiers_list</span> = new_tiers_list
+        <span style="color: #D8FA3C;">depth</span> += 1
 
-    <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#29983;&#25104;tiger&#21644;children&#20851;&#31995;&#65292;{():[region]}</span>
-    <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">{(region):[(region,zone)]}</span>
-    <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">{(region,zone):[(region,zone,machine)]</span>
-    <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">{(region,zone,machine):[region,zone,machine,devid]}</span>
-    <span style="color: #268bd2;">tier2children_sets</span> = build_tier_tree(available_devs)
-    <span style="color: #268bd2;">tier2children</span> = defaultdict(<span style="color: #859900;">list</span>)
-    <span style="color: #268bd2;">tier2children_sort_key</span> = {}
-    <span style="color: #268bd2;">tiers_list</span> = [()]
-    <span style="color: #268bd2;">depth</span> = 1
-    <span style="color: #859900;">while</span> depth &lt;= max_tier_depth:
-        <span style="color: #268bd2;">new_tiers_list</span> = []
-        <span style="color: #859900;">for</span> tier <span style="color: #859900;">in</span> tiers_list:
-            <span style="color: #268bd2;">child_tiers</span> = <span style="color: #859900;">list</span>(tier2children_sets[tier])
-            child_tiers.sort(key=<span style="color: #859900;">lambda</span> t: tier2sort_key[t][-1])
-            <span style="color: #268bd2;">tier2children</span>[tier] = child_tiers
-            <span style="color: #268bd2;">tier2children_sort_key</span>[tier] = <span style="color: #859900;">map</span>(
-                <span style="color: #859900;">lambda</span> t: tier2sort_key[t][-1], child_tiers)
-            new_tiers_list.extend(child_tiers)
-        <span style="color: #268bd2;">tiers_list</span> = new_tiers_list
-        <span style="color: #268bd2;">depth</span> += 1
+    <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#36941;&#21382;tier2children&#20851;&#31995;&#65292;&#25214;&#26368;&#38656;&#35201;&#20998;&#37197;&#30340;dev</span>
+    <span style="color: #FBDE2D;">for</span> part, replace_replicas <span style="color: #FBDE2D;">in</span> reassign_parts:
+        <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">Gather up what other tiers (regions, zones, ip/ports, and</span>
+        <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">devices) the replicas not-to-be-moved are in for this part.</span>
+        <span style="color: #D8FA3C;">other_replicas</span> = defaultdict<span style="color: #8b0000;">(</span><span style="color: #FF6400;">int</span><span style="color: #8b0000;">)</span>
+        <span style="color: #D8FA3C;">unique_tiers_by_tier_len</span> = defaultdict<span style="color: #8b0000;">(</span><span style="color: #FF6400;">set</span><span style="color: #8b0000;">)</span>
+        <span style="color: #FBDE2D;">for</span> replica <span style="color: #FBDE2D;">in</span> <span style="color: #FBDE2D;">self</span>._replicas_for_part<span style="color: #8b0000;">(</span>part<span style="color: #8b0000;">)</span>:
+            <span style="color: #FBDE2D;">if</span> replica <span style="color: #FBDE2D;">not</span> <span style="color: #FBDE2D;">in</span> replace_replicas:
+                <span style="color: #D8FA3C;">dev</span> = <span style="color: #FBDE2D;">self</span>.devs<span style="color: #8b0000;">[</span><span style="color: #FBDE2D;">self</span>._replica2part2dev<span style="color: #006400;">[</span>replica<span style="color: #006400;">][</span>part<span style="color: #006400;">]</span><span style="color: #8b0000;">]</span>
+                <span style="color: #FBDE2D;">for</span> tier <span style="color: #FBDE2D;">in</span> tiers_for_dev<span style="color: #8b0000;">(</span>dev<span style="color: #8b0000;">)</span>:
+                    <span style="color: #D8FA3C;">other_replicas</span><span style="color: #8b0000;">[</span>tier<span style="color: #8b0000;">]</span> += 1
+                    unique_tiers_by_tier_len<span style="color: #8b0000;">[</span><span style="color: #FF6400;">len</span><span style="color: #006400;">(</span>tier<span style="color: #006400;">)</span><span style="color: #8b0000;">]</span>.add<span style="color: #8b0000;">(</span>tier<span style="color: #8b0000;">)</span>
 
-    <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#36941;&#21382;tier2children&#20851;&#31995;&#65292;&#25214;&#26368;&#38656;&#35201;&#20998;&#37197;&#30340;dev</span>
-    <span style="color: #859900;">for</span> part, replace_replicas <span style="color: #859900;">in</span> reassign_parts:
-        <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">Gather up what other tiers (regions, zones, ip/ports, and</span>
-        <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">devices) the replicas not-to-be-moved are in for this part.</span>
-        <span style="color: #268bd2;">other_replicas</span> = defaultdict(<span style="color: #859900;">int</span>)
-        <span style="color: #268bd2;">unique_tiers_by_tier_len</span> = defaultdict(<span style="color: #859900;">set</span>)
-        <span style="color: #859900;">for</span> replica <span style="color: #859900;">in</span> <span style="color: #859900;">self</span>._replicas_for_part(part):
-            <span style="color: #859900;">if</span> replica <span style="color: #859900;">not</span> <span style="color: #859900;">in</span> replace_replicas:
-                <span style="color: #268bd2;">dev</span> = <span style="color: #859900;">self</span>.devs[<span style="color: #859900;">self</span>._replica2part2dev[replica][part]]
-                <span style="color: #859900;">for</span> tier <span style="color: #859900;">in</span> tiers_for_dev(dev):
-                    <span style="color: #268bd2;">other_replicas</span>[tier] += 1
-                    unique_tiers_by_tier_len[<span style="color: #859900;">len</span>(tier)].add(tier)
+        <span style="color: #FBDE2D;">for</span> replica <span style="color: #FBDE2D;">in</span> replace_replicas:
+            <span style="color: #D8FA3C;">tier</span> = <span style="color: #8b0000;">()</span>
+            <span style="color: #D8FA3C;">depth</span> = 1
+            <span style="color: #FBDE2D;">while</span> depth &lt;= max_tier_depth:
+                <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">Order the tiers by how many replicas of this</span>
+                <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">partition they already have. Then, of the ones</span>
+                <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">with the smallest number of replicas, pick the</span>
+                <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">tier with the hungriest drive and then continue</span>
+                <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">searching in that subtree.</span>
+                <span style="color: #8B8989; font-style: italic;">#</span>
+                <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">There are other strategies we could use here,</span>
+                <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">such as hungriest-tier (i.e. biggest</span>
+                <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">sum-of-parts-wanted) or picking one at random.</span>
+                <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">However, hungriest-drive is what was used here</span>
+                <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">before, and it worked pretty well in practice.</span>
+                <span style="color: #8B8989; font-style: italic;">#</span>
+                <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">Note that this allocator will balance things as</span>
+                <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">evenly as possible at each level of the device</span>
+                <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">layout. If your layout is extremely unbalanced,</span>
+                <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">this may produce poor results.</span>
+                <span style="color: #8B8989; font-style: italic;">#</span>
+                <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">This used to be a cute, recursive function, but it's been</span>
+                <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">unrolled for performance.</span>
+                <span style="color: #D8FA3C;">candidate_tiers</span> = tier2children<span style="color: #8b0000;">[</span>tier<span style="color: #8b0000;">]</span>
+                <span style="color: #D8FA3C;">candidates_with_replicas</span> = \
+                    unique_tiers_by_tier_len<span style="color: #8b0000;">[</span><span style="color: #FF6400;">len</span><span style="color: #006400;">(</span>tier<span style="color: #006400;">)</span> + 1<span style="color: #8b0000;">]</span>
+                <span style="color: #FBDE2D;">if</span> <span style="color: #FF6400;">len</span><span style="color: #8b0000;">(</span>candidate_tiers<span style="color: #8b0000;">)</span> &gt; <span style="color: #FF6400;">len</span><span style="color: #8b0000;">(</span>candidates_with_replicas<span style="color: #8b0000;">)</span>:
+                    <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">There exists at least one tier with 0 other replicas,</span>
+                    <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">so work backward among the candidates, accepting the</span>
+                    <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">first which isn't in other_replicas.</span>
+                    <span style="color: #8B8989; font-style: italic;">#</span>
+                    <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">This optimization is to avoid calling the min()</span>
+                    <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">below, which is expensive if you've got thousands of</span>
+                    <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">drives.</span>
+                    <span style="color: #FBDE2D;">for</span> t <span style="color: #FBDE2D;">in</span> <span style="color: #FF6400;">reversed</span><span style="color: #8b0000;">(</span>candidate_tiers<span style="color: #8b0000;">)</span>:
+                        <span style="color: #FBDE2D;">if</span> other_replicas<span style="color: #8b0000;">[</span>t<span style="color: #8b0000;">]</span> == 0:
+                            <span style="color: #D8FA3C;">tier</span> = t
+                            <span style="color: #FBDE2D;">break</span>
+                <span style="color: #FBDE2D;">else</span>:
+                    <span style="color: #D8FA3C;">min_count</span> = <span style="color: #FF6400;">min</span><span style="color: #8b0000;">(</span>other_replicas<span style="color: #006400;">[</span>t<span style="color: #006400;">]</span>
+                                    <span style="color: #FBDE2D;">for</span> t <span style="color: #FBDE2D;">in</span> candidate_tiers<span style="color: #8b0000;">)</span>
+                    <span style="color: #D8FA3C;">tier</span> = <span style="color: #8b0000;">(</span>t <span style="color: #FBDE2D;">for</span> t <span style="color: #FBDE2D;">in</span> <span style="color: #FF6400;">reversed</span><span style="color: #006400;">(</span>candidate_tiers<span style="color: #006400;">)</span>
+                            <span style="color: #FBDE2D;">if</span> other_replicas<span style="color: #006400;">[</span>t<span style="color: #006400;">]</span> == min_count<span style="color: #8b0000;">)</span>.<span style="color: #FF6400;">next</span><span style="color: #8b0000;">()</span>
+                <span style="color: #D8FA3C;">depth</span> += 1
+            <span style="color: #D8FA3C;">dev</span> = tier2devs<span style="color: #8b0000;">[</span>tier<span style="color: #8b0000;">][</span>-1<span style="color: #8b0000;">]</span>
+            <span style="color: #D8FA3C;">dev</span><span style="color: #8b0000;">[</span><span style="color: #61CE3C;">'parts_wanted'</span><span style="color: #8b0000;">]</span> -= 1
+            <span style="color: #D8FA3C;">dev</span><span style="color: #8b0000;">[</span><span style="color: #61CE3C;">'parts'</span><span style="color: #8b0000;">]</span> += 1
+            <span style="color: #D8FA3C;">old_sort_key</span> = dev<span style="color: #8b0000;">[</span><span style="color: #61CE3C;">'sort_key'</span><span style="color: #8b0000;">]</span>
+            <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#37325;&#26032;&#26681;&#25454;&#26032;&#30340;parts_wanted&#35745;&#31639;sort key</span>
+            <span style="color: #D8FA3C;">new_sort_key</span> = <span style="color: #D8FA3C;">dev</span><span style="color: #8b0000;">[</span><span style="color: #61CE3C;">'sort_key'</span><span style="color: #8b0000;">]</span> = <span style="color: #FBDE2D;">self</span>._sort_key_for<span style="color: #8b0000;">(</span>dev<span style="color: #8b0000;">)</span>
+            <span style="color: #FBDE2D;">for</span> tier <span style="color: #FBDE2D;">in</span> tiers_for_dev<span style="color: #8b0000;">(</span>dev<span style="color: #8b0000;">)</span>:
+                <span style="color: #D8FA3C;">other_replicas</span><span style="color: #8b0000;">[</span>tier<span style="color: #8b0000;">]</span> += 1
+                unique_tiers_by_tier_len<span style="color: #8b0000;">[</span><span style="color: #FF6400;">len</span><span style="color: #006400;">(</span>tier<span style="color: #006400;">)</span><span style="color: #8b0000;">]</span>.add<span style="color: #8b0000;">(</span>tier<span style="color: #8b0000;">)</span>
 
-        <span style="color: #859900;">for</span> replica <span style="color: #859900;">in</span> replace_replicas:
-            <span style="color: #268bd2;">tier</span> = ()
-            <span style="color: #268bd2;">depth</span> = 1
-            <span style="color: #859900;">while</span> depth &lt;= max_tier_depth:
-                <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">Order the tiers by how many replicas of this</span>
-                <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">partition they already have. Then, of the ones</span>
-                <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">with the smallest number of replicas, pick the</span>
-                <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">tier with the hungriest drive and then continue</span>
-                <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">searching in that subtree.</span>
-                <span style="color: #586e75; font-style: italic;">#</span>
-                <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">There are other strategies we could use here,</span>
-                <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">such as hungriest-tier (i.e. biggest</span>
-                <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">sum-of-parts-wanted) or picking one at random.</span>
-                <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">However, hungriest-drive is what was used here</span>
-                <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">before, and it worked pretty well in practice.</span>
-                <span style="color: #586e75; font-style: italic;">#</span>
-                <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">Note that this allocator will balance things as</span>
-                <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">evenly as possible at each level of the device</span>
-                <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">layout. If your layout is extremely unbalanced,</span>
-                <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">this may produce poor results.</span>
-                <span style="color: #586e75; font-style: italic;">#</span>
-                <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">This used to be a cute, recursive function, but it's been</span>
-                <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">unrolled for performance.</span>
-                <span style="color: #268bd2;">candidate_tiers</span> = tier2children[tier]
-                <span style="color: #268bd2;">candidates_with_replicas</span> = \
-                    unique_tiers_by_tier_len[<span style="color: #859900;">len</span>(tier) + 1]
-                <span style="color: #859900;">if</span> <span style="color: #859900;">len</span>(candidate_tiers) &gt; <span style="color: #859900;">len</span>(candidates_with_replicas):
-                    <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">There exists at least one tier with 0 other replicas,</span>
-                    <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">so work backward among the candidates, accepting the</span>
-                    <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">first which isn't in other_replicas.</span>
-                    <span style="color: #586e75; font-style: italic;">#</span>
-                    <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">This optimization is to avoid calling the min()</span>
-                    <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">below, which is expensive if you've got thousands of</span>
-                    <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">drives.</span>
-                    <span style="color: #859900;">for</span> t <span style="color: #859900;">in</span> <span style="color: #859900;">reversed</span>(candidate_tiers):
-                        <span style="color: #859900;">if</span> other_replicas[t] == 0:
-                            tier = t
-                            <span style="color: #859900;">break</span>
-                <span style="color: #859900;">else</span>:
-                    min_count = <span style="color: #859900;">min</span>(other_replicas[t]
-                                    <span style="color: #859900;">for</span> t <span style="color: #859900;">in</span> candidate_tiers)
-                    tier = (t <span style="color: #859900;">for</span> t <span style="color: #859900;">in</span> <span style="color: #859900;">reversed</span>(candidate_tiers)
-                            <span style="color: #859900;">if</span> other_replicas[t] == min_count).<span style="color: #859900;">next</span>()
-                depth += 1
-            dev = tier2devs[tier][-1]
-            dev[<span style="color: #2aa198;">'parts_wanted'</span>] -= 1
-            dev[<span style="color: #2aa198;">'parts'</span>] += 1
-            old_sort_key = dev[<span style="color: #2aa198;">'sort_key'</span>]
-            <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#37325;&#26032;&#26681;&#25454;&#26032;&#30340;parts_wanted&#35745;&#31639;sort key</span>
-            new_sort_key = dev[<span style="color: #2aa198;">'sort_key'</span>] = <span style="color: #859900;">self</span>._sort_key_for(dev)
-            <span style="color: #859900;">for</span> tier <span style="color: #859900;">in</span> tiers_for_dev(dev):
-                other_replicas[tier] += 1
-                unique_tiers_by_tier_len[<span style="color: #859900;">len</span>(tier)].add(tier)
+                <span style="color: #D8FA3C;">index</span> = bisect.bisect_left<span style="color: #8b0000;">(</span>tier2sort_key<span style="color: #006400;">[</span>tier<span style="color: #006400;">]</span>,
+                                           old_sort_key<span style="color: #8b0000;">)</span>
+                <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#24377;&#20986;&#35813;dev</span>
+                tier2devs<span style="color: #8b0000;">[</span>tier<span style="color: #8b0000;">]</span>.pop<span style="color: #8b0000;">(</span>index<span style="color: #8b0000;">)</span>
+                tier2sort_key<span style="color: #8b0000;">[</span>tier<span style="color: #8b0000;">]</span>.pop<span style="color: #8b0000;">(</span>index<span style="color: #8b0000;">)</span>
 
-                index = bisect.bisect_left(tier2sort_key[tier],
-                                           old_sort_key)
-                <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#24377;&#20986;&#35813;dev</span>
-                tier2devs[tier].pop(index)
-                tier2sort_key[tier].pop(index)
+                <span style="color: #D8FA3C;">new_index</span> = bisect.bisect_left<span style="color: #8b0000;">(</span>tier2sort_key<span style="color: #006400;">[</span>tier<span style="color: #006400;">]</span>,
+                                               new_sort_key<span style="color: #8b0000;">)</span>
+                <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#29992;&#26032;&#30340;sort key&#25554;&#20837;&#21040;tier2devs&#20013;</span>
+                tier2devs<span style="color: #8b0000;">[</span>tier<span style="color: #8b0000;">]</span>.insert<span style="color: #8b0000;">(</span>new_index, dev<span style="color: #8b0000;">)</span>
+                tier2sort_key<span style="color: #8b0000;">[</span>tier<span style="color: #8b0000;">]</span>.insert<span style="color: #8b0000;">(</span>new_index, new_sort_key<span style="color: #8b0000;">)</span>
 
-                new_index = bisect.bisect_left(tier2sort_key[tier],
-                                               new_sort_key)
-                <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#29992;&#26032;&#30340;sort key&#25554;&#20837;&#21040;tier2devs&#20013;</span>
-                tier2devs[tier].insert(new_index, dev)
-                tier2sort_key[tier].insert(new_index, new_sort_key)
+                <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#21516;&#26679;&#23545;tier2childre&#36827;&#34892;&#25805;&#20316;</span>
+                <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">Now jiggle tier2children values to keep them sorted</span>
+                <span style="color: #D8FA3C;">new_last_sort_key</span> = tier2sort_key<span style="color: #8b0000;">[</span>tier<span style="color: #8b0000;">][</span>-1<span style="color: #8b0000;">]</span>
+                <span style="color: #D8FA3C;">parent_tier</span> = tier<span style="color: #8b0000;">[</span>0:-1<span style="color: #8b0000;">]</span>
+                <span style="color: #D8FA3C;">index</span> = bisect.bisect_left<span style="color: #8b0000;">(</span>
+                    tier2children_sort_key<span style="color: #006400;">[</span>parent_tier<span style="color: #006400;">]</span>,
+                    old_sort_key<span style="color: #8b0000;">)</span>
+                <span style="color: #D8FA3C;">popped</span> = tier2children<span style="color: #8b0000;">[</span>parent_tier<span style="color: #8b0000;">]</span>.pop<span style="color: #8b0000;">(</span>index<span style="color: #8b0000;">)</span>
+                tier2children_sort_key<span style="color: #8b0000;">[</span>parent_tier<span style="color: #8b0000;">]</span>.pop<span style="color: #8b0000;">(</span>index<span style="color: #8b0000;">)</span>
 
-                <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#21516;&#26679;&#23545;tier2childre&#36827;&#34892;&#25805;&#20316;</span>
-                <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">Now jiggle tier2children values to keep them sorted</span>
-                new_last_sort_key = tier2sort_key[tier][-1]
-                parent_tier = tier[0:-1]
-                index = bisect.bisect_left(
-                    tier2children_sort_key[parent_tier],
-                    old_sort_key)
-                popped = tier2children[parent_tier].pop(index)
-                tier2children_sort_key[parent_tier].pop(index)
+                <span style="color: #D8FA3C;">new_index</span> = bisect.bisect_left<span style="color: #8b0000;">(</span>
+                    tier2children_sort_key<span style="color: #006400;">[</span>parent_tier<span style="color: #006400;">]</span>,
+                    new_last_sort_key<span style="color: #8b0000;">)</span>
+                tier2children<span style="color: #8b0000;">[</span>parent_tier<span style="color: #8b0000;">]</span>.insert<span style="color: #8b0000;">(</span>new_index, popped<span style="color: #8b0000;">)</span>
+                tier2children_sort_key<span style="color: #8b0000;">[</span>parent_tier<span style="color: #8b0000;">]</span>.insert<span style="color: #8b0000;">(</span>
+                    new_index, new_last_sort_key<span style="color: #8b0000;">)</span>
 
-                new_index = bisect.bisect_left(
-                    tier2children_sort_key[parent_tier],
-                    new_last_sort_key)
-                tier2children[parent_tier].insert(new_index, popped)
-                tier2children_sort_key[parent_tier].insert(
-                    new_index, new_last_sort_key)
+            <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#24314;&#31435;part&#21644;dev&#26144;&#23556;</span>
+            <span style="color: #FBDE2D;">self</span>._replica2part2dev<span style="color: #8b0000;">[</span>replica<span style="color: #8b0000;">][</span>part<span style="color: #8b0000;">]</span> = dev<span style="color: #8b0000;">[</span><span style="color: #61CE3C;">'id'</span><span style="color: #8b0000;">]</span>
 
-            <span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">&#24314;&#31435;part&#21644;dev&#26144;&#23556;</span>
-            <span style="color: #859900;">self</span>._replica2part2dev[replica][part] = dev[<span style="color: #2aa198;">'id'</span>]
-
-    <span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">Just to save memory and keep from accidental reuse.</span>
-    <span style="color: #859900;">for</span> dev <span style="color: #859900;">in</span> <span style="color: #859900;">self</span>._iter_devs():
-        <span style="color: #859900;">del</span> dev[<span style="color: #2aa198;">'sort_key'</span>]
+    <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">Just to save memory and keep from accidental reuse.</span>
+    <span style="color: #FBDE2D;">for</span> dev <span style="color: #FBDE2D;">in</span> <span style="color: #FBDE2D;">self</span>._iter_devs<span style="color: #8b0000;">()</span>:
+        <span style="color: #FBDE2D;">del</span> dev<span style="color: #8b0000;">[</span><span style="color: #61CE3C;">'sort_key'</span><span style="color: #8b0000;">]</span>
 </pre>
-
-
-
 </div>
 </div>
 </div>
-
+</div>
 </div>
 
-<div id="outline-container-2" class="outline-2">
-<h2 id="sec-2">经典文章</h2>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> 经典文章</h2>
 <div class="outline-text-2" id="text-2">
-
-<ul>
+<ul class="org-ul">
 <li><a href="http://greg.brim.net/page/building_a_consistent_hashing_ring.html">Building a Consistent Hashing Ring</a>
 </li>
 </ul>
-
-
-
+</div>
 </div>
 
-</div>
 
-<div id="outline-container-3" class="outline-2">
-<h2 id="sec-3">Nova</h2>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Nova</h2>
 <div class="outline-text-2" id="text-3">
-
-
-</div>
-
-<div id="outline-container-3-1" class="outline-3">
-<h3 id="sec-3-1">Develop environment</h3>
+</div><div id="outline-container-sec-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> Develop environment</h3>
 <div class="outline-text-3" id="text-3-1">
-
-<ol>
+<ol class="org-ol">
 <li>install package
-   sudo apt-get install python-dev libssl-dev python-pip git-core libxml2-dev
-   libxslt-dev libmysqld-dev
+sudo apt-get install python-dev libssl-dev python-pip git-core libxml2-dev
+libxslt-dev libmysqld-dev
 </li>
 <li>get source code
-   git clone <a href="https://github.com/openstack/nova.git">https://github.com/openstack/nova.git</a> nova-dev
+git clone <a href="https://github.com/openstack/nova.git">https://github.com/openstack/nova.git</a> nova-dev
 </li>
-<li>configure virtualenv<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup>
-   easy<sub>install</sub> Virtualenv
-   cd nova-dev
-   python tools/install<sub>env</sub>.py
-   source .venv/bin/activate
+<li>configure virtualenv<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup>
+easy_install Virtualenv
+cd nova-dev
+python tools/install_env.py
+source .venv/bin/activate
 </li>
 <li>run unit test
-   export PYTHONPATH=$PYTHONPATH:/home/tacy/workspace/nova-dev
-   ./run<sub>tests</sub>.sh
+export PYTHONPATH=$PYTHONPATH:/home/tacy/workspace/nova-dev
+./run_tests.sh
 </li>
 </ol>
-
-
+</div>
+</div>
+</div>
 <div id="footnotes">
 <h2 class="footnotes">Footnotes: </h2>
 <div id="text-footnotes">
-<p class="footnote"><sup><a class="footnum" name="fn-.1" href="#fnr-.1">1</a></sup> <a href="http://pypi.python.org/pypi/virtualenv">using virtualenv to create isolated python environments</a>
-</p>
 
+<div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p class="footpara">
+<a href="http://pypi.python.org/pypi/virtualenv">using virtualenv to create isolated python environments</a>
+</p></div>
 
-
-</div>
-</div>
-</div>
 
 </div>
 </div>
