@@ -802,8 +802,29 @@ Docker的安全还是需要完善，理论上VM的安全性高于Container，Con
 </div>
 
 <div id="outline-container-sec-13" class="outline-2">
-<h2 id="sec-13"><span class="section-number-2">13</span> IBM Research Report 2014 for Container and VM</h2>
+<h2 id="sec-13"><span class="section-number-2">13</span> Kubernetes</h2>
 <div class="outline-text-2" id="text-13">
+</div><div id="outline-container-sec-13-1" class="outline-3">
+<h3 id="sec-13-1"><span class="section-number-3">13.1</span> pod</h3>
+<div class="outline-text-3" id="text-13-1">
+<p>
+pod由同一host上的一组容器构成, 一般是一组紧耦合的进程. 这里不再docker container里面运行多个进程实现, 主要考虑是让docker container尽量轻量级, 不用负责进程管理, 更多的工作让k8完成.
+</p>
+
+<p>
+一个pod是一个最小调度单元, 有自己的ip地址. 同一个pod内的容器共享网络空间.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-13-2" class="outline-3">
+<h3 id="sec-13-2"><span class="section-number-3">13.2</span> service</h3>
+</div>
+</div>
+
+<div id="outline-container-sec-14" class="outline-2">
+<h2 id="sec-14"><span class="section-number-2">14</span> IBM Research Report 2014 for Container and VM</h2>
+<div class="outline-text-2" id="text-14">
 <p>
 IBM的一个关于容器和虚拟机的对比报告，主要是性能关注，包括CPU、内存、存储、网络
 资源，测试结果显示容器的性能表现全面高于或等于虚拟机，对于IO敏感的应用，两个技
@@ -816,9 +837,9 @@ IBM的一个关于容器和虚拟机的对比报告，主要是性能关注，�
 </p>
 </div>
 
-<div id="outline-container-sec-13-1" class="outline-3">
-<h3 id="sec-13-1"><span class="section-number-3">13.1</span> 背景知识</h3>
-<div class="outline-text-3" id="text-13-1">
+<div id="outline-container-sec-14-1" class="outline-3">
+<h3 id="sec-14-1"><span class="section-number-3">14.1</span> 背景知识</h3>
+<div class="outline-text-3" id="text-14-1">
 <p>
 首先了解虚拟化的难点（这里谈论的都是x86）。传统的x86系统都是基于裸硬件设计的，
 也就是说OS缺省默认是自己拥有所有的底层硬件资源，CPU在设计的时候，都会把指令按照
@@ -837,12 +858,12 @@ user mode需要做特权指令调用的时候，只能通过system call实现，
 </p>
 </div>
 
-<div id="outline-container-sec-13-1-1" class="outline-4">
-<h4 id="sec-13-1-1"><span class="section-number-4">13.1.1</span> 软件虚拟化问题</h4>
-<div class="outline-text-4" id="text-13-1-1">
-</div><div id="outline-container-sec-13-1-1-1" class="outline-5">
-<h5 id="sec-13-1-1-1"><span class="section-number-5">13.1.1.1</span> 特权指令调用</h5>
-<div class="outline-text-5" id="text-13-1-1-1">
+<div id="outline-container-sec-14-1-1" class="outline-4">
+<h4 id="sec-14-1-1"><span class="section-number-4">14.1.1</span> 软件虚拟化问题</h4>
+<div class="outline-text-4" id="text-14-1-1">
+</div><div id="outline-container-sec-14-1-1-1" class="outline-5">
+<h5 id="sec-14-1-1-1"><span class="section-number-5">14.1.1.1</span> 特权指令调用</h5>
+<div class="outline-text-5" id="text-14-1-1-1">
 <p>
 最早的vmware采用binary translation解决这个问题，在vmm层模拟所有的系统调用，当
 guest os执行systemcall时，vmm捕获执行模拟操作，然后返回结果给guest os kernel，
@@ -859,9 +880,9 @@ XEN采用一种不同的方式：Paravitualization<sup><a id="fnr.22" name="fnr.
 </div>
 </div>
 
-<div id="outline-container-sec-13-1-1-2" class="outline-5">
-<h5 id="sec-13-1-1-2"><span class="section-number-5">13.1.1.2</span> 内存管理问题（MMU）</h5>
-<div class="outline-text-5" id="text-13-1-1-2">
+<div id="outline-container-sec-14-1-1-2" class="outline-5">
+<h5 id="sec-14-1-1-2"><span class="section-number-5">14.1.1.2</span> 内存管理问题（MMU）</h5>
+<div class="outline-text-5" id="text-14-1-1-2">
 <p>
 由于cpu只有一个MMU，guest os上的内存寻址带来问题，需要从GVA-》GPA-》HVA-》HPA，
 带来严重的性能开销，解决办法就是Shadow Page Table，vmm维护一个虚拟的TLB，直接
@@ -871,9 +892,9 @@ XEN采用一种不同的方式：Paravitualization<sup><a id="fnr.22" name="fnr.
 </div>
 </div>
 
-<div id="outline-container-sec-13-1-1-3" class="outline-5">
-<h5 id="sec-13-1-1-3"><span class="section-number-5">13.1.1.3</span> IO问题</h5>
-<div class="outline-text-5" id="text-13-1-1-3">
+<div id="outline-container-sec-14-1-1-3" class="outline-5">
+<h5 id="sec-14-1-1-3"><span class="section-number-5">14.1.1.3</span> IO问题</h5>
+<div class="outline-text-5" id="text-14-1-1-3">
 <p>
 早期的实现都是基于模拟方式，主流的QEMU实现了全虚拟的驱动设备，但是效率非常地下。
 后期主流都采用Paravirtualization实现，但是需要在guest os上安装具体驱动。vmware
@@ -884,9 +905,9 @@ GPLPV驱动。
 </div>
 </div>
 
-<div id="outline-container-sec-13-1-2" class="outline-4">
-<h4 id="sec-13-1-2"><span class="section-number-4">13.1.2</span> 硬件支持</h4>
-<div class="outline-text-4" id="text-13-1-2">
+<div id="outline-container-sec-14-1-2" class="outline-4">
+<h4 id="sec-14-1-2"><span class="section-number-4">14.1.2</span> 硬件支持</h4>
+<div class="outline-text-4" id="text-14-1-2">
 <p>
 x86芯片虚拟化自然也是不干落后，首先是vt-x（只说intel，AMD有相应技术）<sup><a id="fnr.23" name="fnr.23" class="footref" href="#fn.23">23</a></sup>，
 第一代的vt-x解决的是特权指令问题，引入了ring -1（也叫Root mode）,VMM跑在Root
@@ -917,9 +938,9 @@ IO这块通用的方式更多还是paravirtualization。
 </div>
 </div>
 
-<div id="outline-container-sec-13-1-3" class="outline-4">
-<h4 id="sec-13-1-3"><span class="section-number-4">13.1.3</span> KVM</h4>
-<div class="outline-text-4" id="text-13-1-3">
+<div id="outline-container-sec-14-1-3" class="outline-4">
+<h4 id="sec-14-1-3"><span class="section-number-4">14.1.3</span> KVM</h4>
+<div class="outline-text-4" id="text-14-1-3">
 <p>
 kvm采用的是HVM方式，也就是必须硬件虚拟化支持（vt-x）。IO实现两种模式，一种是通
 过QEMU emulator模拟驱动设备，性能很差，基本只做测试，另外一种就是paravirtual（
@@ -951,9 +972,9 @@ VM的隔离也带来了其他开销：系统内存，文件系统等，虚拟化
 </div>
 </div>
 
-<div id="outline-container-sec-13-1-4" class="outline-4">
-<h4 id="sec-13-1-4"><span class="section-number-4">13.1.4</span> linux container</h4>
-<div class="outline-text-4" id="text-13-1-4">
+<div id="outline-container-sec-14-1-4" class="outline-4">
+<h4 id="sec-14-1-4"><span class="section-number-4">14.1.4</span> linux container</h4>
+<div class="outline-text-4" id="text-14-1-4">
 <p>
 linux container底层技术就是两个：kernel namespace和control groups。
 </p>
@@ -978,12 +999,12 @@ cgroups
 
 
 
-<div id="outline-container-sec-14" class="outline-2">
-<h2 id="sec-14"><span class="section-number-2">14</span> 一些需要注意的问题：</h2>
-<div class="outline-text-2" id="text-14">
-</div><div id="outline-container-sec-14-1" class="outline-3">
-<h3 id="sec-14-1"><span class="section-number-3">14.1</span> net=host安全问题</h3>
-<div class="outline-text-3" id="text-14-1">
+<div id="outline-container-sec-15" class="outline-2">
+<h2 id="sec-15"><span class="section-number-2">15</span> 一些需要注意的问题：</h2>
+<div class="outline-text-2" id="text-15">
+</div><div id="outline-container-sec-15-1" class="outline-3">
+<h3 id="sec-15-1"><span class="section-number-3">15.1</span> net=host安全问题</h3>
+<div class="outline-text-3" id="text-15-1">
 <p>
 <a href="https://github.com/docker/docker/issues/6401">Rebooting within docker container actually reboots the host #6401 </a>
 </p>
@@ -991,11 +1012,13 @@ cgroups
 </div>
 </div>
 
-<div id="outline-container-sec-15" class="outline-2">
-<h2 id="sec-15"><span class="section-number-2">15</span> 好的文章</h2>
-<div class="outline-text-2" id="text-15">
+<div id="outline-container-sec-16" class="outline-2">
+<h2 id="sec-16"><span class="section-number-2">16</span> 好的文章</h2>
+<div class="outline-text-2" id="text-16">
 <ul class="org-ul">
 <li><a href="http://stackoverflow.com/questions/18285212/how-to-scale-docker-containers-in-production">How to scale Docker containers in production</a>
+</li>
+<li><a href="http://www.centurylinklabs.com/caching-docker-images/?hvid=2WaPeN">Working With the Docker Image Cache</a>
 </li>
 </ul>
 </div>

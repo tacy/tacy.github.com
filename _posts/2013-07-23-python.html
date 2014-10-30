@@ -19,6 +19,8 @@ deactivate
 </div>
 </div>
 </div>
+
+
 <div id="outline-container-sec-2" class="outline-2">
 <h2 id="sec-2"><span class="section-number-2">2</span> Core type</h2>
 <div class="outline-text-2" id="text-2">
@@ -73,85 +75,73 @@ object serialization &amp; C structs represented as Python strings
 <h2 id="sec-3"><span class="section-number-2">3</span> String</h2>
 <div class="outline-text-2" id="text-3">
 </div><div id="outline-container-sec-3-1" class="outline-3">
-<h3 id="sec-3-1"><span class="section-number-3">3.1</span> encoding<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup></h3>
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> python中的字符串</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
-python内部都用unicode做中介。当你需要对一个字符串转换编码时，如果它本身不是
-unicode编码，python会隐式转换它成unicode编码，转换时采用的缺省编码是ASCII，
-这样I18N字符串就会出错，比如你要把一个utf8字符串转换成gbk：
+首先明确一下，下面讲的是Python2，在Python2中的string分为两个类型:str类型和unicode类型. str类型其实就是一个字节数组,
+做下面一个简单测试就知道了：
 </p>
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">-*- coding: utf-8 -*-</span>
-<span style="color: #D8FA3C;">name</span> = <span style="color: #61CE3C;">'&#26031;&#22374;&#31119;'</span>
+<pre class="src src-python">In <span style="color: #8b0000;">[</span>176<span style="color: #8b0000;">]</span>: <span style="color: #D8FA3C;">s</span> = <span style="color: #61CE3C;">'&#27979;&#35797;'</span>
+
+In <span style="color: #8b0000;">[</span>177<span style="color: #8b0000;">]</span>: s
+Out<span style="color: #8b0000;">[</span>177<span style="color: #8b0000;">]</span>: <span style="color: #61CE3C;">'\xe6\xb5\x8b\xe8\xaf\x95'</span>
+
+In <span style="color: #8b0000;">[</span>178<span style="color: #8b0000;">]</span>: s<span style="color: #8b0000;">[</span>0<span style="color: #8b0000;">]</span>
+Out<span style="color: #8b0000;">[</span>178<span style="color: #8b0000;">]</span>: <span style="color: #61CE3C;">'\xe6'</span>
+
+In <span style="color: #8b0000;">[</span>179<span style="color: #8b0000;">]</span>: <span style="color: #FF6400;">len</span><span style="color: #8b0000;">(</span>s<span style="color: #8b0000;">)</span>
+Out<span style="color: #8b0000;">[</span>179<span style="color: #8b0000;">]</span>: 6
+
+In <span style="color: #8b0000;">[</span>180<span style="color: #8b0000;">]</span>: <span style="color: #FF6400;">type</span><span style="color: #8b0000;">(</span>s<span style="color: #8b0000;">)</span>
+Out<span style="color: #8b0000;">[</span>180<span style="color: #8b0000;">]</span>: <span style="color: #FF6400;">str</span>
+</pre>
+</div>
+<p>
+从上面可以看到，'测试'这个String其实表达的是一个6字节的数组, 类型是str, 可以
+直接通过下标访问每个字节, 它的长度是6.
+</p>
+
+<p>
+Unicode类型是真正语义上的字符串, 继续做下面一个测试:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-python">In <span style="color: #8b0000;">[</span>181<span style="color: #8b0000;">]</span>: <span style="color: #D8FA3C;">u</span> = u<span style="color: #61CE3C;">'&#27979;&#35797;'</span>
+
+In <span style="color: #8b0000;">[</span>182<span style="color: #8b0000;">]</span>: <span style="color: #FF6400;">len</span><span style="color: #8b0000;">(</span>u<span style="color: #8b0000;">)</span>
+Out<span style="color: #8b0000;">[</span>182<span style="color: #8b0000;">]</span>: 2
+
+In <span style="color: #8b0000;">[</span>183<span style="color: #8b0000;">]</span>: <span style="color: #FF6400;">type</span><span style="color: #8b0000;">(</span>u<span style="color: #8b0000;">)</span>
+Out<span style="color: #8b0000;">[</span>183<span style="color: #8b0000;">]</span>: <span style="color: #FF6400;">unicode</span>
+
+In <span style="color: #8b0000;">[</span>184<span style="color: #8b0000;">]</span>: u<span style="color: #8b0000;">[</span>0<span style="color: #8b0000;">]</span>
+Out<span style="color: #8b0000;">[</span>184<span style="color: #8b0000;">]</span>: u<span style="color: #61CE3C;">'\u6d4b'</span>
+
+In <span style="color: #8b0000;">[</span>185<span style="color: #8b0000;">]</span>: u
+Out<span style="color: #8b0000;">[</span>185<span style="color: #8b0000;">]</span>: u<span style="color: #61CE3C;">'\u6d4b\u8bd5'</span>
 </pre>
 </div>
 
-<pre class="example">
-&gt;name.encode('gbk')
-UnicodeDecodeError: 'ascii' codec can't decode byte 0xe6 in position 0:
-ordinal not in range(128)
-</pre>
 <p>
-上面例子中，name在做encode的时候，会先隐式去做unicode()，转换成unicode编码，
-然后再转成gbk，问题就出在隐式unicode()这个步骤上，python隐式做unicode()用的
-编码是ASCII，而‘斯坦福’是不能用ASCII表达的，这就出现了上面的错误。要解决上
-面的问题，必须先用正确的编码把name转换成unicode格式:
+看到不一样了吗, 你通过u'这个标示告诉Python这是一个Unicode字符串, Unicode
+字符串长度是2, 类型是Unicode. 这里的长度不代表字节数(6d4b无法用一个字节表示), 而是代表字符个数, 这和str类型的string不一样.
+要搞明白这两个字符串类型的关系, 我们需要先来搞明白unicode和encode之间的关系.
 </p>
-<pre class="example">
-&gt;uname = unicode(name, 'utf-8')    #或者也可以uname = name.decode('utf-8')
-&gt;uname.encode('gb18030')
-'\xcb\xb9\xcc\xb9\xb8\xa3'
-</pre>
-
-<p>
-另外注意我们上面指定的unicode()编码，这个也不能随便写，python编码规范要求你指
-定源代码编码<sup><a id="fnr.2" name="fnr.2" class="footref" href="#fn.2">2</a></sup>，例如你指定coding为”# -*- coding: utf-8 -*-“，那么你在
-对字符串做unicode()的时候就不能用gbk去做，会出错：
-</p>
-<pre class="example">
-&gt;unicode(name, 'gb18030')
-UnicodeDecodeError: 'gb18030' codec can't decode byte 0x8f in position 8:
-incomplete multibyte sequence
-</pre>
-
-<p>
-上面的问题都是由于缺省编码导致的，p3k之后的缺省编码格式变成了utf8，这样你只
-需要注意非utf8编码格式的字符串转换。
-</p>
-
-<p>
-转换一个str成为url也必须小心，如果你代码的编码是utf8，而目标网站编码是gbk，
-你在转换的时候需要先转换str编码为gbk，然后做quote:
-</p>
-<pre class="example">
-&gt;uname = name.decode('utf-8')
-&gt;urllib2.quote(uname.encode('gb18030'))
-'%CB%B9%CC%B9%B8%A3'
-</pre>
 </div>
 </div>
+
 <div id="outline-container-sec-3-2" class="outline-3">
-<h3 id="sec-3-2"><span class="section-number-3">3.2</span> p2k &amp; p3k</h3>
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> unicode &amp; encode</h3>
 <div class="outline-text-3" id="text-3-2">
 <p>
-两个版本的python中，string的实现有很大区别，p2k中，string表示单字节字符和byte，
-unicode表示多字节字符，有byte类型，主要是为了向前兼容，其实和string是同义词；而
-在p3k中，string代表unicode（含ascii），byte表示字节，bytearray为字节数组。p3k
-中明确的分为两个类型str和byte，使用中要求你明确，不能混用。转换同样通过decode
-和encode实现，你可以把str encode成byte，也能把byte decode成str。str在3.3之后
-内存占用也进行了优化，ascii采用单字节表示，减少转换成本和内存占用。
-</p>
-</div>
-</div>
-<div id="outline-container-sec-3-3" class="outline-3">
-<h3 id="sec-3-3"><span class="section-number-3">3.3</span> unicode &amp; encode</h3>
-<div class="outline-text-3" id="text-3-3">
-<p>
 这里两个概念不要搞混淆了，unicode是用一组code points表示字符序列，codepoints就
-是一个整形，比如26446，代表‘李’，在unicode中是唯一的。由于他不能使用一个字节表
-示，那么他在内存、持久化、传输的时候，转换成bytes序列必须有某种格式，这样以后才
-能重新解码回来，这样就有了字符encode，常见的encode包括ascii、iso-8859-1、utf-8
+是一个整形，比如26446，代表‘李’，在unicode中是唯一的。
+</p>
+
+<p>
+但是由于26446这个数字不能使用一个字节表示，那么他在内存、持久化、传输的时候，就必须定义一些标准, 这样对端才能正确理解这个bytes序列的具体含义. 对端也才能重新解码回来，这样就有了字符编码规范 - encode. 常见的encode包括ascii、iso-8859-1、utf-8
 下面是我在理解过程中，几篇重要的文章：
 </p>
 <ul class="org-ul">
@@ -162,11 +152,20 @@ unicode表示多字节字符，有byte类型，主要是为了向前兼容，其
 <li><a href="http://docs.python.org/2/howto/unicode.html">Unicode HOWTO</a>
 </li>
 </ul>
+
+<p>
+理解这两个概念对于搞明白Python的字符串非常重要. 说白了, unicode字符串按照某种编码规范(例如utf-8)编码之后, 就变成了str类型的字节数组, 反之亦然.
+</p>
+
+<p>
+下面我们就来看看最常用的utf-8编码
+</p>
 </div>
 </div>
-<div id="outline-container-sec-3-4" class="outline-3">
-<h3 id="sec-3-4"><span class="section-number-3">3.4</span> utf-8</h3>
-<div class="outline-text-3" id="text-3-4">
+
+<div id="outline-container-sec-3-3" class="outline-3">
+<h3 id="sec-3-3"><span class="section-number-3">3.3</span> utf-8 encode</h3>
+<div class="outline-text-3" id="text-3-3">
 <p>
 最常用的编码之一，python建议采用的编码格式，采用变长方式编码:
 </p>
@@ -251,11 +250,95 @@ unicode表示多字节字符，有byte类型，主要是为了向前兼容，其
 </div>
 </div>
 
+<div id="outline-container-sec-3-4" class="outline-3">
+<h3 id="sec-3-4"><span class="section-number-3">3.4</span> encoding<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup></h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+有了前面的铺垫,我们再来看看Python中的字符串编码支持.
+</p>
+
+<p>
+python内部都用unicode做中介。当你定义一个字符串时, 如果没有明确的用u'标示,
+那么他就是一个str类型的字符串数组. 当你需要对一个字符串转换编码时，比如你要把
+一个utf-8编码的字符串转换成gbk编码, python会先该字符串转换成unicode字符，然
+后再转成gbk. 转换成unicode的过程, 可以是隐式的也可以是显式的. 如果是隐式的,
+就像下面示例这样:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">-*- coding: utf-8 -*-</span>
+<span style="color: #D8FA3C;">name</span> = <span style="color: #61CE3C;">'&#26031;&#22374;&#31119;'</span>
+</pre>
+</div>
+
+<pre class="example">
+&gt;name.encode('gbk')
+UnicodeDecodeError: 'ascii' codec can't decode byte 0xe6 in position 0:
+ordinal not in range(128)
+</pre>
+
+<p>
+Python会抛UnicodeDecodeError异常. 导致该结果的原因是, Python隐式转码的过程用
+的缺省编码是ASCII, 但是'斯坦福'这个字符串无法用ASCII编码格式进行编码(ascii只
+能处理0-127的字符).
+</p>
+
+<p>
+要解决上面的问题, 我们需要显式的对name进行转码, 先手动把name解码成unicode字符
+串, 然后再用gbk去做编码, 这样Python才能正常工作:
+</p>
+<pre class="example">
+&gt;uname = unicode(name, 'utf-8')    #或者也可以uname = name.decode('utf-8')
+&gt;uname.encode('gb18030')
+'\xcb\xb9\xcc\xb9\xb8\xa3'
+</pre>
+
+<p>
+另外需要注意的是, 我们怎么才能知道Python缺省使用的字符串编码呢? 例如上面赋值
+语句:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #D8FA3C;">name</span> = <span style="color: #61CE3C;">'&#26031;&#22374;&#31119;'</span>
+</pre>
+</div>
+
+<p>
+Python缺省使用什么编码格式来对name进行编码? 在Python编码规范中, 明确要求你指
+定源代码编码<sup><a id="fnr.2" name="fnr.2" class="footref" href="#fn.2">2</a></sup>， 例如你指定coding为”# -*- coding: utf-8 -*-“，那么
+Python就知道用utf-8对name进行编码, 你在对name做unicode()的时候就不能用gbk
+去做，会出错：
+</p>
+<pre class="example">
+&gt;unicode(name, 'gb18030')
+UnicodeDecodeError: 'gb18030' codec can't decode byte 0x8f in position 8:
+incomplete multibyte sequence
+</pre>
+<p>
+如果你没有申明编码格式, 那么Python就会用系统的缺省编码, 比如在中文windows系统中, 可能就是cp936.
+</p>
+
+<p>
+转换一个str成为url也必须小心，如果你代码的编码是utf8，而目标网站编码是gbk，
+你在转换的时候需要先转换str编码为gbk，然后做quote:
+</p>
+<pre class="example">
+&gt;uname = name.decode('utf-8')
+&gt;urllib2.quote(uname.encode('gb18030'))
+'%CB%B9%CC%B9%B8%A3'
+</pre>
+
+<p>
+搞明白了上面这些东西, 基本你就能解决UnicodeDecodeError问题了.
+</p>
+</div>
+</div>
+
 <div id="outline-container-sec-3-5" class="outline-3">
 <h3 id="sec-3-5"><span class="section-number-3">3.5</span> 关于print和重定向</h3>
 <div class="outline-text-3" id="text-3-5">
 <p>
-这里需要注意，如果你的代码明确了编码，例如:“# -*- coding: utf-8 -*-”，那么你在中文的windows平台上执行print时需要小心，str类型的变量需要明确做转码，比如：
+这里需要注意，如果你的代码明确了编码，例如:“# -*- coding: utf-8 -*-”，那么你在中文的windows平台上执行print时需要小心，由于缺省用的是utf-8编码, 字符串在输出的时候需要注意, 需要先解码成unicode, 然后让Python自己去编码成console stdout制定的编码格式. 如果你不显示解码成unicode, 就会发生隐式转换, 导致UnicodeDecodeError异常.
 </p>
 <pre class="example">
 a = '测试'
@@ -273,7 +356,35 @@ print a.decode('utf-8')
 </pre>
 </div>
 </div>
+
+<div id="outline-container-sec-3-6" class="outline-3">
+<h3 id="sec-3-6"><span class="section-number-3">3.6</span> p2k &amp; p3k</h3>
+<div class="outline-text-3" id="text-3-6">
+<p>
+上面我们说的都是p2k, 可以看到p2k对于字符串编码的处理非常麻烦, 这点在p3k之后有了很大的改进.
+</p>
+
+<p>
+两个版本的python中，string的实现有很大区别:
+</p>
+<ul class="org-ul">
+<li>p2k中，String分为str类型和unicode类型, str类型其实是字节数组，而unicode类型才是真正语义上的字符串(计算字符串长度的时候就能看出明显区别), 另外p2k中也有byte类型, 但它和str是同义词;
+</li>
+<li>而在p3k中，对String进行了统一, 只有unicode类型的string，p2k中的str类型字符直接用byte类型表示，bytearray为字节数组, 也就是说p3k中, str全部用unicode表示, byte类型表示编码过后的字符, 使用中要求你明确，不能混用。转换同样通过decode和encode实现，你可以把str encode成byte，也能把byte decode成str。
+</li>
+</ul>
+
+<p>
+这样看来, p3k对于编码的处理方便多了~
+</p>
+
+<p>
+当然, 早期的p3k把所有的字符都表示成unicode, 这样对于ascii字符会占用更多的内存. 在3.3之后, Python对ascii str进行了优化，ascii字符采用单字节表示，减少转换成本和内存占用。
+</p>
 </div>
+</div>
+</div>
+
 
 <div id="outline-container-sec-4" class="outline-2">
 <h2 id="sec-4"><span class="section-number-2">4</span> Regex<sup><a id="fnr.4" name="fnr.4" class="footref" href="#fn.4">4</a></sup></h2>
@@ -852,6 +963,7 @@ properties其实底层就是通过descriptors实现，properties对于简单的a
 </p>
 </div>
 </div>
+
 
 <div id="outline-container-sec-9" class="outline-2">
 <h2 id="sec-9"><span class="section-number-2">9</span> Python分支</h2>
