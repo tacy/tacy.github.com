@@ -14,7 +14,11 @@ tags: [raspberrypi, hostapd]
 </p>
 
 <p>
-网上已经有一大堆文档, 大部分都已经过期了, 所有建议大家在搜索的时候, 尽量选择近期的文档, 这样会比较靠谱一点. 拿我的设备举例子: 我的无线网卡是RTL8192CU, 网上的大部分帖子都过期了, 上来就让你编译网卡驱动. 其实这个网卡在kernel 3.10之前有bug, 无法正确支持, 但是在后续版本中已经fix了, 我现在用的kernel是3.11, 自动支持.
+网上已经有一大堆文档, 大部分都已经过期了, 所以建议大家在搜索的时候, 尽量选择近期的文档, 这样会比较靠谱一点.
+</p>
+
+<p>
+拿我的设备举例子: 我的无线网卡是RTL8192CU, 网上的大部分帖子都过期了, 上来就让你编译网卡驱动. 其实这个网卡在kernel 3.10之前有bug, 无法正确支持, 但是在后续版本中已经fix了, 我现在用的kernel是3.11, 自动支持.
 </p>
 
 <p>
@@ -40,7 +44,7 @@ sudo apt-get install hostapd isc-dhcp-server
 <h3 id="sec-1-2"><span class="section-number-3">1.2</span> 配置无线网卡和网络路由</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
-配置无线网卡为静态地址, 当然不要和eth0地址段冲突了, 如果你家里是192.168.1.0/24, 那么这里你可以设置为该网段以外的其他网段.
+配置无线网卡为静态地址, 当然不要和eth0地址段冲突了, 如果你家里是192.168.1.0/24, 那么这里你需要设置为该网段以外的其他网段.
 </p>
 <pre class="example">
 pi@raspbmc:/etc/dhcp$ cat /etc/network/interfaces
@@ -298,7 +302,7 @@ rsn_pairwise=CCMP
 </pre>
 
 <p>
-修改hostapd.conf文件, 制定配置文件位置DAEMON_CONF="/etc/hostapd/hostapd.conf":
+修改hostapd.conf文件, 指定配置文件位置DAEMON_CONF="/etc/hostapd/hostapd.conf":
 </p>
 <pre class="example">
 pi@raspbmc:/etc/hostapd$ cat /etc/default/hostapd
