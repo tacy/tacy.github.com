@@ -1,0 +1,147 @@
+---
+layout: post
+categories: [tech]
+title: "在本地kvm环节下使用cloud image"
+description: "大量的cloud image, 其实在本地虚拟环境也能使用, 这里简单介绍一下在我本机kvm环境下使用cloud image的步骤"
+tags: [virtualization, openvswitch, kvm, cloud-init]
+---
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> 在本地kvm环境下使用cloud image</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+这里用的是openvswitch做网络环境配置
+</p>
+</div>
+
+<div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> 配置openvswitch+kvm</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+apt-get install qemu-kvm openvswitch-switch
+</p>
+
+<p>
+vi /etc/network/interfacen
+auto ovsbr0
+iface ovsbr0 inet static
+   address 172.16.11.1
+   network 172.16.11.0
+   netmask 255.255.255.0
+   broadcast 172.16.11.255
+</p>
+
+<p>
+ovs-vsctl add-br ovsbr0
+</p>
+
+<p>
+/etc/openvswitch/ovs-ifup
+#!/bin/sh
+switch='ovsbr0'
+/sbin/ifconfig $1 0.0.0.0 up
+ovs-vsctl add-port ${switch} $1
+</p>
+
+<p>
+/etc/openvswitch/ovs-ifdown
+#!/bin/sh
+switch='ovsbr0'
+/sbin/ifconfig $1 0.0.0.0 down
+ovs-vsctl del-port ${switch} $1
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 配置ubuntu cloud image</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+去ubuntu网站下载相对应的image:
+</p>
+<pre class="example">
+https://cloud-images.ubuntu.com/releases/14.04.1/release/
+
+wget https://cloud-images.ubuntu.com/releases/14.04.1/release/ubuntu-14.04-server-cloudimg-amd64-disk1.img
+
+tar zxvf ubuntu-14.04-server-cloudimg-amd64-disk1.img
+</pre>
+
+<p>
+这是一个已经安装好的ubunt 14.04镜像, 文件格式是qcow2, 磁盘空间大小是2.2G, 可以用qemu-img resize.
+</p>
+
+<pre class="example">
+qemu-img resize ubuntu-14.04-server-cloudimg-amd64-disk1.img +8g
+</pre>
+
+<p>
+然后我们做一个快照, 用它来启动虚拟机
+</p>
+
+<pre class="example">
+qemu-img create -f qcow2 -b ubuntu-14.04-server-cloudimg-amd64-disk1.img node01.img
+</pre>
+
+<p>
+配置本地的cloud init, 让cloud image能启动起来, 也很简单, 建立下面两个文件:
+</p>
+
+<pre class="example">
+tacy@momo1:~/metadata$ cat meta-data
+instance-id: iid-local01
+local-hostname: cloudimg
+network-interfaces: |
+  auto eth0
+  iface eth0 inet static
+  address 172.16.11.100
+  network 172.16.11.0
+  netmask 255.255.255.0
+  broadcast 172.16.11.255
+  gateway 172.16.11.1
+
+tacy@momo1:~/metadata$ cat user-data
+#cloud-config
+#password: passw0rd
+#chpasswd: { expire: False }
+#ssh_pwauth: True
+ssh_authorized_keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCUtDcwkNskzigh0rjirK/BoualyOiuZoBLMpK03MHBUPh/wHgoiSGOUoSGY7RMcVclKECqCQjyv3WN6vJnDwjQ1mEiXFKntnWqqJYZsDETttDfxYwPmV2sA5UBfSFDUuBhmLYVsJg/T9NUf/K/aO8RI2Q7M09Xds6hfilO1rR59h/8/d3fbj8QG/DBnEFe6HxQj7OX5RGPbL/dT9OlLdDLhRf6rPHFHVy7PKTU1SfzIsL89v9MXkAcet+zb5UJcuifSMIQQhSv8MhhWscZibkXQi1btqxNgoxIVguW57fghR7wpVUn6oAHiCnz3KY34N8Nv1UodY6kk4idUmQ0oJiZ xx@xx
+</pre>
+
+<p>
+这里的ssh key是你的公钥, 当然也可以配置密码登陆.
+</p>
+
+<p>
+生成镜像文件:
+genisoimage  -output seed.iso -volid cidata -joliet -rock user-data meta-data
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 启动虚拟机</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+现在可以启动虚拟机了:
+</p>
+<pre class="example">
+sudo kvm -m 2048m -smp 2 \
+-drive file=node01.img,if=virtio,cache=none,aio=native \
+-drive file=./metadata/seed.iso,if=virtio \
+-net nic,vlan=0,model=virtio,macaddr=DE:AD:BE:EF:FC:80 \
+-net tap,vlan=0,vhost=on,script=/etc/openvswitch/ovs-ifup,downscript=/etc/openvswitch/ovs-ifdown \
+-nographic -curses
+</pre>
+
+<p>
+启动之后, 你的配置信息注入到了虚拟机里面, 你现在可以直接访问了:
+</p>
+
+<pre class="example">
+ssh ubuntu@172.16.11.100
+</pre>
+</div>
+</div>
+</div>
