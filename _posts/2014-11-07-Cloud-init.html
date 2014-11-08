@@ -9,6 +9,10 @@ tags: [virtualization, openvswitch, kvm, cloud-init]
 <h2 id="sec-1"><span class="section-number-2">1</span> 在本地kvm环境下使用cloud image</h2>
 <div class="outline-text-2" id="text-1">
 <p>
+大量的cloud image, 其实在本地虚拟环境也能使用, 这里简单介绍一下在我本机kvm环境下使用cloud image的步骤
+</p>
+
+<p>
 这里用的是openvswitch做网络环境配置
 </p>
 </div>
@@ -106,8 +110,10 @@ ssh_authorized_keys:
 
 <p>
 生成镜像文件:
-genisoimage  -output seed.iso -volid cidata -joliet -rock user-data meta-data
 </p>
+<pre class="example">
+genisoimage  -output seed.iso -volid cidata -joliet -rock user-data meta-data
+</pre>
 </div>
 </div>
 
@@ -133,6 +139,10 @@ sudo kvm -m 2048m -smp 2 \
 <pre class="example">
 ssh ubuntu@172.16.11.100
 </pre>
+
+<p>
+想象一下, 这样你自己完全可以diy一个单机的IaaS平台嘛!
+</p>
 </div>
 </div>
 </div>
