@@ -52,14 +52,12 @@ ovs-vsctl del-port ${switch} $1
 <h3 id="sec-1-2"><span class="section-number-3">1.2</span> 配置ubuntu cloud image</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
-去ubuntu网站下载相对应的image:
+去<a href="https://cloud-images.ubuntu.com/releases/14.04.1/release/">Ubuntu网站</a> 下载相对应的image, 我这里用的是1404做测试:
 </p>
 <pre class="example">
-https://cloud-images.ubuntu.com/releases/14.04.1/release/
+tacy@momo1:~/$ wget https://cloud-images.ubuntu.com/releases/14.04.1/release/ubuntu-14.04-server-cloudimg-amd64-disk1.img
 
-wget https://cloud-images.ubuntu.com/releases/14.04.1/release/ubuntu-14.04-server-cloudimg-amd64-disk1.img
-
-tar zxvf ubuntu-14.04-server-cloudimg-amd64-disk1.img
+tacy@momo1:~/$ tar zxvf ubuntu-14.04-server-cloudimg-amd64-disk1.img
 </pre>
 
 <p>
@@ -67,7 +65,7 @@ tar zxvf ubuntu-14.04-server-cloudimg-amd64-disk1.img
 </p>
 
 <pre class="example">
-qemu-img resize ubuntu-14.04-server-cloudimg-amd64-disk1.img +8g
+tacy@momo1:~/$ qemu-img resize ubuntu-14.04-server-cloudimg-amd64-disk1.img +8g
 </pre>
 
 <p>
@@ -75,14 +73,15 @@ qemu-img resize ubuntu-14.04-server-cloudimg-amd64-disk1.img +8g
 </p>
 
 <pre class="example">
-qemu-img create -f qcow2 -b ubuntu-14.04-server-cloudimg-amd64-disk1.img node01.img
+tacy@momo1:~/$ qemu-img create -f qcow2 -b ubuntu-14.04-server-cloudimg-amd64-disk1.img node01.img
 </pre>
 
 <p>
-配置本地的cloud init, 让cloud image能启动起来, 也很简单, 建立下面两个文件:
+准备好image, 现在我们来配置本地的cloud init, 让cloud image能启动起来, 也很简单, 建立下面两个文件:
 </p>
 
 <pre class="example">
+tacy@momo1:~/$ mkdir metadata &amp;&amp; cd metadata
 tacy@momo1:~/metadata$ cat meta-data
 instance-id: iid-local01
 local-hostname: cloudimg
@@ -143,6 +142,96 @@ ssh ubuntu@172.16.11.100
 <p>
 想象一下, 这样你自己完全可以diy一个单机的IaaS平台嘛!
 </p>
+
+<p>
+当然这里没有配置虚拟机的网络访问, 如果要实现网络访问, 需要配置虚拟机的resolv.conf和宿主机的路由转发.
+</p>
 </div>
+</div>
+
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> 宿主机路由</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+首先打开转发功能, 编辑/etc/sysctl.conf, 打开ip_forward=1那一行, 同时让配置生效:
+</p>
+<pre class="example">
+sysctl -p
+</pre>
+
+<p>
+配置iptables:
+</p>
+<pre class="example">
+iptables -I FORWARD -j ACCEPT
+iptables -t nat -A POSTROUTING -s 172.16.11.0/24 ! -d 172.168.11.0/24 -j MASQUERADE
+</pre>
+
+<p>
+这里只是测试环境, 所以我打开了所有包的转发, 当然你也能细粒度控制包转发.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> CoreOS的cloud config</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+coreos这是个顺应容器时代的操作系统, 他和其他linux发行版完全不一样, 没有提供包管理机制, 预编译升级, 支持很多IaaS平台, 如果你没有IaaS平台, 当然你也能在本地用, 社区有支持版本<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup>. 我一般在自己机器上用kvm, 测试了一下, 非常方便, 简单注意几点:
+</p>
+</div>
+<div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> cloud config</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+该文件必须存放在特殊位置, 使用方式如下:
+</p>
+<pre class="example">
+mkdir -p myconfig/openstack/latest
+cp user_data myconfig/openstack/latest/
+</pre>
+<p>
+user_data就是coreos的cloud config文件, 具体用法请参考CoreOS文档<sup><a id="fnr.2" name="fnr.2" class="footref" href="#fn.2">2</a></sup>. 必须存放在openstack/latest目录下才行.
+</p>
+
+<p>
+使用方式在kvm启动命令中添加如下启动项:
+</p>
+<pre class="example">
+-fsdev local,id=conf,security_model=none,readonly,path=~/myconfig \
+-device virtio-9p-pci,fsdev=conf,mount_tag=config-2 \
+</pre>
+</div>
+</div>
+
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> kvm启动命令示例</h3>
+<div class="outline-text-3" id="text-2-2">
+<pre class="example">
+sudo kvm -m 2048m -smp 2 \
+-drive file=coreos-etcd.img,if=virtio,cache=none,aio=native \
+-fsdev local,id=conf,security_model=none,readonly,path=~/myconfig \
+-device virtio-9p-pci,fsdev=conf,mount_tag=config-2 \
+-net nic,vlan=0,model=virtio \
+-net tap,vlan=0,vhost=on,script=/etc/openvswitch/ovs-ifup,downscript=/etc/openvswitch/ovs-ifdown \
+-nographic &gt; /dev/null 2&gt;&amp;1 &amp;
+</pre>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p class="footpara">
+<a href="https://coreos.com/docs/#running-coreos">CoreOS support platforms</a>
+</p></div>
+
+<div class="footdef"><sup><a id="fn.2" name="fn.2" class="footnum" href="#fnr.2">2</a></sup> <p class="footpara">
+<a href="https://coreos.com/docs/cluster-management/setup/cloudinit-cloud-config/">Cloud Config</a>
+</p></div>
+
+
 </div>
 </div>
