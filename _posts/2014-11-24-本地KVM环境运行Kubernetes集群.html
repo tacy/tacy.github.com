@@ -136,7 +136,7 @@ $dnsmasq --bind-interfaces --listen-address 172.16.11.1 --dhcp-range 172.16.11.1
 </p>
 
 <p>
-当运行系统检测到CoreOS有升级包的时候, 他会根据你选定的升级策略, 自动下载升级包更新, 但是他不会更新你当前正在运行的根分区, 因为他存在两个根分区, Active/Passive, 他升级的是Passive这个分区, 重启的时候, 切换Passive成为Active, 完成升级操作.
+当运行系统检测到CoreOS有升级包的时候, 他会根据你选定的升级策略, 自动下载升级包更新, 但是他不会更新你当前正在运行的根分区(/usr被mount为只读), 因为他存在两个根分区, Active/Passive, 他升级的是Passive这个分区, 重启的时候, 切换Passive成为Active, 完成升级操作.
 </p>
 
 <p>
@@ -437,6 +437,7 @@ redis-master                           dockerfile/redis           172.16.11.165/
 </div>
 </div>
 
+
 <div id="outline-container-sec-6" class="outline-2">
 <h2 id="sec-6"><span class="section-number-2">6</span> 部署监控</h2>
 </div>
@@ -481,20 +482,29 @@ redis-master                           dockerfile/redis           172.16.11.165/
 </div>
 </div>
 
+
 <div id="outline-container-sec-8" class="outline-2">
 <h2 id="sec-8"><span class="section-number-2">8</span> 部署中碰到的问题</h2>
 <div class="outline-text-2" id="text-8">
 </div><div id="outline-container-sec-8-1" class="outline-3">
-<h3 id="sec-8-1"><span class="section-number-3">8.1</span> fleetctl</h3>
+<h3 id="sec-8-1"><span class="section-number-3">8.1</span> etcd</h3>
 <div class="outline-text-3" id="text-8-1">
+<p>
+etcd 0.5之前的版本使用的go-raft实现有问题, 会导致etcd起不来. 0.5版本之后, etcd实现了自己版本的raft, 解决了该问题, 建议用0.5之后的版本.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-8-2" class="outline-3">
+<h3 id="sec-8-2"><span class="section-number-3">8.2</span> fleetctl</h3>
+<div class="outline-text-3" id="text-8-2">
 <p>
 fleetctl确实非常方便, 但是也有一些问题, 参考这里<sup><a id="fnr.3" name="fnr.3" class="footref" href="#fn.3">3</a></sup><sup>, </sup><sup><a id="fnr.4" name="fnr.4" class="footref" href="#fn.4">4</a></sup>, 对于服务的管理还有bug, 期待更稳定
 </p>
 </div>
 </div>
-<div id="outline-container-sec-8-2" class="outline-3">
-<h3 id="sec-8-2"><span class="section-number-3">8.2</span> kube-register</h3>
-<div class="outline-text-3" id="text-8-2">
+<div id="outline-container-sec-8-3" class="outline-3">
+<h3 id="sec-8-3"><span class="section-number-3">8.3</span> kube-register</h3>
+<div class="outline-text-3" id="text-8-3">
 <p>
 老版本有bug, 会有too much open files问题, 需要自己编译
 </p>
