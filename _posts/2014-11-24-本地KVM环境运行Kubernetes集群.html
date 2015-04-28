@@ -440,6 +440,15 @@ redis-master                           dockerfile/redis           172.16.11.165/
 
 <div id="outline-container-sec-6" class="outline-2">
 <h2 id="sec-6"><span class="section-number-2">6</span> 部署监控</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+K8S的监控可以用cAdvisor + heapster + Influxdb + Grafana来实现. 下面我们来说说怎么去部署这样一个方案
+</p>
+
+<p>
+首先需要做的是在每一个minions上运行cAdvisor作为一个Pod, 可以通过<a href="https://github.com/GoogleCloudPlatform/kubernetes/blob/master/cluster/saltbase/salt/cadvisor/cadvisor.manifest#L1">static manifest file</a>来实现, 我们这里需要修改一下node节点的
+</p>
+</div>
 </div>
 
 

@@ -37,13 +37,13 @@ client发起syn，server应答syn/ack，client应答ack，握手成功。
 
 <pre class="src src-emacs-lisp">   TCP A                                                TCP B
 1.  ESTABLISHED                                          ESTABLISHED
-2.  <span style="color: #8b0000;">(</span>Close<span style="color: #8b0000;">)</span>
+2.  (Close)
     FIN-WAIT-1  --&gt; &lt;SEQ=100&gt;&lt;ACK=300&gt;&lt;CTL=FIN,ACK&gt;  --&gt; CLOSE-WAIT
 3.  FIN-WAIT-2  &lt;-- &lt;SEQ=300&gt;&lt;ACK=101&gt;&lt;CTL=ACK&gt;      &lt;-- CLOSE-WAIT
-4.                                                       <span style="color: #8b0000;">(</span>Close<span style="color: #8b0000;">)</span>
+4.                                                       (Close)
     TIME-WAIT   &lt;-- &lt;SEQ=300&gt;&lt;ACK=101&gt;&lt;CTL=FIN,ACK&gt;  &lt;-- LAST-ACK
 5.  TIME-WAIT   --&gt; &lt;SEQ=101&gt;&lt;ACK=301&gt;&lt;CTL=ACK&gt;      --&lt; CLOSED
-6.  <span style="color: #8b0000;">(</span>2 MSL<span style="color: #8b0000;">)</span>
+6.  (2 MSL)
     CLOSED
 </pre>
 </div>

@@ -14,25 +14,25 @@ tags: [cloud, openstack]
 </p>
 <div class="org-src-container">
 
-<pre class="src src-sh">2012-07-23 13:10:31 ERROR nova.rpc.common <span style="color: #8b0000;">[</span>req-f354d5ad-17c5-409e-adfd-ec1b89dec11e 568399d8b5cd4bf29864c4540bebd983 c6615626265b4ece99980509501541f6<span style="color: #8b0000;">]</span> Timed out waiting for RPC response: timed out
-2012-07-23 13:10:31 TRACE nova.rpc.common Traceback <span style="color: #8b0000;">(</span>most recent call last<span style="color: #8b0000;">)</span>:
-2012-07-23 13:10:31 TRACE nova.rpc.common   File <span style="color: #61CE3C;">"/usr/lib/python2.7/dist-packages/nova/rpc/impl_kombu.py"</span>, line 490,<span style="color: #FBDE2D;"> in</span> ensure
-2012-07-23 13:10:31 TRACE nova.rpc.common     return method<span style="color: #8b0000;">(</span>*args, **kwargs<span style="color: #8b0000;">)</span>
-2012-07-23 13:10:31 TRACE nova.rpc.common   File <span style="color: #61CE3C;">"/usr/lib/python2.7/dist-packages/nova/rpc/impl_kombu.py"</span>, line 567,<span style="color: #FBDE2D;"> in</span> _consume
-2012-07-23 13:10:31 TRACE nova.rpc.common     return self.connection.drain_events<span style="color: #8b0000;">(</span><span style="color: #D8FA3C;">timeout</span>=timeout<span style="color: #8b0000;">)</span>
-2012-07-23 13:10:31 TRACE nova.rpc.common   File <span style="color: #61CE3C;">"/usr/lib/python2.7/dist-packages/kombu/connection.py"</span>, line 175,<span style="color: #FBDE2D;"> in</span> drain_events
-2012-07-23 13:10:31 TRACE nova.rpc.common     return self.transport.drain_events<span style="color: #8b0000;">(</span>self.connection, **kwargs<span style="color: #8b0000;">)</span>
-2012-07-23 13:10:31 TRACE nova.rpc.common   File <span style="color: #61CE3C;">"/usr/lib/python2.7/dist-packages/kombu/transport/pyamqplib.py"</span>, line 238,<span style="color: #FBDE2D;"> in</span> drain_events
-2012-07-23 13:10:31 TRACE nova.rpc.common     return connection.drain_events<span style="color: #8b0000;">(</span>**kwargs<span style="color: #8b0000;">)</span>
-2012-07-23 13:10:31 TRACE nova.rpc.common   File <span style="color: #61CE3C;">"/usr/lib/python2.7/dist-packages/kombu/transport/pyamqplib.py"</span>, line 57,<span style="color: #FBDE2D;"> in</span> drain_events
-2012-07-23 13:10:31 TRACE nova.rpc.common     return self.wait_multi<span style="color: #8b0000;">(</span>self.channels.values<span style="color: #006400;">()</span>, <span style="color: #D8FA3C;">timeout</span>=timeout<span style="color: #8b0000;">)</span>
-2012-07-23 13:10:31 TRACE nova.rpc.common   File <span style="color: #61CE3C;">"/usr/lib/python2.7/dist-packages/kombu/transport/pyamqplib.py"</span>, line 63,<span style="color: #FBDE2D;"> in</span> wait_multi
-2012-07-23 13:10:31 TRACE nova.rpc.common     chanmap.keys<span style="color: #8b0000;">()</span>, allowed_methods, <span style="color: #D8FA3C;">timeout</span>=timeout<span style="color: #88090B;">)</span>
-2012-07-23 13:10:31 TRACE nova.rpc.common   File <span style="color: #61CE3C;">"/usr/lib/python2.7/dist-packages/kombu/transport/pyamqplib.py"</span>, line 120,<span style="color: #FBDE2D;"> in</span> _wait_multiple
-2012-07-23 13:10:31 TRACE nova.rpc.common     channel, method_sig, args, content = read_timeout<span style="color: #8b0000;">(</span>timeout<span style="color: #8b0000;">)</span>
-2012-07-23 13:10:31 TRACE nova.rpc.common   File <span style="color: #61CE3C;">"/usr/lib/python2.7/dist-packages/kombu/transport/pyamqplib.py"</span>, line 94,<span style="color: #FBDE2D;"> in</span> read_timeout
-2012-07-23 13:10:31 TRACE nova.rpc.common     return self.method_reader.read_method<span style="color: #8b0000;">()</span>
-2012-07-23 13:10:31 TRACE nova.rpc.common   File <span style="color: #61CE3C;">"/usr/lib/python2.7/dist-packages/amqplib/client_0_8/method_framing.py"</span>, line 221,<span style="color: #FBDE2D;"> in</span> read_method
+<pre class="src src-sh">2012-07-23 13:10:31 ERROR nova.rpc.common [req-f354d5ad-17c5-409e-adfd-ec1b89dec11e 568399d8b5cd4bf29864c4540bebd983 c6615626265b4ece99980509501541f6] Timed out waiting for RPC response: timed out
+2012-07-23 13:10:31 TRACE nova.rpc.common Traceback (most recent call last):
+2012-07-23 13:10:31 TRACE nova.rpc.common   File "/usr/lib/python2.7/dist-packages/nova/rpc/impl_kombu.py", line 490, in ensure
+2012-07-23 13:10:31 TRACE nova.rpc.common     return method(*args, **kwargs)
+2012-07-23 13:10:31 TRACE nova.rpc.common   File "/usr/lib/python2.7/dist-packages/nova/rpc/impl_kombu.py", line 567, in _consume
+2012-07-23 13:10:31 TRACE nova.rpc.common     return self.connection.drain_events(timeout=timeout)
+2012-07-23 13:10:31 TRACE nova.rpc.common   File "/usr/lib/python2.7/dist-packages/kombu/connection.py", line 175, in drain_events
+2012-07-23 13:10:31 TRACE nova.rpc.common     return self.transport.drain_events(self.connection, **kwargs)
+2012-07-23 13:10:31 TRACE nova.rpc.common   File "/usr/lib/python2.7/dist-packages/kombu/transport/pyamqplib.py", line 238, in drain_events
+2012-07-23 13:10:31 TRACE nova.rpc.common     return connection.drain_events(**kwargs)
+2012-07-23 13:10:31 TRACE nova.rpc.common   File "/usr/lib/python2.7/dist-packages/kombu/transport/pyamqplib.py", line 57, in drain_events
+2012-07-23 13:10:31 TRACE nova.rpc.common     return self.wait_multi(self.channels.values(), timeout=timeout)
+2012-07-23 13:10:31 TRACE nova.rpc.common   File "/usr/lib/python2.7/dist-packages/kombu/transport/pyamqplib.py", line 63, in wait_multi
+2012-07-23 13:10:31 TRACE nova.rpc.common     chanmap.keys(), allowed_methods, timeout=timeout)
+2012-07-23 13:10:31 TRACE nova.rpc.common   File "/usr/lib/python2.7/dist-packages/kombu/transport/pyamqplib.py", line 120, in _wait_multiple
+2012-07-23 13:10:31 TRACE nova.rpc.common     channel, method_sig, args, content = read_timeout(timeout)
+2012-07-23 13:10:31 TRACE nova.rpc.common   File "/usr/lib/python2.7/dist-packages/kombu/transport/pyamqplib.py", line 94, in read_timeout
+2012-07-23 13:10:31 TRACE nova.rpc.common     return self.method_reader.read_method()
+2012-07-23 13:10:31 TRACE nova.rpc.common   File "/usr/lib/python2.7/dist-packages/amqplib/client_0_8/method_framing.py", line 221, in read_method
 2012-07-23 13:10:31 TRACE nova.rpc.common     raise m
 2012-07-23 13:10:31 TRACE nova.rpc.common timeout: timed out
 </pre>

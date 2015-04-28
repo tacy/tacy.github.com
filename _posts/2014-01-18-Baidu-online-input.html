@@ -11,103 +11,103 @@ tags: [python, xbmc]
 </p>
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">__init__</span><span style="color: #8b0000;">(</span> <span style="color: #FBDE2D;">self</span>, *args, **kwargs <span style="color: #8b0000;">)</span>:
-    <span style="color: #FBDE2D;">self</span>.totalpage = 0
-    <span style="color: #FBDE2D;">self</span>.nowpage = 0
-    <span style="color: #FBDE2D;">self</span>.words = <span style="color: #61CE3C;">''</span>
-    <span style="color: #FBDE2D;">self</span>.py = <span style="color: #61CE3C;">''</span>
-    <span style="color: #FBDE2D;">self</span>.bg = 0
-    <span style="color: #FBDE2D;">self</span>.ed = 20
-    <span style="color: #FBDE2D;">self</span>.wordpgs = <span style="color: #8b0000;">[]</span>   <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">word page metadata</span>
-    <span style="color: #FBDE2D;">self</span>.inputString = kwargs.get<span style="color: #8b0000;">(</span><span style="color: #61CE3C;">"default"</span><span style="color: #8b0000;">)</span> <span style="color: #FBDE2D;">or</span> <span style="color: #61CE3C;">""</span>
-    <span style="color: #FBDE2D;">self</span>.heading = kwargs.get<span style="color: #8b0000;">(</span><span style="color: #61CE3C;">"heading"</span><span style="color: #8b0000;">)</span> <span style="color: #FBDE2D;">or</span> <span style="color: #61CE3C;">""</span>
-    <span style="color: #FBDE2D;">self</span>.fetchCookie<span style="color: #8b0000;">()</span>
-    <span style="color: #FBDE2D;">self</span>.conn = httplib.HTTPConnection<span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'olime.baidu.com'</span><span style="color: #8b0000;">)</span>
-    xbmcgui.WindowXMLDialog.__init__<span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span><span style="color: #8b0000;">)</span>
+<pre class="src src-python">def __init__( self, *args, **kwargs ):
+    self.totalpage = 0
+    self.nowpage = 0
+    self.words = ''
+    self.py = ''
+    self.bg = 0
+    self.ed = 20
+    self.wordpgs = []   #word page metadata
+    self.inputString = kwargs.get("default") or ""
+    self.heading = kwargs.get("heading") or ""
+    self.fetchCookie()
+    self.conn = httplib.HTTPConnection('olime.baidu.com')
+    xbmcgui.WindowXMLDialog.__init__(self)
 
-<span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">fetchCookie</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span><span style="color: #8b0000;">)</span>:
-    <span style="color: #D8FA3C;">req</span> = urllib2.Request<span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'http://ime.baidu.com/online.html'</span><span style="color: #8b0000;">)</span>
-    req.add_header<span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'User-Agent'</span>, UserAgent<span style="color: #8b0000;">)</span>
-    <span style="color: #D8FA3C;">response</span> = urllib2.urlopen<span style="color: #8b0000;">(</span>req<span style="color: #8b0000;">)</span>
-    response.close<span style="color: #8b0000;">()</span>
-    <span style="color: #D8FA3C;">cdata</span> = response.info<span style="color: #8b0000;">()</span>.get<span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'Set-Cookie'</span><span style="color: #8b0000;">)</span>
-    <span style="color: #FBDE2D;">self</span>.cookie = cdata.split<span style="color: #8b0000;">(</span><span style="color: #61CE3C;">';'</span><span style="color: #8b0000;">)[</span>0<span style="color: #8b0000;">]</span>
-    <span style="color: #FBDE2D;">if</span> re.search<span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'BAIDUID'</span>,<span style="color: #FBDE2D;">self</span>.cookie<span style="color: #8b0000;">)</span> <span style="color: #FBDE2D;">is</span> <span style="color: #4c83ff;">None</span>: <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">just in case</span>
-        <span style="color: #FBDE2D;">self</span>.cookie=<span style="color: #61CE3C;">'BAIDUID=5FF5CF0348C2CD89C15799855BBCB09A:FG=1'</span>
+def fetchCookie(self):
+    req = urllib2.Request('http://ime.baidu.com/online.html')
+    req.add_header('User-Agent', UserAgent)
+    response = urllib2.urlopen(req)
+    response.close()
+    cdata = response.info().get('Set-Cookie')
+    self.cookie = cdata.split(';')[0]
+    if re.search('BAIDUID',self.cookie) is None: # just in case
+        self.cookie='BAIDUID=5FF5CF0348C2CD89C15799855BBCB09A:FG=1'
 
-<span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">changepages</span> <span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span><span style="color: #8b0000;">)</span>:
-    <span style="color: #FBDE2D;">self</span>.getControl<span style="color: #8b0000;">(</span>CTRL_ID_HZLIST<span style="color: #8b0000;">)</span>.setLabel<span style="color: #8b0000;">(</span><span style="color: #61CE3C;">''</span><span style="color: #8b0000;">)</span>
-    <span style="color: #D8FA3C;">hzlist</span> = <span style="color: #61CE3C;">''</span>
-    <span style="color: #FBDE2D;">if</span> <span style="color: #FBDE2D;">not</span> <span style="color: #FBDE2D;">self</span>.wordpgs: <span style="color: #FBDE2D;">return</span>
-    <span style="color: #FBDE2D;">if</span> <span style="color: #FBDE2D;">self</span>.nowpage &gt;= <span style="color: #FBDE2D;">self</span>.totalpage-1:
-        <span style="color: #FBDE2D;">self</span>.bg += 20
-        <span style="color: #FBDE2D;">self</span>.ed += 20
-        <span style="color: #FBDE2D;">self</span>.getChineseWord<span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span>.py, <span style="color: #FBDE2D;">self</span>.bg, <span style="color: #FBDE2D;">self</span>.ed<span style="color: #8b0000;">)</span>
-        <span style="color: #FBDE2D;">return</span>
-    <span style="color: #D8FA3C;">curwpg</span> = <span style="color: #FBDE2D;">self</span>.wordpgs<span style="color: #8b0000;">[</span><span style="color: #FBDE2D;">self</span>.nowpage<span style="color: #8b0000;">]</span>
-    <span style="color: #FBDE2D;">for</span> i, w <span style="color: #FBDE2D;">in</span> <span style="color: #FF6400;">enumerate</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span>.words<span style="color: #006400;">[</span>curwpg<span style="color: #ff1493;">[</span>0<span style="color: #ff1493;">]</span>:curwpg<span style="color: #ff1493;">[</span>1<span style="color: #ff1493;">]</span><span style="color: #006400;">]</span><span style="color: #8b0000;">)</span>:
-        <span style="color: #D8FA3C;">hzlist</span> = hzlist + <span style="color: #FF6400;">str</span><span style="color: #8b0000;">(</span>i<span style="color: #8b0000;">)</span> + <span style="color: #61CE3C;">'.'</span> + w +<span style="color: #61CE3C;">' '</span>
-    <span style="color: #FBDE2D;">if</span> <span style="color: #FBDE2D;">self</span>.nowpage &gt; 0:
-        <span style="color: #D8FA3C;">hzlist</span> = <span style="color: #61CE3C;">'&lt;'</span> + hzlist
-    <span style="color: #FBDE2D;">if</span> <span style="color: #FBDE2D;">self</span>.nowpage &lt; <span style="color: #FBDE2D;">self</span>.totalpage-1:
-        <span style="color: #D8FA3C;">hzlist</span> = hzlist + <span style="color: #61CE3C;">'&gt;'</span>
-    <span style="color: #FBDE2D;">self</span>.getControl<span style="color: #8b0000;">(</span>CTRL_ID_HZLIST<span style="color: #8b0000;">)</span>.setLabel<span style="color: #8b0000;">(</span>hzlist<span style="color: #8b0000;">)</span>
+def changepages (self):
+    self.getControl(CTRL_ID_HZLIST).setLabel('')
+    hzlist = ''
+    if not self.wordpgs: return
+    if self.nowpage &gt;= self.totalpage-1:
+        self.bg += 20
+        self.ed += 20
+        self.getChineseWord(self.py, self.bg, self.ed)
+        return
+    curwpg = self.wordpgs[self.nowpage]
+    for i, w in enumerate(self.words[curwpg[0]:curwpg[1]]):
+        hzlist = hzlist + str(i) + '.' + w +' '
+    if self.nowpage &gt; 0:
+        hzlist = '&lt;' + hzlist
+    if self.nowpage &lt; self.totalpage-1:
+        hzlist = hzlist + '&gt;'
+    self.getControl(CTRL_ID_HZLIST).setLabel(hzlist)
 
-<span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">getChineseWord</span> <span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span>, py, bg=0, ed=20<span style="color: #8b0000;">)</span>:
-    <span style="color: #FBDE2D;">self</span>.getControl<span style="color: #8b0000;">(</span>CTRL_ID_HZLIST<span style="color: #8b0000;">)</span>.setLabel<span style="color: #8b0000;">(</span><span style="color: #61CE3C;">''</span><span style="color: #8b0000;">)</span>
-    <span style="color: #FBDE2D;">if</span> py==<span style="color: #61CE3C;">''</span>: <span style="color: #FBDE2D;">return</span>
-    <span style="color: #FBDE2D;">if</span> <span style="color: #FBDE2D;">not</span> bg:
-        <span style="color: #FBDE2D;">self</span>.nowpage = 0
-        <span style="color: #FBDE2D;">self</span>.totalpage = 0
-        <span style="color: #FBDE2D;">self</span>.wordpgs = <span style="color: #8b0000;">[]</span>
-        <span style="color: #FBDE2D;">self</span>.words= <span style="color: #8b0000;">[]</span>
-        <span style="color: #FBDE2D;">self</span>.py = py
-        <span style="color: #FBDE2D;">self</span>.bg = 0
-        <span style="color: #FBDE2D;">self</span>.ed = 20
-    <span style="color: #D8FA3C;">wres</span> = <span style="color: #FBDE2D;">self</span>.getwords<span style="color: #8b0000;">(</span>py, bg, ed<span style="color: #8b0000;">)</span>
-    <span style="color: #FBDE2D;">if</span> wres:
-        <span style="color: #FBDE2D;">self</span>.words.extend<span style="color: #8b0000;">(</span>wres<span style="color: #8b0000;">)</span>
-        <span style="color: #FBDE2D;">self</span>.wordpgs = <span style="color: #8b0000;">[]</span>
-        <span style="color: #D8FA3C;">inum</span> = 0
-        <span style="color: #FBDE2D;">for</span> s, w <span style="color: #FBDE2D;">in</span> <span style="color: #FF6400;">enumerate</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span>.words<span style="color: #8b0000;">)</span>:
-            <span style="color: #FBDE2D;">if</span> <span style="color: #FF6400;">len</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">''</span>.join<span style="color: #006400;">(</span><span style="color: #FBDE2D;">self</span>.words<span style="color: #ff1493;">[</span>inum:s+1<span style="color: #ff1493;">]</span><span style="color: #006400;">)</span>.decode<span style="color: #006400;">(</span><span style="color: #61CE3C;">'utf-8'</span><span style="color: #006400;">)</span><span style="color: #8b0000;">)</span> + <span style="color: #8b0000;">(</span>
-                    s+1-inum<span style="color: #8b0000;">)</span>*2 &gt;30:
-                <span style="color: #FBDE2D;">self</span>.wordpgs.append<span style="color: #8b0000;">(</span><span style="color: #006400;">(</span>inum, s<span style="color: #006400;">)</span><span style="color: #8b0000;">)</span>
-                <span style="color: #D8FA3C;">inum</span> = s
-        <span style="color: #FBDE2D;">if</span> <span style="color: #FF6400;">len</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span>.words<span style="color: #8b0000;">)</span> &gt; inum:
-            <span style="color: #FBDE2D;">self</span>.wordpgs.append<span style="color: #8b0000;">(</span><span style="color: #006400;">(</span>inum, <span style="color: #FF6400;">len</span><span style="color: #ff1493;">(</span><span style="color: #FBDE2D;">self</span>.words<span style="color: #ff1493;">)</span><span style="color: #006400;">)</span><span style="color: #8b0000;">)</span>
-        <span style="color: #FBDE2D;">self</span>.totalpage = <span style="color: #FF6400;">len</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span>.wordpgs<span style="color: #8b0000;">)</span>
-    <span style="color: #FBDE2D;">else</span>:
-        <span style="color: #FBDE2D;">self</span>.nowpage = <span style="color: #FBDE2D;">self</span>.totalpage - 1
+def getChineseWord (self, py, bg=0, ed=20):
+    self.getControl(CTRL_ID_HZLIST).setLabel('')
+    if py=='': return
+    if not bg:
+        self.nowpage = 0
+        self.totalpage = 0
+        self.wordpgs = []
+        self.words= []
+        self.py = py
+        self.bg = 0
+        self.ed = 20
+    wres = self.getwords(py, bg, ed)
+    if wres:
+        self.words.extend(wres)
+        self.wordpgs = []
+        inum = 0
+        for s, w in enumerate(self.words):
+            if len(''.join(self.words[inum:s+1]).decode('utf-8')) + (
+                    s+1-inum)*2 &gt;30:
+                self.wordpgs.append((inum, s))
+                inum = s
+        if len(self.words) &gt; inum:
+            self.wordpgs.append((inum, len(self.words)))
+        self.totalpage = len(self.wordpgs)
+    else:
+        self.nowpage = self.totalpage - 1
 
-    <span style="color: #D8FA3C;">hzlist</span> = <span style="color: #61CE3C;">''</span>
-    <span style="color: #D8FA3C;">curwpg</span> = <span style="color: #FBDE2D;">self</span>.wordpgs<span style="color: #8b0000;">[</span><span style="color: #FBDE2D;">self</span>.nowpage<span style="color: #8b0000;">]</span>
-    <span style="color: #FBDE2D;">for</span> i, w <span style="color: #FBDE2D;">in</span> <span style="color: #FF6400;">enumerate</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span>.words<span style="color: #006400;">[</span>curwpg<span style="color: #ff1493;">[</span>0<span style="color: #ff1493;">]</span>:curwpg<span style="color: #ff1493;">[</span>1<span style="color: #ff1493;">]</span><span style="color: #006400;">]</span><span style="color: #8b0000;">)</span>:
-        <span style="color: #D8FA3C;">hzlist</span> = hzlist + <span style="color: #FF6400;">str</span><span style="color: #8b0000;">(</span>i<span style="color: #8b0000;">)</span> + <span style="color: #61CE3C;">'.'</span> + w +<span style="color: #61CE3C;">' '</span>
-    <span style="color: #FBDE2D;">if</span> <span style="color: #FBDE2D;">self</span>.nowpage &gt; 0:
-        <span style="color: #D8FA3C;">hzlist</span> = <span style="color: #61CE3C;">'&lt;'</span> + hzlist
-    <span style="color: #FBDE2D;">if</span> <span style="color: #FBDE2D;">self</span>.nowpage &lt; <span style="color: #FBDE2D;">self</span>.totalpage-1:
-        <span style="color: #D8FA3C;">hzlist</span> = hzlist + <span style="color: #61CE3C;">'&gt;'</span>
-    <span style="color: #FBDE2D;">self</span>.getControl<span style="color: #8b0000;">(</span>CTRL_ID_HZLIST<span style="color: #8b0000;">)</span>.setLabel<span style="color: #8b0000;">(</span>hzlist<span style="color: #8b0000;">)</span>
+    hzlist = ''
+    curwpg = self.wordpgs[self.nowpage]
+    for i, w in enumerate(self.words[curwpg[0]:curwpg[1]]):
+        hzlist = hzlist + str(i) + '.' + w +' '
+    if self.nowpage &gt; 0:
+        hzlist = '&lt;' + hzlist
+    if self.nowpage &lt; self.totalpage-1:
+        hzlist = hzlist + '&gt;'
+    self.getControl(CTRL_ID_HZLIST).setLabel(hzlist)
 
-<span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">getwords</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span>, py, bg, ed<span style="color: #8b0000;">)</span>:
-    <span style="color: #D8FA3C;">t</span> = time.time<span style="color: #8b0000;">()</span>
-    <span style="color: #D8FA3C;">urlsuf</span> = <span style="color: #61CE3C;">'/py?input={0}&amp;inputtype=py&amp;bg={1}&amp;ed={2}&amp;{3}'</span>.<span style="color: #FF6400;">format</span><span style="color: #8b0000;">(</span>
+def getwords(self, py, bg, ed):
+    t = time.time()
+    urlsuf = '/py?input={0}&amp;inputtype=py&amp;bg={1}&amp;ed={2}&amp;{3}'.format(
         py, bg, ed,
-        <span style="color: #61CE3C;">'result=hanzi&amp;resultcoding=unicode&amp;ch_en=0&amp;clientinfo=web'</span><span style="color: #8b0000;">)</span>
-    <span style="color: #FBDE2D;">try</span>:
-        <span style="color: #FBDE2D;">self</span>.conn.request<span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'GET'</span>, urlsuf, headers=<span style="color: #006400;">{</span><span style="color: #61CE3C;">'Cookies'</span>:<span style="color: #FBDE2D;">self</span>.cookie,<span style="color: #006400;">}</span><span style="color: #8b0000;">)</span>
-    <span style="color: #FBDE2D;">except</span> <span style="color: #D8FA3C;">Exception</span> <span style="color: #FBDE2D;">as</span> e:
-        <span style="color: #FBDE2D;">self</span>.conn = httplib.HTTPConnection<span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'olime.baidu.com'</span><span style="color: #8b0000;">)</span>
-        <span style="color: #FBDE2D;">self</span>.conn.request<span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'GET'</span>, urlsuf, headers=<span style="color: #006400;">{</span><span style="color: #61CE3C;">'Cookies'</span>:<span style="color: #FBDE2D;">self</span>.cookie,<span style="color: #006400;">}</span><span style="color: #8b0000;">)</span>
-    <span style="color: #D8FA3C;">httpdata</span> = <span style="color: #FBDE2D;">self</span>.conn.getresponse<span style="color: #8b0000;">()</span>.read<span style="color: #8b0000;">()</span>
-    <span style="color: #D8FA3C;">words</span> = <span style="color: #8b0000;">[]</span>
-    <span style="color: #FBDE2D;">try</span>:
-        <span style="color: #D8FA3C;">jsondata</span> = simplejson.loads<span style="color: #8b0000;">(</span>httpdata<span style="color: #8b0000;">)</span>
-    <span style="color: #FBDE2D;">except</span> <span style="color: #D8FA3C;">ValueError</span>:
-        <span style="color: #FBDE2D;">return</span> <span style="color: #4c83ff;">None</span>
-    <span style="color: #FBDE2D;">for</span> word <span style="color: #FBDE2D;">in</span> jsondata<span style="color: #8b0000;">[</span>0<span style="color: #8b0000;">]</span>:
-        words.append<span style="color: #8b0000;">(</span>word<span style="color: #006400;">[</span>0<span style="color: #006400;">]</span>.encode<span style="color: #006400;">(</span><span style="color: #61CE3C;">'utf-8'</span><span style="color: #006400;">)</span><span style="color: #8b0000;">)</span>
-    <span style="color: #FBDE2D;">return</span> words
+        'result=hanzi&amp;resultcoding=unicode&amp;ch_en=0&amp;clientinfo=web')
+    try:
+        self.conn.request('GET', urlsuf, headers={'Cookies':self.cookie,})
+    except Exception as e:
+        self.conn = httplib.HTTPConnection('olime.baidu.com')
+        self.conn.request('GET', urlsuf, headers={'Cookies':self.cookie,})
+    httpdata = self.conn.getresponse().read()
+    words = []
+    try:
+        jsondata = simplejson.loads(httpdata)
+    except ValueError:
+        return None
+    for word in jsondata[0]:
+        words.append(word[0].encode('utf-8'))
+    return words
 </pre>
 </div>

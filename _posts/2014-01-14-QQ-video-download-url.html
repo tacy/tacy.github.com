@@ -13,31 +13,31 @@ tags: [python, tools]
 
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">qq</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span><span style="color: #8b0000;">)</span>:
-    <span style="color: #D8FA3C;">html</span> = _http<span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span>.url<span style="color: #8b0000;">)</span>
-    <span style="color: #D8FA3C;">vid</span> = re.<span style="color: #FF6400;">compile</span><span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'vid:"([^"]+)"'</span><span style="color: #8b0000;">)</span>.search<span style="color: #8b0000;">(</span>html<span style="color: #8b0000;">)</span>.group<span style="color: #8b0000;">(</span>1<span style="color: #8b0000;">)</span>
-    <span style="color: #D8FA3C;">murl</span> = <span style="color: #61CE3C;">'http://vv.video.qq.com/'</span>
-    <span style="color: #D8FA3C;">vinfo</span> = _http<span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'%sgetinfo?otype=json&amp;vids=%s'</span> % <span style="color: #006400;">(</span>murl, vid<span style="color: #006400;">)</span><span style="color: #8b0000;">)</span>
-    <span style="color: #D8FA3C;">infoj</span> = json.loads<span style="color: #8b0000;">(</span>vinfo.split<span style="color: #006400;">(</span><span style="color: #61CE3C;">'='</span><span style="color: #006400;">)[</span>1<span style="color: #006400;">][</span>:-1<span style="color: #006400;">]</span><span style="color: #8b0000;">)</span>
-    <span style="color: #D8FA3C;">qtyps</span> = OrderedDict<span style="color: #8b0000;">(</span><span style="color: #006400;">(</span>
-        <span style="color: #ff1493;">(</span><span style="color: #61CE3C;">'1080P'</span>, <span style="color: #61CE3C;">'fhd'</span><span style="color: #ff1493;">)</span>, <span style="color: #ff1493;">(</span><span style="color: #61CE3C;">'&#36229;&#28165;'</span>, <span style="color: #61CE3C;">'shd'</span><span style="color: #ff1493;">)</span>, <span style="color: #ff1493;">(</span><span style="color: #61CE3C;">'&#39640;&#28165;'</span>, <span style="color: #61CE3C;">'hd'</span><span style="color: #ff1493;">)</span>, <span style="color: #ff1493;">(</span><span style="color: #61CE3C;">'&#26631;&#28165;'</span>, <span style="color: #61CE3C;">'sd'</span><span style="color: #ff1493;">)</span><span style="color: #006400;">)</span><span style="color: #8b0000;">)</span>
-    <span style="color: #D8FA3C;">vtyps</span> = <span style="color: #8b0000;">{</span>v<span style="color: #006400;">[</span><span style="color: #61CE3C;">'name'</span><span style="color: #006400;">]</span>:v<span style="color: #006400;">[</span><span style="color: #61CE3C;">'id'</span><span style="color: #006400;">]</span> <span style="color: #FBDE2D;">for</span> v <span style="color: #FBDE2D;">in</span> infoj<span style="color: #006400;">[</span><span style="color: #61CE3C;">'fl'</span><span style="color: #006400;">][</span><span style="color: #61CE3C;">'fi'</span><span style="color: #006400;">]</span><span style="color: #8b0000;">}</span>
-    <span style="color: #D8FA3C;">qtypid</span> = vtyps<span style="color: #8b0000;">[</span><span style="color: #61CE3C;">'sd'</span><span style="color: #8b0000;">]</span>
-    <span style="color: #D8FA3C;">sels</span> = <span style="color: #8b0000;">[</span>k <span style="color: #FBDE2D;">for</span> k,v <span style="color: #FBDE2D;">in</span> qtyps.iteritems<span style="color: #006400;">()</span> <span style="color: #FBDE2D;">if</span> v <span style="color: #FBDE2D;">in</span> vtyps<span style="color: #8b0000;">]</span>
-    <span style="color: #D8FA3C;">sel</span> = dialog.select<span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'&#28165;&#26224;&#24230;'</span>, sels<span style="color: #8b0000;">)</span>
-    <span style="color: #D8FA3C;">surls</span> = <span style="color: #8b0000;">[]</span>
-    <span style="color: #D8FA3C;">urlpre</span> = infoj<span style="color: #8b0000;">[</span><span style="color: #61CE3C;">'vl'</span><span style="color: #8b0000;">][</span><span style="color: #61CE3C;">'vi'</span><span style="color: #8b0000;">][</span>0<span style="color: #8b0000;">][</span><span style="color: #61CE3C;">'ul'</span><span style="color: #8b0000;">][</span><span style="color: #61CE3C;">'ui'</span><span style="color: #8b0000;">][</span>-1<span style="color: #8b0000;">][</span><span style="color: #61CE3C;">'url'</span><span style="color: #8b0000;">]</span>
-    <span style="color: #FBDE2D;">if</span> sel <span style="color: #FBDE2D;">is</span> <span style="color: #FBDE2D;">not</span> -1:
-        <span style="color: #D8FA3C;">qtypid</span> = vtyps<span style="color: #8b0000;">[</span>qtyps<span style="color: #006400;">[</span>sels<span style="color: #ff1493;">[</span>sel<span style="color: #ff1493;">]</span><span style="color: #006400;">]</span><span style="color: #8b0000;">]</span>
-    <span style="color: #FBDE2D;">for</span> i <span style="color: #FBDE2D;">in</span> <span style="color: #FF6400;">range</span><span style="color: #8b0000;">(</span>1, <span style="color: #FF6400;">int</span><span style="color: #006400;">(</span>infoj<span style="color: #ff1493;">[</span><span style="color: #61CE3C;">'vl'</span><span style="color: #ff1493;">][</span><span style="color: #61CE3C;">'vi'</span><span style="color: #ff1493;">][</span>0<span style="color: #ff1493;">][</span><span style="color: #61CE3C;">'cl'</span><span style="color: #ff1493;">][</span><span style="color: #61CE3C;">'fc'</span><span style="color: #ff1493;">]</span><span style="color: #006400;">)</span><span style="color: #8b0000;">)</span>:
-        <span style="color: #D8FA3C;">fn</span> = <span style="color: #61CE3C;">'%s.p%s.%s.mp4'</span> % <span style="color: #8b0000;">(</span>vid, qtypid%10000, <span style="color: #FF6400;">str</span><span style="color: #006400;">(</span>i<span style="color: #006400;">)</span><span style="color: #8b0000;">)</span>
-        <span style="color: #D8FA3C;">sinfo</span> = _http<span style="color: #8b0000;">(</span>
-            <span style="color: #61CE3C;">'{0}getkey?format={1}&amp;filename={2}&amp;vid={3}&amp;otype=json'</span>.<span style="color: #FF6400;">format</span><span style="color: #006400;">(</span>
-                murl, qtypid, fn, vid<span style="color: #006400;">)</span><span style="color: #8b0000;">)</span>
-        <span style="color: #D8FA3C;">skey</span> = json.loads<span style="color: #8b0000;">(</span>sinfo.split<span style="color: #006400;">(</span><span style="color: #61CE3C;">'='</span><span style="color: #006400;">)[</span>1<span style="color: #006400;">][</span>:-1<span style="color: #006400;">]</span><span style="color: #8b0000;">)[</span><span style="color: #61CE3C;">'key'</span><span style="color: #8b0000;">]</span>
-        <span style="color: #D8FA3C;">surl</span> = urllib2.urlopen<span style="color: #8b0000;">(</span>
-            <span style="color: #61CE3C;">'%s%s?vkey=%s'</span> % <span style="color: #006400;">(</span>urlpre, fn, skey<span style="color: #006400;">)</span>, timeout=30<span style="color: #8b0000;">)</span>.geturl<span style="color: #8b0000;">()</span>
-        <span style="color: #FBDE2D;">if</span> <span style="color: #FBDE2D;">not</span> surl: <span style="color: #FBDE2D;">break</span>
-        surls.append<span style="color: #8b0000;">(</span>surl<span style="color: #8b0000;">)</span>
+<pre class="src src-python">def qq(self):
+    html = _http(self.url)
+    vid = re.compile(r'vid:"([^"]+)"').search(html).group(1)
+    murl = 'http://vv.video.qq.com/'
+    vinfo = _http('%sgetinfo?otype=json&amp;vids=%s' % (murl, vid))
+    infoj = json.loads(vinfo.split('=')[1][:-1])
+    qtyps = OrderedDict((
+        ('1080P', 'fhd'), ('超清', 'shd'), ('高清', 'hd'), ('标清', 'sd')))
+    vtyps = {v['name']:v['id'] for v in infoj['fl']['fi']}
+    qtypid = vtyps['sd']
+    sels = [k for k,v in qtyps.iteritems() if v in vtyps]
+    sel = dialog.select('清晰度', sels)
+    surls = []
+    urlpre = infoj['vl']['vi'][0]['ul']['ui'][-1]['url']
+    if sel is not -1:
+        qtypid = vtyps[qtyps[sels[sel]]]
+    for i in range(1, int(infoj['vl']['vi'][0]['cl']['fc'])):
+        fn = '%s.p%s.%s.mp4' % (vid, qtypid%10000, str(i))
+        sinfo = _http(
+            '{0}getkey?format={1}&amp;filename={2}&amp;vid={3}&amp;otype=json'.format(
+                murl, qtypid, fn, vid))
+        skey = json.loads(sinfo.split('=')[1][:-1])['key']
+        surl = urllib2.urlopen(
+            '%s%s?vkey=%s' % (urlpre, fn, skey), timeout=30).geturl()
+        if not surl: break
+        surls.append(surl)
 </pre>
 </div>

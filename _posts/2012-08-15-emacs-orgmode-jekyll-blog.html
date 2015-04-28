@@ -90,49 +90,49 @@ body-only t
 </p>
 <div class="org-src-container">
 
-<pre class="src src-emacs-lisp"><span style="color: #8B8989; font-style: italic;">;;</span><span style="color: #8B8989; font-style: italic;">org-mode</span>
-<span style="color: #8b0000;">(</span>add-to-list 'load-path <span style="color: #61CE3C;">"~/.emacs.d/lisp/org-7.8.11/lisp"</span><span style="color: #8b0000;">)</span>
-<span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">require</span> '<span style="color: #4c83ff;">org-install</span><span style="color: #8b0000;">)</span>
-<span style="color: #8b0000;">(</span>add-to-list 'auto-mode-alist '<span style="color: #006400;">(</span><span style="color: #61CE3C;">"\\.org$"</span> . org-mode<span style="color: #006400;">)</span><span style="color: #8b0000;">)</span>
-<span style="color: #8b0000;">(</span>define-key global-map <span style="color: #61CE3C;">"\C-cl"</span> 'org-store-link<span style="color: #8b0000;">)</span>
-<span style="color: #8b0000;">(</span>define-key global-map <span style="color: #61CE3C;">"\C-ca"</span> 'org-agenda<span style="color: #8b0000;">)</span>
-<span style="color: #8b0000;">(</span>global-set-key <span style="color: #61CE3C;">"\C-cb"</span> 'org-iswitchb<span style="color: #8b0000;">)</span>
-<span style="color: #8b0000;">(</span>global-font-lock-mode 1<span style="color: #8b0000;">)</span>                     <span style="color: #8B8989; font-style: italic;">; </span><span style="color: #8B8989; font-style: italic;">for all buffers</span>
-<span style="color: #8b0000;">(</span>add-hook 'org-mode-hook 'turn-on-font-lock<span style="color: #8b0000;">)</span>  <span style="color: #8B8989; font-style: italic;">; </span><span style="color: #8B8989; font-style: italic;">Org buffers only</span>
-<span style="color: #8b0000;">(</span>setq org-startup-indented t<span style="color: #8b0000;">)</span>
-<span style="color: #8b0000;">(</span>setq org-log-done t<span style="color: #8b0000;">)</span>
-<span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">require</span> '<span style="color: #4c83ff;">org-publish</span><span style="color: #8b0000;">)</span>
-<span style="color: #8b0000;">(</span>setq org-publish-project-alist '<span style="color: #006400;">(</span>
-  <span style="color: #ff1493;">(</span><span style="color: #61CE3C;">"org-myblog"</span>
-          <span style="color: #8B8989; font-style: italic;">;; </span><span style="color: #8B8989; font-style: italic;">Path to your org files.</span>
-          <span style="color: #FF6400;">:base-directory</span> <span style="color: #61CE3C;">"~/myblog/org/"</span>
-          <span style="color: #FF6400;">:base-extension</span> <span style="color: #61CE3C;">"org"</span>
+<pre class="src src-emacs-lisp">;;org-mode
+(add-to-list 'load-path "~/.emacs.d/lisp/org-7.8.11/lisp")
+(require 'org-install)
+(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-ca" 'org-agenda)
+(global-set-key "\C-cb" 'org-iswitchb)
+(global-font-lock-mode 1)                     ; for all buffers
+(add-hook 'org-mode-hook 'turn-on-font-lock)  ; Org buffers only
+(setq org-startup-indented t)
+(setq org-log-done t)
+(require 'org-publish)
+(setq org-publish-project-alist '(
+  ("org-myblog"
+          ;; Path to your org files.
+          :base-directory "~/myblog/org/"
+          :base-extension "org"
 
-          <span style="color: #8B8989; font-style: italic;">;; </span><span style="color: #8B8989; font-style: italic;">Path to your Jekyll project.</span>
-          <span style="color: #FF6400;">:publishing-directory</span> <span style="color: #61CE3C;">"~/myblog/jekyll/"</span>
-          <span style="color: #FF6400;">:recursive</span> t
-          <span style="color: #FF6400;">:publishing-function</span> org-publish-org-to-html
-          <span style="color: #FF6400;">:headline-levels</span> 4
-          <span style="color: #FF6400;">:html-extension</span> <span style="color: #61CE3C;">"html"</span>
-          <span style="color: #FF6400;">:body-only</span> t <span style="color: #8B8989; font-style: italic;">;; </span><span style="color: #8B8989; font-style: italic;">Only export section between &lt;body&gt; &lt;/body&gt;</span>
-    <span style="color: #ff1493;">)</span>
+          ;; Path to your Jekyll project.
+          :publishing-directory "~/myblog/jekyll/"
+          :recursive t
+          :publishing-function org-publish-org-to-html
+          :headline-levels 4
+          :html-extension "html"
+          :body-only t ;; Only export section between &lt;body&gt; &lt;/body&gt;
+    )
 
-    <span style="color: #ff1493;">(</span><span style="color: #61CE3C;">"org-static-myblog"</span>
-          <span style="color: #FF6400;">:base-directory</span> <span style="color: #61CE3C;">"~/myblog/org/"</span>
-          <span style="color: #FF6400;">:base-extension</span> <span style="color: #61CE3C;">"css</span><span style="color: #E9C062;">\\</span><span style="color: #ff0000;">|</span><span style="color: #61CE3C;">js</span><span style="color: #E9C062;">\\</span><span style="color: #ff0000;">|</span><span style="color: #61CE3C;">png</span><span style="color: #E9C062;">\\</span><span style="color: #ff0000;">|</span><span style="color: #61CE3C;">jpg</span><span style="color: #E9C062;">\\</span><span style="color: #ff0000;">|</span><span style="color: #61CE3C;">gif</span><span style="color: #E9C062;">\\</span><span style="color: #ff0000;">|</span><span style="color: #61CE3C;">pdf</span><span style="color: #E9C062;">\\</span><span style="color: #ff0000;">|</span><span style="color: #61CE3C;">mp3</span><span style="color: #E9C062;">\\</span><span style="color: #ff0000;">|</span><span style="color: #61CE3C;">ogg</span><span style="color: #E9C062;">\\</span><span style="color: #ff0000;">|</span><span style="color: #61CE3C;">swf</span><span style="color: #E9C062;">\\</span><span style="color: #ff0000;">|</span><span style="color: #61CE3C;">php"</span>
-          <span style="color: #FF6400;">:publishing-directory</span> <span style="color: #61CE3C;">"~/myblog/jekyll/"</span>
-          <span style="color: #FF6400;">:recursive</span> t
-          <span style="color: #FF6400;">:publishing-function</span> org-publish-attachment<span style="color: #ff1493;">)</span>
+    ("org-static-myblog"
+          :base-directory "~/myblog/org/"
+          :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php"
+          :publishing-directory "~/myblog/jekyll/"
+          :recursive t
+          :publishing-function org-publish-attachment)
 
-    <span style="color: #ff1493;">(</span><span style="color: #61CE3C;">"myblog"</span> <span style="color: #FF6400;">:components</span> <span style="color: #ffff00;">(</span><span style="color: #61CE3C;">"org-myblog"</span> <span style="color: #61CE3C;">"org-static-myblog"</span><span style="color: #ffff00;">)</span><span style="color: #ff1493;">)</span>
-<span style="color: #006400;">)</span><span style="color: #8b0000;">)</span>
+    ("myblog" :components ("org-myblog" "org-static-myblog"))
+))
 
-<span style="color: #8B8989; font-style: italic;">;; </span><span style="color: #8B8989; font-style: italic;">turn on soft wrapping mode for org mode</span>
-<span style="color: #8b0000;">(</span>add-hook 'org-mode-hook 'turn-on-visual-line-mode<span style="color: #8b0000;">)</span>
-<span style="color: #8b0000;">(</span>add-hook 'message-mode-hook 'turn-on-orgstruct<span style="color: #8b0000;">)</span>
-<span style="color: #8b0000;">(</span>add-hook 'message-mode-hook 'turn-on-orgstruct++<span style="color: #8b0000;">)</span>
+;; turn on soft wrapping mode for org mode
+(add-hook 'org-mode-hook 'turn-on-visual-line-mode)
+(add-hook 'message-mode-hook 'turn-on-orgstruct)
+(add-hook 'message-mode-hook 'turn-on-orgstruct++)
 
-<span style="color: #8b0000;">(</span>add-to-list 'load-path <span style="color: #61CE3C;">"~/.emacs.d/lisp/magit"</span><span style="color: #8b0000;">)</span>
-<span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">require</span> '<span style="color: #4c83ff;">magit</span><span style="color: #8b0000;">)</span>
+(add-to-list 'load-path "~/.emacs.d/lisp/magit")
+(require 'magit)
 </pre>
 </div>

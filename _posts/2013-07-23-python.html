@@ -34,14 +34,14 @@ them
 to completely copy the object, use deepcopy
 <div class="org-src-container">
 
-<pre class="src src-python">&gt;&gt;&gt;<span style="color: #D8FA3C;">x</span> = <span style="color: #8b0000;">[</span>1, 2, <span style="color: #006400;">[</span>3, 4<span style="color: #006400;">]</span><span style="color: #8b0000;">]</span>
-&gt;&gt;&gt;<span style="color: #D8FA3C;">y</span> = <span style="color: #8b0000;">[</span><span style="color: #61CE3C;">'aa'</span>, x<span style="color: #006400;">[</span>:<span style="color: #006400;">]</span><span style="color: #8b0000;">]</span>
-&gt;&gt;&gt;<span style="color: #D8FA3C;">x</span><span style="color: #8b0000;">[</span>0<span style="color: #8b0000;">]</span> = 11
-&gt;&gt;&gt;x<span style="color: #8b0000;">[</span>2<span style="color: #8b0000;">][</span>0<span style="color: #8b0000;">]</span> = 33
+<pre class="src src-python">&gt;&gt;&gt;x = [1, 2, [3, 4]]
+&gt;&gt;&gt;y = ['aa', x[:]]
+&gt;&gt;&gt;x[0] = 11
+&gt;&gt;&gt;x[2][0] = 33
 &gt;&gt;&gt;x
-<span style="color: #8b0000;">[</span>11, 2, <span style="color: #006400;">[</span>33, 4<span style="color: #006400;">]</span><span style="color: #8b0000;">]</span>
+[11, 2, [33, 4]]
 &gt;&gt;&gt;y
-<span style="color: #8b0000;">[</span><span style="color: #61CE3C;">'aa'</span>, <span style="color: #006400;">[</span>1, 2, <span style="color: #ff1493;">[</span>33, 4<span style="color: #ff1493;">]</span><span style="color: #006400;">]</span>
+['aa', [1, 2, [33, 4]]
 </pre>
 </div>
 </li>
@@ -54,12 +54,12 @@ to completely copy the object, use deepcopy
 sorted dict by value
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">method 1</span>
-<span style="color: #FF6400;">sorted</span><span style="color: #8b0000;">(</span>d.iteritems<span style="color: #006400;">()</span>, key=<span style="color: #FBDE2D;">lambda</span> x: x<span style="color: #006400;">[</span>1<span style="color: #006400;">]</span><span style="color: #8b0000;">)</span>   <span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">d.items() return list</span>
-<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">method 2</span>
-<span style="color: #FBDE2D;">import</span> operator
-<span style="color: #D8FA3C;">x</span> = <span style="color: #8b0000;">{</span>1: 2, 3: 4, 4:3, 2:1, 0:0<span style="color: #8b0000;">}</span>
-<span style="color: #D8FA3C;">sorted_x</span> = <span style="color: #FF6400;">sorted</span><span style="color: #8b0000;">(</span>x.iteritems<span style="color: #006400;">()</span>, key=operator.itemgetter<span style="color: #006400;">(</span>1<span style="color: #006400;">)</span><span style="color: #8b0000;">)</span>
+<pre class="src src-python">#method 1
+sorted(d.iteritems(), key=lambda x: x[1])   #d.items() return list
+#method 2
+import operator
+x = {1: 2, 3: 4, 4:3, 2:1, 0:0}
+sorted_x = sorted(x.iteritems(), key=operator.itemgetter(1))
 </pre>
 </div>
 </li>
@@ -83,19 +83,19 @@ object serialization &amp; C structs represented as Python strings
 </p>
 <div class="org-src-container">
 
-<pre class="src src-python">In <span style="color: #8b0000;">[</span>176<span style="color: #8b0000;">]</span>: <span style="color: #D8FA3C;">s</span> = <span style="color: #61CE3C;">'&#27979;&#35797;'</span>
+<pre class="src src-python">In [176]: s = '测试'
 
-In <span style="color: #8b0000;">[</span>177<span style="color: #8b0000;">]</span>: s
-Out<span style="color: #8b0000;">[</span>177<span style="color: #8b0000;">]</span>: <span style="color: #61CE3C;">'\xe6\xb5\x8b\xe8\xaf\x95'</span>
+In [177]: s
+Out[177]: '\xe6\xb5\x8b\xe8\xaf\x95'
 
-In <span style="color: #8b0000;">[</span>178<span style="color: #8b0000;">]</span>: s<span style="color: #8b0000;">[</span>0<span style="color: #8b0000;">]</span>
-Out<span style="color: #8b0000;">[</span>178<span style="color: #8b0000;">]</span>: <span style="color: #61CE3C;">'\xe6'</span>
+In [178]: s[0]
+Out[178]: '\xe6'
 
-In <span style="color: #8b0000;">[</span>179<span style="color: #8b0000;">]</span>: <span style="color: #FF6400;">len</span><span style="color: #8b0000;">(</span>s<span style="color: #8b0000;">)</span>
-Out<span style="color: #8b0000;">[</span>179<span style="color: #8b0000;">]</span>: 6
+In [179]: len(s)
+Out[179]: 6
 
-In <span style="color: #8b0000;">[</span>180<span style="color: #8b0000;">]</span>: <span style="color: #FF6400;">type</span><span style="color: #8b0000;">(</span>s<span style="color: #8b0000;">)</span>
-Out<span style="color: #8b0000;">[</span>180<span style="color: #8b0000;">]</span>: <span style="color: #FF6400;">str</span>
+In [180]: type(s)
+Out[180]: str
 </pre>
 </div>
 <p>
@@ -108,19 +108,19 @@ Unicode类型是真正语义上的字符串, 继续做下面一个测试:
 </p>
 <div class="org-src-container">
 
-<pre class="src src-python">In <span style="color: #8b0000;">[</span>181<span style="color: #8b0000;">]</span>: <span style="color: #D8FA3C;">u</span> = u<span style="color: #61CE3C;">'&#27979;&#35797;'</span>
+<pre class="src src-python">In [181]: u = u'测试'
 
-In <span style="color: #8b0000;">[</span>182<span style="color: #8b0000;">]</span>: <span style="color: #FF6400;">len</span><span style="color: #8b0000;">(</span>u<span style="color: #8b0000;">)</span>
-Out<span style="color: #8b0000;">[</span>182<span style="color: #8b0000;">]</span>: 2
+In [182]: len(u)
+Out[182]: 2
 
-In <span style="color: #8b0000;">[</span>183<span style="color: #8b0000;">]</span>: <span style="color: #FF6400;">type</span><span style="color: #8b0000;">(</span>u<span style="color: #8b0000;">)</span>
-Out<span style="color: #8b0000;">[</span>183<span style="color: #8b0000;">]</span>: <span style="color: #FF6400;">unicode</span>
+In [183]: type(u)
+Out[183]: unicode
 
-In <span style="color: #8b0000;">[</span>184<span style="color: #8b0000;">]</span>: u<span style="color: #8b0000;">[</span>0<span style="color: #8b0000;">]</span>
-Out<span style="color: #8b0000;">[</span>184<span style="color: #8b0000;">]</span>: u<span style="color: #61CE3C;">'\u6d4b'</span>
+In [184]: u[0]
+Out[184]: u'\u6d4b'
 
-In <span style="color: #8b0000;">[</span>185<span style="color: #8b0000;">]</span>: u
-Out<span style="color: #8b0000;">[</span>185<span style="color: #8b0000;">]</span>: u<span style="color: #61CE3C;">'\u6d4b\u8bd5'</span>
+In [185]: u
+Out[185]: u'\u6d4b\u8bd5'
 </pre>
 </div>
 
@@ -266,8 +266,8 @@ python内部都用unicode做中介。当你定义一个字符串时, 如果没�
 </p>
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">-*- coding: utf-8 -*-</span>
-<span style="color: #D8FA3C;">name</span> = <span style="color: #61CE3C;">'&#26031;&#22374;&#31119;'</span>
+<pre class="src src-python"># -*- coding: utf-8 -*-
+name = '斯坦福'
 </pre>
 </div>
 
@@ -299,7 +299,7 @@ Python会抛UnicodeDecodeError异常. 导致该结果的原因是, Python隐式�
 </p>
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #D8FA3C;">name</span> = <span style="color: #61CE3C;">'&#26031;&#22374;&#31119;'</span>
+<pre class="src src-python">name = '斯坦福'
 </pre>
 </div>
 
@@ -394,26 +394,26 @@ print a.decode('utf-8')
 <div class="outline-text-3" id="text-4-1">
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #FF6400;">str</span> = <span style="color: #61CE3C;">'atestaa,btestbb,'</span>
-<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#19981;&#21305;&#37197;&#65292;match&#26159;&#20174;&#31532;&#19968;&#20010;&#23383;&#31526;&#24320;&#22987;&#21305;&#37197;</span>
-<span style="color: #D8FA3C;">rs</span> = re.match<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'test.*'</span>, <span style="color: #FF6400;">str</span><span style="color: #8b0000;">)</span>
-<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#21305;&#37197;&#65292;rs.group()&#36755;&#20986; 'atestaa,btestbb,'</span>
-<span style="color: #D8FA3C;">rs</span> = re.match<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'.test.*'</span>, <span style="color: #FF6400;">str</span><span style="color: #8b0000;">)</span>
-<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#21305;&#37197;&#65292;&#27880;&#24847;patten&#21518;&#38754;&#22810;&#20102;&#19968;&#20010;&#36887;&#21495;&#23383;&#31526;&#65292;&#20294;&#26159;&#21305;&#37197;&#32467;&#26524;&#21516;&#19978;&#65292;&#22240;&#32570;&#30465;&#26159;&#36138;&#21507;&#27169;&#24335;,</span>
-<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#21407;&#21017;&#26159;&#26368;&#38271;&#21305;&#37197;</span>
-<span style="color: #D8FA3C;">rs</span> = re.match<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'.test.*,'</span>, <span style="color: #FF6400;">str</span><span style="color: #8b0000;">)</span>
-<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#21305;&#37197;&#65292;&#27880;&#24847;patten&#20013;&#22810;&#20102;&#20010;&#38382;&#21495;&#65292;&#21305;&#37197;&#32467;&#26524;&#21464;&#25104;&#20102;'atestaa,',&#25913;&#21464;&#27169;&#24335;&#20026;&#26368;&#30701;&#21305;&#37197;</span>
-<span style="color: #D8FA3C;">rs</span> = re.match<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'.test.*?,'</span>, <span style="color: #FF6400;">str</span><span style="color: #8b0000;">)</span>
-<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#21305;&#37197;&#65292;group&#27169;&#24335;&#65292;patten&#20013;&#22810;&#20102;&#19968;&#23545;&#25324;&#21495;&#65292;&#21305;&#37197;&#32467;&#26524;&#21516;&#19978;&#65292;&#21482;&#26159;&#25324;&#21495;&#20013;&#34920;&#36798;&#24335;&#21305;</span>
-<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#37197;&#30340;&#23383;&#31526;&#20250;&#21333;&#29420;&#23384;&#25918;&#22312;re.group(1)&#20013;&#65292;&#26412;&#20363;&#20013;&#20026;'aa'</span>
-<span style="color: #D8FA3C;">rs</span> = re.match<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'.test(.*?),'</span>, <span style="color: #FF6400;">str</span><span style="color: #8b0000;">)</span>
-<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#21305;&#37197;&#65292;&#22810;&#20102;&#19968;&#20010;re.group(2)&#65292;&#26412;&#20363;&#20013;&#23384;&#25918;'bb'</span>
-<span style="color: #D8FA3C;">rs</span> = re.match<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'.test(.*?),.test(.*?),'</span>, <span style="color: #FF6400;">str</span><span style="color: #8b0000;">)</span>
-<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#20351;&#29992;&#26041;&#24335;&#21516;match&#65292;&#21807;&#19968;&#21306;&#21035;&#23601;&#26159;search&#20174;&#20219;&#24847;&#20301;&#32622;&#24320;&#22987;&#21305;&#37197;&#65292;&#32780;match&#24517;&#39035;&#20174;&#31532;&#19968;&#20010;</span>
-<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#23383;&#31526;&#24320;&#22987;&#21305;&#37197;&#65292;&#21478;&#22806;match&#21644;search&#37117;&#26159;&#19968;&#27425;&#21305;&#37197;</span>
-<span style="color: #D8FA3C;">rs</span> = re.search
-<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#21305;&#37197;&#65292;&#22810;&#27425;&#21305;&#37197;&#27169;&#24335;&#65292;rs&#36755;&#20986;['aa', 'bb']&#65292;return list</span>
-<span style="color: #D8FA3C;">rs</span> = re.findall<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'test(.*?),'</span>, <span style="color: #FF6400;">str</span><span style="color: #8b0000;">)</span>
+<pre class="src src-python">str = 'atestaa,btestbb,'
+#不匹配，match是从第一个字符开始匹配
+rs = re.match(r'test.*', str)
+#匹配，rs.group()输出 'atestaa,btestbb,'
+rs = re.match(r'.test.*', str)
+#匹配，注意patten后面多了一个逗号字符，但是匹配结果同上，因缺省是贪吃模式,
+#原则是最长匹配
+rs = re.match(r'.test.*,', str)
+#匹配，注意patten中多了个问号，匹配结果变成了'atestaa,',改变模式为最短匹配
+rs = re.match(r'.test.*?,', str)
+#匹配，group模式，patten中多了一对括号，匹配结果同上，只是括号中表达式匹
+#配的字符会单独存放在re.group(1)中，本例中为'aa'
+rs = re.match(r'.test(.*?),', str)
+#匹配，多了一个re.group(2)，本例中存放'bb'
+rs = re.match(r'.test(.*?),.test(.*?),', str)
+#使用方式同match，唯一区别就是search从任意位置开始匹配，而match必须从第一个
+#字符开始匹配，另外match和search都是一次匹配
+rs = re.search
+#匹配，多次匹配模式，rs输出['aa', 'bb']，return list
+rs = re.findall(r'test(.*?),', str)
 </pre>
 </div>
 
@@ -422,19 +422,19 @@ print a.decode('utf-8')
 </p>
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#36825;&#37324;&#21305;&#37197;xx&#65292;xy&#65292;yx&#65292;yy&#65292;&#20294;&#26159;&#22914;&#26524;&#20320;&#21482;&#24819;&#21305;&#37197;xy&#21644;yx&#30340;&#26102;&#20505;&#24590;&#20040;&#21150;&#21602;</span>
-<span style="color: #D8FA3C;">re</span> = re.search<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'(x|y)(x|y)'</span>, <span style="color: #61CE3C;">'xy'</span><span style="color: #8b0000;">)</span>
+<pre class="src src-python">#这里匹配xx，xy，yx，yy，但是如果你只想匹配xy和yx的时候怎么办呢
+re = re.search(r'(x|y)(x|y)', 'xy')
 
-<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#21305;&#37197;xy&#25110;&#32773;yx&#65292;&#19981;&#21305;&#37197;xx&#65292;yy&#65292;&#35299;&#37322;&#19968;&#19979;&#65292;&#31532;&#19968;&#20010;&#22823;&#25324;&#21495;&#37324;&#38754;&#26159;&#34920;&#31034;&#24403;&#25214;&#21040;x&#30340;&#26102;</span>
-<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#20505;&#65292;&#23384;&#20837;group&#65288;1&#65289;&#37324;&#38754;&#65292;&#22914;&#26524;&#26159;y&#21017;&#19981;&#23384;&#20837;group&#65288;1&#65289;&#65292;&#21518;&#38754;&#19968;&#20010;&#25324;&#21495;&#37324;&#38754;&#34920;&#31034;&#22914;</span>
-<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#26524;group&#65288;1&#65289;&#23384;&#22312;&#65292;&#21017;&#32487;&#32493;&#21305;&#37197;y&#65292;&#21542;&#21017;&#21305;&#37197;x</span>
-<span style="color: #D8FA3C;">rs</span> = re.search<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'(?:(x)|y)(?(1)y|x)'</span>, <span style="color: #61CE3C;">'xy'</span><span style="color: #8b0000;">)</span>
+#匹配xy或者yx，不匹配xx，yy，解释一下，第一个大括号里面是表示当找到x的时
+#候，存入group（1）里面，如果是y则不存入group（1），后面一个括号里面表示如
+#果group（1）存在，则继续匹配y，否则匹配x
+rs = re.search(r'(?:(x)|y)(?(1)y|x)', 'xy')
 
-<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">OR&#20851;&#31995;&#21305;&#37197;</span>
-<span style="color: #8B8989; font-style: italic;">#</span><span style="color: #8B8989; font-style: italic;">&#20551;&#22914;&#20320;&#35201;&#21305;&#37197;&#30340;&#20869;&#23481;&#21069;&#38754;&#30340;&#38480;&#23450;&#31526;&#26377;&#21464;&#21270;&#65292;&#27604;&#22914;&#19979;&#38754;&#20363;&#23376;&#65292;</span>
-<span style="color: #D8FA3C;">s</span> = <span style="color: #61CE3C;">'''&lt;div class="data"&gt;12-11&lt;a href="http://www.google.com"&gt;&lt;/a&gt;&lt;/div&gt;</span>
-<span style="color: #61CE3C;">       &lt;div class ="phase"&gt;1102&lt;a href="http://www.yahoo.com"&gt;&lt;/a&gt;&lt;/div&gt;'''</span>
-<span style="color: #D8FA3C;">rs</span> = re.findall<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'class="(?:(?:data)|(?:phase))"&gt;([\d-]+)&lt;a.*?"(.*?)"&gt;'</span>, s<span style="color: #8b0000;">)</span>
+#OR关系匹配
+#假如你要匹配的内容前面的限定符有变化，比如下面例子，
+s = '''&lt;div class="data"&gt;12-11&lt;a href="http://www.google.com"&gt;&lt;/a&gt;&lt;/div&gt;
+       &lt;div class ="phase"&gt;1102&lt;a href="http://www.yahoo.com"&gt;&lt;/a&gt;&lt;/div&gt;'''
+rs = re.findall(r'class="(?:(?:data)|(?:phase))"&gt;([\d-]+)&lt;a.*?"(.*?)"&gt;', s)
 </pre>
 </div>
 </div>
@@ -445,12 +445,12 @@ print a.decode('utf-8')
 <div class="outline-text-3" id="text-4-2">
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #FF6400;">str</span> = <span style="color: #61CE3C;">'purple alice@google.com, blah monkey bob@abc.com blah dishwasher'</span>
-<span style="color: #D8FA3C;">tuples</span> = re.findall<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'([\w\.-]+)@([\w\.-]+)'</span>, <span style="color: #FF6400;">str</span><span style="color: #8b0000;">)</span>
-<span style="color: #FBDE2D;">print</span> tuples  <span style="color: #8B8989; font-style: italic;">## </span><span style="color: #8B8989; font-style: italic;">[('alice', 'google.com'), ('bob', 'abc.com')]</span>
-<span style="color: #FBDE2D;">for</span> <span style="color: #FF6400;">tuple</span> <span style="color: #FBDE2D;">in</span> tuples:
-  <span style="color: #FBDE2D;">print</span> <span style="color: #FF6400;">tuple</span><span style="color: #8b0000;">[</span>0<span style="color: #8b0000;">]</span>  <span style="color: #8B8989; font-style: italic;">## </span><span style="color: #8B8989; font-style: italic;">username</span>
-  <span style="color: #FBDE2D;">print</span> <span style="color: #FF6400;">tuple</span><span style="color: #8b0000;">[</span>1<span style="color: #8b0000;">]</span>  <span style="color: #8B8989; font-style: italic;">## </span><span style="color: #8B8989; font-style: italic;">host</span>
+<pre class="src src-python">str = 'purple alice@google.com, blah monkey bob@abc.com blah dishwasher'
+tuples = re.findall(r'([\w\.-]+)@([\w\.-]+)', str)
+print tuples  ## [('alice', 'google.com'), ('bob', 'abc.com')]
+for tuple in tuples:
+  print tuple[0]  ## username
+  print tuple[1]  ## host
 </pre>
 </div>
 </div>
@@ -499,12 +499,12 @@ them to keep the user (\1) but have yo-yo-dyne.com as the host.
 </p>
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #FF6400;">str</span> = <span style="color: #61CE3C;">'purple alice@google.com, blah monkey bob@abc.com blah dishwasher'</span>
-<span style="color: #8B8989; font-style: italic;">## </span><span style="color: #8B8989; font-style: italic;">re.sub(pat, replacement, str) -returns new string with all replacements,</span>
-<span style="color: #8B8989; font-style: italic;">## </span><span style="color: #8B8989; font-style: italic;">\1 is group(1), \2 group(2) in the replacement</span>
-<span style="color: #FBDE2D;">print</span> re.sub<span style="color: #8b0000;">(</span>r<span style="color: #61CE3C;">'([\w\.-]+)@([\w\.-]+)'</span>, r<span style="color: #61CE3C;">'\1@yo-yo-dyne.com'</span>, <span style="color: #FF6400;">str</span><span style="color: #8b0000;">)</span>
-<span style="color: #8B8989; font-style: italic;">## </span><span style="color: #8B8989; font-style: italic;">purple alice@yo-yo-dyne.com, blah monkey bob@yo-yo-dyne.com blah</span>
-<span style="color: #8B8989; font-style: italic;">##</span><span style="color: #8B8989; font-style: italic;">dishwasher</span>
+<pre class="src src-python">str = 'purple alice@google.com, blah monkey bob@abc.com blah dishwasher'
+## re.sub(pat, replacement, str) -returns new string with all replacements,
+## \1 is group(1), \2 group(2) in the replacement
+print re.sub(r'([\w\.-]+)@([\w\.-]+)', r'\1@yo-yo-dyne.com', str)
+## purple alice@yo-yo-dyne.com, blah monkey bob@yo-yo-dyne.com blah
+##dishwasher
 </pre>
 </div>
 </div>
@@ -527,26 +527,26 @@ descriptor protocol转换成method（这么说也不准确，理论上你依然�
 </p>
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">foo</span><span style="color: #8b0000;">(</span>x<span style="color: #8b0000;">)</span>:
-    <span style="color: #FBDE2D;">print</span> <span style="color: #61CE3C;">'call foo'</span>, x
+<pre class="src src-python">def foo(x):
+    print 'call foo', x
 
-<span style="color: #FBDE2D;">class</span> <span style="color: #D8FA3C;">MyClass</span><span style="color: #8b0000;">(</span><span style="color: #FF6400;">object</span><span style="color: #8b0000;">)</span>:
-    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">m1</span><span style="color: #8b0000;">(</span>x<span style="color: #8b0000;">)</span>:
-        <span style="color: #FBDE2D;">print</span> <span style="color: #61CE3C;">'call m1'</span>, x
+class MyClass(object):
+    def m1(x):
+        print 'call m1', x
 
-    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">m2</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span>, y<span style="color: #8b0000;">)</span>:
-        <span style="color: #FBDE2D;">print</span> <span style="color: #61CE3C;">'call m2'</span>, y
+    def m2(self, y):
+        print 'call m2', y
 
-In <span style="color: #8b0000;">[</span>259<span style="color: #8b0000;">]</span>: foo
-Out<span style="color: #8b0000;">[</span>259<span style="color: #8b0000;">]</span>: &lt;function __main__.foo&gt;
+In [259]: foo
+Out[259]: &lt;function __main__.foo&gt;
 
-In <span style="color: #8b0000;">[</span>260<span style="color: #8b0000;">]</span>: MyClass.m1
-Out<span style="color: #8b0000;">[</span>260<span style="color: #8b0000;">]</span>: &lt;unbound method MyClass.m1&gt;
+In [260]: MyClass.m1
+Out[260]: &lt;unbound method MyClass.m1&gt;
 
-In <span style="color: #8b0000;">[</span>261<span style="color: #8b0000;">]</span>: <span style="color: #D8FA3C;">m</span> = MyClass<span style="color: #8b0000;">()</span>
+In [261]: m = MyClass()
 
-In <span style="color: #8b0000;">[</span>264<span style="color: #8b0000;">]</span>: m.m1
-Out<span style="color: #8b0000;">[</span>264<span style="color: #8b0000;">]</span>: &lt;bound method MyClass.m1 of &lt;__main__.MyClass <span style="color: #FF6400;">object</span> at 0x1e49c10&gt;&gt;
+In [264]: m.m1
+Out[264]: &lt;bound method MyClass.m1 of &lt;__main__.MyClass object at 0x1e49c10&gt;&gt;
 </pre>
 </div>
 <p>
@@ -560,14 +560,14 @@ Out<span style="color: #8b0000;">[</span>264<span style="color: #8b0000;">]</spa
 </p>
 <div class="org-src-container">
 
-<pre class="src src-python">In <span style="color: #8b0000;">[</span>281<span style="color: #8b0000;">]</span>: foo
-Out<span style="color: #8b0000;">[</span>281<span style="color: #8b0000;">]</span>: &lt;function __main__.foo&gt;
+<pre class="src src-python">In [281]: foo
+Out[281]: &lt;function __main__.foo&gt;
 
-In <span style="color: #8b0000;">[</span>282<span style="color: #8b0000;">]</span>: MyClass.__dict__.get<span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'m1'</span><span style="color: #8b0000;">)</span>
-Out<span style="color: #8b0000;">[</span>284<span style="color: #8b0000;">]</span>: &lt;function __main__.m1&gt;
+In [282]: MyClass.__dict__.get('m1')
+Out[284]: &lt;function __main__.m1&gt;
 
-In <span style="color: #8b0000;">[</span>285<span style="color: #8b0000;">]</span>: MyClass.m1
-Out<span style="color: #8b0000;">[</span>285<span style="color: #8b0000;">]</span>: &lt;unbound method MyClass.m1&gt;
+In [285]: MyClass.m1
+Out[285]: &lt;unbound method MyClass.m1&gt;
 </pre>
 </div>
 <p>
@@ -584,11 +584,11 @@ Out<span style="color: #8b0000;">[</span>285<span style="color: #8b0000;">]</spa
 </p>
 <div class="org-src-container">
 
-<pre class="src src-python">In <span style="color: #8b0000;">[</span>328<span style="color: #8b0000;">]</span>: <span style="color: #61CE3C;">'#'</span>.join<span style="color: #8b0000;">(</span><span style="color: #FF6400;">dir</span><span style="color: #006400;">(</span>MyClass.m1<span style="color: #006400;">)</span><span style="color: #8b0000;">)</span>
-Out<span style="color: #8b0000;">[</span>330<span style="color: #8b0000;">]</span>: <span style="color: #61CE3C;">'__call__#__class__#__cmp__#__delattr__#__doc__#__format__#__func__#</span>
-<span style="color: #61CE3C;">__get__#__getattribute__#__hash__#__init__#__new__#__reduce__#__reduce_ex__#</span>
-<span style="color: #61CE3C;">__repr__#__self__#__setattr__#__sizeof__#__str__#__subclasshook__#im_class#</span>
-<span style="color: #61CE3C;">im_func#im_self'</span>
+<pre class="src src-python">In [328]: '#'.join(dir(MyClass.m1))
+Out[330]: '__call__#__class__#__cmp__#__delattr__#__doc__#__format__#__func__#
+__get__#__getattribute__#__hash__#__init__#__new__#__reduce__#__reduce_ex__#
+__repr__#__self__#__setattr__#__sizeof__#__str__#__subclasshook__#im_class#
+im_func#im_self'
 </pre>
 </div>
 <p>
@@ -597,11 +597,11 @@ Out<span style="color: #8b0000;">[</span>330<span style="color: #8b0000;">]</spa
 </p>
 <div class="org-src-container">
 
-<pre class="src src-python">In <span style="color: #8b0000;">[</span>346<span style="color: #8b0000;">]</span>: MyClass.m1.__get__<span style="color: #8b0000;">(</span><span style="color: #4c83ff;">None</span>, MyClass<span style="color: #8b0000;">)</span>
-Out<span style="color: #8b0000;">[</span>346<span style="color: #8b0000;">]</span>: &lt;unbound method MyClass.m1&gt;
+<pre class="src src-python">In [346]: MyClass.m1.__get__(None, MyClass)
+Out[346]: &lt;unbound method MyClass.m1&gt;
 
-In <span style="color: #8b0000;">[</span>347<span style="color: #8b0000;">]</span>: MyClass.m1.__get__<span style="color: #8b0000;">(</span>m, MyClass<span style="color: #8b0000;">)</span>
-Out<span style="color: #8b0000;">[</span>354<span style="color: #8b0000;">]</span>: &lt;bound method MyClass.m1 of &lt;__main__.MyClass <span style="color: #FF6400;">object</span> at 0x1e49c10&gt;&gt;
+In [347]: MyClass.m1.__get__(m, MyClass)
+Out[354]: &lt;bound method MyClass.m1 of &lt;__main__.MyClass object at 0x1e49c10&gt;&gt;
 </pre>
 </div>
 
@@ -610,22 +610,22 @@ Out<span style="color: #8b0000;">[</span>354<span style="color: #8b0000;">]</spa
 </p>
 <div class="org-src-container">
 
-<pre class="src src-python">In <span style="color: #8b0000;">[</span>357<span style="color: #8b0000;">]</span>: m.m1<span style="color: #8b0000;">(</span>1<span style="color: #8b0000;">)</span>
+<pre class="src src-python">In [357]: m.m1(1)
 ---------------------------------------------------------------------------
-<span style="color: #D8FA3C;">TypeError</span>                                 Traceback <span style="color: #8b0000;">(</span>most recent call last<span style="color: #8b0000;">)</span>
-&lt;ipython-<span style="color: #FF6400;">input</span>-357-329146df192e&gt; <span style="color: #FBDE2D;">in</span> &lt;module&gt;<span style="color: #8b0000;">()</span>
-----&gt; 1 m.m1<span style="color: #8b0000;">(</span>1<span style="color: #8b0000;">)</span>
+TypeError                                 Traceback (most recent call last)
+&lt;ipython-input-357-329146df192e&gt; in &lt;module&gt;()
+----&gt; 1 m.m1(1)
 
-<span style="color: #D8FA3C;">TypeError</span>: m1<span style="color: #8b0000;">()</span> takes exactly 1 argument <span style="color: #8b0000;">(</span>2 given<span style="color: #8b0000;">)</span>
+TypeError: m1() takes exactly 1 argument (2 given)
 
-In <span style="color: #8b0000;">[</span>358<span style="color: #8b0000;">]</span>: MyClass.m1<span style="color: #8b0000;">(</span>1<span style="color: #8b0000;">)</span>
+In [358]: MyClass.m1(1)
 ---------------------------------------------------------------------------
-<span style="color: #D8FA3C;">TypeError</span>                                 Traceback <span style="color: #8b0000;">(</span>most recent call last<span style="color: #8b0000;">)</span>
-&lt;ipython-<span style="color: #FF6400;">input</span>-360-f35a4576c1b2&gt; <span style="color: #FBDE2D;">in</span> &lt;module&gt;<span style="color: #8b0000;">()</span>
-----&gt; 1 MyClass.m1<span style="color: #8b0000;">(</span>1<span style="color: #8b0000;">)</span>
+TypeError                                 Traceback (most recent call last)
+&lt;ipython-input-360-f35a4576c1b2&gt; in &lt;module&gt;()
+----&gt; 1 MyClass.m1(1)
 
-<span style="color: #D8FA3C;">TypeError</span>: unbound method m1<span style="color: #8b0000;">()</span> must be called <span style="color: #FBDE2D;">with</span> MyClass instance <span style="color: #FBDE2D;">as</span> first
-argument <span style="color: #8b0000;">(</span>got <span style="color: #FF6400;">int</span> instance instead<span style="color: #8b0000;">)</span>
+TypeError: unbound method m1() must be called with MyClass instance as first
+argument (got int instance instead)
 </pre>
 </div>
 <p>
@@ -636,19 +636,19 @@ argument <span style="color: #8b0000;">(</span>got <span style="color: #FF6400;"
 </p>
 <div class="org-src-container">
 
-<pre class="src src-python">In <span style="color: #8b0000;">[</span>382<span style="color: #8b0000;">]</span>: MyClass.__dict__.get<span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'m1'</span><span style="color: #8b0000;">)(</span>1<span style="color: #8b0000;">)</span>
+<pre class="src src-python">In [382]: MyClass.__dict__.get('m1')(1)
 call m1 1
 
-In <span style="color: #8b0000;">[</span>393<span style="color: #8b0000;">]</span>: m.m2<span style="color: #8b0000;">(</span>1<span style="color: #8b0000;">)</span>
+In [393]: m.m2(1)
 call m2 1
 
-In <span style="color: #8b0000;">[</span>394<span style="color: #8b0000;">]</span>: m.__class__.__dict__.get<span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'m1'</span><span style="color: #8b0000;">)(</span>1<span style="color: #8b0000;">)</span>
+In [394]: m.__class__.__dict__.get('m1')(1)
 call m1 1
 
-In <span style="color: #8b0000;">[</span>25<span style="color: #8b0000;">]</span>: m.m1.im_func<span style="color: #8b0000;">(</span>1<span style="color: #8b0000;">)</span>
+In [25]: m.m1.im_func(1)
 call m1 1
 
-In <span style="color: #8b0000;">[</span>26<span style="color: #8b0000;">]</span>: MyClass.m1.im_func<span style="color: #8b0000;">(</span>1<span style="color: #8b0000;">)</span>
+In [26]: MyClass.m1.im_func(1)
 call m1 1
 </pre>
 </div>
@@ -677,18 +677,18 @@ TODO &amp; staticmethod &amp; classmethod &amp; instancemethod &amp; super
 </p>
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #D8FA3C;">funcs</span> = <span style="color: #8b0000;">[]</span>
-<span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">outer</span><span style="color: #8b0000;">()</span>:
-    <span style="color: #FBDE2D;">for</span> i <span style="color: #FBDE2D;">in</span> <span style="color: #FF6400;">range</span><span style="color: #8b0000;">(</span>4<span style="color: #8b0000;">)</span>:
-        <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">inner</span><span style="color: #8b0000;">()</span>:
-            <span style="color: #FBDE2D;">print</span> i
-        funcs.append<span style="color: #8b0000;">(</span>inner<span style="color: #8b0000;">)</span>
-    <span style="color: #FBDE2D;">return</span> funcs
+<pre class="src src-python">funcs = []
+def outer():
+    for i in range(4):
+        def inner():
+            print i
+        funcs.append(inner)
+    return funcs
 
-<span style="color: #FBDE2D;">for</span> f <span style="color: #FBDE2D;">in</span> outer<span style="color: #8b0000;">()</span>:
-    f<span style="color: #8b0000;">()</span>
+for f in outer():
+    f()
 
-In <span style="color: #8b0000;">[</span>126<span style="color: #8b0000;">]</span>: 3
+In [126]: 3
 3
 3
 3
@@ -724,18 +724,18 @@ outter运行时才存在，而现在outer已经执行结束了，为啥inner还�
 </p>
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #D8FA3C;">funcs</span> = <span style="color: #8b0000;">[]</span>
-<span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">outer</span><span style="color: #8b0000;">()</span>:
-    <span style="color: #FBDE2D;">for</span> i <span style="color: #FBDE2D;">in</span> <span style="color: #FF6400;">range</span><span style="color: #8b0000;">(</span>4<span style="color: #8b0000;">)</span>:
-        <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">inner</span><span style="color: #8b0000;">(</span>i=i<span style="color: #8b0000;">)</span>:
-            <span style="color: #FBDE2D;">print</span> i
-        funcs.append<span style="color: #8b0000;">(</span>inner<span style="color: #8b0000;">)</span>
-    <span style="color: #FBDE2D;">return</span> funcs
+<pre class="src src-python">funcs = []
+def outer():
+    for i in range(4):
+        def inner(i=i):
+            print i
+        funcs.append(inner)
+    return funcs
 
-<span style="color: #FBDE2D;">for</span> f <span style="color: #FBDE2D;">in</span> outer<span style="color: #8b0000;">()</span>:
-    f<span style="color: #8b0000;">()</span>
+for f in outer():
+    f()
 
-In <span style="color: #8b0000;">[</span>127<span style="color: #8b0000;">]</span>: 0
+In [127]: 0
 1
 2
 3
@@ -751,20 +751,20 @@ In <span style="color: #8b0000;">[</span>127<span style="color: #8b0000;">]</spa
 <div class="org-src-container">
 
 <pre class="src src-python">demo_global.py
-<span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">-*- coding: utf-8 -*-</span>
-<span style="color: #D8FA3C;">x</span> = 10
-<span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">f1</span><span style="color: #8b0000;">()</span>:
-    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">inner</span><span style="color: #8b0000;">()</span>:
-        <span style="color: #FBDE2D;">print</span> x
-    <span style="color: #FBDE2D;">return</span> inner
+# -*- coding: utf-8 -*-
+x = 10
+def f1():
+    def inner():
+        print x
+    return inner
 
 demo_test.py
-<span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">-*- coding: utf-8 -*-</span>
-<span style="color: #FBDE2D;">import</span> demo_global
+# -*- coding: utf-8 -*-
+import demo_global
 
-<span style="color: #D8FA3C;">x</span> = 30
-<span style="color: #D8FA3C;">f2</span> = demo_global.f1<span style="color: #8b0000;">()</span>
-f2<span style="color: #8b0000;">()</span>
+x = 30
+f2 = demo_global.f1()
+f2()
 </pre>
 </div>
 <p>
@@ -779,11 +779,11 @@ f2<span style="color: #8b0000;">()</span>
 </p>
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #D8FA3C;">x</span> = 10
+<pre class="src src-python">x = 10
 
-<span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">f</span><span style="color: #8b0000;">()</span>:
-  <span style="color: #FBDE2D;">print</span> x
-  <span style="color: #D8FA3C;">x</span> = x + 1
+def f():
+  print x
+  x = x + 1
 </pre>
 </div>
 <p>
@@ -832,73 +832,73 @@ old class中任何attribute fetch操作都会触发"__getattr</span></span>"，�
 </p>
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">-*- coding: utf-8 -*-</span>
-<span style="color: #FBDE2D;">class</span> <span style="color: #D8FA3C;">GetAttr</span><span style="color: #8b0000;">(</span><span style="color: #FF6400;">object</span><span style="color: #8b0000;">)</span>:
-    <span style="color: #D8FA3C;">eggs</span> = 88
-    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">__init__</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span><span style="color: #8b0000;">)</span>:
-        <span style="color: #FBDE2D;">self</span>.spam = 77
-    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">__len__</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span><span style="color: #8b0000;">)</span>:
-        <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'__len__:42'</span><span style="color: #8b0000;">)</span>
-        <span style="color: #FBDE2D;">return</span> 42
-    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">__getattr__</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span>, attr<span style="color: #8b0000;">)</span>:
-        <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'getattr:'</span> + attr<span style="color: #8b0000;">)</span>
-        <span style="color: #FBDE2D;">if</span> attr == <span style="color: #61CE3C;">'__str__'</span>:
-            <span style="color: #FBDE2D;">return</span> <span style="color: #FBDE2D;">lambda</span> *args: <span style="color: #61CE3C;">'[Getattr str]'</span>
-        <span style="color: #FBDE2D;">else</span>:
-            <span style="color: #FBDE2D;">return</span> <span style="color: #FBDE2D;">lambda</span> *args: <span style="color: #4c83ff;">None</span>
+<pre class="src src-python"># -*- coding: utf-8 -*-
+class GetAttr(object):
+    eggs = 88
+    def __init__(self):
+        self.spam = 77
+    def __len__(self):
+        print('__len__:42')
+        return 42
+    def __getattr__(self, attr):
+        print('getattr:' + attr)
+        if attr == '__str__':
+            return lambda *args: '[Getattr str]'
+        else:
+            return lambda *args: None
 
 
-<span style="color: #FBDE2D;">class</span> <span style="color: #D8FA3C;">GetAttrOld</span>:
-    <span style="color: #D8FA3C;">eggs</span> = 88
-    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">__init__</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span><span style="color: #8b0000;">)</span>:
-        <span style="color: #FBDE2D;">self</span>.spam = 77
-    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">__len__</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span><span style="color: #8b0000;">)</span>:
-        <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'__len__:42'</span><span style="color: #8b0000;">)</span>
-        <span style="color: #FBDE2D;">return</span> 42
-    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">__getattr__</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span>, attr<span style="color: #8b0000;">)</span>:
-        <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'getattr:'</span> + attr<span style="color: #8b0000;">)</span>
-        <span style="color: #FBDE2D;">if</span> attr == <span style="color: #61CE3C;">'__str__'</span>:
-            <span style="color: #FBDE2D;">return</span> <span style="color: #FBDE2D;">lambda</span> *args: <span style="color: #61CE3C;">'[Getattr str]'</span>
-        <span style="color: #FBDE2D;">else</span>:
-            <span style="color: #FBDE2D;">return</span> <span style="color: #FBDE2D;">lambda</span> *args: <span style="color: #4c83ff;">None</span>
+class GetAttrOld:
+    eggs = 88
+    def __init__(self):
+        self.spam = 77
+    def __len__(self):
+        print('__len__:42')
+        return 42
+    def __getattr__(self, attr):
+        print('getattr:' + attr)
+        if attr == '__str__':
+            return lambda *args: '[Getattr str]'
+        else:
+            return lambda *args: None
 
 
-<span style="color: #FBDE2D;">class</span> <span style="color: #D8FA3C;">GetAttribute</span><span style="color: #8b0000;">(</span><span style="color: #FF6400;">object</span><span style="color: #8b0000;">)</span>:
-    <span style="color: #D8FA3C;">eggs</span> = 88
-    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">__init__</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span><span style="color: #8b0000;">)</span>:
-        <span style="color: #FBDE2D;">self</span>.spam = 77
-    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">__len__</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span><span style="color: #8b0000;">)</span>:
-        <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'__len__:42'</span><span style="color: #8b0000;">)</span>
-        <span style="color: #FBDE2D;">return</span> 42
-    <span style="color: #FBDE2D;">def</span> <span style="color: #ff1493;">__getattribute__</span><span style="color: #8b0000;">(</span><span style="color: #FBDE2D;">self</span>, attr<span style="color: #8b0000;">)</span>:
-        <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'getattribute:'</span> + attr<span style="color: #8b0000;">)</span>
-        <span style="color: #FBDE2D;">if</span> attr == <span style="color: #61CE3C;">'__str__'</span>:
-            <span style="color: #FBDE2D;">return</span> <span style="color: #FBDE2D;">lambda</span> *args: <span style="color: #61CE3C;">'[GetAttribute str]'</span>
-        <span style="color: #FBDE2D;">else</span>:
-            <span style="color: #FBDE2D;">return</span> <span style="color: #FBDE2D;">lambda</span> *args: <span style="color: #4c83ff;">None</span>
+class GetAttribute(object):
+    eggs = 88
+    def __init__(self):
+        self.spam = 77
+    def __len__(self):
+        print('__len__:42')
+        return 42
+    def __getattribute__(self, attr):
+        print('getattribute:' + attr)
+        if attr == '__str__':
+            return lambda *args: '[GetAttribute str]'
+        else:
+            return lambda *args: None
 
 
-<span style="color: #FBDE2D;">for</span> Class <span style="color: #FBDE2D;">in</span> GetAttr, GetAttrOld, GetAttribute:
-    <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'\n'</span> + Class.<span style="color: #FF6400;">__name__</span>.ljust<span style="color: #006400;">(</span>50, <span style="color: #61CE3C;">'='</span><span style="color: #006400;">)</span><span style="color: #8b0000;">)</span>
-    <span style="color: #D8FA3C;">x</span> = Class<span style="color: #8b0000;">()</span>
+for Class in GetAttr, GetAttrOld, GetAttribute:
+    print('\n' + Class.__name__.ljust(50, '='))
+    x = Class()
     x.eggs
     x.spam
     x.other
-    <span style="color: #FF6400;">len</span><span style="color: #8b0000;">(</span>x<span style="color: #8b0000;">)</span>
+    len(x)
 
-    <span style="color: #FBDE2D;">try</span>: x<span style="color: #8b0000;">[</span>0<span style="color: #8b0000;">]</span>
-    <span style="color: #FBDE2D;">except</span>: <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'fail []'</span><span style="color: #8b0000;">)</span>
+    try: x[0]
+    except: print('fail []')
 
-    <span style="color: #FBDE2D;">try</span>: x + 99
-    <span style="color: #FBDE2D;">except</span>: <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'fail +'</span><span style="color: #8b0000;">)</span>
+    try: x + 99
+    except: print('fail +')
 
-    <span style="color: #FBDE2D;">try</span>: x<span style="color: #8b0000;">()</span>
-    <span style="color: #FBDE2D;">except</span>: <span style="color: #FBDE2D;">print</span> <span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'fail ()'</span><span style="color: #8b0000;">)</span>
+    try: x()
+    except: print ('fail ()')
 
-    x.b<span style="color: #8b0000;">()</span>
-    x.__call__<span style="color: #8b0000;">()</span>
-    <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span>x.__str__<span style="color: #006400;">()</span><span style="color: #8b0000;">)</span>
-    <span style="color: #FBDE2D;">print</span><span style="color: #8b0000;">(</span>x<span style="color: #8b0000;">)</span>
+    x.b()
+    x.__call__()
+    print(x.__str__())
+    print(x)
 </pre>
 </div>
 
