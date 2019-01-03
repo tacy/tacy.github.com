@@ -20,5 +20,14 @@
       <description>TRACE[^4]1 linux下的trace，这里只讨论function相关的分析，event和计数器不涉及。从两个维度讨论，首先是根据运行态：分为kerne</description>
     </item>
     
+    <item>
+      <title>Linux trace</title>
+      <link>http://tacy.github.io/post/write-something/</link>
+      <pubDate>Thu, 26 Jul 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/write-something/</guid>
+      <description>查了一下自己在网上写的最后一篇blog，时间竟然停留在2008年11月！ 一晃这么多年过去了，漂到了帝都，暂住着。值得高兴的事情是女儿出生了，</description>
+    </item>
+    
   </channel>
 </rss>

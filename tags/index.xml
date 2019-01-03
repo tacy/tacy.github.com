@@ -6,10 +6,19 @@
     <description>Recent content in Tags on Tacy - Notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 02 Jan 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 26 Jul 2012 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://tacy.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Life</title>
+      <link>http://tacy.github.io/tags/life/</link>
+      <pubDate>Thu, 26 Jul 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/tags/life/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Linux</title>
@@ -26,6 +35,15 @@
       <pubDate>Wed, 02 Jan 2019 00:00:00 +0000</pubDate>
       
       <guid>http://tacy.github.io/tags/tech/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Thinking</title>
+      <link>http://tacy.github.io/tags/thinking/</link>
+      <pubDate>Thu, 26 Jul 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/tags/thinking/</guid>
       <description></description>
     </item>
     

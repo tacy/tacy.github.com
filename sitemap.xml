@@ -17,7 +17,28 @@
   </url>
   
   <url>
+    <loc>http://tacy.github.io/post/write-something/</loc>
+    <lastmod>2012-07-26T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>http://tacy.github.io/categories/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/life/</loc>
+    <lastmod>2012-07-26T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/categories/life/</loc>
+    <lastmod>2012-07-26T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -45,6 +66,13 @@
   
   <url>
     <loc>http://tacy.github.io/tags/</loc>
+    <lastmod>2012-07-26T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/tech/</loc>
     <lastmod>2019-01-02T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
@@ -58,8 +86,8 @@
   </url>
   
   <url>
-    <loc>http://tacy.github.io/tags/tech/</loc>
-    <lastmod>2019-01-02T00:00:00+00:00</lastmod>
+    <loc>http://tacy.github.io/tags/thinking/</loc>
+    <lastmod>2012-07-26T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
