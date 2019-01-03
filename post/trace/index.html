@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Linux trace - Tacy - Notes</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="春龙" />
+  <meta name="description" content="TRACE[^4]1 linux下的trace，这里只讨论function相关的分析，event和计数器不涉及。从两个维度讨论，首先是根据运行态：分为kerne" />
+
+  <meta name="keywords" content="Tacy, tech, life, linux, performance, kubernetes, golang, java, troubleshooting" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.51" />
+
+
+<link rel="canonical" href="http://tacy.github.io/post/trace/" />
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.c8c1ff75dee09b44060a6c38f41b9036bac2512ccdb22d7f296cec12dc786375.css" integrity="sha256-yMH/dd7gm0QGCmw49BuQNrrCUSzNsi1/KWzsEtx4Y3U=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="Linux trace" />
+<meta property="og:description" content="TRACE[^4]1 linux下的trace，这里只讨论function相关的分析，event和计数器不涉及。从两个维度讨论，首先是根据运行态：分为kerne" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://tacy.github.io/post/trace/" /><meta property="article:published_time" content="2019-01-02T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2019-01-02T00:00:00&#43;00:00"/>
+
+<meta itemprop="name" content="Linux trace">
+<meta itemprop="description" content="TRACE[^4]1 linux下的trace，这里只讨论function相关的分析，event和计数器不涉及。从两个维度讨论，首先是根据运行态：分为kerne">
+
+
+<meta itemprop="datePublished" content="2019-01-02T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2019-01-02T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="7544">
+
+
+
+<meta itemprop="keywords" content="tech,linux,trace,troubleshooting," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Linux trace"/>
+<meta name="twitter:description" content="TRACE[^4]1 linux下的trace，这里只讨论function相关的分析，event和计数器不涉及。从两个维度讨论，首先是根据运行态：分为kerne"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33694554-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Tacy&#39;s notes</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/">Home</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/post/">Archives</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/tags/">Tags</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/categories/">Categories</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/about/">About</a>
+          
+        
+      </li>
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      Tacy's notes
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/">Home</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/post/">Archives</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/tags/">Tags</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/categories/">Categories</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/about/">About</a>
+          
+
+        
+
+      </li>
+    
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Linux trace</h1>
+      
+      <div class="post-meta">
+        <time datetime="2019-01-02" class="post-time">
+          2019-01-02
+        </time>
+        <div class="post-category">
+            <a href="http://tacy.github.io/categories/tech/"> tech </a>
+            
+          </div>
+        
+
+        
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    
+    <div class="post-content">
+      
+
+<h1 id="trace-4-13">TRACE[^4]<sup class="footnote-ref" id="fnref:13"><a href="#fn:13">1</a></sup></h1>
+
+<p>linux下的trace，这里只讨论function相关的分析，event和计数器不涉及。从两个维度讨论，首先是根据运行态：分为kernel和userland；其次根据trace方式：分为静态分析和动态分析。</p>
+
+<h2 id="kernel">Kernel</h2>
+
+<p>kernel空间下，静态分析是指tracepoint，动态分析是指kprobe</p>
+
+<h3 id="静态分析">静态分析</h3>
+
+<p>是指代码里面已经埋下了探针（probe），可以对这些探针进行分析，没有探针的地方不能trace，探针列表可以通过perf查看：</p>
+
+<pre><code class="language-shell">#sudo perf list tracepoint
+...
+syscalls:sys_enter_getcpu                          [Tracepoint event]
+syscalls:sys_exit_getcpu                           [Tracepoint event]
+tcp:tcp_destroy_sock                               [Tracepoint event]
+tcp:tcp_probe                                      [Tracepoint event]
+...
+</code></pre>
+
+<p>静态分析有两种方式：ftrace和perf</p>
+
+<h4 id="ftrace-7-8">ftrace<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">2</a></sup><sup class="footnote-ref" id="fnref:8"><a href="#fn:8">3</a></sup></h4>
+
+<p>ftrace是linux下的主要trace框架，linux实现了一个tracefs文件系统（类似proc的虚文件系统，驻留在内存），挂载在/sys/kernel/debug/tracing目录下，里面包括所有ftrace相关的内容，ftrace就是通过配置该目录下的文件，完成tracing。</p>
+
+<p>ftrace里面涉及到静态分析的除了tracepoint之外，另外还有一个部分叫function，分别介绍</p>
+
+<h5 id="function">function</h5>
+
+<p>traceing目录下，带function字样的文件都和function有关，文件available_filter_functions里面包括了所有能trace的function（在没有添加任何filter的情况下）。如果你需要开启function tracer（更多的tracer，查看文件available_tracers，里面包括了系统支持哪些tracer），只需要执行命令：<code>echo function &gt; current_tracer</code>，启用之后，你能查看function trace的输出和输出格式定义：</p>
+
+<pre><code class="language-shell">#cat trace|head -10
+# tracer: function
+#
+#                              _-----=&gt; irqs-off
+#                             / _----=&gt; need-resched
+#                            | / _---=&gt; hardirq/softirq
+#                            || / _--=&gt; preempt-depth
+#                            ||| /     delay
+#           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
+#              | |       |   ||||       |         |
+           gdbus-1275  [001] .... 11758.901088: unix_poll &lt;-sock_poll
+</code></pre>
+
+<p>如果你查看trace的内容，你会发现内容太多，你很难找到有价值的东西，绝大部分时候，你不是对整个系统的调用感兴趣，你只想看你关心的内容，ftrace提供了function filter来进行trace过滤：通过设置<code>set_ftrace_filter  set_ftrace_notrace  set_ftrace_pid</code>三个文件，你能过滤需要trace的function。</p>
+
+<p>最简单的做法是看看available_filter_functions里面有些什么，里面的这些function都是可以用，例如我关心tcp_sendmsg：<code>echo tcp_sendmsg &gt; set_ftrace_filter</code>，这样function tracer就只会记录tcp_sendmsg这个function。当然filter也支持“*”号通配符，支持三种写法：“*key/<em>key</em>/key*”。也支持模块过滤“echo :mod:ext3 &gt; set_ftrace_filter”</p>
+
+<p>另外，filter也支持“Format: <function>:<trigger>[:count]”这类的写法，通过它你能实现：某个function调用了，就tracingoff/tracingon/stacktrace/snapshot/dump/cpudump。例如：<code>echo do_trap:traceoff:3 &gt; set_ftrace_filter</code>，do_trap调用三次，停止trace。</p>
+
+<p>如果你需要看到调用栈，可以设置：<code>echo 1 &gt; options/func_stack_trace</code>，但是必须注意，该操作容易导致问题，务必需要先设置filter，缩小trace范围，否则容易导致系统问题。</p>
+
+<p>这里主要说一下tracepoint相关内容。tracing目录下有一个events目录，里面就是所有的kernel tracepoint，内容和<code>perf list tracepoint</code>输出一致，只是这里是目录结构呈现。
+trace方法就是找到对应的tracepoint，例如tcp_probe，进入到该目录下（events/tcp/tcp_probe），通过命令<code>echo 1 &gt; enable</code>激活该探针，然后你就可以回到tracing目录下，查看trace文件内容，里面能看到trace内容，输出格式可以参考探针目录下的format文件。</p>
+
+<p>另外你也能设置filter，根据条件过滤事件；你也能设置triger，当条件满足的时候，触发定义的action，例如stracktrace，输出栈到trace文件</p>
+
+<pre><code class="language-shell">[root@tacyArch tracing]# cat available_filter_functions |grep tcp_sendmsg
+bpf_tcp_sendmsg
+tcp_sendmsg_locked
+tcp_sendmsg
+[root@tacyArch tracing]# echo tcp_sendmsg &gt; set_ftrace_filter
+[root@tacyArch tracing]# echo function &gt; current_tracer
+[root@tacyArch tracing]# cat trace
+# tracer: function
+#
+#                              _-----=&gt; irqs-off
+#                             / _----=&gt; need-resched
+#                            | / _---=&gt; hardirq/softirq
+#                            || / _--=&gt; preempt-depth
+#                            ||| /     delay
+#           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
+#              | |       |   ||||       |         |
+           vvv-631   [003] .... 33440.208482: tcp_sendmsg &lt;-sock_sendmsg
+  NetworkManager-555   [002] .... 33446.836585: tcp_sendmsg &lt;-sock_sendmsg
+            curl-26180 [001] .... 33449.150367: tcp_sendmsg &lt;-sock_sendmsg
+           vvv-4083  [002] .... 33456.700836: tcp_sendmsg &lt;-sock_sendmsg
+
+[root@tacyArch tracing]# echo &gt; current_tracer
+bash: echo: write error: Invalid argument
+[root@tacyArch tracing]# echo nop &gt;current_tracer
+[root@tacyArch tracing]# echo &gt; set_ftrace_filter
+[root@tacyArch tracing]#
+</code></pre>
+
+<p>总的来说，function tracer最大的问题就是给出的信息太模糊，有用的信息太少，也无法扩展（你只能enable它）。很多时候，虽然知道function被调用，知道调用的pid和comm，但光有这些信息对于解决问题是不够的。</p>
+
+<h5 id="tracepoint">tracepoint</h5>
+
+<p>tracing里面的events目录，包含了所有的tracepoint，每一个tracepoint都以目录存在，目录下面是针对该tracepoint的配置文件:</p>
+
+<pre><code class="language-shell">[root@tacyArch tcp_receive_reset]# ls
+enable  filter  format  hist  id  trigger
+
+[root@tacyArch tcp_receive_reset]# cat format
+name: tcp_receive_reset
+ID: 1133
+format:
+        field:unsigned short common_type;       offset:0;       size:2; signed:0;
+        field:unsigned char common_flags;       offset:2;       size:1; signed:0;
+        field:unsigned char common_preempt_count;       offset:3;       size:1; signed:0;
+        field:int common_pid;   offset:4;       size:4; signed:1;
+
+        field:const void * skaddr;      offset:8;       size:8; signed:0;
+        field:__u16 sport;      offset:16;      size:2; signed:0;
+        field:__u16 dport;      offset:18;      size:2; signed:0;
+        field:__u8 saddr[4];    offset:20;      size:4; signed:0;
+        field:__u8 daddr[4];    offset:24;      size:4; signed:0;
+        field:__u8 saddr_v6[16];        offset:28;      size:16;        signed:0;
+        field:__u8 daddr_v6[16];        offset:44;      size:16;        signed:0;
+        field:__u64 sock_cookie;        offset:64;      size:8; signed:0;
+
+print fmt: &quot;sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c sock_cookie=%llx&quot;, REC-&gt;sport, REC-&gt;dport, REC-&gt;saddr, REC-&gt;daddr, REC-&gt;saddr_v6, REC-&gt;daddr_v6, REC-&gt;sock_cookie
+
+</code></pre>
+
+<p>enable文件用来控制开关，filter可以用来做事件过滤，format是tracepoint的输出内容定义，hist做事件统计，id就是tracepoint的标识，trigger可以条件触发action。</p>
+
+<pre><code class="language-shell">[root@tacyArch tracing]# echo 1 &gt; events/tcp/tcp_receive_reset/enable
+[root@tacyArch tracing]# cat trace
+# tracer: nop
+#
+#                              _-----=&gt; irqs-off
+#                             / _----=&gt; need-resched
+#                            | / _---=&gt; hardirq/softirq
+#                            || / _--=&gt; preempt-depth
+#                            ||| /     delay
+#           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
+#              | |       |   ||||       |         |
+            curl-26346 [001] .... 33819.317760: tcp_receive_reset: sport=44248 dport=8080 saddr=0.0.0.0 daddr=0.0.0.0 saddrv6=::1 daddrv6=::1 sock_cookie=1
+            curl-26346 [001] .... 33819.317892: tcp_receive_reset: sport=49690 dport=8080 saddr=127.0.0.1 daddr=127.0.0.1 saddrv6=::ffff:127.0.0.1 daddrv6=::ffff:127.0.0.1 sock_cookie=2
+[root@tacyArch tracing]# echo 0 &gt; events/tcp/tcp_receive_reset/enable
+[root@tacyArch tracing]#
+</code></pre>
+
+<p>上面的输出更友好，基本上你关心的内容都给你输出了：通过上面内容，你能知道curl从127.0.0.1:8080接收到一个reset包。</p>
+
+<p>tracepoint能帮助你解决很多问题，当然tracepoint数量有限，有可能你关心的点正好没有，只能等着看新版本的kernel能否提供</p>
+
+<h4 id="perf">perf</h4>
+
+<p>perf位于kernel源代码的tools下，linux的主要性能分析工具之一，perf提供很多功能，这里我们只谈它和tracepoint有关的部分（perf不能操作ftrace中的function tracer），以tcp_probe这个tracepoint为例，操作也很简单：</p>
+
+<pre><code class="language-shell">[root@tacyArch ~]# perf record -e 'tcp:tcp_probe' -a
+^C[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 1.460 MB perf.data (3 samples) ]
+
+[root@tacyArch ~]# perf script
+ irq/69-brcmf_pc 19366 [003] 99975.473448: tcp:tcp_probe: src=192.168.1.21:44404 dest=203.208.xx.xx:443 mark=0 data_len=0 snd_nxt=0x66d5014 snd_una=0x66d5014 snd_cwnd=16 ssthresh=21&gt;
+ irq/69-brcmf_pc 19366 [003] 99977.000673: tcp:tcp_probe: src=192.168.1.21:59262 dest=xx.201.xx.119:80 mark=0 data_len=60 snd_nxt=0x6ec6b07d snd_una=0x6ec6b07d snd_cwnd=55 ssthresh&gt;
+ irq/69-brcmf_pc 19366 [003] 99977.057786: tcp:tcp_probe: src=192.168.1.21:59262 dest=xx.201.xx.119:80 mark=0 data_len=0 snd_nxt=0x6ec6b0a1 snd_una=0x6ec6b07d snd_cwnd=55 ssthresh=&gt;
+[root@tacyArch ~]#
+
+</code></pre>
+
+<h3 id="动态分析">动态分析</h3>
+
+<p>动态分析，当某函数没有预先在代码中埋下探针的时候，系统能够动态给它添加探针的分析方式。在kernel中，这些动态添加的探针也被称为kprobe。kernel把所有的可symbol输出在/proc/kallsyms文件中，你可以对这里面的所有symbol添加探针。kprobe可以说是linux中最牛逼的trace手段。</p>
+
+<p>动态分析也支持ftrace和perf两种方式。两者的选择：优先选择perf，perf会做错误检验，不容易导致问题，ftrace的话就需要你特别小心，这里可是在kernel层面的操作，一个不小心，系统可能会挂起或者中断。</p>
+
+<h4 id="ftrace-6">ftrace<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">4</a></sup></h4>
+
+<p>/proc/kallsyms里面所有的symbol都能添加kprobe，kprobe和function tracer无关，无需启用function tracer。你只需定义好event，写入到kprobe_events即可，ftrace会自动在/sys/kernel/debug/tracing/events下创建kprobe目录，并在该目录下为每个kprobe创建类似tracepoint的目录，之后你只需要通过enable文件来控制启用还是禁用。event的语法如下：</p>
+
+<pre><code class="language-shell">Synopsis of kprobe_events
+-------------------------
+  p[:[GRP/]EVENT] [MOD:]SYM[+offs]|MEMADDR [FETCHARGS]	: Set a probe
+  r[MAXACTIVE][:[GRP/]EVENT] [MOD:]SYM[+0] [FETCHARGS]	: Set a return probe
+  -:[GRP/]EVENT						: Clear a probe
+
+ GRP		: Group name. If omitted, use &quot;kprobes&quot; for it.
+ EVENT		: Event name. If omitted, the event name is generated
+		  based on SYM+offs or MEMADDR.
+ MOD		: Module name which has given SYM.
+ SYM[+offs]	: Symbol+offset where the probe is inserted.
+ MEMADDR	: Address where the probe is inserted.
+ MAXACTIVE	: Maximum number of instances of the specified function that
+		  can be probed simultaneously, or 0 for the default value
+		  as defined in Documentation/kprobes.txt section 1.3.1.
+
+ FETCHARGS	: Arguments. Each probe can have up to 128 args.
+  %REG		: Fetch register REG
+  @ADDR		: Fetch memory at ADDR (ADDR should be in kernel)
+  @SYM[+|-offs]	: Fetch memory at SYM +|- offs (SYM should be a data symbol)
+  $stackN	: Fetch Nth entry of stack (N &gt;= 0)
+  $stack	: Fetch stack address.
+  $retval	: Fetch return value.(*)
+  $comm		: Fetch current task comm.
+  +|-offs(FETCHARG) : Fetch memory at FETCHARG +|- offs address.(**)
+  NAME=FETCHARG : Set NAME as the argument name of FETCHARG.
+  FETCHARG:TYPE : Set TYPE as the type of FETCHARG. Currently, basic types
+		  (u8/u16/u32/u64/s8/s16/s32/s64), hexadecimal types
+		  (x8/x16/x32/x64), &quot;string&quot; and bitfield are supported.
+
+  (*) only for return probe.
+  (**) this is useful for fetching a field of data structures.
+</code></pre>
+
+<p>我们来创建一个event：</p>
+
+<pre><code class="language-shell">[root@tacyArch tracing]# echo 'p:tcp_sendmsg tcp_sendmsg' &gt; /sys/kernel/debug/tracing/kprobe_events
+[root@tacyArch tracing]# cat kprobe_events
+p:kprobes/tcp_sendmsg tcp_sendmsg
+[root@tacyArch tracing]# ls events/kprobes/tcp_sendmsg/
+enable  filter  format  hist  id  trigger
+[root@tacyArch tracing]# cat events/kprobes/tcp_sendmsg/format
+name: tcp_sendmsg
+ID: 1638
+format:
+        field:unsigned short common_type;       offset:0;       size:2; signed:0;
+        field:unsigned char common_flags;       offset:2;       size:1; signed:0;
+        field:unsigned char common_preempt_count;       offset:3;       size:1; signed:0;
+        field:int common_pid;   offset:4;       size:4; signed:1;
+
+        field:unsigned long __probe_ip; offset:8;       size:8; signed:0;
+
+print fmt: &quot;(%lx)&quot;, REC-&gt;__probe_ip
+
+</code></pre>
+
+<p>定义好之后，启用该probe进行trace（设置enable等于1）:</p>
+
+<pre><code class="language-shell">[root@tacyArch tracing]# echo 1 &gt; events/kprobes/tcp_sendmsg/enable
+[root@tacyArch tracing]# cat trace |head -10
+# tracer: nop
+#
+#                              _-----=&gt; irqs-off
+#                             / _----=&gt; need-resched
+#                            | / _---=&gt; hardirq/softirq
+#                            || / _--=&gt; preempt-depth
+#                            ||| /     delay
+#           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
+#              | |       |   ||||       |         |
+            curl-21745 [001] ...1 27996.148112: tcp_sendmsg: (tcp_sendmsg+0x0/0x40)
+[root@tacyArch tracing]# echo 0 &gt; events/kprobes/tcp_sendmsg/enable
+</code></pre>
+
+<p>看起来和ftrace的function tracer差不多，这就尴尬了？</p>
+
+<p>继续努力，接下来，我们看看怎么查看调用参数，先看看tcp_sendmsg代码：</p>
+
+<pre><code class="language-shell">[root@tacyArch src]# gdb /lib/modules/4.19.12-arch1-1-ARCH/build/vmlinux
+...
+For help, type &quot;help&quot;.
+Type &quot;apropos word&quot; to search for commands related to &quot;word&quot;...
+Reading symbols from /lib/modules/4.19.12-arch1-1-ARCH/build/vmlinux...done.
+(gdb) directory /home/tacy/workspace/archlinux-linux/
+Source directories searched: /home/tacy/workspace/archlinux-linux:$cdir:$cwd
+(gdb) li tcp_sendmsg
+1434            return err;
+1435    }
+1436    EXPORT_SYMBOL_GPL(tcp_sendmsg_locked);
+1437
+1438    int tcp_sendmsg(struct sock *sk, struct msghdr *msg, size_t size)
+1439    {
+1440            int ret;
+1441
+1442            lock_sock(sk);
+1443            ret = tcp_sendmsg_locked(sk, msg, size);
+
+</code></pre>
+
+<p>tcp_sendmsg有3个调用参数，我们希望能看到发送包的大小：size，第三个参数的寄存器使用的是rdx（参考System V ABI AMD64<sup class="footnote-ref" id="fnref:9"><a href="#fn:9">5</a></sup><sup class="footnote-ref" id="fnref:10"><a href="#fn:10">6</a></sup>，找到每个register定义），我们重新定义一个probe，覆盖之前的：</p>
+
+<pre><code class="language-shell">[root@tacyArch tracing]# echo 'probe:tcp_sendmsg tcp_sendmsg size=%dx' &gt; kprobe_events
+[root@tacyArch tracing]# cat events/kprobes/tcp_sendmsg/format
+name: tcp_sendmsg
+ID: 1639
+format:
+        field:unsigned short common_type;       offset:0;       size:2; signed:0;
+        field:unsigned char common_flags;       offset:2;       size:1; signed:0;
+        field:unsigned char common_preempt_count;       offset:3;       size:1; signed:0;
+        field:int common_pid;   offset:4;       size:4; signed:1;
+
+        field:unsigned long __probe_ip; offset:8;       size:8; signed:0;
+        field:u64 size; offset:16;      size:8; signed:0;
+
+print fmt: &quot;(%lx) size=0x%Lx&quot;, REC-&gt;__probe_ip, REC-&gt;size
+[root@tacyArch tracing]# echo 1 &gt; events/kprobes/tcp_sendmsg/enable
+[root@tacyArch tracing]# cat trace
+# tracer: nop
+#
+#                              _-----=&gt; irqs-off
+#                             / _----=&gt; need-resched
+#                            | / _---=&gt; hardirq/softirq
+#                            || / _--=&gt; preempt-depth
+#                            ||| /     delay
+#           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
+#              | |       |   ||||       |         |
+            curl-22314 [000] ...1 29227.292645: tcp_sendmsg: (tcp_sendmsg+0x0/0x40) size=0x4c
+[root@tacyArch tracing]# echo 0 &gt; events/kprobes/tcp_sendmsg/enable
+</code></pre>
+
+<p>干的不错，能看到包大小了，能不能继续进一步，看看socket信息呢？</p>
+
+<pre><code class="language-shell">(gdb) print (int)&amp;((struct sock *)0)-&gt;__sk_common
+$1 = 0
+(gdb) print (int)&amp;((struct sock_common *)0)-&gt;skc_daddr
+$2 = 0
+(gdb) print (int)&amp;((struct sock_common *)0)-&gt;skc_rcv_saddr
+$3 = 4
+(gdb) print (int)&amp;((struct sock_common *)0)-&gt;skc_dport
+$4 = 12
+(gdb) print (int)&amp;((struct sock_common *)0)-&gt;skc_num
+$5 = 14
+[root@tacyArch tracing]# echo 'probe:tcp_sendmsg tcp_sendmsg dst=+0(%di):x32 dport=+12(%di):x16 src=+4(%di):x32 sport=+14(%di):x16 size=%dx' &gt; kprobe_events
+[root@tacyArch tracing]# echo 1 &gt; events/kprobes/tcp_sendmsg/enable
+[root@tacyArch tracing]# tail -2 trace
+            curl-25876 [001] ...1 37339.320598: tcp_sendmsg: (tcp_sendmsg+0x0/0x40) dst=0x64e959ca dport=0x5000 src=0x670aa8c0 sport=0xa4f0 size=0x4c
+            curl-25878 [000] ...1 37340.118164: tcp_sendmsg: (tcp_sendmsg+0x0/0x40) dst=0x64e959ca dport=0x5000 src=0x670aa8c0 sport=0xa4f2 size=0x4c
+[root@tacyArch tracing]# echo 0 &gt; events/kprobes/tcp_sendmsg/enable
+</code></pre>
+
+<p>这个就厉害啦，少年，有没有跃跃欲试的感觉，还不赶紧操练一下去（写个脚本把地址转换一下呗）！</p>
+
+<p>总结一下就是，终于寻得屠龙宝刀在手。。。唯一的遗憾就是不能做复杂程序处理。</p>
+
+<h4 id="perf-1">perf</h4>
+
+<p>首先需要说明的是，perf无法操作ftrace里面的function tracer，它只能定义和操作kprobe（当然也可以定义uprobe，后面会有描述），perf-probe其实操作的也是/sys/kernel/debug/tracing/kprobe_event。但是通过perf-probe定义probe的好处就是会有校验，不容易出错</p>
+
+<p>还是以tcp_sendmsg为例，添加和使用probe的方式：</p>
+
+<pre><code class="language-shell">[root@tacyArch ~]#perf probe --add tcp_sendmsg  // 无参数版本
+Added new event:
+  probe:tcp_sendmsg    (on tcp_sendmsg)
+
+You can now use it in all perf tools, such as:
+
+        perf record -e probe:tcp_sendmsg -aR sleep 1
+
+
+[root@tacyArch ~]# perf probe --list
+  probe:tcp_sendmsg    (on tcp_sendmsg@net/ipv4/tcp.c)
+
+[root@tacyArch ~]# perf probe -d probe:tcp_sendmsg  //删除
+
+[root@tacyArch tracing]# perf probe 'tcp_sendmsg tcp_sendmsg dst=+0(%di):x32 dport=+12(%di):x16 src=+4(%di):x32 sport=+14(%di):x16 size=%dx'  //有参数
+
+</code></pre>
+
+<p>有了probe之后，你就可以对该probe进行trace操作了，操作方法和静态分析中的perf类似</p>
+
+<p>如果你的kernel安装了debug info，perf能更简单的定义probe，同样上面显示socket信息的tcp_sendmsg，如果有debuginfo，你不用去找寄存器和偏移，直接使用变量名：</p>
+
+<pre><code class="language-shell">[root@tacyArch tracing]# perf probe 'tcp_sendmsg size sk-&gt;__sk_common.skc_daddr sk-&gt;__sk_common.skc_dport sk-&gt;__sk_common.skc_rcv_saddr sk-&gt;__sk_common.skc_num'
+
+</code></pre>
+
+<p>另外，在有debuginfo的情况下，你可以不借助gdb，直接用perf查看代码和变量：</p>
+
+<pre><code class="language-shell"># perf probe -L tcp_sendmsg:0+10   # 查看tcp_sendmsg代码0~10行，如果你的源文件放在自己目录里面，通过-x参数指定
+&lt;tcp_sendmsg@/home/tacy/workspace/archlinux-linux/net/ipv4/tcp.c:0&gt;
+      0  int tcp_sendmsg(struct sock *sk, struct msghdr *msg, size_t size)
+      1  {
+      2         int ret;
+
+      4         lock_sock(sk);
+      5         ret = tcp_sendmsg_locked(sk, msg, size);
+      6         release_sock(sk);
+
+      8         return ret;
+      9  }
+         EXPORT_SYMBOL(tcp_sendmsg);
+
+         /*
+
+# perf probe -V tcp_sendmsg        # 查看tcp_sendmsg参数
+Available variables at tcp_sendmsg
+        @&lt;tcp_sendmsg+0&gt;
+                int     ret
+                size_t  size
+                struct msghdr*  msg
+                struct sock*    sk
+
+# perf probe --add 'tcp_sendmsg size'  # 使用tcp_sendmsg参数，输出到结果中
+# perf probe -V tcp_sendmsg:+9  # 可以查看函数内部变量，内部变量也能输出
+</code></pre>
+
+<h2 id="userland">userland</h2>
+
+<p>usersland的trace同样包括静态和动态两部分，但是这两部分我们也统一称为uprobe<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">7</a></sup>，你可以在ftrace目录（/sys/kernel/debug/tracing）下的uprobe_events文件中找到你定义的所有uprobe event。</p>
+
+<p>uprobe event定义：</p>
+
+<pre><code class="language-shell">Synopsis of uprobe_tracer
+-------------------------
+  p[:[GRP/]EVENT] PATH:OFFSET [FETCHARGS] : Set a uprobe
+  r[:[GRP/]EVENT] PATH:OFFSET [FETCHARGS] : Set a return uprobe (uretprobe)
+  -:[GRP/]EVENT                           : Clear uprobe or uretprobe event
+
+  GRP           : Group name. If omitted, &quot;uprobes&quot; is the default value.
+  EVENT         : Event name. If omitted, the event name is generated based
+                  on PATH+OFFSET.
+  PATH          : Path to an executable or a library.
+  OFFSET        : Offset where the probe is inserted.
+
+  FETCHARGS     : Arguments. Each probe can have up to 128 args.
+   %REG         : Fetch register REG
+   @ADDR	: Fetch memory at ADDR (ADDR should be in userspace)
+   @+OFFSET	: Fetch memory at OFFSET (OFFSET from same file as PATH)
+   $stackN	: Fetch Nth entry of stack (N &gt;= 0)
+   $stack	: Fetch stack address.
+   $retval	: Fetch return value.(*)
+   $comm	: Fetch current task comm.
+   +|-offs(FETCHARG) : Fetch memory at FETCHARG +|- offs address.(**)
+   NAME=FETCHARG     : Set NAME as the argument name of FETCHARG.
+   FETCHARG:TYPE     : Set TYPE as the type of FETCHARG. Currently, basic types
+		       (u8/u16/u32/u64/s8/s16/s32/s64), hexadecimal types
+		       (x8/x16/x32/x64), &quot;string&quot; and bitfield are supported.
+</code></pre>
+
+<h3 id="静态分析-1">静态分析</h3>
+
+<p>一般称为USDT Probe，需要预先在代码中加探针（开发人员可以参考<a href="https://www.sourceware.org/systemtap/wiki/AddingUserSpaceProbingToApps">Adding User Space Probing to an Application</a>，学习如何在代码里面埋探针），这类探针技术也叫DTRACE，来源于Solaris，很多软件支持，但是需要在编译时启用，例如java，就需要在编译时启用enable-dtrace编译参数(启用dtrace编译需要依赖systemtap-sdt-dev包，至少jdk编译需要）</p>
+
+<p>同样，我们也可以通过ftrace和perf两种方式操作它。但是ftrace操作方法复杂（主要是需要小心操作地址），方法参考<a href="http://www.brendangregg.com/blog/2015-07-03/hacking-linux-usdt-ftrace.html">Hacking Linux USDT with Ftrace</a>。</p>
+
+<p>下面我们用openjdk为例，说明用户空间的静态分析方法。首先需要你的JDK启用了enable-dtrace，其次启动java应用的时候加上参数<code>-XX:+ExtendedDTraceProbes</code>，查看USDT probe：</p>
+
+<pre><code class="language-shell">readelf -n /usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so
+Displaying notes found in: .note.gnu.build-id
+  Owner                 Data size       Description
+  GNU                  0x00000014       NT_GNU_BUILD_ID (unique build ID bitstring)
+    Build ID: deaa14871e0101bc717a00461519385ebdb010fd
+
+Displaying notes found in: .note.stapsdt
+  Owner                 Data size       Description
+  stapsdt              0x0000004d       NT_STAPSDT (SystemTap probe descriptors)
+    Provider: hotspot
+    Name: class__loaded
+    Location: 0x00000000005b5d7a, Base: 0x0000000000dbb1b2, Semaphore: 0x0000000000000000
+    Arguments: 8@%r13 -4@%r14d 8@%rax 1@%r12b
+  stapsdt              0x0000004c       NT_STAPSDT (SystemTap probe descriptors)
+    Provider: hotspot
+    Name: class__unloaded
+    Location: 0x00000000005b5f11, Base: 0x0000000000dbb1b2, Semaphore: 0x0000000000000000
+    Arguments: 8@%rbx -4@%r13d 8@%rax 1@$0
+  stapsdt              0x00000071       NT_STAPSDT (SystemTap probe descriptors)
+    Provider: hotspot
+    Name: method__compile__begin
+
+</code></pre>
+
+<p>确保出处中有stapsdt字样</p>
+
+<h4 id="ftrace">ftrace</h4>
+
+<p>我们用method<strong>entry为例，操作如何通过ftrace来trace该probe。参考前面uprobe event的定义<code>p[:[GRP/]EVENT] PATH:OFFSET [FETCHARGS] : Set a uprobe</code>，我们需要找到method</strong>entry在libjvm.so中的位置，可以通过readelf找到：</p>
+
+<pre><code class="language-shell">[root@tacyArch tacy]# readelf -n /usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so |tail +2659 -|head -5 -
+  stapsdt              0x00000062       NT_STAPSDT (SystemTap probe descriptors)
+    Provider: hotspot
+    Name: method__entry
+    Location: 0x0000000000bd21e5, Base: 0x0000000000dbb1b2, Semaphore: 0x0000000000000000
+    Arguments: -8@%rax 8@%rdx -4@%ecx 8@%rsi -4@%edi 8@%r8 -4@%r9d
+</code></pre>
+
+<p>method__entry的位置在0x0000000000bd21e5，应为libjvm.so是一个共享库，所以这个地址可以直接使用（如果非共享库，你还需要找到程序的base加载地址，location-base得到偏移）。</p>
+
+<p>readelf的输出中，可以看到method__entry的arguments，总共有7个（这里我也没搞明白为啥register的使用不用遵守System V ABI AMD64规范），具体每个参数的定义就需要去看代码了，我机器上找不到stp文件，只能看在线<a href="https://github.com/mpujari/systemtap-tapset-openjdk9/blob/master/tapset-1.8.0/hotspot-1.8.0.stp.in#L411">stp</a>，引用在下面：</p>
+
+<pre><code class="language-shell">/* hotspot.method_entry (extended probe)
+   Triggers when a method is entered.
+   Sets thread_id to the current java thread id, class to the name of
+   the class, method to the name of the method, and sig to the
+   signature string of the method.
+   Needs -XX:+ExtendedDTraceProbes.
+*/
+probe hotspot.method_entry =
+  process(&quot;@ABS_CLIENT_LIBJVM_SO@&quot;).mark(&quot;method__entry&quot;),
+  process(&quot;@ABS_SERVER_LIBJVM_SO@&quot;).mark(&quot;method__entry&quot;)
+{
+  name = &quot;method_entry&quot;;
+  thread_id = $arg1;
+  class = user_string_n($arg2, $arg3);
+  method = user_string_n($arg4, $arg5);
+  sig = user_string_n($arg6, $arg7);
+  probestr = sprintf(&quot;%s(thread_id=%d,class='%s',method='%s',sig='%s')&quot;,
+		     name, thread_id, class, method, sig);
+}
+</code></pre>
+
+<p>大致搞清楚每个参数的定义：arg1是线程id，arge2看起来里面包含了classname，arg3是classname的长度，依次类推，下面我们就可以来定义probe了：</p>
+
+<pre><code class="language-shell">[root@tacyArch tacy]# echo 'p:uprobes/method_entry /usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so:0x0000000000bd21e5 arg1=%ax:s64 arg2=+0(%dx):string arg3=%cx:s32 arg4=+0(%si):string arg5=%di:s32 arg6=+0(%r8):string arg7=%r9:s32' &gt; uprobe_events
+</code></pre>
+
+<p>搞定，可以测试一下效果：</p>
+
+<pre><code class="language-shell">[root@tacyArch tracing]# echo 1 &gt;events/uprobes/method_entry/enable
+[root@tacyArch tracing]# echo 0 &gt;events/uprobes/method_entry/enable
+[root@tacyArch tracing]# cat trace|grep hello
+ http-nio-8080-e-31172 [003] d... 51704.118354: method_entry: (0x7f80e000d1e5) arg1=24 arg2=&quot;hello/Greeting&lt;init&gt;(JLjava/lang/String;)V&quot; arg3=14 arg4=&quot;&lt;init&gt;(JLjava/lang/String;)V&quot; arg5=6 arg6=&quot;(JLjava/lang/String;)V&quot; arg7=22
+ http-nio-8080-e-31172 [003] d... 51704.134194: method_entry: (0x7f80e000d1e5) arg1=24 arg2=&quot;hello/GreetinggetId()J&quot; arg3=14 arg4=&quot;getId()J&quot; arg5=5 arg6=&quot;()J&quot; arg7=3
+ http-nio-8080-e-31172 [003] d... 51704.134229: method_entry: (0x7f80e000d1e5) arg1=24 arg2=&quot;hello/GreetinggetContent&amp;()Ljava/lang/String;&quot; arg3=14 arg4=&quot;getContent&amp;()Ljava/lang/String;&quot; arg5=10 arg6=&quot;()Ljava/lang/String;&quot; arg7=20
+ http-nio-8080-e-31173 [002] d... 51704.628421: method_entry: (0x7f80e000d1e5) arg1=25 arg2=&quot;hello/GreetinggetId()J&quot; arg3=14 arg4=&quot;getId()J&quot; arg5=5 arg6=&quot;()J&quot; arg7=3
+ http-nio-8080-e-31173 [002] d... 51704.628476: method_entry: (0x7f80e000d1e5) arg1=25 arg2=&quot;hello/GreetinggetContent&amp;()Ljava/lang/String;&quot; arg3=14 arg4=&quot;getContent&amp;()Ljava/lang/String;&quot; arg5=10 arg6=&quot;()Ljava/lang/String;&quot; arg7=20
+</code></pre>
+
+<p>上面我们用grep来过滤我们想看到的class，其实不用这么麻烦，参考events的filter，你可以直接过滤掉你不想看到的内容：</p>
+
+<pre><code class="language-shell">[root@tacyArch tracing]# echo 'arg2 ~ &quot;hello*&quot;' &gt; events/uprobes/method_entry/filter
+</code></pre>
+
+<p>牛，java的方法调用一览无遗，用这个来profile method响应时间，不用对应用做任何调整，想想都觉得不可思议（如果你需要获取每个method的调用时间，你需要定义一个return probe，参考uprobe event定义）</p>
+
+<h4 id="perf-2">perf</h4>
+
+<p>方法参考<a href="http://www.brendangregg.com/perf.html#StaticUserTracing">Static User Tracing</a>，我简单描述一下jdk实现</p>
+
+<p>为了perf能操作USDT Probe，需要把它添加到perf buildcache：</p>
+
+<pre><code class="language-shell">/****************** sdt需要先添加到perf里面：**************/
+/* 注意，perf操作sdt，建议切换到root运行，否则可能出一些奇怪问题，例如无法添加sdt到probe */
+[root@tacyArch tracing]# perf buildid-cache --add /usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so
+
+[root@tacyArch tracing]# perf list sdt
+
+List of pre-defined events (to be used in -e):
+
+  sdt_hotspot:class__initialization__clinit          [SDT event]
+  sdt_hotspot:class__initialization__concurrent      [SDT event]
+  sdt_hotspot:class__initialization__end             [SDT event]
+  sdt_hotspot:class__initialization__erroneous       [SDT event]
+  sdt_hotspot:class__initialization__error           [SDT event]
+  sdt_hotspot:class__initialization__recursive       [SDT event]
+  sdt_hotspot:class__initialization__required        [SDT event]
+  sdt_hotspot:class__initialization__super__failed   [SDT event]
+  sdt_hotspot:class__loaded                          [SDT event]
+  sdt_hotspot:class__unloaded                        [SDT event]
+  sdt_hotspot:compiled__method__load                 [SDT event]
+  sdt_hotspot:compiled__method__unload               [SDT event]
+  sdt_hotspot:gc__begin                              [SDT event]
+  sdt_hotspot:gc__end                                [SDT event]
+  sdt_hotspot:mem__pool__gc__begin                   [SDT event]
+  sdt_hotspot:mem__pool__gc__end                     [SDT event]
+  sdt_hotspot:method__compile__begin                 [SDT event]
+  sdt_hotspot:method__compile__end                   [SDT event]
+</code></pre>
+
+<p>添加到buildcache之后，你才能用他们定义uprobe，执行trace操作，下面用gc<strong>begin示例（method</strong>entry获取参数方法和ftrace一致，只是不需要去找offset）：</p>
+
+<pre><code class="language-shell">[root@tacyArch tacy]# perf probe --add sdt_hotspot:gc__begin                                                                                                                 [20/1846]
+Added new events:
+  sdt_hotspot:gc__begin (on %gc__begin in /usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so)
+  sdt_hotspot:gc__begin_1 (on %gc__begin in /usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so)
+  sdt_hotspot:gc__begin_2 (on %gc__begin in /usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so)
+  sdt_hotspot:gc__begin_3 (on %gc__begin in /usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so)
+
+You can now use it in all perf tools, such as:
+
+        perf record -e sdt_hotspot:gc__begin_3 -aR sleep 1
+
+
+[root@tacyArch tacy]# perf record -e 'sdt_hotspot:gc__begin,sdt_hotspot:gc__begin_1,sdt_hotspot:gc__begin_2,sdt_hotspot:gc__begin_3' -a
+
+^C[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 1.706 MB perf.data (11 samples) ]
+
+[root@tacyArch tacy]# perf script
+       VM Thread  7050 [000] 97761.385404: sdt_hotspot:gc__begin_2: (7f2cebede940) arg1=0
+       VM Thread  6178 [000] 97762.596125: sdt_hotspot:gc__begin_2: (7f5430da5940) arg1=0
+       VM Thread  6178 [003] 97762.863885: sdt_hotspot:gc__begin_2: (7f5430da5940) arg1=0
+       VM Thread  6178 [002] 97763.374132: sdt_hotspot:gc__begin_3: (7f5430da5e31)
+       VM Thread  6178 [002] 97763.374145: sdt_hotspot:gc__begin_2: (7f5430da5940) arg1=0
+       VM Thread  6178 [002] 97763.388108: sdt_hotspot:gc__begin_2: (7f5430da5940) arg1=0
+       VM Thread  6178 [001] 97764.320487: sdt_hotspot:gc__begin_2: (7f5430da5940) arg1=0
+       VM Thread  6178 [000] 97765.442266: sdt_hotspot:gc__begin_3: (7f5430da5e31)
+       VM Thread  6178 [000] 97765.442274: sdt_hotspot:gc__begin_2: (7f5430da5940) arg1=0
+       VM Thread  6178 [001] 97765.462569: sdt_hotspot:gc__begin_2: (7f5430da5940) arg1=0
+       VM Thread  6178 [002] 97766.663314: sdt_hotspot:gc__begin_2: (7f5430da5940) arg1=0
+
+</code></pre>
+
+<h3 id="动态分析-1">动态分析</h3>
+
+<p>动态添加uprobe和操作USDT probe差不多，简单说一下perf的方法</p>
+
+<pre><code class="language-shell">[root@tacyArch tracing]# perf probe -x /lib64/libc.so.6 -F|grep malloc|head -10
+cache_malloced
+malloc
+malloc_check
+malloc_consolidate
+malloc_get_state@GLIBC_2.2.5
+malloc_hook_ini
+malloc_info
+malloc_init_state
+malloc_printerr
+malloc_set_state@GLIBC_2.2.5
+
+[root@tacyArch tracing]# perf probe -x /lib64/libc.so.6 malloc
+Added new event:
+  probe_libc:malloc    (on malloc in /usr/lib/libc-2.28.so)
+
+You can now use it in all perf tools, such as:
+
+        perf record -e probe_libc:malloc -aR sleep 1
+
+[root@tacyArch tracing]# cd
+[root@tacyArch ~]# perf record -e probe_libc:malloc -a
+^C[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 1.900 MB perf.data (3349 samples) ]
+
+[root@tacyArch ~]# perf script |head -10
+     soffice.bin   312 [001] 53221.883430: probe_libc:malloc: (7f2503f9a8d0)
+     soffice.bin   312 [001] 53221.883453: probe_libc:malloc: (7f2503f9a8d0)
+            java 30971 [003] 53221.941838: probe_libc:malloc: (7f3682e238d0)
+            java 30971 [003] 53221.941875: probe_libc:malloc: (7f3682e238d0)
+            java 30971 [003] 53221.941887: probe_libc:malloc: (7f3682e238d0)
+            java 30971 [003] 53221.966116: probe_libc:malloc: (7f3682e238d0)
+            java 30971 [003] 53221.966164: probe_libc:malloc: (7f3682e238d0)
+            java 30971 [003] 53221.966260: probe_libc:malloc: (7f3682e238d0)
+            java 30971 [003] 53221.966272: probe_libc:malloc: (7f3682e238d0)
+     soffice.bin   312 [001] 53221.983791: probe_libc:malloc: (7f2503f9a8d0)
+</code></pre>
+
+<h2 id="总结">总结</h2>
+
+<p>上面介绍的内容，操作起来有一定复杂度，大牛Brendan Gregg提供了<a href="https://github.com/brendangregg/perf-tools">perf-tools</a>工具集来简化操作，里面提供了很多非常实用的工具，大力推荐。另外大牛的<a href="http://www.brendangregg.com/blog/2015-07-03/hacking-linux-usdt-ftrace.html">blog</a>建议反复阅读</p>
+
+<p>ftrace最大的问题是不可编程，无法做更多扩展，但是它不需要太新的kernel，对目前很多生产环境来说，这非常关键，而且ftrace也在持续改进，建议follow大牛@srostedt（kernel ftrace maintainer）。</p>
+
+<p>至于目前最热门的ebpf/bcc<sup class="footnote-ref" id="fnref:12"><a href="#fn:12">8</a></sup>，强烈建议学习，优点就是一句话：可编程。kernel至少都需要4.1（推荐4.8以上），RHEL7.6官方已经支持<sup class="footnote-ref" id="fnref:11"><a href="#fn:11">9</a></sup>。</p>
+
+<h2 id="相关知识">相关知识</h2>
+
+<h3 id="assambly-gdb">assambly &amp; gdb</h3>
+
+<h3 id="dynamic-symbol-static-symbol">dynamic symbol / static symbol</h3>
+
+<p>dynamic symbol是指动态链接的程序对外依赖的共享库symbol，程序运行时必须。static symbol这个需要编译时打开<code>-g</code>开关才能看到，调试用</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:13"><a href="http://www.brendangregg.com/blog/2015-07-08/choosing-a-linux-tracer.html">Choosing a Linux Tracer (2015)</a>
+ <a class="footnote-return" href="#fnref:13"><sup>[return]</sup></a></li>
+<li id="fn:7"><a href="https://www.kernel.org/doc/Documentation/trace/ftrace.txt">ftrace document</a>
+ <a class="footnote-return" href="#fnref:7"><sup>[return]</sup></a></li>
+<li id="fn:8"><a href="https://lwn.net/Articles/370423/">Secrets of the Ftrace function tracer</a>
+ <a class="footnote-return" href="#fnref:8"><sup>[return]</sup></a></li>
+<li id="fn:6"><a href="https://www.kernel.org/doc/Documentation/trace/kprobetrace.txt">kprobe trace</a>
+ <a class="footnote-return" href="#fnref:6"><sup>[return]</sup></a></li>
+<li id="fn:9"><a href="http://cs.lmu.edu/~ray/notes/nasmtutorial/">NASM Tutorial</a>
+ <a class="footnote-return" href="#fnref:9"><sup>[return]</sup></a></li>
+<li id="fn:10"><a href="https://github.com/hjl-tools/x86-psABI/wiki/x86-64-psABI-1.0.pdf">X86 psABI</a>
+ <a class="footnote-return" href="#fnref:10"><sup>[return]</sup></a></li>
+<li id="fn:5"><a href="https://www.kernel.org/doc/Documentation/trace/uprobetracer.txt">uprobe tracer</a>
+ <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
+<li id="fn:12"><a href="https://github.com/iovisor/bcc/blob/master/INSTALL.md">iovisor bcc</a>
+ <a class="footnote-return" href="#fnref:12"><sup>[return]</sup></a></li>
+<li id="fn:11"><a href="https://github.com/iovisor/bcc/blob/master/INSTALL.md">bcc install</a>
+ <a class="footnote-return" href="#fnref:11"><sup>[return]</sup></a></li>
+</ol>
+</div>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">春龙</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">2019-01-02</span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">License</span>
+    <span class="item-content">true</span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="http://tacy.github.io/tags/tech/">tech</a>
+          <a href="http://tacy.github.io/tags/linux/">linux</a>
+          <a href="http://tacy.github.io/tags/trace/">trace</a>
+          <a href="http://tacy.github.io/tags/troubleshooting/">troubleshooting</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+
+  
+
+  <div class="disqus-comment">
+  <div class="disqus-button" id="load_disqus" onclick="load_disqus()">
+    Show Disqus Comments
+  </div>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_config = function () {
+      this.page.url = "http://tacy.github.io/post/trace/";
+    };
+    function load_disqus() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'tacyweblog';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+
+      $('#load_disqus').remove();
+    };
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+  
+  </div>
+  
+    
+
+
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+  
+  
+    <a href="mailto:your@email.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://stackoverflow.com/users/1225294/tacy-lee" rel="me noopener" class="iconfont"
+      title="stack-overflow"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M809.714286 932.571429l-638.857143 0 0-274.285714-91.428571 0 0 365.714286 821.714286 0 0-365.714286-91.428571 0 0 274.285714zm-538.285714-299.428571l18.857143-89.714286 447.428571 94.285714-18.857143 89.142857zm58.857143-213.714286l38.285714-83.428571 414.285714 193.714286-38.285714 82.857143zm114.857143-203.428571l58.285714-70.285714 350.857143 293.142857-58.285714 70.285714zm226.857143-216l272.571429 366.285714-73.142857 54.857143-272.571429-366.285714zm-410.285714 840.571429l0-90.857143 457.142857 0 0 90.857143-457.142857 0z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://twitter.com/tacy_lee" rel="me noopener" class="iconfont"
+      title="twitter"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1264 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M1229.8616 18.043658c0 0-117.852626 63.135335-164.151872 67.344358-105.225559-164.151872-505.082682-92.598492-437.738325 223.078185C278.622548 312.675223 89.216542 47.506814 89.216542 47.506814s-117.852626 189.406006 75.762402 345.139833C127.097743 396.85567 55.544363 371.601535 55.544363 371.601535S26.081207 535.753407 253.368414 615.724832c-21.045112 29.463156-113.643603 8.418045-113.643603 8.418045s25.254134 143.10676 231.496229 180.987961c-143.10676 130.479693-387.230056 92.598492-370.393967 105.225559 206.242095 189.406006 1119.599946 231.496229 1128.01799-643.98042C1179.353331 249.539887 1263.533778 123.269217 1263.533778 123.269217s-130.479693 37.881201-138.897738 33.672179C1225.652577 98.015083 1229.8616 18.043658 1229.8616 18.043658"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/tacy" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://weibo.com/p/1005051970158087" rel="me noopener" class="iconfont"
+      title="weibo"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M385.714286 733.714286q12-19.428571 6.285714-39.428571t-25.714286-28.571429q-19.428571-8-41.714286-0.571429t-34.285714 26.285714q-12.571429 19.428571-7.428571 39.142857t24.571429 28.857143 42.571429 1.428571 35.714286-27.142857zm53.714286-69.142857q4.571429-7.428571 2-15.142857t-10-10.571429q-8-2.857143-16.285714 2.857143t-12.285714 10.571429q-9.714286 17.714286 7.428571 25.714286 8 2.857143 16.571429 2.857143t12.571429-10.571429zm99.428571 61.142857q-25.714286 58.285714-90.285714 85.714286t-128 6.857143q-61.142857-19.428571-84.285714-72.285714t3.714286-107.142857q26.857143-53.142857 86.571429-79.428571t120.285714-10.857143q63.428571 16.571429 90.571429 68.285714t1.428571 108.857143zm178.285714-91.428571q-5.142857-54.857143-50.857143-97.142857t-119.142857-62.285714-156.857143-12q-127.428571 13.142857-211.142857 80.857143t-75.714286 151.142857q5.142857 54.857143 50.857143 97.142857t119.142857 62.285714 156.857143 12q127.428571-13.142857 211.142857-80.857143t75.714286-151.142857zm176 2.285714q0 38.857143-21.142857 79.714286t-62.285714 78.285714-96.285714 67.142857-129.142857 47.428571-154.571429 17.714286-157.142857-19.142857-137.428571-53.142857-98-86.285714-37.142857-114q0-65.714286 39.714286-140t112.857143-147.428571q96.571429-96.571429 195.142857-134.857143t140.857143 4q37.142857 36.571429 11.428571 119.428571-2.285714 8-0.571429 11.428571t5.714286 4 8.285714 2.857143 7.714286-2l3.428571-1.142857q79.428571-33.714286 140.571429-33.714286t87.428571 34.857143q25.714286 36 0 101.714286-1.142857 7.428571-2.571429 11.428571t2.571429 7.142857 6.857143 4.285714 9.714286 3.428571q32.571429 10.285714 58.857143 26.857143t45.714286 46.571429 19.428571 66.571429zm-42.285714-356.571429q24 26.857143 31.142857 62t-3.714286 67.142857q-4.571429 13.142857-16.857143 19.428571t-25.428571 2.285714q-13.142857-4.571429-19.428571-16.857143t-2.285714-25.428571q11.428571-36-13.714286-63.428571t-61.142857-20q-13.714286 2.857143-25.714286-4.571429t-14.285714-21.142857q-2.857143-13.714286 4.571429-25.428571t21.142857-14.571429q34.285714-7.428571 68 3.142857t57.714286 37.428571zm103.428571-93.142857q49.714286 54.857143 64.285714 127.142857t-7.714286 138q-5.142857 15.428571-19.428571 22.857143t-29.714286 2.285714-22.857143-19.428571-2.857143-29.714286q16-46.857143 5.714286-98.285714t-45.714286-90.285714q-35.428571-39.428571-84.571429-54.571429t-98.857143-4.857143q-16 3.428571-29.714286-5.428571t-17.142857-24.857143 5.428571-29.428571 24.857143-16.857143q70.285714-14.857143 139.428571 6.571429t118.857143 76.857143z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://www.douban.com/people/tacy_lee/" rel="me noopener" class="iconfont"
+      title="douban"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M926.917973 37.80608C959.65184 37.80608 986.19392 64.34816 986.19392 97.082027L986.19392 926.917973C986.19392 959.65184 959.65184 986.19392 926.917973 986.19392L97.082027 986.19392C64.34816 986.19392 37.80608 959.65184 37.80608 926.917973L37.80608 97.082027C37.80608 64.34816 64.34816 37.80608 97.082027 37.80608zM176.653653 176.19968 176.653653 252.678827 825.658027 252.678827 825.658027 176.19968zM217.719467 316.146347 217.719467 628.08064 273.524053 628.08064 341.292373 770.39616 157.259093 770.39616 157.259093 845.417813 842.949973 845.417813 842.949973 770.39616 654.226773 770.39616 722.899627 628.08064 783.67744 628.08064 783.67744 316.146347zM684.885333 392.891733 684.885333 553.987413 312.576 553.987413 312.576 392.891733zM570.770773 770.39616 426.653013 770.39616 359.621973 628.08064 639.443627 628.08064z"></path>
+</svg>
+
+    </a>
+
+
+<a href="http://tacy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+  
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2012 -
+    2019
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        春龙
+        
+      </span></span>
+
+  
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
