@@ -6,10 +6,19 @@
     <description>Recent content in Database on Tacy - Notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 01 Apr 2014 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 11 Oct 2017 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://tacy.github.io/tags/database/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>mysql notes</title>
+      <link>http://tacy.github.io/post/mysql/</link>
+      <pubDate>Wed, 11 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/mysql/</guid>
+      <description>read-only user Adding the new MySQL user Connect to your database as root, then add your new user like so: CREATE USER &amp;lsquo;lele&amp;rsquo;@&amp;lsquo;%&amp;rsquo; IDENTIFIED BY &amp;lsquo;lele_lelelele&amp;rsquo;; The % here means the user &amp;lsquo;tester&amp;rsquo; connecting from any host, you can place a network hostname here instead if you want to restrict access further. Naturally you will also want to substitute password with something a little stronger ;-) Now run the following</description>
+    </item>
     
     <item>
       <title>DB2锁和隔离级别</title>

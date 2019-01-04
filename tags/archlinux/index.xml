@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Archlinux on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/archlinux/</link>
+    <description>Recent content in Archlinux on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 01 Jan 2015 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/archlinux/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>archlinux notes</title>
+      <link>http://tacy.github.io/post/archlinux/</link>
+      <pubDate>Thu, 01 Jan 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/archlinux/</guid>
+      <description>my archlinux machine baseline archlinux包更新非常, 如果你经常需要安装包, 会频繁出现新安装的包更新了依赖包, 但是原来依赖这个依赖包的组件可能就不能运行了,</description>
+    </item>
+    
+  </channel>
+</rss>

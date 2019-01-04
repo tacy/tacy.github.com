@@ -60,15 +60,15 @@
 <meta property="og:description" content="Docker是对LXC的一个抽象，依赖于LXC，相比KVM这种Hypervisor，LXC要轻量级很多，但是LXC很难打包分发，Docker就是解决这个问题，当然还提供了一系列的辅助功能，本文是自己在使用Docker使用过程中的一些记录" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://tacy.github.io/post/docker/" /><meta property="article:published_time" content="2014-04-04T00:00:00&#43;00:00"/>
-<meta property="article:modified_time" content="2014-04-04T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2014-08-26T00:00:00&#43;00:00"/>
 
 <meta itemprop="name" content="Docker使用笔记">
 <meta itemprop="description" content="Docker是对LXC的一个抽象，依赖于LXC，相比KVM这种Hypervisor，LXC要轻量级很多，但是LXC很难打包分发，Docker就是解决这个问题，当然还提供了一系列的辅助功能，本文是自己在使用Docker使用过程中的一些记录">
 
 
 <meta itemprop="datePublished" content="2014-04-04T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2014-04-04T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="8606">
+<meta itemprop="dateModified" content="2014-08-26T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="8962">
 
 
 
@@ -791,6 +791,41 @@ sudo docker rm &lt;CONTAINER ID&gt;
 sudo docker rmi &lt;IMAGE ID&gt;
 </code></pre>
 
+<h1 id="docker-upgrade">docker upgrade</h1>
+
+<h2 id="network">network</h2>
+
+<p>升级docker之后,启动发现docker另外创建了一个qemu0(我系统本省已经有一个qemu0, 它直接把我的删掉重建了一个, ip配置也变了. 我尝试降版本, 发现启动不了, 抛无法创建网桥错误, 解决方法是删除/var/lib/docker/network, 然后重启docker服务, 参考<a href="https://github.com/docker/docker/issues/23630">https://github.com/docker/docker/issues/23630</a></p>
+
+<h2 id="network-namespace">network namespace</h2>
+
+<p><a href="Experiments with container networking: Part 1">http://murat1985.github.io/kubernetes/cni/2016/05/14/netns-and-cni.html</a>
+pid=<code>docker inspect -f '{{.State.Pid}}' $container_id</code>
+ln -s /proc/$pid/ns/net /var/run/netns/$container_id
+ip netns exec $container_id tcpdump -i any tcp port 8888 -nnn -v</p>
+
+<h1 id="docker-hub-automated-build">docker-hub automated build</h1>
+
+<p>记住, 在github上, 对应的reponsitory也要和docker绑定, 否则不会触发自动编译.
+Within GitHub, a Docker integration appears in your repositories Settings &gt; Webhooks &amp; services page.
+<a href="Configure automated builds on Docker Hub">https://docs.docker.com/docker-hub/builds/#understand-the-build-process</a></p>
+
+<h2 id="command">command</h2>
+
+<p>save &amp; export, save 保留层信息, export类似快照, 没有元信息, 包括cmd类似都没有</p>
+
+<h1 id="dockerization">dockerization</h1>
+
+<h2 id="kafka">kafka</h2>
+
+<p>All-in-one: <a href="https://github.com/spotify/docker-kafka">https://github.com/spotify/docker-kafka</a></p>
+
+<pre><code class="language-abap">docker run -p 2181:2181 -p 9092:9092 --env ADVERTISED_HOST=172.18.1.0 --env ADVERTISED_PORT=9092 spotify/kafka
+bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test
+bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning
+</code></pre>
+
 <h1 id="centos">Centos</h1>
 
 <p>[[<a href="http://wiki.centos.org/Cloud/Docker][Cloud/Doker">http://wiki.centos.org/Cloud/Docker][Cloud/Doker</a> - Centos Wiki]]</p>
@@ -1092,7 +1127,7 @@ VMM，保证了VM的安全隔离，当然也不是说没有安全问题，vmm的
   </p>
   <p class="copyright-item">
     <span class="item-title">LastMod</span>
-    <span class="item-content">2014-04-04</span>
+    <span class="item-content">2014-08-26</span>
   </p>
   
   <p class="copyright-item">

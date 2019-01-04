@@ -68,7 +68,7 @@
 
 <meta itemprop="datePublished" content="2014-07-29T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2014-07-29T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="365">
+<meta itemprop="wordCount" content="1657">
 
 
 
@@ -366,6 +366,175 @@ adb install test.apk
 </dl>
 
 <p>具体的其他子命令可以help，主要是abd和android两个。</p>
+
+<h1 id="env">ENV</h1>
+
+<p>android目录在workspace下</p>
+
+<h1 id="android-sdk">android sdk</h1>
+
+<p>About the version of Android SDK Build-tools, the answer is</p>
+
+<p>By default, the Android SDK uses the most recent downloaded version of the Build Tools.</p>
+
+<p>The [build] tools, such as aidl, aapt, dexdump, and dx, are typically called by the Android build tools or Android Development Tools (ADT), so you rarely need to invoke these tools directly. As a general rule, you should rely on the build tools or the ADT plugin to call them as needed.
+Source</p>
+
+<p>Anyway, here is a synthesis of the differences between tools, platform-tools and build-tools:</p>
+
+<p>Android SDK Tools
+Location: $ANDROID_HOME/tools
+Main tools: ant scripts (to build your APKs) and ddms (for debugging)
+Android SDK Platform-tools
+Location: $ANDROID_HOME/platform-tools
+Main tool: adb (to manage the state of an emulator or an Android device)
+Android SDK Build-tools
+Location: $ANDROID_HOME/build-tools/$VERSION/
+Documentation
+Main tools: aapt (to generate R.java and unaligned, unsigned APKs), dx (to convert Java bytecode to Dalvik bytecode), and zipalign (to optimize your APKs)</p>
+
+<h1 id="reverse-engineering">reverse engineering</h1>
+
+<p>编译过程是java-&gt;smali-&gt;dex, smali负责smali-&gt;dex, baksmali负责dex-&gt;smali, smali类汇编, 但是也可以修改.</p>
+
+<p>一般如果你需要先获取apk, 然后通过apktool, 获取到apk的资源文件和smali, 然后可以直接通过smaliide(android studio插件)调试, 具体参考<a href="https://github.com/JesusFreke/smali/wiki/smalidea">smalidea</a></p>
+
+<p>你也能通过baksmali获取到smali代码, 修改之后smali重新打包</p>
+
+<p>如果觉得smali很难懂, 也可以通过dex2jar把dex转换成jar包, 然后通过java反编译工具获取java代码, 当然这个反编译一般都是不完全的, 但是你也能完成apk的修改, 然后重新打包</p>
+
+<h1 id="emulator-1">emulator</h1>
+
+<h2 id="set-proxy">set proxy</h2>
+
+<p>Go to Settings&gt;WIRELESS &amp; NETWORKS&gt;Mobile networks&gt;Mobile networks settings&gt;Access Point Names
+add access point by clicking &ldquo;+&rdquo; button and then type favorite name for Name, favorite name for APN, fixed Proxy and port. If necessary put user name and password.</p>
+
+<h2 id="fake-gps-location">fake gps location</h2>
+
+<p>直接通过模拟器发送就行了</p>
+
+<h1 id="android-studio">android studio</h1>
+
+<p>启动bin/studio.sh
+配置文件玩在~/.AndroidStudio1.5目录下, 调整jvm参数在该目录下的studio.vmoptions,</p>
+
+<p>配置sdk: file-&gt;setting
+配置project sdk: file-&gt;project structure下, platform settings -&gt; sdks中选择&rdquo;+&ldquo;. 还需要配置project运行用的sdk, project setting -&gt; project中选择project sdk和project language level</p>
+
+<p>avd管理: tools -&gt; android -&gt; avd manager</p>
+
+<h2 id="debug">debug</h2>
+
+<p>首先<code>lsusb</code>获取到id, 例如<code>us 001 Device 004: ID 17ef:776d Lenovo</code></p>
+
+<p>添加udev rules:</p>
+
+<pre><code>cat /etc/udev/rules.d/51-android.rules
+DB your devices
+SUBSYSTEM==&quot;usb&quot;, ATTR{idVendor}==&quot;17ef&quot;, ATTR{Product}==&quot;776d&quot;, MODE=&quot;0666&quot;
+</code></pre>
+
+<p>然后执行<code>sudo adb kill-server &amp;&amp; sudo adb start-server</code></p>
+
+<p>接下来执行<code>adb devices</code>, 应该看到下面这样的行输出:</p>
+
+<pre><code>List of devices attached
+813d4882        device
+</code></pre>
+
+<h3 id="获取手机上的应用">获取手机上的应用</h3>
+
+<pre><code class="language-abap">adb shell pm list packages -f
+adb pull -p PATH/base.apk OUTPUT.apk
+
+安装到指定设备
+adb -s &quot;deviceIDfromlist&quot; install path+apkName
+</code></pre>
+
+<h3 id="apk">apk</h3>
+
+<p>查看apk适配的架构</p>
+
+<pre><code class="language-abap">/apk/# build-tools/version/aapt dump badging ymatou-shop.apk
+native-code: 'arm64-v8a' 'armeabi' 'armeabi-v7a' 'x86' 'x86_64'
+</code></pre>
+
+<h2 id="字体显示方框">字体显示方框</h2>
+
+<p>setting -&gt; Appearance -&gt; Override default fonts by (not recommended)</p>
+
+<h2 id="migrate-eclipse-project-to-android-studio">migrate eclipse project to android studio</h2>
+
+<p>svn编码是gbk, 所以checkout代码出来的时候需要先修改LANG=zh_CN.gbk
+svn checkout file:///data/svn/android/zhijie/branches/vTest .
+svn checkout file:///data/svn/android/zhijie/branches/abs-library abs-library
+svn checkout file:///data/svn/android/zhijie/branches/sliding-library sliding-library</p>
+
+<p>然后android studio直接import eclipse项目</p>
+
+<p>接下来抛错误:
+Error:(12, 0) Error: NDK integration is deprecated in the current plugin.  Consider trying the new experimental plugin.  For details, see <a href="http://tools.android.com/tech-docs/new-build-system/gradle-experimental">http://tools.android.com/tech-docs/new-build-system/gradle-experimental</a>.  Set &ldquo;android.useDeprecatedNdk=true&rdquo; in gradle.properties to continue using the current NDK integration.
+<a href="openFile:/home/tacy/workspace/android/zhijie_pay/zhijie_pay/build.gradle">Open File</a></p>
+
+<p>修改gradle.properties, 增加行<code>android.useDeprecatedNdk=true</code></p>
+
+<p>继续:
+ERROR: 9-patch image /home/tacy/workspace/android/zhijie_pay/zhijie_pay/src/main/res/drawable/navbar.9.png malformed</p>
+
+<p>直接修改文件名为navbar.png(临时改法)</p>
+
+<p>undefined reference to `__android_log_print&rsquo;
+<a href="http://stackoverflow.com/questions/4455941/undefined-reference-to-android-log-print">http://stackoverflow.com/questions/4455941/undefined-reference-to-android-log-print</a></p>
+
+<p>Error:(63, 14) error: cannot find symbol method addOnPageChangeListener(<anonymous OnPageChangeListener>)
+<a href="http://stackoverflow.com/questions/31099555/cannot-find-symbol-method-addonpagechangelistener">http://stackoverflow.com/questions/31099555/cannot-find-symbol-method-addonpagechangelistener</a></p>
+
+<p>01-31 15:43:12.995 9628-9628/? E/dalvikvm: dlopen(&ldquo;/data/app-lib/com.zhijie.android-1/libBaiduMapSDK_v2_3_1.so&rdquo;) failed: Cannot load library: load_library(linker.cpp:761): not a valid ELF executable: /data/app-lib/com.zhijie.android-1/libBaiduMapSDK_v2_3_1.so</p>
+
+<p>emulator: ERROR: This AVD&rsquo;s configuration is missing a kernel file!!
+需要安装对应的image</p>
+
+<p>#zhijie
+java/com/zhijie/android/login/LoginActivity
+java/com/zhijie/android/shopping/net/HttpManager</p>
+
+<p>client:13959203004 | e47ca7a09cf6781e29634502345930a7 | 4e5ceed89a82a06a37e2bd0f0d8f49a4</p>
+
+<p>00000000 md5 =&gt; dd4b21e9ef71e1291183a46b913ae6f2
+device_id =&gt; 914ddf9d048008cb58390d20a94d9d05
+username =&gt; 13959203004</p>
+
+<p>client:18642716660 | e10adc3949ba59abbe56e057f20f883e | 609f7d6df5c040d964aeff06ef57beba</p>
+
+<p>deviceId=a76fe41f91946c4f96fde0fa4341e679&amp;username=18642716600&amp;password=d4f74be5b3c0a379fe3f12b6503a89ed&amp;macAddress=34%3Ac3%3Ad2%3A06%3Ad3%3A32&amp;registTime=1454570913373HTTP/1.1 200 OK</p>
+
+<p>update client set password=&lsquo;dd4b21e9ef71e1291183a46b913ae6f2&rsquo;, deviceid=&lsquo;914ddf9d048008cb58390d20a94d9d05&rsquo; where username=&lsquo;18642716660&rsquo;;</p>
+
+<p>device_info: terminal   | tm38d628d1f73b896e77ace749a3301923 |</p>
+
+<p>update device_info set devicetype=&lsquo;pad&rsquo;, deviceid=&lsquo;914ddf9d048008cb58390d20a94d9d05&rsquo; where id=&lsquo;360&rsquo;;</p>
+
+<p>select o.cid from client c join device_info o on c.cid=o.cid where o.deviceid=&lsquo;914ddf9d048008cb58390d20a94d9d05&rsquo; and c.username=&lsquo;18642716660&rsquo; and c.password=&lsquo;dd4b21e9ef71e1291183a46b913ae6f2&rsquo;;</p>
+
+<h1 id="常用">常用</h1>
+
+<h2 id="yarn">yarn</h2>
+
+<p>yarn add -S packagename / yarn add -D packagename / yarn remove packagename</p>
+
+<h2 id="react-native">react native</h2>
+
+<p>react-native link  packagename /  react-native unlink packagename</p>
+
+<h3 id="faq">FAQ</h3>
+
+<ol>
+<li>Unable to install /home/admin/MyApp/app/build/outputs/apk/app-local-debug.apk</li>
+</ol>
+
+<p>Step 1: Make sure your device is connected and then run adb devices. From the output, grab the device id H80xxxxxx.
+Step 2: Run react-native run-android &ndash;deviceId H80xxxxxx</p>
 
 <h1 id="footnotes">Footnotes</h1>
 

@@ -21,6 +21,24 @@
     </item>
     
     <item>
+      <title>gdb notes</title>
+      <link>http://tacy.github.io/post/gdb/</link>
+      <pubDate>Wed, 05 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/gdb/</guid>
+      <description>coredump find coredump cat /proc/sys/kernel/core_pattern /usr/lib/systemd/systemd-coredump %p %u %g %s %t %e Examining a core dump, Use coredumpctl to find the corresponding dump: You need to uniquely identify the relevant dump. This is possible by specifying a PID, name of the executable, path to the executable or a journalctl predicate (see coredumpctl(1) and journalctl(1) for details). To see details of the core dumps: Pay attention to &amp;ldquo;Signal&amp;rdquo; row, that helps</description>
+    </item>
+    
+    <item>
+      <title>archlinux notes</title>
+      <link>http://tacy.github.io/post/archlinux/</link>
+      <pubDate>Thu, 01 Jan 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/archlinux/</guid>
+      <description>my archlinux machine baseline archlinux包更新非常, 如果你经常需要安装包, 会频繁出现新安装的包更新了依赖包, 但是原来依赖这个依赖包的组件可能就不能运行了,</description>
+    </item>
+    
+    <item>
       <title>l2tp ipsec in linode</title>
       <link>http://tacy.github.io/post/l2tp-ipsec-in-linode/</link>
       <pubDate>Wed, 24 Dec 2014 00:00:00 +0000</pubDate>

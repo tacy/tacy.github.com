@@ -68,7 +68,7 @@
 
 <meta itemprop="datePublished" content="2014-08-21T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2014-08-21T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="655">
+<meta itemprop="wordCount" content="1108">
 
 
 
@@ -325,7 +325,46 @@ if (!doNotTrack) {
     <div class="post-content">
       
 
-<h1 id="一个问题诊断">一个问题诊断</h1>
+<h1 id="tshark">tshark</h1>
+
+<p>tshark -V -O http -Y &ldquo;(http.request and http.host contains ymatou)&rdquo;  -T fields -e frame.number -e http.request.method -e http.request.full_uri -r ~/workspace/python/osx/lele/ymt-addproductv2.pcapng</p>
+
+<h2 id="filter-field-reference">FILTER FIELD REFERENCE</h2>
+
+<p>tshark -G fields on the command line</p>
+
+<h1 id="troubleshooting">Troubleshooting</h1>
+
+<h2 id="ssl-1-2-3">SSL<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup><sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup><sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup></h2>
+
+<p>Starting with Wireshark 2.0, the RSA key file is automatically matched against the public key as found in the Certificate handshake message. Before Wireshark 2.0, it relied on the user to enter a valid Address and Port value. Note that only RSA key exchanges can be decrypted using this RSA private key, Diffie-Hellman key exchanges cannot be decrypted using a RSA key file! (See &ldquo;SSLKEYLOGFILE&rdquo; if you have such a capture.)</p>
+
+<p>连接建立的时候, 会告诉你是否采用Diffie Hellman key交换, 这样的方式你只能采用SSLKEYLOGFILE方式</p>
+
+<h2 id="抓不到应该出现的包">抓不到应该出现的包</h2>
+
+<p>路由问题,路由问题,路由问题</p>
+
+<p>重要的事情说三遍, 仔细检查路由表, 看看是否路由正确, 网络配置错误很容易导致.</p>
+
+<h2 id="关于tcp-segment-len超过1500">关于tcp segment len超过1500</h2>
+
+<p>很可能是网卡支持tso, 同时打开了该功能, 应用层的拆包工作交给了网卡, 一般这种情况, 你能在对端看到正确的tcp segment len大小</p>
+
+<h2 id="如何查找一个session">如何查找一个session</h2>
+
+<p>标识一个tcp链接通过src_ip:port  -&gt; dst_ip:port, 过滤条件写上就行, 当然tcp port存在重用的情况, 所以你还需要加上session id啥的, 在cookie里面有</p>
+
+<h1 id="usage">Usage</h1>
+
+<h2 id="导出过滤的包">导出过滤的包</h2>
+
+<p>首先过滤包, 然后file -&gt; export specified packets -&gt; all packets
+也可以通过tshark来过滤, 一般可以</p>
+
+<h1 id="案例">案例</h1>
+
+<h2 id="session失效">session失效</h2>
 
 <p>系统做了单点登录，用的是CAS，用户反馈偶尔系统登出之后，重新用其他帐号登入，查询
 到的用户资料依然是上一个用户的，只有关闭浏览器之后，才能正常。</p>
@@ -359,6 +398,19 @@ tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 65535 byte
 明白为啥被reset而不是connection reject之类的，修改apache配置问题解决。</p>
 
 <p>当然也不能算彻底解决，CAS关于注销的实现有bug，是一个不可靠实现，需要做一定处理。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1"><a href="https://wiki.wireshark.org/SSL">Wireshark SSL</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:2"><a href="https://github.com/k8sp/tls">TLS完全指南</a>
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+<li id="fn:3"><a href="https://github.com/kelseyhightower/docker-kubernetes-tls-guide">Docker&amp;Kubernetes tls guide</a>
+ <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+</ol>
+</div>
 
     </div>
 

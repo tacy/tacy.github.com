@@ -17,7 +17,7 @@
       <pubDate>Thu, 21 Aug 2014 00:00:00 +0000</pubDate>
       
       <guid>http://tacy.github.io/post/wireshark-tcpdump/</guid>
-      <description>一个问题诊断 系统做了单点登录，用的是CAS，用户反馈偶尔系统登出之后，重新用其他帐号登入，查询 到的用户资料依然是上一个用户的，只有关闭浏览器</description>
+      <description>tshark tshark -V -O http -Y &amp;ldquo;(http.request and http.host contains ymatou)&amp;rdquo; -T fields -e frame.number -e http.request.method -e http.request.full_uri -r ~/workspace/python/osx/lele/ymt-addproductv2.pcapng FILTER FIELD REFERENCE tshark -G fields on the command line Troubleshooting SSL123 Starting with Wireshark 2.0, the RSA key file is automatically matched against the public key as found in the Certificate handshake message. Before Wireshark 2.0, it relied on the user to enter a valid Address and Port</description>
     </item>
     
     <item>

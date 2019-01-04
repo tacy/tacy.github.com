@@ -6,10 +6,19 @@
     <description>Recent content in Java on Tacy - Notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 16 Jul 2014 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 23 Apr 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://tacy.github.io/tags/java/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Heapster monitor java by custom metrics</title>
+      <link>http://tacy.github.io/post/heapster-monitor-java-by-custom-metrics/</link>
+      <pubDate>Mon, 23 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/heapster-monitor-java-by-custom-metrics/</guid>
+      <description>Heapster monitor java by custom metrics Heapster是kubernetes的监控组件, 它负责收集Node上Cadvisor提供的监控信息, 推送给上游监控组件. 除了缺</description>
+    </item>
     
     <item>
       <title>Java性能分析之火焰图</title>

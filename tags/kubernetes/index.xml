@@ -6,10 +6,37 @@
     <description>Recent content in Kubernetes on Tacy - Notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 24 Nov 2014 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 23 Apr 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://tacy.github.io/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Heapster monitor java by custom metrics</title>
+      <link>http://tacy.github.io/post/heapster-monitor-java-by-custom-metrics/</link>
+      <pubDate>Mon, 23 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/heapster-monitor-java-by-custom-metrics/</guid>
+      <description>Heapster monitor java by custom metrics Heapster是kubernetes的监控组件, 它负责收集Node上Cadvisor提供的监控信息, 推送给上游监控组件. 除了缺</description>
+    </item>
+    
+    <item>
+      <title>openshift notes</title>
+      <link>http://tacy.github.io/post/openshift/</link>
+      <pubDate>Fri, 10 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/openshift/</guid>
+      <description>Openshift 权限控制 https://docs.openshift.com/container-platform/3.3/architecture/additional_concepts/authorization.html 首先是认证, 可以设置自己的认证服务器, 缺省用htpasswd 然后是权限控制: rule规则, role角色(规则集), bind绑定角</description>
+    </item>
+    
+    <item>
+      <title>kubernetes notes</title>
+      <link>http://tacy.github.io/post/kubernetes/</link>
+      <pubDate>Fri, 11 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/kubernetes/</guid>
+      <description>Dev Kubernetes项目对于开发人员的支持做的很好, 再Github仓库有开放指南, 非常详细. 简单记录以下过程 Kubernetes项目开发语</description>
+    </item>
     
     <item>
       <title>本地KVM环境运行Kubernetes集群</title>

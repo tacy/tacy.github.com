@@ -60,15 +60,15 @@
 <meta property="og:description" content="python学习点滴" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://tacy.github.io/post/python/" /><meta property="article:published_time" content="2013-07-23T00:00:00&#43;00:00"/>
-<meta property="article:modified_time" content="2013-07-23T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2019-01-04T00:00:00&#43;00:00"/>
 
 <meta itemprop="name" content="python notes">
 <meta itemprop="description" content="python学习点滴">
 
 
 <meta itemprop="datePublished" content="2013-07-23T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2013-07-23T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="9081">
+<meta itemprop="dateModified" content="2019-01-04T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="9233">
 
 
 
@@ -1083,6 +1083,39 @@ getattribute:__str__
   的I/O异步框架是libevent/livev（epoll on linux / kqueue on FreeBSD / iocp on
   windows)，evenlet自己实现的。</p>
 
+<h1 id="requests">requests</h1>
+
+<p>支持sockets需要版本2.10, 同时urllib3需要1.14以上版本, 同时需要安装PySocks包</p>
+
+<h1 id="tor">tor</h1>
+
+<p>需要安装stem, 测试代码:</p>
+
+<pre><code class="language-python">from stem import Signal
+from stem.control import Controller
+import requests
+
+# signal TOR for a new connection
+def renew_connection():
+    with Controller.from_port(port = 9051) as controller:
+        controller.authenticate(password=&quot;lichunlongasd12288&quot;)
+        controller.signal(Signal.NEWNYM)
+renew_connection()
+proxies = {
+  'http': 'socks5://localhost:9050',
+  'https': 'sockets5://localhost:9050',
+}
+print requests.session().get(&quot;http://httpbin.org/ip&quot;,proxies=proxies).content
+</code></pre>
+
+<h1 id="mysql">mysql</h1>
+
+<p>插入空到字段用<code>None</code>, 或者<code>''</code>, 不是<code>&quot;null&quot;</code></p>
+
+<h1 id="datetime">datetime</h1>
+
+<p><a href="https://opensource.com/article/17/5/understanding-datetime-python-primer">How to work with dates and time with Python</a></p>
+
 <h1 id="emacs-python">Emacs &amp; Python</h1>
 
 <p>设置python-shell-extra-pythonpaths变量来增加额外的PYTHONPATH环境变量</p>
@@ -1153,7 +1186,7 @@ getattribute:__str__
   </p>
   <p class="copyright-item">
     <span class="item-title">LastMod</span>
-    <span class="item-content">2013-07-23</span>
+    <span class="item-content">2019-01-04</span>
   </p>
   
   <p class="copyright-item">

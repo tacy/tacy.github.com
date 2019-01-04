@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Openshift on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/openshift/</link>
+    <description>Recent content in Openshift on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Fri, 10 Nov 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/openshift/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>openshift notes</title>
+      <link>http://tacy.github.io/post/openshift/</link>
+      <pubDate>Fri, 10 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/openshift/</guid>
+      <description>Openshift 权限控制 https://docs.openshift.com/container-platform/3.3/architecture/additional_concepts/authorization.html 首先是认证, 可以设置自己的认证服务器, 缺省用htpasswd 然后是权限控制: rule规则, role角色(规则集), bind绑定角</description>
+    </item>
+    
+  </channel>
+</rss>

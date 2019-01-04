@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Git on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/git/</link>
+    <description>Recent content in Git on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 12 Jan 2016 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/git/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>git notes</title>
+      <link>http://tacy.github.io/post/git/</link>
+      <pubDate>Tue, 12 Jan 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/git/</guid>
+      <description>squash 在你的work branch完成某个feature之后，你需要merge到master： git checkout master git merge workbranch 这种做法的问题在于，一般你完成某个fea</description>
+    </item>
+    
+  </channel>
+</rss>

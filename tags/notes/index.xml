@@ -6,10 +6,73 @@
     <description>Recent content in Notes on Tacy - Notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 29 Jul 2014 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 10 Nov 2017 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://tacy.github.io/tags/notes/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>openshift notes</title>
+      <link>http://tacy.github.io/post/openshift/</link>
+      <pubDate>Fri, 10 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/openshift/</guid>
+      <description>Openshift 权限控制 https://docs.openshift.com/container-platform/3.3/architecture/additional_concepts/authorization.html 首先是认证, 可以设置自己的认证服务器, 缺省用htpasswd 然后是权限控制: rule规则, role角色(规则集), bind绑定角</description>
+    </item>
+    
+    <item>
+      <title>mysql notes</title>
+      <link>http://tacy.github.io/post/mysql/</link>
+      <pubDate>Wed, 11 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/mysql/</guid>
+      <description>read-only user Adding the new MySQL user Connect to your database as root, then add your new user like so: CREATE USER &amp;lsquo;lele&amp;rsquo;@&amp;lsquo;%&amp;rsquo; IDENTIFIED BY &amp;lsquo;lele_lelelele&amp;rsquo;; The % here means the user &amp;lsquo;tester&amp;rsquo; connecting from any host, you can place a network hostname here instead if you want to restrict access further. Naturally you will also want to substitute password with something a little stronger ;-) Now run the following</description>
+    </item>
+    
+    <item>
+      <title>django notes</title>
+      <link>http://tacy.github.io/post/django/</link>
+      <pubDate>Sun, 17 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/django/</guid>
+      <description>user python manage.py createsuperuser cors Using CORS django-cors-headers django debug $ python manage.py shell &amp;gt;&amp;gt;&amp;gt; import django &amp;gt;&amp;gt;&amp;gt; django.setup() from polls.models import Question, Choice &amp;gt;&amp;gt;&amp;gt; q = Question(question_text=&amp;ldquo;What&amp;rsquo;s new?&amp;rdquo;, pub_date=timezone.now()) Save the object into the database. You have to call save() explicitly. q.save() migrate 有时候, 你需要修改的model字段有约束, 例如外健,</description>
+    </item>
+    
+    <item>
+      <title>kubernetes notes</title>
+      <link>http://tacy.github.io/post/kubernetes/</link>
+      <pubDate>Fri, 11 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/kubernetes/</guid>
+      <description>Dev Kubernetes项目对于开发人员的支持做的很好, 再Github仓库有开放指南, 非常详细. 简单记录以下过程 Kubernetes项目开发语</description>
+    </item>
+    
+    <item>
+      <title>golang notes</title>
+      <link>http://tacy.github.io/post/go/</link>
+      <pubDate>Tue, 01 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/go/</guid>
+      <description>配置 pacman -S go export GOPATH=~/workspace/go/go-tools/ go get github.com/mailgun/godebug go get github.com/nsf/gocode go get github.com/rogpeppe/godef go get github.com/tools/godep go get golang.org/x/tools/cmd/goimports go get golang.org/x/tools/cmd/oracle export PATH=$PATH:~/workspace/go/go-tools/bin 不建议在bash_profile里面设置GOPATH，Go的依赖问题容易导致冲突，建议</description>
+    </item>
+    
+    <item>
+      <title>git notes</title>
+      <link>http://tacy.github.io/post/git/</link>
+      <pubDate>Tue, 12 Jan 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/git/</guid>
+      <description>squash 在你的work branch完成某个feature之后，你需要merge到master： git checkout master git merge workbranch 这种做法的问题在于，一般你完成某个fea</description>
+    </item>
+    
+    <item>
+      <title>archlinux notes</title>
+      <link>http://tacy.github.io/post/archlinux/</link>
+      <pubDate>Thu, 01 Jan 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/archlinux/</guid>
+      <description>my archlinux machine baseline archlinux包更新非常, 如果你经常需要安装包, 会频繁出现新安装的包更新了依赖包, 但是原来依赖这个依赖包的组件可能就不能运行了,</description>
+    </item>
     
     <item>
       <title>android notes</title>

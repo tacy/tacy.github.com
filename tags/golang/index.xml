@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Golang on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/golang/</link>
+    <description>Recent content in Golang on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 01 Mar 2016 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/golang/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>golang notes</title>
+      <link>http://tacy.github.io/post/go/</link>
+      <pubDate>Tue, 01 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/go/</guid>
+      <description>配置 pacman -S go export GOPATH=~/workspace/go/go-tools/ go get github.com/mailgun/godebug go get github.com/nsf/gocode go get github.com/rogpeppe/godef go get github.com/tools/godep go get golang.org/x/tools/cmd/goimports go get golang.org/x/tools/cmd/oracle export PATH=$PATH:~/workspace/go/go-tools/bin 不建议在bash_profile里面设置GOPATH，Go的依赖问题容易导致冲突，建议</description>
+    </item>
+    
+  </channel>
+</rss>

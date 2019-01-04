@@ -1,0 +1,1968 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>kubernetes notes - Tacy - Notes</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="春龙" /><meta name="description" content="研究kubernetes的一些笔记，包括开发和使用两方面" />
+
+  <meta name="keywords" content="Tacy, tech, life, linux, performance, kubernetes, golang, java, troubleshooting" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.51" />
+
+
+<link rel="canonical" href="http://tacy.github.io/post/kubernetes/" />
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.c8c1ff75dee09b44060a6c38f41b9036bac2512ccdb22d7f296cec12dc786375.css" integrity="sha256-yMH/dd7gm0QGCmw49BuQNrrCUSzNsi1/KWzsEtx4Y3U=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="kubernetes notes" />
+<meta property="og:description" content="研究kubernetes的一些笔记，包括开发和使用两方面" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://tacy.github.io/post/kubernetes/" /><meta property="article:published_time" content="2017-08-11T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2018-05-30T00:00:00&#43;00:00"/>
+
+<meta itemprop="name" content="kubernetes notes">
+<meta itemprop="description" content="研究kubernetes的一些笔记，包括开发和使用两方面">
+
+
+<meta itemprop="datePublished" content="2017-08-11T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-05-30T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="6740">
+
+
+
+<meta itemprop="keywords" content="tech,kubernetes,notes,container," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="kubernetes notes"/>
+<meta name="twitter:description" content="研究kubernetes的一些笔记，包括开发和使用两方面"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33694554-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Tacy&#39;s notes</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/">Home</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/post/">Archives</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/tags/">Tags</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/categories/">Categories</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/about/">About</a>
+          
+        
+      </li>
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      Tacy's notes
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/">Home</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/post/">Archives</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/tags/">Tags</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/categories/">Categories</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/about/">About</a>
+          
+
+        
+
+      </li>
+    
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">kubernetes notes</h1>
+      
+      <div class="post-meta">
+        <time datetime="2017-08-11" class="post-time">
+          2017-08-11
+        </time>
+        <div class="post-category">
+            <a href="http://tacy.github.io/categories/tech/"> tech </a>
+            
+          </div>
+        
+
+        
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    
+    <div class="post-content">
+      
+
+<h1 id="dev">Dev</h1>
+
+<p>Kubernetes项目对于开发人员的支持做的很好, 再Github仓库有开放指南, 非常详细. 简单记录以下过程</p>
+
+<p>Kubernetes项目开发语言用的是Go, 目前Go对于包依赖的管理比较混乱. Go1.5以后引入了vendor特性希望解决这个问题, 目前还是experimental状态, Kubernetes项目并没有采用, 而是采用的godep方案, 这是一个需要注意的点, 建议先好好了解一下godep.</p>
+
+<p>先简单介绍一下godep. godep会在kubernetes目录下建立一个Godeps目录, 里面会保存一份kubernetes的依赖包, 包括版本信息, 当用户需要搭建自己的开放环境时, 只需要<code>godep restore</code>即可, godep会帮你获取依赖包的正确版本, 形成统一的开发环境.</p>
+
+<p>采用了godep, 你的编译命令前面必须加上godep, 例如<code>go build</code>就需要替换成<code>godep go build</code>, 这点需要特别注意. 否则你将遇到下面这类问题:</p>
+
+<pre><code>kubelet git:(master)$ go install
+# k8s.io/kubernetes/pkg/kubelet/rkt
+../../pkg/kubelet/rkt/rkt.go:168: cannot use apisvcConn (type *&quot;google.golang.org/grpc&quot;.ClientConn) as type *&quot;github.com/coreos/rkt/Godeps/_workspace/src/google.golang.org/grpc&quot;.ClientConn in argument to v1alpha.NewPublicAPIClient
+</code></pre>
+
+<p>这样还有一个严重问题, 如果GOPATH里面的其他项目和kubernetes依赖同一个包, 比如: A项目和Kubernetes同时依赖B包, 如果A项目更新了B包, Kubernetes项目如果运行<code>godep save ./..</code>, 也会引入这个更新的B包&hellip;</p>
+
+<p>解决这个问题, kubernetes给出的解决方案是, 让kubernets在一个独立的GOPATH, 里面不要有其他项目&hellip;</p>
+
+<p>这也是不得已的办法了. 如果还是遇到问题, 可以考虑把Godeps加入到GOPATH: <code>\</code>godep path`:$GOPATH`, 确保Godeps里面的包优先被使用.</p>
+
+<h2 id="check-out">Check out</h2>
+
+<p>Kubernetes参考github的开放流程, 先fork项目, 然后再本地</p>
+
+<ol>
+<li>fork</li>
+<li>mkdir -p ~/workspace/go/kubernetes/k8s.io/kubernetes</li>
+<li>cd ~/workspace/go/kubernetes/k8s.io/kubernetes</li>
+<li>git clone git@github.com:tacy/kubernetes.git .</li>
+<li>git remote add upstream <a href="https://github.com/kubernetes/kubernetes.git">https://github.com/kubernetes/kubernetes.git</a></li>
+</ol>
+
+<h2 id="keeping-sync">Keeping sync</h2>
+
+<p>保持自己的代码和主仓库同步</p>
+
+<pre><code class="language-sh">git fetch upstream
+git rebase upstream/master
+git remote set-url --push upstream no_push  #prevent push to upstream if you have write access to the main repository
+</code></pre>
+
+<h2 id="godep">Godep</h2>
+
+<p>kubernetes项目使用godep管理依赖，所以你需要通过<code>godep restore -v</code>恢复依赖包(自备梯子)</p>
+
+<h2 id="create-branch">Create branch</h2>
+
+<ol>
+<li>git checkout -b myfeature</li>
+</ol>
+
+<h2 id="build">Build</h2>
+
+<p>你可以直接在kubernetes目录下运行mark命令, 会编译整个kubernetes项目, 也可以编译具体包, 具体参考Makefile文件</p>
+
+<p>比如我需要编译linux平台下的kubelet: <code>KUBE_BUILD_PLATFORMS=linux/amd64 CGO_ENABLED=1 make WHAT=cmd/kubelet GOGCFLAGS='-N -1'</code></p>
+
+<p><code>go build -gcflags '-N -l'</code></p>
+
+<p>你也可以直接到具体目录下, 运行<code>godep go install</code>, 有时候你会需要这个(例如gocode需要编译后的pkg才能做代码提示).</p>
+
+<h2 id="committing-changes-to-your-fork">Committing changes to your fork</h2>
+
+<p>Before committing any changes, please link/copy these pre-commit hooks into your .git
+directory. This will keep you from accidentally committing non-gofmt&rsquo;d go code.</p>
+
+<pre><code class="language-sh">cd kubernetes/.git/hooks/
+ln -s ../../hooks/pre-commit .
+</code></pre>
+
+<p>Then you can commit your changes and push them to your fork:</p>
+
+<pre><code class="language-sh">git commit
+git push -f origin myfeature
+</code></pre>
+
+<h2 id="creating-a-pull-request">Creating a pull request</h2>
+
+<ol>
+<li>Visit <a href="https://github.com/$YOUR_GITHUB_USERNAME/kubernetes">https://github.com/$YOUR_GITHUB_USERNAME/kubernetes</a></li>
+<li>Click the &ldquo;Compare and pull request&rdquo; button next to your &ldquo;myfeature&rdquo; branch.</li>
+<li>Check out the pull request <a href="pull-requests.md">process</a> for more details</li>
+</ol>
+
+<h2 id="kubelet">kubelet</h2>
+
+<p>main: k8s.io/kubernetes/cmd/kubelet.go</p>
+
+<p>server.go -&gt; RunKubelet</p>
+
+<p>eventbroadcaster.StartLogging 输出kubelet event到log
+eventbroadcaster.startrecordingtosink 发送kubelet event到apiserver</p>
+
+<p>makePodSourceConfig 接收所有的podupdate事件,通过file,url,api REST</p>
+
+<p>app/server.go  -&gt; CreateAndInintKubelet() -&gt; makePodSourceConfig() -&gt; kubeletbootstap.birthcry() -&gt;kubeletbootstap.startgarbagecollection()</p>
+
+<h2 id="apiserver">APIServer</h2>
+
+<h3 id="schema">Schema</h3>
+
+<ol>
+<li>convert 版本之间转换器, convertfunc用(in,out)做key, 这样就能找到正确的convertfunc做转换, 例如Convert_v1alpha1_Flunder_To_wardle_Flunder(in *Flunder, out *wardle.Flunder, s conversion.Scope).</li>
+<li>serializer(decode/encode) 序列化反序列化, request json/yaml -&gt;decode to internal object -&gt; version object -&gt; etcd. serializer在handler中调用</li>
+</ol>
+
+<h1 id="install">Install</h1>
+
+<h2 id="kvm-env">KVM env</h2>
+
+<h3 id="bridge">Bridge</h3>
+
+<pre><code>[tacy@tacyArch network]$ cat qemu.netdev
+[NetDev]
+Name=qemu0
+Kind=bridge
+[tacy@tacyArch network]$ cat qemu.network
+[Match]
+Name=qemu0
+
+[Network]
+Address=172.18.0.1/16
+DNS=233.5.5.5
+IPForward=yes
+
+[tacy@tacyArch network]$ systemctl restart systemd-networkd
+</code></pre>
+
+<h3 id="iptables">Iptables</h3>
+
+<pre><code>[tacy@tacyArch ~]$ cat /etc/iptables/iptables.rules
+# Generated by iptables-save v1.4.21 on Thu Dec 10 10:31:57 2015
+*nat
+:PREROUTING ACCEPT [20:3432]
+:INPUT ACCEPT [18:2776]
+:OUTPUT ACCEPT [886:56198]
+:POSTROUTING ACCEPT [886:56198]
+:DOCKER - [0:0]
+-A PREROUTING -m addrtype --dst-type LOCAL -j DOCKER
+-A OUTPUT ! -d 127.0.0.0/8 -m addrtype --dst-type LOCAL -j DOCKER
+-A POSTROUTING -s 172.18.0.0/16 ! -o docker0 -j MASQUERADE
+COMMIT
+# Completed on Thu Dec 10 10:31:57 2015
+# Generated by iptables-save v1.4.21 on Thu Dec 10 10:31:57 2015
+*filter
+:INPUT ACCEPT [57801:42904359]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [52989:24492467]
+:DOCKER - [0:0]
+-A FORWARD -o qemu0 -j DOCKER
+-A FORWARD -o qemu0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A FORWARD -i qemu0 ! -o qemu0 -j ACCEPT
+-A FORWARD -i qemu0 -o qemu0 -j ACCEPT
+COMMIT
+# Completed on Thu Dec 10 10:31:57 2015
+</code></pre>
+
+<h3 id="dnsmasq">Dnsmasq</h3>
+
+<p>edit /etc/dnsmasq.conf:</p>
+
+<pre><code>interface=qemu0
+listen-address=172.18.0.1,127.0.0.1
+dhcp-range=172.18.100.1,172.18.100.254,255.255.0.0
+</code></pre>
+
+<h3 id="docker-custom">Docker custom</h3>
+
+<p>让docker和kvm共用同一个bridge, 同时禁用docker的iptables和forward, 设置docker走代理</p>
+
+<pre><code>[tacy@tacyArch ~]$ cat /etc/systemd/system/docker.service.d/custom.conf
+[Service]
+Environment=&quot;HTTP_PROXY=http://127.0.0.1:9001/&quot; &quot;HTTPS_PROXY=http://127.0.0.1:9001/&quot;
+ExecStart=
+ExecStart=/usr/bin/docker daemon -H fd:// --exec-opt native.cgroupdriver=cgroupfs -b=qemu0 --fixed-cidr=172.18.1.1/24 --iptables=false --ip-forward=false
+</code></pre>
+
+<pre><code>[root@localhost ~]# systemctl show --property=Environment docker
+Environment=GOTRACEBACK=crash HTTP_PROXY=http://172.18.0.1:9001/ HTTPS_PROXY=http://172.18.0.1:9001/
+</code></pre>
+
+<h3 id="create-vm">Create VM</h3>
+
+<h4 id="create-vm-img-7">Create VM img #### <sup class="footnote-ref" id="fnref:7"><a href="#fn:7">1</a></sup></h4>
+
+<p>Download CentosCloud image :
+<code>curl http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1510.qcow2 -o CentOS-7-x86_64-GenericCloud.qcow2</code></p>
+
+<pre><code>qemu-img create -f qcow2 -o backing_file=CentOS-7-x86_64-GenericCloud.qcow2,backing_fmt=qcow2 master.qcow2
+qemu-img create -f qcow2 -o backing_file=CentOS-7-x86_64-GenericCloud.qcow2,backing_fmt=qcow2 node-one.qcow2
+qemu-img create -f qcow2 -o backing_file=CentOS-7-x86_64-GenericCloud.qcow2,backing_fmt=qcow2 node-two.qcow2
+</code></pre>
+
+<h4 id="cloud-init">Cloud init</h4>
+
+<pre><code>[tacy@tacyArch qemu]$ ls
+cloud-init  vm
+[tacy@tacyArch qemu]$ cd cloud-init/
+[tacy@tacyArch cloud-init]$ ls
+meta-data  user-data
+[tacy@tacyArch cloud-init]$ cat meta-data
+{}
+[tacy@tacyArch cloud-init]$ cat user-data
+#cloud-config
+users:
+  - name: root
+    ssh-authorized-keys:
+    - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJBe4qjPGBqnoE6Up6aB6jBOSBK1aqOjpX8fU8nvneKdzKmH0xTX5nRsfiZdTbJWX7CfjnrA0
+[tacy@tacyArch qemu]$ genisoimage  -output seed.iso -volid cidata -joliet -rock user-data meta-data
+
+https://cloudinit.readthedocs.org/en/latest/topics/datasources.html#no-cloud
+
+</code></pre>
+
+<h4 id="shell">Shell</h4>
+
+<h5 id="qemu-ifup-sh-qemu-ifdown-sh">qemu-ifup.sh / qemu-ifdown.sh</h5>
+
+<pre><code class="language-sh">##/etc/qemu-ifup.sh##
+#!/bin/sh
+
+echo &quot;Executing /etc/qemu-ifup&quot;
+echo &quot;Bringing up $1 for bridged mode...&quot;
+sudo /usr/bin/ip link set $1 up promisc on
+echo &quot;Adding $1 to qemu0...&quot;
+sudo /usr/bin/brctl addif qemu0 $1
+sleep 2
+
+##/etc/qemu-ifdown.sh##
+#!/bin/sh
+
+echo &quot;Executing /etc/qemu-ifdown&quot;
+sudo /usr/bin/ip link set $1 down
+sudo /usr/bin/brctl delif qemu0 $1
+sudo /usr/bin/ip link delete dev $1
+
+</code></pre>
+
+<h5 id="mac-address">mac address</h5>
+
+<pre><code class="language-python">#!/usr/bin/env python
+
+import sys
+import zlib
+
+if len(sys.argv) != 2:
+    print(&quot;usage: %s &lt;VM Name&gt;&quot; % sys.argv[0])
+    sys.exit(1)
+
+crc = zlib.crc32(sys.argv[1].encode(&quot;utf-8&quot;)) &amp; 0xffffffff
+crc = str(hex(crc))[2:]
+print(&quot;52:54:%s%s:%s%s:%s%s:%s%s&quot; % tuple(crc))
+</code></pre>
+
+<h5 id="run-qemu-sh">run-qemu.sh</h5>
+
+<pre><code class="language-sh">#!/bin/bash
+USERID=$(whoami)
+
+print_usage() {
+  echo &quot;Usage:
+
+  $0 {-n,-m,-i,-sp,-mp) ARG
+
+Options:
+
+  --name ARG
+  -n ARG
+
+  --memory ARG
+  -m ARG
+
+  --image ARG
+  -i ARG
+
+  --serialport ARG
+  -sp ARG
+
+  --monitorport ARG
+  -mp ARG
+
+&quot; &gt;&amp;2
+}
+
+if [ $# -le 0 ]; then
+  print_usage
+  exit 1
+fi
+
+while [[ $# &gt; 1 ]]
+do
+key=&quot;$1&quot;
+
+case $key in
+    -n|--name)
+    NAME=&quot;$2&quot;
+    shift # past argument
+    ;;
+    -m|--memory)
+    MEMORY=&quot;$2&quot;
+    shift # past argument
+    ;;
+    -i|--image)
+    IMAGE=&quot;$2&quot;
+    shift # past argument
+    ;;
+    -mp|--monitorport)
+    MP=&quot;$2&quot;
+    shift # past argument
+    ;;
+    -sp|--serialport)
+    SP=&quot;$2&quot;
+    shift # past argument
+    ;;
+    --default)
+    DEFAULT=YES
+    ;;
+    *)
+            # unknown option
+    ;;
+esac
+shift # past argument or value
+done
+
+# Get name of newly created TAP device; see https://bbs.archlinux.org/viewtopic.php?pid=1285079#p1285079
+precreationg=$(/usr/bin/ip tuntap list | /usr/bin/cut -d: -f1 | /usr/bin/sort)
+sudo /usr/bin/ip tuntap add user $USERID mode tap
+postcreation=$(/usr/bin/ip tuntap list | /usr/bin/cut -d: -f1 | /usr/bin/sort)
+IFACE=$(comm -13 &lt;(echo &quot;$precreationg&quot;) &lt;(echo &quot;$postcreation&quot;))
+
+MACADDR=`/home/tacy/workspace/qemu/vm/qemu-mac-hasher.py ${NAME}`
+
+qemu-system-x86_64 -name ${NAME} -cpu host -m ${MEMORY} -smp cores=2,threads=1,sockets=1 -machine type=pc,accel=kvm -net nic,macaddr=${MACADDR},model=virtio -net tap,vhost=on,ifname=&quot;$IFACE&quot; -serial telnet:localhost:${SP},server,nowait,nodelay -monitor tcp:127.0.0.1:${MP},server,nowait,nodelay -device virtio-scsi-pci,id=scsi -device scsi-hd,drive=hd -drive file=${IMAGE},format=qcow2,cache=writeback,discard=unmap,if=none,id=hd -drive file=/home/tacy/workspace/qemu/vm/seed.iso,if=virtio -nographic
+
+# 注意, 这里cache可以考虑用directsync, 然后加上io=native, 这样磁盘性能应该是最优的.
+
+sudo ip link set dev $IFACE down &amp;&gt; /dev/null
+sudo ip tuntap del $IFACE mode tap &amp;&gt; /dev/null
+
+</code></pre>
+
+<h4 id="systemd">Systemd</h4>
+
+<pre><code>## ~/.config/systemd/user/qemu@.service
+[Unit]
+Description=QEMU virtual machine
+
+[Service]
+Environment=&quot;type=system-x86_64&quot; &quot;haltcmd=kill -INT $MAINPID&quot;
+EnvironmentFile=/home/tacy/workspace/qemu/vm/%i
+ExecStart=/usr/bin/env /home/tacy/workspace/qemu/vm/run-qemu.sh -n %i  -m $memory -i $image -sp $sp -mp $mp
+ExecStop=/bin/sh -c ${haltcmd}
+TimeoutStopSec=30
+KillMode=none
+
+[Install]
+WantedBy=multi-user.target
+
+</code></pre>
+
+<p>systemd env file:</p>
+
+<pre><code>## ~/workspace/qemu/vm/master
+memory=1024
+image=/home/tacy/workspace/qemu/vm/master.qcow2
+sp=7101
+mp=7001
+haltcmd=&quot;echo 'system_powerdown' | /usr/bin/nc localhost 7001&quot;
+
+## ~/workspace/qemu/vm/node-one
+memory=1024
+image=/home/tacy/workspace/qemu/vm/node-one.qcow2
+sp=7102
+mp=7002
+haltcmd=&quot;echo 'system_powerdown' | /usr/bin/nc localhost 7002&quot;
+
+## ~/workspace/qemu/vm/node-two
+memory=1024
+image=/home/tacy/workspace/qemu/vm/node-two.qcow2
+sp=7103
+mp=7003
+haltcmd=&quot;echo 'system_powerdown' | /usr/bin/nc localhost 7003&quot;
+
+</code></pre>
+
+<h4 id="start-vm-stop-vm">Start VM &amp; Stop VM</h4>
+
+<pre><code>systemctl --user start qemu@master
+systemctl --user start qemu@node-one
+systemctl --user start qemu@node-two
+
+systemctl --user stop qemu@master
+systemctl --user stop qemu@node-one
+systemctl --user stop qemu@node-two
+</code></pre>
+
+<h3 id="vm-config">VM Config</h3>
+
+<h4 id="docker">Docker</h4>
+
+<pre><code>yum install docker
+
+##/etc/sysconfig/docker
+HTTP_PROXY='http://172.18.0.1:9001'
+HTTPS_PROXY='http://172.18.0.1:9001'
+</code></pre>
+
+<h4 id="ssd-tuning-1-2-3">SSD tuning ####<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">2</a></sup><sup class="footnote-ref" id="fnref:2"><a href="#fn:2">3</a></sup><sup class="footnote-ref" id="fnref:3"><a href="#fn:3">4</a></sup></h4>
+
+<h5 id="discard">discard</h5>
+
+<p>要启用磁盘的discard, 首先用的驱动设备必须是SCSI: <code>-device virtio-scsi-pci,id=scsi -device scsi-hd,drive=hd -drive file=${IMAGE},format=qcow2,cache=writeback,discard=unmap,if=none,id=hd</code></p>
+
+<p>然后修改fstab: <code>UUID=ba1b9d4d-f899-4121-bc02-b385767de754 /                       xfs     defaults,discard,nobarrier,noatime        0 0</code></p>
+
+<p>确认是否成功启用discard:</p>
+
+<pre><code>[root@localhost ~]# lsblk -o MOUNTPOINT,DISC-MAX,FSTYPE
+MOUNTPOINT DISC-MAX FSTYPE
+                 1G
+/                1G xfs
+                 0B
+</code></pre>
+
+<h4 id="ioscheduler">ioscheduler</h4>
+
+<pre><code>[root@localhost ~]# cat /etc/tmpfiles.d/10_ioscheduler.conf
+w /sys/block/sda/queue/scheduler - - - - noop
+</code></pre>
+
+<h2 id="kubernetes-cluster-setup">Kubernetes Cluster Setup</h2>
+
+<h3 id="pre-request">Pre request</h3>
+
+<p>下载需要的软件:</p>
+
+<pre><code>wget https://github.com/kubernetes/kubernetes/releases/download/v1.1.2/kubernetes.tar.gz
+wget https://github.com/projectcalico/calico-kubernetes/archive/master.tar.gz
+wget https://github.com/coreos/etcd/releases/download/v2.2.2/etcd-v2.1.3-linux-amd64.tar.gz
+</code></pre>
+
+<p>另外需要修改所有节点的主机名(包括master, node-one, node-two), Calico使用主机名作为关键的信息.</p>
+
+<h3 id="etcd-calico">Etcd &amp; Calico</h3>
+
+<p>Kubernetes/Calico/Skydns都需要使用Etcd, 我们只配置一个Etcd供所有的组件使用. Calico为Kuernetes提供一个BGP网络(路由), 而不是Overlay网络, Calico在两层的使用很简单, 三层使用需要仔细规划.</p>
+
+<h4 id="master">Master</h4>
+
+<p><code>scp etcd calicoctl to master</code></p>
+
+<ul>
+<li>etcd</li>
+</ul>
+
+<pre><code>[root@master bin]# cat /etc/systemd/system/etcd.service
+[Unit]
+Description=Etcd service
+Documentation=https://coreos.com/etcd/docs/latest/
+Requires=docker.service
+After=docker.service
+
+[Service]
+ExecStart=/usr/bin/etcd \
+  --data-dir=/var/lib/etcd \
+  --advertise-client-urls=http://172.18.100.187:6666 \    #MASTER IP
+  --listen-client-urls=http://0.0.0.0:6666 \
+  --listen-peer-urls=http://127.0.0.1:2380 \
+  --name=etcd
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+
+<p>enable etcd &amp; start etcd: <code>systemctl start etcd &amp;&amp; systemctl enable etcd</code></p>
+
+<ul>
+<li>calico</li>
+</ul>
+
+<pre><code>[root@master bin]# cat /etc/systemd/system/calico-node.service
+[Unit]
+Description=calicoctl node
+After=docker.service
+Requires=docker.service
+
+[Service]
+User=root
+Environment=&quot;ETCD_AUTHORITY=127.0.0.1:6666&quot;
+PermissionsStartOnly=true
+ExecStart=/usr/bin/calicoctl node --detach=false
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+
+<p>start &amp; enable calico: <code>systemctl enable calico &amp;&amp; systemctl start calico</code></p>
+
+<p>在宿主机上操作Etcd和Calico:</p>
+
+<pre><code>etcdctl -C 172.18.100.187:6666 ls --recursive
+
+ETCD_AUTHORITY=172.18.100.187:6666  calicoctl pool show
+</code></pre>
+
+<p>calico里面缺省的pool是192网段, 这个地址段很容易冲突, 你可以通过calicoctl重新定义你自己的网段(我修改成了172.19.0.0/16).</p>
+
+<h4 id="node">Node</h4>
+
+<pre><code>[root@node-one ~]# cat /etc/network-environment
+#! /usr/bin/bash
+
+# This node's IPv4 address
+DEFAULT_IPV4=172.18.100.122
+
+# The Kubernetes master IP
+KUBERNETES_MASTER=172.18.100.187
+
+# IP and port of etcd instance used by Calico
+ETCD_AUTHORITY=172.18.100.187:6666
+
+# URL to access the Kubernetes apiserver
+KUBE_API_ROOT=http://172.18.100.187:8080/api/v1/
+
+# Enable Calcio IPAM
+CALICO_IPAM=true
+
+注意, 每个Node需要修改DEFAULT_IPV4地址为自己的IP地址
+
+[root@node-one ~]# cat /etc/systemd/system/calico-node.service
+[Unit]
+Description=Calico per-node agent
+Documentation=https://github.com/projectcalico/calico-docker
+Requires=docker.service
+After=docker.service
+
+[Service]
+EnvironmentFile=/etc/network-environment
+User=root
+PermissionsStartOnly=true
+#ExecStart=/usr/bin/calicoctl node --ip=${DEFAULT_IPV4} --kubernetes --kube-plugin-version=v0.6.1 --detach=false
+# use CNI: https://github.com/projectcalico/calico-cni
+ExecStart=/usr/bin/calicoctl node --ip=${DEFAULT_IPV4} --detach=false
+Restart=always
+RestartSec=10
+</code></pre>
+
+<p>start &amp; enable calico: <code>systemctl enable calico &amp;&amp; systemctl start calico</code></p>
+
+<h3 id="kubernetes">Kubernetes</h3>
+
+<h4 id="master-1">Master</h4>
+
+<p>scp kube-apiserver kubectl kube-scheduler kube-controller-manager kubelet to master</p>
+
+<pre><code>[root@master bin]# cat /etc/systemd/system/kube-apiserver.service
+[Unit]
+Description=Kubernetes API Server
+Documentation=https://github.com/kubernetes/kubernetes
+Requires=etcd.service
+After=etcd.service
+
+[Service]
+ExecStart=/usr/bin/kube-apiserver \
+  --allow-privileged=true \
+  --etcd-servers=http://127.0.0.1:6666 \
+  --insecure-bind-address=0.0.0.0 \
+  --service-cluster-ip-range=10.100.0.0/24 \
+  --logtostderr=true
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+
+
+[root@master bin]# cat /etc/systemd/system/kube-scheduler.service
+[Unit]
+Description=Kubernetes Scheduler
+Documentation=https://github.com/kubernetes/kubernetes
+Requires=kube-apiserver.service
+After=kube-apiserver.service
+
+[Service]
+ExecStart=/usr/bin/kube-scheduler \
+  --master=127.0.0.1:8080 \
+  --logtostderr=true
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+
+
+[root@master bin]# cat /etc/systemd/system/kube-controller-manager.service
+[Unit]
+Description=Kubernetes Controller Manager
+Documentation=https://github.com/kubernetes/kubernetes
+Requires=kube-apiserver.service
+After=kube-apiserver.service
+
+[Service]
+ExecStart=/usr/bin/kube-controller-manager \
+  --master=127.0.0.1:8080 \
+  --logtostderr=true
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+
+
+[root@master bin]# cat /etc/systemd/system/kubelet.service
+[Unit]
+Description=Kubernetes Kubelet
+Documentation=https://github.com/kubernetes/kubernetes
+Requires=docker.service
+After=docker.service
+
+[Service]
+ExecStart=/usr/bin/kubelet \
+--config=/etc/kubernetes/manifests \
+--logtostderr=true
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+
+</code></pre>
+
+<p>start &amp; enable all kube service</p>
+
+<h4 id="node-1">Node</h4>
+
+<blockquote>
+<p>mkdir -p /opt/cni/bin
+sudo wget -N -P /opt/cni/bin/ <a href="https://github.com/projectcalico/calico-cni/releases/download/v0.2.0/calico">https://github.com/projectcalico/calico-cni/releases/download/v0.2.0/calico</a>
+sudo wget -N -P /opt/cni/bin/ <a href="https://github.com/projectcalico/calico-cni/releases/download/v0.2.0/calico-ipam">https://github.com/projectcalico/calico-cni/releases/download/v0.2.0/calico-ipam</a></p>
+
+<p>mkdir -p /etc/cni/net.d/
+cat /etc/cni/net.d/10-calico.conf</p>
+
+<pre><code>{
+    &quot;name&quot;: &quot;calico-k8s-network&quot;,
+    &quot;type&quot;: &quot;calico&quot;,
+    &quot;etcd_authority&quot;: &quot;172.18.100.187:6666&quot;,
+    &quot;log_level&quot;: &quot;debug&quot;,
+    &quot;ipam&quot;: {
+        &quot;type&quot;: &quot;calico-ipam&quot;
+    }
+}
+</code></pre>
+</blockquote>
+
+<pre><code>[root@node-one ~]# cat /etc/systemd/system/kubelet.service
+[Unit]
+Description=Kubernetes Kubelet
+Documentation=https://github.com/kubernetes/kubernetes
+After=calico-node.service
+Requires=calico-node.service
+
+[Service]
+EnvironmentFile=/etc/network-environment
+ExecStart=/usr/bin/kubelet \
+--address=0.0.0.0 \
+--port=10250 \
+--hostname_override=${DEFAULT_IPV4} \
+--cluster-dns=10.100.0.10 \
+--cluster-domain=cluster.local \
+--api_servers=${KUBERNETES_MASTER}:8080 \
+--network-plugin=cni \
+--network-plugin-dir=/etc/cni/net.d \
+--logtostderr=true
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+
+
+[root@node-one ~]# cat /etc/systemd/system/kube-proxy.service
+[Unit]
+Description=Kubernetes Proxy
+Documentation=https://github.com/kubernetes/kubernetes
+After=calico-node.service
+Requires=calico-node.service
+
+[Service]
+EnvironmentFile=/etc/network-environment
+ExecStart=/usr/bin/kube-proxy --master=http://${KUBERNETES_MASTER}:8080 --logtostderr=true --proxy-mode=iptables
+Restart=always
+RestartSec=10
+</code></pre>
+
+<h2 id="kubeadm">Kubeadm</h2>
+
+<p>docker images <a href="https://quay.io/repository/mritd/kubernetes-dashboard-amd64?tab=tags">https://quay.io/repository/mritd/kubernetes-dashboard-amd64?tab=tags</a>
+kubectl proxy &ndash;address 172.18.100.28 &ndash;accept-hosts=&lsquo;^*$&rsquo;</p>
+
+<p>disable firewalld
+disable selinux
+set hostname
+&ldquo;&ndash;cgroup-driver=systemd &ndash;pod-infra-container-image=tacylee/pause-amd64:3.0&rdquo;
+export KUBE_REPO_PREFIX=tacylee
+export KUBECONFIG=/etc/kubernetes/admin.conf</p>
+
+<p>编译rpm在kubernetes/release仓库.</p>
+
+<h1 id="using-kubernetes">Using Kubernetes</h1>
+
+<h2 id="start-stop-env">start &amp; stop env</h2>
+
+<pre><code>docker start {ceph_container_id}
+systemctl --user start qemu@master
+systemctl --user start qemu@node-one
+systemctl --user start qemu@node-two
+</code></pre>
+
+<p>一些常用命令:</p>
+
+<pre><code>ETCD_AUTHORITY=172.18.100.187:6666 ./calicoctl endpoint show --detailed
+
+etcdctl -C 172.18.100.187:6666 ls --recursive /calico
+
+</code></pre>
+
+<h2 id="label-nodes">label nodes</h2>
+
+<p><code>kubectl -s 172.18.100.187:8080 label nodes '172.18.100.122' skydns=server</code></p>
+
+<h2 id="skydns">skydns</h2>
+
+<p>服务发现扩展组件, 通过DNS实现, Kubernetes的DNS发现机制实现灵活:
+  * 可以为Service建立DNS条目</p>
+
+<p>Service本身只是一个虚IP, 并不真正提供接入服务, 不用担心健康问题.</p>
+
+<ul>
+<li>也可以为Pods建立多个DNS条目</li>
+</ul>
+
+<p>如果你希望采用自己的服务发现组件, 你也可以选择为Pods建立一组DNS条目, 然后自己实现负载均衡机制</p>
+
+<p>使用skydns只需在启动kubelet的时候, 设置cluster-dns启动参数, Container就用会用该IP当DNS Server.</p>
+
+<p>Create skydns into the label skydns=server of node</p>
+
+<pre><code>kubectl -s 172.18.100.187:8080 create -f skydns-rc.yaml
+kubectl -s 172.18.100.187:8080 create -f skydns-svc.yaml
+</code></pre>
+
+<p>查看skydns运行情况:</p>
+
+<pre><code>kubectl -s 172.18.100.187:8080 get -w wide rc --all-namespace
+kubectl -s 172.18.100.187:8080 get -w wide pods --all-namespace
+kubectl -s 172.18.100.187:8080 exec busybox nslookup kubernetes.default
+Server:    10.100.0.10
+Address 1: 10.100.0.10
+
+Name:      kubernetes.default
+Address 1: 10.100.0.1
+
+kubectl -s 172.18.100.187:8080 exec busybox nslookup kube-ui.kube-system
+Server:    10.100.0.10
+Address 1: 10.100.0.10
+
+Name:      kube-ui.kube-system
+Address 1: 10.100.0.243
+
+</code></pre>
+
+<pre><code>//skydns-rc.yaml
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: kube-dns-v8
+  namespace: kube-system
+  labels:
+    k8s-app: kube-dns
+    version: v8
+    kubernetes.io/cluster-service: &quot;true&quot;
+spec:
+  replicas: 1
+  selector:
+    k8s-app: kube-dns
+    version: v8
+  template:
+    metadata:
+      labels:
+        k8s-app: kube-dns
+        version: v8
+        kubernetes.io/cluster-service: &quot;true&quot;
+    spec:
+      containers:
+      - name: kube2sky
+        image: gcr.io/google_containers/kube2sky:1.11
+        resources:
+          limits:
+            cpu: 100m
+            memory: 50Mi
+        args:
+        # command = &quot;/kube2sky&quot;
+        - -domain=cluster.local
+        - -kube_master_url=http://172.18.100.187:8080
+        - -etcd-server=http://172.18.100.187:6666
+      - name: skydns
+        image: gcr.io/google_containers/skydns:2015-03-11-001
+        resources:
+          limits:
+            cpu: 100m
+            memory: 50Mi
+        args:
+        # command = &quot;/skydns&quot;
+        - -machines=http://172.18.100.187:6666
+        - -addr=0.0.0.0:53
+        - -domain=cluster.local.
+        ports:
+        - containerPort: 53
+          name: dns
+          protocol: UDP
+        - containerPort: 53
+          name: dns-tcp
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+      - name: healthz
+        image: gcr.io/google_containers/exechealthz:1.0
+        resources:
+          limits:
+            cpu: 10m
+            memory: 20Mi
+        args:
+        - -cmd=nslookup kubernetes.default.svc.cluster.local localhost &gt;/dev/null
+        - -port=8080
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+      dnsPolicy: Default  # Don't use cluster DNS.
+      nodeSelector:
+        skydns: server
+
+
+\\skydns-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-dns
+  namespace: kube-system
+  labels:
+    k8s-app: kube-dns
+    kubernetes.io/cluster-service: &quot;true&quot;
+    kubernetes.io/name: &quot;KubeDNS&quot;
+spec:
+  selector:
+    k8s-app: kube-dns
+  clusterIP: 10.100.0.10
+  ports:
+  - name: dns
+    port: 53
+    protocol: UDP
+  - name: dns-tcp
+    port: 53
+    protocol: TCP
+</code></pre>
+
+<h2 id="debug">Debug</h2>
+
+<p>kubectl run -i &ndash;tty busybox &ndash;image=busybox &ndash; sh</p>
+
+<h3 id="e2e-performance-test">E2E Performance Test</h3>
+
+<p>There is an end-to-end test for collecting overall resource usage of node components:
+<a href="../../test/e2e/kubelet_perf.go">kubelet_perf.go</a>. To
+run the test, simply make sure you have an e2e cluster running (<code>go run hack/e2e.go -up</code>) and
+<a href="#cluster-set-up">set up</a> correctly.</p>
+
+<p>Run the test with <code>go run hack/e2e.go -v -test
+--test_args=&quot;--ginkgo.focus=resource\susage\stracking&quot;</code>. You may also wish to customise the number of
+pods or other parameters of the test (remember to rerun <code>make WHAT=test/e2e/e2e.test</code> after you do).</p>
+
+<h3 id="profiling">Profiling</h3>
+
+<p>Kubelet installs the <a href="https://golang.org/pkg/net/http/pprof/">go pprof handlers</a>, which can be
+queried for CPU profiles:</p>
+
+<pre><code class="language-console">$ kubectl proxy &amp;
+Starting to serve on 127.0.0.1:8001
+$ curl -G &quot;http://localhost:8001/api/v1/proxy/nodes/${NODE}:10250/debug/pprof/profile?seconds=${DURATION_SECONDS}&quot; &gt; $OUTPUT
+$ KUBELET_BIN=_output/dockerized/bin/linux/amd64/kubelet
+$ go tool pprof -web $KUBELET_BIN $OUTPUT
+</code></pre>
+
+<p><code>pprof</code> can also provide heap usage, from the <code>/debug/pprof/heap</code> endpoint
+(e.g. <code>http://localhost:8001/api/v1/proxy/nodes/${NODE}:10250/debug/pprof/heap</code>).</p>
+
+<p>More information on go profiling can be found <a href="http://blog.golang.org/profiling-go-programs">here</a>.</p>
+
+<h3 id="benchmarks">Benchmarks</h3>
+
+<p>Before jumping through all the hoops to measure a live Kubernetes node in a real cluster, it is
+worth considering whether the data you need can be gathered through a Benchmark test. Go provides a
+really simple benchmarking mechanism, just add a unit test of the form:</p>
+
+<pre><code class="language-go">// In foo_test.go
+func BenchmarkFoo(b *testing.B) {
+  b.StopTimer()
+  setupFoo() // Perform any global setup
+  b.StartTimer()
+  for i := 0; i &lt; b.N; i++ {
+    foo() // Functionality to measure
+  }
+}
+</code></pre>
+
+<p>Then:</p>
+
+<pre><code class="language-console">$ go test -bench=. -benchtime=${SECONDS}s foo_test.go
+</code></pre>
+
+<p>More details on benchmarking <a href="https://golang.org/pkg/testing/">here</a>.</p>
+
+<h3 id="dns">DNS</h3>
+
+<h2 id="kube-ui">kube-ui</h2>
+
+<p>Kubernetes portal, 新的项目是Dashboard, 部署kube-ui通过下面yaml文件. 注意在svc文件中定义了type和nodeport, 你可以在集群外部通过任意node的ip访问到kube-ui.</p>
+
+<pre><code>\\kube-ui-rc.yaml
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: kube-ui-v4
+  namespace: kube-system
+  labels:
+    k8s-app: kube-ui
+    version: v4
+    kubernetes.io/cluster-service: &quot;true&quot;
+spec:
+  replicas: 1
+  selector:
+    k8s-app: kube-ui
+    version: v4
+  template:
+    metadata:
+      labels:
+        k8s-app: kube-ui
+        version: v4
+        kubernetes.io/cluster-service: &quot;true&quot;
+    spec:
+      containers:
+      - name: kube-ui
+        image: gcr.io/google_containers/kube-ui:v4
+        resources:
+          limits:
+            cpu: 100m
+            memory: 50Mi
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+      nodeSelector:
+        kube-ui: server
+
+
+\\kube-ui-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-ui
+  namespace: kube-system
+  labels:
+    k8s-app: kube-ui
+    kubernetes.io/cluster-service: &quot;true&quot;
+    kubernetes.io/name: &quot;KubeUI&quot;
+spec:
+  selector:
+    k8s-app: kube-ui
+  clusterIP: 10.100.0.243
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 8080
+    nodePort: 30061
+
+
+</code></pre>
+
+<h2 id="volumes">Volumes</h2>
+
+<p>Kubernetes支持Volume, Container可以和Volume绑定, 不同的Volume有不同的特性, 例如当容器销毁的时候, rdb volume不会销毁.</p>
+
+<h3 id="ceph-in-docker">Ceph in Docker</h3>
+
+<p>如果你没ceph环境, 可以通过下面这个命令创建一个基于容器的<sup class="footnote-ref" id="fnref:8"><a href="#fn:8">5</a></sup>. 注意: 在我的Archlinux环境, 必须用特权容器, 否则rbd map的时候抛只读文件系统错误.</p>
+
+<pre><code>#!/bin/bash
+
+sudo docker run -d --net=host --privileged=true --name ceph-cluster \
+-v /etc/ceph:/etc/ceph \
+-v /var/lib/ceph/:/var/lib/ceph/ \
+-e MON_IP=172.18.0.1 \
+-e CEPH_NETWORK=172.18.0.0/16 \
+ceph/demo
+
+</code></pre>
+
+<p>验证ceph状态:</p>
+
+<pre><code>[tacy@tacyArch ~]# docker exec {CONTAINER_ID} ceph status
+    cluster 9f487f28-d328-4f1a-bdb2-737006c8d7e9
+     health HEALTH_OK
+     monmap e1: 1 mons at {tacyArch=172.18.0.1:6789/0}
+            election epoch 1, quorum 0 tacyArch
+     mdsmap e10: 1/1/1 up {0=0=up:active}
+     osdmap e22: 1 osds: 1 up, 1 in
+            flags sortbitwise
+      pgmap v28: 128 pgs, 9 pools, 2808 bytes data, 190 objects
+            28159 MB used, 170 GB / 208 GB avail
+                 120 active+clean
+                   8 active+clean+replay
+  client io 81925 B/s rd, 0 B/s wr, 133 op/s
+
+</code></pre>
+
+<h3 id="use-rdb-volume">Use rdb volume</h3>
+
+<h4 id="conf-node">Conf node</h4>
+
+<p><code>yum install ceph-common</code></p>
+
+<h4 id="create-ceph-secret">Create ceph secret</h4>
+
+<pre><code>[tacy@tacyArch ~]# docker exec {CEPH_CONTAINER_ID} ceph auth get-key client.admin
+AQC8dINWKUyBNxAARQN5Fz0xNmltCSyRz0924A==
+
+[tacy@tacyArch ~]# echo 'AQC8dINWKUyBNxAARQN5Fz0xNmltCSyRz0924A==' |base64
+QVFDOGRJTldLVXlCTnhBQVJRTjVGejB4Tm1sdENTeVJ6MDkyNEE9PQo=
+</code></pre>
+
+<p>Edit your ceph-secret.yml with the base64 key:</p>
+
+<pre><code>apiVersion: v1
+kind: Secret
+metadata:
+  name: ceph-secret
+data:
+  key: QVFCQU1vMVZxRTFPTWhBQVZwRVJQY3lRVTVwelU2SU9KMjJ4MXc9PQo=
+</code></pre>
+
+<p>Add your secret to Kubernetes:</p>
+
+<pre><code>$ kubectl create -f ceph-secret.yaml
+$ kubectl get secret
+NAME                  TYPE                                  DATA
+ceph-secret           Opaque                                1
+</code></pre>
+
+<h4 id="create-ceph-image">Create ceph image</h4>
+
+<pre><code>$ docker exec {CEPH_CONTAINER_ID} rbd create foo -s 100
+$ docker exec {CEPH_CONTAINER_ID} rbd map foo
+$ docker exec {CEPH_CONTAINER_ID} rbd mkfs.ext4 /dev/rbd0
+$ docker exec {CEPH_CONTAINER_ID} rbd unmap /dev/rbd0
+</code></pre>
+
+<h4 id="create-pod-with-foo">Create pod with foo</h4>
+
+<h2 id="tips">tips</h2>
+
+<p><a href="http://172.18.100.187:8080/api/v1/proxy/namespaces/kube-system/services/kubedash/#!/">kubedash</a>
+<a href="http://172.18.100.187:8080/api/v1/proxy/namespaces/default/services/cluster-insight:cluster-insight/">cluster-insight</a></p>
+
+<h1 id="api">API</h1>
+
+<h3 id="fieldselect-9-10">fieldSelect<sup class="footnote-ref" id="fnref:9"><a href="#fn:9">6</a></sup><sup class="footnote-ref" id="fnref:10"><a href="#fn:10">7</a></sup></h3>
+
+<p>通过<code>kubectl -v=8</code>能看到所有的kubectl关于api的调用.
+<code>kubectl proxy</code>
+<code>curl http://127.0.0.1:8001/api/v1/pods?fielSelector=spec.nodeName=primeton-tacy-k8s-node2,metadata.namespace=default</code></p>
+
+<h1 id="code">Code</h1>
+
+<h2 id="kube-proxy">kube-proxy</h2>
+
+<p>两个功能: 第一负责监听endpoint变化, 建立iptables规则, 第二负责userspace的代理, 如果代理模式选择userspace的话</p>
+
+<h2 id="kubelet-1">kubelet</h2>
+
+<p>cmd/kubelet/server.go:RunKubelet 进入 -&gt; CreateAndInitKubelet -&gt; pkg/kubelet.go: NewMainKubelet -&gt; makePodSourceConfig -&gt;pkg/kubelet/config/apiserver.go:NewSourceApiserver 这是监控apiserver, 获取所有的pod update事件</p>
+
+<p>然后主gorouinte会扫描podupdate channel, 处理事件</p>
+
+<h3 id="初始化kubelet配置">初始化kubelet配置</h3>
+
+<pre><code>kubelet.go: s := options.NewKubeletServer()
+options.go: api.Scheme.Convert(&amp;v1alpha1.KubeletConfiguration{}, &amp;config, nil)
+</code></pre>
+
+<p>这里引入v1alpha1包, 利用v1alpha1包下面的register.go文件中的下面代码注入缺省配置:</p>
+
+<pre><code>var (
+	SchemeBuilder = runtime.NewSchemeBuilder(addKnownTypes, addDefaultingFuncs)
+	AddToScheme   = SchemeBuilder.AddToScheme
+)
+</code></pre>
+
+<p>其中的addDefaultingFuncs:</p>
+
+<pre><code>func addDefaultingFuncs(scheme *kruntime.Scheme) error {
+	return scheme.AddDefaultingFuncs(
+		SetDefaults_KubeProxyConfiguration,
+		SetDefaults_KubeSchedulerConfiguration,
+		SetDefaults_LeaderElectionConfiguration,
+		SetDefaults_KubeletConfiguration,
+	)
+}
+</code></pre>
+
+<p>kubelet就是通过SetDefaults_KubeletConfiguration方法初始化配置缺省值.</p>
+
+<p>具体调用:</p>
+
+<pre><code>return s.converter.Convert(in, out, flags, meta)
+return c.doConversion(src, dest, flags, meta, c.convert)
+return f(sv, dv, s)
+</code></pre>
+
+<p>这里的f就是动态注入的SetDefaults_KubeletConfiguration</p>
+
+<h1 id="example">Example</h1>
+
+<h2 id="thirdpartyresource">ThirdPartyResource</h2>
+
+<p><a href="https://github.com/tiaanl/kube-tpr-demo">https://github.com/tiaanl/kube-tpr-demo</a>
+<a href="https://github.com/wfarr/k8s-tpr-playground">https://github.com/wfarr/k8s-tpr-playground</a>
+<a href="https://github.com/kubernetes/kubernetes/pull/43027">https://github.com/kubernetes/kubernetes/pull/43027</a>
+<a href="https://github.com/kubernetes/client-go/issues/8">https://github.com/kubernetes/client-go/issues/8</a>
+<a href="https://groups.google.com/forum/#!topic/kubernetes-sig-network/igJrjG-v-Cs">https://groups.google.com/forum/#!topic/kubernetes-sig-network/igJrjG-v-Cs</a></p>
+
+<h1 id="usage">Usage</h1>
+
+<h2 id="rolling-update">rolling update</h2>
+
+<p>滚动更新, 用一个新版本的rc替换就版本的rc, 也可以直接更新image, 不用新写rc文件
+Deployment支持recreate和rollupdate两种模式, 但是目前没法支持restart之类的需求</p>
+
+<h2 id="访问集群">访问集群</h2>
+
+<p>kubectl proxy &ndash;accept-hosts=&lsquo;^*&lsquo;, &ndash;address=&lsquo;0.0.0.0&rsquo;
+<a href="http://172.18.100.28:8001/api/v1/proxy/nodes/kube-node1.mytacy.com:10250/stats/summary">http://172.18.100.28:8001/api/v1/proxy/nodes/kube-node1.mytacy.com:10250/stats/summary</a>
+<a href="http://localhost:8080/api/v1/namespaces/kube-system/services/elasticsearch-logging/proxy/">http://localhost:8080/api/v1/namespaces/kube-system/services/elasticsearch-logging/proxy/</a></p>
+
+<h1 id="issue">Issue</h1>
+
+<h2 id="arch">Arch</h2>
+
+<ol>
+<li>arch roadmap: <a href="https://docs.google.com/document/d/1XkjVm4bOeiVkj-Xt1LgoGiqWsBfNozJ51dyI-ljzt1o/edit#">Kubernetes Architectural Roadmap (was Core/Layers Working Doc) </a></li>
+</ol>
+
+<h2 id="volume">Volume</h2>
+
+<ol>
+<li>实现类似docker的volume共享: <a href="https://github.com/kubernetes/kubernetes/issues/831">Idea: New volume type: &ldquo;container&rdquo; #831</a></li>
+</ol>
+
+<h2 id="schedule">Schedule</h2>
+
+<ol>
+<li>重新调度功能: <a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/rescheduling.md">Controlled Rescheduling in Kubernetes</a></li>
+</ol>
+
+<h2 id="security">security</h2>
+
+<ol>
+<li>async addmission control <a href="https://github.com/kubernetes/community/pull/132">Extension of Admission Control via Initializers and External Admission Enforcement</a></li>
+</ol>
+
+<h2 id="api-machine">API Machine</h2>
+
+<ol>
+<li><a href="https://docs.google.com/document/d/1lU1SnVtEec2iIfYx5U3L5N0za2YhfEOik0uPen276Ks/edit#">API Extensions position statement</a></li>
+<li><a href="https://docs.google.com/document/d/1y16jKL2hMjQO0trYBJJSczPAWj8vAgNFrdTZeCincmI/edit#heading=h.xugwibxye5f0">Two Ways to Extend the K8s API</a></li>
+</ol>
+
+<h2 id="sig">sig</h2>
+
+<h3 id="configmap-https-github-com-kubernetes-kubernetes-blob-master-docs-design-configmap-md-changes-to-secret"><a href="https://github.com/kubernetes/kubernetes/blob/master/docs/design/configmap.md#changes-to-secret">configmap</a></h3>
+
+<p>Use Cases</p>
+
+<p>As a user, I want to be able to consume configuration data as environment variables.
+As a user, I want to be able to consume configuration data as files in a volume.
+As a user, I want my view of configuration data in files to be eventually consistent with changes to the data.</p>
+
+<p>如果作为Volume使用, 修改能被动态传播到Pod中, 用户可以监控文件实现功能, 如果作为环境变量, 不会传播</p>
+
+<p>Secret volume should refresh when secrets are updated #<a href="https://github.com/kubernetes/kubernetes/issues/18372">18372</a>, 这个issue已经fix, 也就是说目前支持secret的refresh(Pod可见, 之前必须删除secret然后建立一个新的)
+里面提到:</p>
+
+<p>configmap的两种适用模式</p>
+
+<pre><code>I think there are 2 patterns people will use with ConfigMap:
+
+Update the ConfigMap and expect it to immediately propagate to all instances. They may watch their configurations using using inotify, or expect a HUP, or just restart. This is useful for applications where all replicas need consistent configuration. I'd guess etcd and Zookeeper are in this category.
+
+Create a new ConfigMap, update the pod template to reference it, and roll it out via rolling update. This is useful when replicas don't need identical configuration and one is worried about pushing bad configs, which is a common source of failure.
+
+Updating ConfigMap and not propagating the change is just confusing. Expecting users to kill pods in order to implicitly pick up changes lacks transparency and predictability, which is why we moved away from that approach in rolling update.
+
+Other than &quot;it was simpler to implement&quot;, what's the rationale for not propagating Secret updates?
+</code></pre>
+
+<p>下面谈到configmap update的几种情况</p>
+
+<pre><code>Re: picking up new config:
+
+The user-centric question for configmap updates (and secrets now that we are going to allow updates) is I updated my configMap/Secret... Now when should I expect to see my app use the new files?
+
+If we think the system should be able to answer this for the user, then it would need to know the semantics of the application in the container. We thought there were 3 styles of applications:
+
+apps that need to restart to read config.
+apps that reread config after a signal (HUP being the classic example)
+apps that poll or inotify to detect file changes and reload
+Users of secrets and configmap need to be aware which type of app they have, so they can know what the steps are to complete a config update / secret rotation for their app.
+
+I wonder if we should define something like:
+
+type ConfigPushAction string
+
+const (
+        // Restart means that the app requires restart to pick up changes to a configuration file.
+        ConfigPushActionRestart ConfigPushAction = &quot;Restart&quot;
+        // Hup means that the app requires a sighup to pickup changes to a configuration file.
+        ConfigPushActionHup ConfigPushAction = &quot;Hup&quot;
+        // None means that the app can detect new config files and so requires no action after config is pushed.
+        ConfigPushActionNone ConfigPushAction = &quot;None&quot;
+)
+...
+type Container struct {
+...
+   ConfigPushAction ConfigPushAction `omitempty, name:configPushAction`
+...
+}
+It would get tricky though when you start to get into which pid to signal (maybe better to use the ExecProbe model instead, or for special cases). It also gets tricky if different files have different semantics.
+
+But, if you get it right, then you can automate more of the update process.
+</code></pre>
+
+<h3 id="无法动态更新配置">无法动态更新配置</h3>
+
+<p>configmap目前无法滚动更新, 例如你更新了configmap的内容, 但是rc或者dc不会有任何操作, 没法做rollupdate, 目前的做法是, 你必须创建一个新的configmap, 然后修改dc或者rc, 引用到这个新的configmap, 然后触发dc rollupdate, 完成之后删除旧的configmap, 参见: Facilitate ConfigMap rollouts / management #<a href="https://github.com/kubernetes/kubernetes/issues/22368">22368</a></p>
+
+<p>secret存在同样的问题&hellip;</p>
+
+<p>openshift相关的configmap问题: Provide an option to redeploy deployment when config map used changes<a href="https://github.com/openshift/origin/issues/9146">#9146</a></p>
+
+<p>类似的问题, 关于secret的更新问题Trigger to redeploy containers when a secret changes:<a href="https://github.com/openshift/origin/issues/7019">#7019</a></p>
+
+<p>目前尚不支持In-place rolling updates <a href="https://github.com/kubernetes/kubernetes/issues/9043">#9043</a>, 也就是说rollingupdate只能重新调度新的pod, 这对于有状态的pod不适用</p>
+
+<p>Canarying mechanism for ConfigMap #<a href="https://github.com/kubernetes/kubernetes/issues/20200">20200</a>, 这里也希望能in-place update</p>
+
+<p>目前官方推荐的解法:</p>
+
+<pre><code>I agree with @thockin's last proposal. The right thing to do here is create a new ConfigMap and do a rolling update to switch to it, using the new Deployment API.
+</code></pre>
+
+<p>Thockin的一个issue, 支持动态配置Feature request: A way to signal pods #<a href="https://github.com/kubernetes/kubernetes/issues/24957">24957</a></p>
+
+<h3 id="log">log</h3>
+
+<p>关于日志的讨论Kubernetes logging, journalD, fluentD, and Splunk, oh my! #<a href="https://github.com/kubernetes/kubernetes/issues/24677">24677</a>, 相关的doc: <a href="https://docs.google.com/document/d/1K2hh7nQ9glYzGE-5J7oKBB7oK3S_MKqwCISXZK-sB2Q/edit#">What I would like from Kubernetes Logging Volumes</a>.</p>
+
+<p><a href="https://github.com/kubernetes/kubernetes/pull/33111">[WIP] kubelet-cri: create a new logging mechanism #33111</a></p>
+
+<p><a href="https://github.com/kubernetes/kubernetes/pull/35348">CRI: Add kuberuntime container logs #35348</a></p>
+
+<p><a href="https://github.com/kubernetes/kubernetes/issues/30709">Handle logging in CRI #30709</a></p>
+
+<h3 id="service">service</h3>
+
+<h4 id="支持dns服务外部注入">支持dns服务外部注入</h4>
+
+<p>支持类似rds的外部service注入, 例如你在aws上有一个rds, kubernetes集群里面的应用需要引用, 可以看这个Proposal:Add proposal for service externalName <a href="https://github.com/kubernetes/kubernetes/pull/29073">#29073</a>
+用法类似这样:</p>
+
+<pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: my-rds
+spec:
+  ports:
+  - port: 12345
+type: ExternalName
+externalName: myapp.rds.whatever.aws.says
+</code></pre>
+
+<h4 id="支持node-local-service">支持node-local service</h4>
+
+<p>有些daemonset pod, 通过service暴露给内部应用, 但是service有个问题, 他会随机选择一个pod提供服务. 这就带来一个问题, 例如fluentd, 首先这会带来跨节点流量问题, 本来同一node上的pod只需要把日志吐给本地的fluentd pod, 但是如果通过service, 可能会吐到其他node去, 这是明显不合理的, 尤其如果日志需要Node信息的时候.</p>
+
+<p>解决这个问题, 参考这个Proposal: Initial proposal for node-local services #<a href="https://github.com/kubernetes/kubernetes/pull/28637v">28637</a></p>
+
+<h3 id="lb">LB</h3>
+
+<p>有很多值得学习的东西use iptables for proxying instead of userspace #<a href="https://github.com/kubernetes/kubernetes/issues/3760">3760</a></p>
+
+<h4 id="解决external-lb两跳和snat问题">解决External LB两跳和SNAT问题</h4>
+
+<h3 id="monitor">monitor</h3>
+
+<p>cadvisor支持application metrics, 通过label和container volume实现: <a href="https://github.com/google/cadvisor/issues/1016">Introduce direct API for application metrics #1016
+</a>.</p>
+
+<p>kubelet集成cadvisor之后， 导致kubelet性能消耗很大， 带来很多问题: <a href="https://github.com/kubernetes/kubernetes/issues/18770">Standalone cAdvisor for monitoring #18770</a>, 主要是影响kubelet稳定性和性能问题 <a href="https://github.com/kubernetes/kubernetes/issues/16296">Provide an option to disable/mock cadvisor in kubelet #16296</a>， 而且有的用户并不使用cadvisor， 目前需要重新设计， 分离kubelet和cadvisor, 分离之后， cadvisor没有pod label， 对于使用cadvisor监控的人来说， 无法做pod聚合， 目前希望cadvisor提供pod label: <a href="https://github.com/kubernetes/kubernetes/issues/32326">cAdvisor should export pod labels for container metrics #32326</a>.</p>
+
+<p>新定义的容器运行时接口，定义了container metrics， 相关issue<a href="https://github.com/kubernetes/kubernetes/issues/27097">A better story of container metrics for runtime integration #27097</a>.</p>
+
+<p>新的监控架构设计 <a href="https://github.com/kubernetes/kubernetes/pull/34758">Add monitoring architecture #34758</a>.</p>
+
+<p><a href="https://github.com/kubernetes/kubernetes/pull/34586">Proposal: Introduce Custom Metrics API #34586</a></p>
+
+<h1 id="footnote">Footnote</h1>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:7"><a href="qcow2 tuning">http://events.linuxfoundation.org/sites/events/files/slides/p0.pp_.pdf</a>
+ <a class="footnote-return" href="#fnref:7"><sup>[return]</sup></a></li>
+<li id="fn:1"><a href="Solid State Drives">https://wiki.archlinux.org/index.php/Solid_State_Drives</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:2"><a href="Discard with KVM">https://chrisirwin.ca/posts/discard-with-kvm/</a>
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+<li id="fn:3"><a href="How to setup virtio scsi with qemu">https://wiki.netbsd.org/tutorials/how_to_setup_virtio_scsi_with_qemu/</a>
+ <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+<li id="fn:8"><a href="ceph docker">https://github.com/ceph/ceph-docker/tree/master/demo</a>
+ <a class="footnote-return" href="#fnref:8"><sup>[return]</sup></a></li>
+<li id="fn:9"><a href="https://github.com/kubernetes/kubernetes/pull/28112">Allow fieldSelectors to match arbitrary values </a>
+ <a class="footnote-return" href="#fnref:9"><sup>[return]</sup></a></li>
+<li id="fn:10"><a href="https://github.com/kubernetes/kubernetes/issues/1362">Generic field selectors #1362</a>
+ <a class="footnote-return" href="#fnref:10"><sup>[return]</sup></a></li>
+</ol>
+</div>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">春龙</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">2018-05-30</span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">License</span>
+    <span class="item-content">true</span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="http://tacy.github.io/tags/tech/">tech</a>
+          <a href="http://tacy.github.io/tags/kubernetes/">kubernetes</a>
+          <a href="http://tacy.github.io/tags/notes/">notes</a>
+          <a href="http://tacy.github.io/tags/container/">container</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+          <a class="prev" href="/post/django/">
+            
+            <i class="iconfont">
+              <svg  class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417 757.434875 204.940602c11.338233-12.190647 11.035334-32.285311-0.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-0.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891 0.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"></path>
+</svg>
+
+            </i>
+            <span class="prev-text nav-default">django notes</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        
+          <a class="next" href="/post/go/">
+            <span class="next-text nav-default">golang notes</span>
+            <span class="prev-text nav-mobile">Next</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+
+  
+
+  <div class="disqus-comment">
+  <div class="disqus-button" id="load_disqus" onclick="load_disqus()">
+    Show Disqus Comments
+  </div>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_config = function () {
+      this.page.url = "http://tacy.github.io/post/kubernetes/";
+    };
+    function load_disqus() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'tacyweblog';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+
+      $('#load_disqus').remove();
+    };
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+  
+  </div>
+  
+    
+
+
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+  
+  
+    <a href="mailto:your@email.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://stackoverflow.com/users/1225294/tacy-lee" rel="me noopener" class="iconfont"
+      title="stack-overflow"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M809.714286 932.571429l-638.857143 0 0-274.285714-91.428571 0 0 365.714286 821.714286 0 0-365.714286-91.428571 0 0 274.285714zm-538.285714-299.428571l18.857143-89.714286 447.428571 94.285714-18.857143 89.142857zm58.857143-213.714286l38.285714-83.428571 414.285714 193.714286-38.285714 82.857143zm114.857143-203.428571l58.285714-70.285714 350.857143 293.142857-58.285714 70.285714zm226.857143-216l272.571429 366.285714-73.142857 54.857143-272.571429-366.285714zm-410.285714 840.571429l0-90.857143 457.142857 0 0 90.857143-457.142857 0z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://twitter.com/tacy_lee" rel="me noopener" class="iconfont"
+      title="twitter"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1264 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M1229.8616 18.043658c0 0-117.852626 63.135335-164.151872 67.344358-105.225559-164.151872-505.082682-92.598492-437.738325 223.078185C278.622548 312.675223 89.216542 47.506814 89.216542 47.506814s-117.852626 189.406006 75.762402 345.139833C127.097743 396.85567 55.544363 371.601535 55.544363 371.601535S26.081207 535.753407 253.368414 615.724832c-21.045112 29.463156-113.643603 8.418045-113.643603 8.418045s25.254134 143.10676 231.496229 180.987961c-143.10676 130.479693-387.230056 92.598492-370.393967 105.225559 206.242095 189.406006 1119.599946 231.496229 1128.01799-643.98042C1179.353331 249.539887 1263.533778 123.269217 1263.533778 123.269217s-130.479693 37.881201-138.897738 33.672179C1225.652577 98.015083 1229.8616 18.043658 1229.8616 18.043658"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/tacy" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://weibo.com/p/1005051970158087" rel="me noopener" class="iconfont"
+      title="weibo"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M385.714286 733.714286q12-19.428571 6.285714-39.428571t-25.714286-28.571429q-19.428571-8-41.714286-0.571429t-34.285714 26.285714q-12.571429 19.428571-7.428571 39.142857t24.571429 28.857143 42.571429 1.428571 35.714286-27.142857zm53.714286-69.142857q4.571429-7.428571 2-15.142857t-10-10.571429q-8-2.857143-16.285714 2.857143t-12.285714 10.571429q-9.714286 17.714286 7.428571 25.714286 8 2.857143 16.571429 2.857143t12.571429-10.571429zm99.428571 61.142857q-25.714286 58.285714-90.285714 85.714286t-128 6.857143q-61.142857-19.428571-84.285714-72.285714t3.714286-107.142857q26.857143-53.142857 86.571429-79.428571t120.285714-10.857143q63.428571 16.571429 90.571429 68.285714t1.428571 108.857143zm178.285714-91.428571q-5.142857-54.857143-50.857143-97.142857t-119.142857-62.285714-156.857143-12q-127.428571 13.142857-211.142857 80.857143t-75.714286 151.142857q5.142857 54.857143 50.857143 97.142857t119.142857 62.285714 156.857143 12q127.428571-13.142857 211.142857-80.857143t75.714286-151.142857zm176 2.285714q0 38.857143-21.142857 79.714286t-62.285714 78.285714-96.285714 67.142857-129.142857 47.428571-154.571429 17.714286-157.142857-19.142857-137.428571-53.142857-98-86.285714-37.142857-114q0-65.714286 39.714286-140t112.857143-147.428571q96.571429-96.571429 195.142857-134.857143t140.857143 4q37.142857 36.571429 11.428571 119.428571-2.285714 8-0.571429 11.428571t5.714286 4 8.285714 2.857143 7.714286-2l3.428571-1.142857q79.428571-33.714286 140.571429-33.714286t87.428571 34.857143q25.714286 36 0 101.714286-1.142857 7.428571-2.571429 11.428571t2.571429 7.142857 6.857143 4.285714 9.714286 3.428571q32.571429 10.285714 58.857143 26.857143t45.714286 46.571429 19.428571 66.571429zm-42.285714-356.571429q24 26.857143 31.142857 62t-3.714286 67.142857q-4.571429 13.142857-16.857143 19.428571t-25.428571 2.285714q-13.142857-4.571429-19.428571-16.857143t-2.285714-25.428571q11.428571-36-13.714286-63.428571t-61.142857-20q-13.714286 2.857143-25.714286-4.571429t-14.285714-21.142857q-2.857143-13.714286 4.571429-25.428571t21.142857-14.571429q34.285714-7.428571 68 3.142857t57.714286 37.428571zm103.428571-93.142857q49.714286 54.857143 64.285714 127.142857t-7.714286 138q-5.142857 15.428571-19.428571 22.857143t-29.714286 2.285714-22.857143-19.428571-2.857143-29.714286q16-46.857143 5.714286-98.285714t-45.714286-90.285714q-35.428571-39.428571-84.571429-54.571429t-98.857143-4.857143q-16 3.428571-29.714286-5.428571t-17.142857-24.857143 5.428571-29.428571 24.857143-16.857143q70.285714-14.857143 139.428571 6.571429t118.857143 76.857143z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://www.douban.com/people/tacy_lee/" rel="me noopener" class="iconfont"
+      title="douban"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M926.917973 37.80608C959.65184 37.80608 986.19392 64.34816 986.19392 97.082027L986.19392 926.917973C986.19392 959.65184 959.65184 986.19392 926.917973 986.19392L97.082027 986.19392C64.34816 986.19392 37.80608 959.65184 37.80608 926.917973L37.80608 97.082027C37.80608 64.34816 64.34816 37.80608 97.082027 37.80608zM176.653653 176.19968 176.653653 252.678827 825.658027 252.678827 825.658027 176.19968zM217.719467 316.146347 217.719467 628.08064 273.524053 628.08064 341.292373 770.39616 157.259093 770.39616 157.259093 845.417813 842.949973 845.417813 842.949973 770.39616 654.226773 770.39616 722.899627 628.08064 783.67744 628.08064 783.67744 316.146347zM684.885333 392.891733 684.885333 553.987413 312.576 553.987413 312.576 392.891733zM570.770773 770.39616 426.653013 770.39616 359.621973 628.08064 639.443627 628.08064z"></path>
+</svg>
+
+    </a>
+
+
+<a href="http://tacy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+  
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2012 -
+    2019
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        春龙
+        
+      </span></span>
+
+  
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

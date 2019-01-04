@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>archlinux notes - Tacy - Notes</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="春龙" /><meta name="description" content="archlinux使用笔记" />
+
+  <meta name="keywords" content="Tacy, tech, life, linux, performance, kubernetes, golang, java, troubleshooting" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.51" />
+
+
+<link rel="canonical" href="http://tacy.github.io/post/archlinux/" />
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.c8c1ff75dee09b44060a6c38f41b9036bac2512ccdb22d7f296cec12dc786375.css" integrity="sha256-yMH/dd7gm0QGCmw49BuQNrrCUSzNsi1/KWzsEtx4Y3U=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="archlinux notes" />
+<meta property="og:description" content="archlinux使用笔记" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://tacy.github.io/post/archlinux/" /><meta property="article:published_time" content="2015-01-01T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2019-01-04T00:00:00&#43;00:00"/>
+
+<meta itemprop="name" content="archlinux notes">
+<meta itemprop="description" content="archlinux使用笔记">
+
+
+<meta itemprop="datePublished" content="2015-01-01T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2019-01-04T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="4338">
+
+
+
+<meta itemprop="keywords" content="tech,linux,archlinux,notes," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="archlinux notes"/>
+<meta name="twitter:description" content="archlinux使用笔记"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33694554-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Tacy&#39;s notes</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/">Home</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/post/">Archives</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/tags/">Tags</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/categories/">Categories</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/about/">About</a>
+          
+        
+      </li>
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      Tacy's notes
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/">Home</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/post/">Archives</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/tags/">Tags</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/categories/">Categories</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/about/">About</a>
+          
+
+        
+
+      </li>
+    
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">archlinux notes</h1>
+      
+      <div class="post-meta">
+        <time datetime="2015-01-01" class="post-time">
+          2015-01-01
+        </time>
+        <div class="post-category">
+            <a href="http://tacy.github.io/categories/tech/"> tech </a>
+            
+          </div>
+        
+
+        
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    
+    <div class="post-content">
+      
+
+<h1 id="my-archlinux-machine">my archlinux machine</h1>
+
+<h2 id="baseline">baseline</h2>
+
+<p>archlinux包更新非常, 如果你经常需要安装包, 会频繁出现新安装的包更新了依赖包, 但是原来依赖这个依赖包的组件可能就不能运行了, 这种情况下, 导致你需要频繁的升级整个系统.</p>
+
+<p>我的做法是把仓库固定在某个时间点上, 例如&rsquo;2018-11-29&rsquo;, 让pacman的server只用这个路径的包, 这样就可以解决这个问题, 编辑/etc/pacman.d/mirrorlist, 只用下面这个server, 其他全部注释掉</p>
+
+<pre><code class="language-shell">Server=https://archive.archlinux.org/repos/2018/11/29/$repo/os/$arch
+</code></pre>
+
+<h2 id="gnome">gnome</h2>
+
+<h3 id="gnome-shell">gnome-shell</h3>
+
+<p>aur: chrome-gnome-shell-git
+chrome plugin: chrome-gnome-shell
+extension: pixel-saver &amp; hidetopbar &amp; User themes &amp; no-title-bar
+themes aur: gtk-theme-arc-git
+选择themes用tweak tools</p>
+
+<h3 id="gnome-terminal">gnome-terminal</h3>
+
+<ul>
+<li>.config/gtk3.0/gtk.css</li>
+</ul>
+
+<pre><code class="language-shell">terminal-window notebook &gt; header.top button {
+    padding: 0 0 0 0;
+    background-image: none;
+    border: 0;
+}
+terminal-window notebook &gt; header.top &gt; tabs &gt; tab {
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+}
+terminal-window notebook &gt; header.top &gt; tabs &gt; tab label {
+    padding: 0 0 0 0;
+    margin: 0 0 0 0;
+}
+</code></pre>
+
+<ul>
+<li>profile
+theme variant -&gt; light
+text and background color -&gt; white on black
+Palette -&gt; linux console
+limit scrollback to   -&gt; 10000
+shortcuts -&gt; switch to tab1 -&gt; Ctrl_1</li>
+</ul>
+
+<h1 id="kernel">kernel</h1>
+
+<p>启动加载模块在/etc/modules-load.d/modules.conf里面添加</p>
+
+<h1 id="systemd">systemd</h1>
+
+<p>显示service文件内容指令: <code>systemctl cat servicename</code>
+显示当前运行的service: <code>systemctl -t service --state running</code></p>
+
+<h1 id="journal">journal</h1>
+
+<p>Journal size limit, edit <code>/etc/systemd/journald.conf</code>, add line: <code>SystemMaxUse=50M</code></p>
+
+<p>clean journal files manually: <code>journalctl --vacuum-size=100M</code> or <code>journalctl --vacuum-time=2weeks</code></p>
+
+<p>journal file no presistent, edit <code>/etc/systemd/journald.conf</code>:</p>
+
+<pre><code>Storage=volatile
+RuntimeMaxUse=25
+</code></pre>
+
+<h1 id="env">env</h1>
+
+<h2 id="man-path">MAN PATH</h2>
+
+<p>export MANPATH=$MANPATH:/your/path</p>
+
+<h2 id="graphical-applications-evn-variables">graphical applications evn variables</h2>
+
+<p>Applications running on Wayland may to use systemd user environments variables instead, as Wayland does not initiate any Xorg related files:</p>
+
+<pre><code>~/.config/environment.d/envvars.conf
+PATH=$PATH:~/scripts
+GUIVAR=value
+</code></pre>
+
+<h1 id="hardware-info">Hardware INFO</h1>
+
+<p>smartctl
+lspci
+lsblk
+dmidecode
+lscpu
+lshw
+hdparm</p>
+
+<h1 id="mouse-touchpad">mouse &amp; touchpad</h1>
+
+<p>升级系统系统的时候, 容易把synaptics的配置弄丢了, 注意修改</p>
+
+<p>Natural scrolling</p>
+
+<p>It is possible to enable natural scrolling through synaptics. Simply use negative values for VertScrollDelta and HorizScrollDelta like so:
+/etc/X11/xorg.conf.d/50-synaptics.conf</p>
+
+<pre><code>Section &quot;InputClass&quot;
+    Identifier &quot;Trackpad&quot;
+    Driver &quot;synaptics&quot;
+    MatchIsTouchpad &quot;on&quot;
+    Option &quot;HorizTwoFingerScroll&quot; &quot;1&quot;
+    Option &quot;VertScrollDelta&quot; &quot;-111&quot;
+    Option &quot;HorizScrollDelta&quot; &quot;-111&quot;
+    Option &quot;HorizHysteresis&quot; &quot;72&quot;
+    Option &quot;VertHysteresis&quot; &quot;72&quot;
+    Option &quot;PalmDetect&quot; &quot;3&quot;
+    Option &quot;PalmMinWidth&quot; &quot;12&quot;
+    Option &quot;PalmMinZ&quot; &quot;20&quot;
+    Option &quot;AreaRightEdge&quot; &quot;4461&quot;
+    Option &quot;AreaTopEdge&quot; &quot;395&quot;
+    Option &quot;FingerLow&quot; &quot;10&quot;
+    Option &quot;FingerHigh&quot; &quot;50&quot;
+    MatchDevicePath &quot;/dev/input/event*&quot;
+EndSection
+
+</code></pre>
+
+<p>缺省配置的触摸板, 两指右键容易触发滚动事件, 导致焦点错位, 需要设置HorizHysteresis和VertHysteresis两个值.</p>
+
+<p>另外一个问题就是手掌误触发移动事件, 这个需要设置PalmDetect参数, 需要自己慢慢调节, 注意参数是PalmMinWidth, 我的机器需要调到8才行, 太小正常的手指移动有问题. 但是这个问题通过设置Palm依然不能解决, 最终通过设置AreaRightEdge和AreaTopEdge解决, 这个的意思就是屏蔽掉一部分触摸板, 这里把右边和上边的部分触摸板屏蔽了, 最终解决了这个鼠标乱跳的烦人问题</p>
+
+<p>另外就是AreaLeftEdge在我电脑上是负数, 很奇怪, 无法设置(设置为1就把半边的触摸板屏蔽了), 本来打算把Left也设置以下, 防止右手的误触. 触摸板的四个值参考synaclient输出LeftEdge/RightEdge/TopEdge/BottomEdge.</p>
+
+<p>还有一个问题就是错误的认为你释放了鼠标键(untouch), 这个问题需要调整FingerLow, 别让这个值太高, 因为移动鼠标的时候可能用力不均匀, 需要确保这个力度不会低于FingerLow, 否则触摸板错误的认为你释放了鼠标</p>
+
+<p>没有解决的问题是两指触发的滚动事件, 垂直移动两指容易产生水平滚动事件, 反之亦然, 暂时没找到解决办法.</p>
+
+<p>调整synaptics的值通过和synclient完成, 修改之后实时观察效果.</p>
+
+<h1 id="aur">aur</h1>
+
+<p>首先git clone代码, 然后<code>makepkg -sric</code>, s表示解决依赖, r表示移除编译依赖, i表示安装, c表示清楚编译后环境.</p>
+
+<p>如果碰到<code>ERROR: One or more PGP signatures could not be verified!</code>, 使用<code>gpg --recv-keys</code>接受key, 也可以<code>makepkg --skippgpcheck</code>.</p>
+
+<h2 id="cower">cower</h2>
+
+<p>aur包管理器, 可以查看安装的aur包, 是否由更新, 下载更新, 然后通过makepkg安装更新</p>
+
+<h1 id="tor">tor</h1>
+
+<p>pacman安装即可, 然后需要修改以下/etc/tor/torrc里面的配置, 缺省没有打开controller, 如果你需要编程调用, 需要打开该端口, 同时修改hashpasswd, hashpasswd可以通过&rsquo;tor &ndash;hash-password yourpassws&rsquo;获取.</p>
+
+<p>如果只需要脚本控制tor, 就不需要配置tor称为bridge relay或者relay, 容易引起麻烦. 如果只需要给自己提供bridge, 可以配置:</p>
+
+<pre><code>BridgeRelay 1
+PublishServerDescriptor 0
+</code></pre>
+
+<h1 id="fonts">fonts</h1>
+
+<p>The font paths initially known to Fontconfig are: /usr/share/fonts/, ~/.local/share/fonts (and ~/.fonts/, now deprecated). Fontconfig will scan these directories recursively. For ease of organization and installation, it is recommended to use these font paths when adding fonts.
+To see a list of known Fontconfig fonts: <code>fc-list : file</code></p>
+
+<p>字体控制通过gnome-tweaks调整, 建议用12号字体</p>
+
+<p>一般安装字体:</p>
+
+<pre><code>ttf-inconsolata                                 #程序员字体, 从验证结果看, 这个字体支持中英文混编效果最好(用12号字体)
+adobe-source-han-sans-cn-fonts 1.004-1          #中文
+</code></pre>
+
+<p>字体配置文件在/etc/fonts目录下, 用户一般定义自己的配置在/etc/fonts/local.conf目录:</p>
+
+<pre><code>[tacy@tacyArch fonts]$ cat /etc/fonts/local.conf
+&lt;!DOCTYPE fontconfig SYSTEM &quot;../fonts.dtd&quot;&gt;
+&lt;fontconfig&gt;
+  &lt;!-- Generic name aliasing --&gt;
+  &lt;alias&gt;
+    &lt;family&gt;sans-serif&lt;/family&gt;
+    &lt;prefer&gt;
+      &lt;family&gt;Source Han Sans CN&lt;/family&gt;
+    &lt;/prefer&gt;
+  &lt;/alias&gt;
+  &lt;!-- Generic name aliasing --&gt;
+  &lt;alias&gt;
+    &lt;family&gt;monospace&lt;/family&gt;
+    &lt;prefer&gt;
+      &lt;family&gt;Inconsolata&lt;/family&gt;
+    &lt;/prefer&gt;
+  &lt;/alias&gt;
+&lt;/fontconfig&gt;
+</code></pre>
+
+<p>配置完成之后, monospace优先使用Inconsolata, sans-serif/sans优先使用SourceHanSansCN</p>
+
+<p>查看字体列表<code>fc-list : file</code></p>
+
+<p>查看匹配字体<code>fc-match sans -a</code></p>
+
+<h1 id="powerline">powerline</h1>
+
+<p>sudo pip install powerline-status  #install into: /usr/bin/ &amp; <code>pip show powerline-status</code></p>
+
+<h2 id="install-powerline-fonts">install powerline fonts</h2>
+
+<pre><code>cd  ~/usr/share/fonts/tacy
+wget https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf
+fc-cache ./tacy
+cd /etc/fonts/conf.avail
+wget https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf
+cd /etc/fonts/conf.d
+ln -s /etc/fonts/10-powerline-symbols.conf .
+</code></pre>
+
+<h2 id="powerline-daemon-by-systemd">powerline daemon by systemd</h2>
+
+<pre><code>cat ~/.config/systemd/user/powerline-daemon.service
+[Unit]
+Description=powerline-daemon - Daemon that improves powerline performance
+Documentation=man:powerline-daemon(1)
+Documentation=https://powerline.readthedocs.org/en/latest/
+
+[Service]
+ExecStart=/usr/bin/powerline-daemon --foreground
+
+[Install]
+WantedBy=default.target
+
+systemctl --user enable powerline-daemon
+systemctl --user start powerline-daemon
+</code></pre>
+
+<h2 id="tmux">tmux</h2>
+
+<p>add <code>source /usr/lib/python3.5/site-packages/powerline/bindings/tmux/powerline.conf</code> to <code>~/.tmux.conf</code></p>
+
+<h2 id="bash">bash</h2>
+
+<p>add <code>. /usr/lib/python3.5/site-packages/powerline/bindings/bash/powerline.sh</code> to <code>~/.bash_profile</code></p>
+
+<h2 id="dns">dns</h2>
+
+<p>chattr +i /etc/resolv.conf</p>
+
+<h1 id="tmux-1">tmux</h1>
+
+<pre><code># remap prefix to Control + a
+unbind C-b
+set -g prefix C-x
+bind C-x send-prefix
+
+unbind r
+bind r source-file ~/.tmux.conf
+
+set -g default-shell /bin/zsh
+
+## copy-mode
+unbind [
+bind-key -T prefix e copy-mode
+# move x clipboard into tmux paste buffer
+# To copy:
+bind-key -n -t emacs-copy M-w copy-pipe &quot;xclip -i -sel p -f | xclip -i -sel c &quot;
+# To paste:
+bind-key -n C-y run &quot;xclip -o | tmux load-buffer - ; tmux paste-buffer&quot;
+
+
+## * Window Management
+set -g base-index 1 # start window indices at 1
+set -g renumber-windows on
+</code></pre>
+
+<h1 id="zsh">zsh</h1>
+
+<h2 id="install">Install</h2>
+
+<blockquote>
+<p>pacman -Ss zsh</p>
+</blockquote>
+
+<h2 id="config">Config</h2>
+
+<p>我的缺省Shell依然是用的Bash, 通过Bash激活tmux, 然后设置tmux的缺省shell为zsh, 省得对系统做修改</p>
+
+<ol>
+<li><p>在<code>~/.tmux.conf</code>中加入: <code>set -g default-shell /bin/zsh</code></p></li>
+
+<li><p>在<code>~/.bashrc</code>中判断是否有tmux实例, 如果没有创建一个新的, 否则attach它</p></li>
+</ol>
+
+<pre><code class="language-sh">#
+# ~/.bashrc
+#
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] &amp;&amp; return
+
+alias ls='ls --color=auto'
+PS1='[\u@\h \W]\$ '
+export PATH=~/bin:$PATH
+
+# tmux
+if which tmux &gt;/dev/null 2&gt;&amp;1; then
+    ID=&quot;`tmux ls | grep -vm1 attached | cut -d: -f1`&quot; # get the id of a deattached session
+    if [[ -z &quot;$ID&quot; ]] ;then # if not available create a new one
+        tmux new-session
+    else
+        tmux attach-session -t &quot;$ID&quot; # if available attach to it
+    fi
+fi
+</code></pre>
+
+<ol>
+<li>通过systemd启动tmux
+&gt;systemctl &ndash;user start tmux</li>
+</ol>
+
+<pre><code>[Unit]
+Description=Start tmux in detached session
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/tmux new-session -s %u -d
+ExecStop=/usr/bin/tmux kill-session -t %u
+
+[Install]
+WantedBy=multi-user.target
+
+</code></pre>
+
+<h2 id="oh-my-zsh">Oh-my-zsh</h2>
+
+<blockquote>
+<p>sh -c &ldquo;$(curl -fsSL <a href="https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)&quot;">https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)&quot;</a></p>
+</blockquote>
+
+<p>my custom conf:</p>
+
+<pre><code># ********************************************************************
+## tacy cust ##
+HISTFILE=~/.histfile
+HISTSIZE=1000
+SAVEHIST=1000
+setopt HIST_FIND_NO_DUPS HIST_IGNORE_ALL_DUPS HIST_IGNORE_DUPS HIST_IGNORE_SPACE HIST_SAVE_NO_DUPS
+
+# Automatically included new bin file in the completion
+zstyle ':completion:*' rehash true
+
+# emacs mode
+bindkey -e
+
+# app set
+## set relative app
+evince_bg() { evince &quot;$@&quot; &amp; }
+alias -s pdf=evince_bg
+
+emacs_bg() { emacsclient &quot;$@&quot; &amp; }
+alias -s go=emacs_bg -nc
+alias -s html=emacs_bg -nc
+alias -s py=emacs_bg -nc
+alias -s md=emacs_bg -nc
+alias -s go=emacs_bg -nc
+# ********************************************************************
+</code></pre>
+
+<h2 id="autojump">autojump</h2>
+
+<blockquote>
+<p>pacman -S autojump</p>
+</blockquote>
+
+<p><code>d</code>: 列出最近的目录列表
+<code>j number</code>: 其中的number是<code>d</code>命令输出中的序号, 可以完成快速跳转.
+<code>j kube</code>: 跳转到历史目录中保护kube的路径
+<code>j -s</code>: 列出历史路径
+<code>jo</code>: 打开文件浏览器</p>
+
+<h2 id="using">Using</h2>
+
+<p>C-p / C-n      #history substring search</p>
+
+<h1 id="network">network</h1>
+
+<h2 id="bbr">BBR</h2>
+
+<pre><code class="language-shell">cat /etc/sysctl.d/50-bbr.conf
+net.core.default_qdisc=fq
+net.ipv4.tcp_congestion_control=bbr
+
+lsmod|grep -i bbr
+</code></pre>
+
+<h2 id="software-ap">software AP</h2>
+
+<p>最简单的办法就是使用<a href="https://github.com/oblique/create_ap">create_ap</a>, 一条命令搞定<code>create_ap wlan0 wlan0 MyAccessPoint MyPassPhrase</code></p>
+
+<p>具体参考<a href="https://wiki.archlinux.org/index.php/software_access_point">software access point</a></p>
+
+<h2 id="ssh-reverse-resolv">ssh reverse resolv</h2>
+
+<p>There are several things that can go wrong. Add -vvv to make ssh print a detailed trace of what it&rsquo;s doing, and see where it&rsquo;s pausing.</p>
+
+<p>The problem could be on the client or on the server.</p>
+
+<p>A common problem on the server is if you&rsquo;re connecting from a client for which reverse DNS lookups time out. (A “reverse DNS lookup” means getting back from the client machine&rsquo;s IP address to a host name. It isn&rsquo;t really useful for security, only slightly helpful to diagnose breakin attempts from log entries, but the default configuration does it anyway.) To turn off reverse DNS lookups, add UseDNS no to /etc/ssh/sshd_config (you need to be root on the server; remember to restart the SSH service afterwards).</p>
+
+<p>Another thing that can go wrong is GSSAPI authentication timing out. If you don&rsquo;t know what that is, you&rsquo;re probably not relying on it; you can turn it off by adding the line GSSAPIAuthentication no to /etc/ssh/ssh_config or ~/.ssh/config (that&rsquo;s on the client side).</p>
+
+<h2 id="mitmproxy">mitmproxy</h2>
+
+<p>证书地址<code>http://mitm.it</code>, android模拟器运行时加参数<code>-http-proxy=ip:8080</code></p>
+
+<h1 id="qemu">Qemu</h1>
+
+<h2 id="mount-qcow2">mount qcow2</h2>
+
+<pre><code>$modprobe nbd max_part=16
+$qemu-nbd --connection=/dev/nbd0 node_two.qcow2
+$fdisk -l /dev/nbd0
+Disk /dev/nbd0: 8 GiB, 8589934592 bytes, 16777216 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x000aa3f5
+
+Device      Boot Start      End  Sectors Size Id Type
+/dev/nbd0p1 *     2048 16777215 16775168   8G 83 Linux
+
+$mount /dev/nbd0p1 tmp
+
+</code></pre>
+
+<p>有时候没办法mount, 比如盘元数据有问题, 你可以用工具修复以下, 比如:<code>xfs_repair -L /dev/nbd0p1</code></p>
+
+<h2 id="tftp-server">tftp server</h2>
+
+<p>dnsmasq内嵌tftp server, 直接修改/etc/dnsmasq配置, 指定下面选项即可:</p>
+
+<pre><code>tftp-root=/srv/tftp
+enable-tftp
+</code></pre>
+
+<p>如果需要配置ubuntu的pxe server, 下载netboot.tar.gz包, 解压到/srv/tftp即可</p>
+
+<p>注意网络里面的dhcpserver, 容易导致问题. 另外, 无线网卡需要支持ipxe才行</p>
+
+<h2 id="software">software</h2>
+
+<h3 id="base-utils">base-utils</h3>
+
+<p><code>du -s ./* | sort -n</code> 查询磁盘空间</p>
+
+<h3 id="imagemagick">imagemagick</h3>
+
+<pre><code>find . -name '*-1.jpg' -exec mogrify -font Source-Han-Sans-CN-Heavy -fill '#E91E63' -draw 'rectangle 0,565,800,705' -pointsize 120 -gravity center -fill black -annotate +0+230 '日本直邮到手' -fill white -annotate +5+235 '日本直邮到手' '{}' \; -print
+
+find . -name '*.JPG' -exec mogrify -filter Triangle -define jpeg:extent=45KB -thumbnail 800x800\! '{}' \;
+</code></pre>
+
+<h3 id="ffmpeg">ffmpeg</h3>
+
+<pre><code>find . -name '*.MOV' -exec ffmpeg -i '{}' -vcodec libx264 -crf 32 '{}'.mp4
+</code></pre>
+
+<h3 id="chrome">chrome</h3>
+
+<ol>
+<li>remote desktop -&gt; app(应用) -&gt; chrome remote desktop -&gt; share(分享)</li>
+<li>chrome的dns总是不走代理, 会导致问题, 如果实在很急, 可以用下面命令启动chrome: <code>google-chrome --proxy-server=&quot;socks5://localhost:8888&quot;</code></li>
+<li>清除chrome dns cache, 两步: 首先, <code>chrome://net-internals/#dns</code> -&gt; <code>Clear host cache</code>, 其次, <code>chrome://net-internals/#sockets</code> -&gt;<code>Flush socket pools“</code>, 后者可以观察到dns用的代理情况, 对于一些奇怪的问题诊断非常有用.</li>
+</ol>
+
+<h3 id="bash-1">bash</h3>
+
+<p>find finances -name &lsquo;*.vue&rsquo; -maxdepth 1 -exec wc -l &lsquo;{}&rsquo; \; |cut -d&rsquo; &lsquo; -f1|paste -sd+ |bc</p>
+
+<h3 id="eclipse">eclipse</h3>
+
+<p>Disable GTK+ 3
+When the SWT GTK+ 3 UI is buggy and sometimes unusable, You can try to disable the use of GTK+ 3 with add the following to /usr/lib/eclipse/eclipse.ini.</p>
+
+<pre><code>--launcher.GTK_version
+2
+</code></pre>
+
+<p>Those two lines must be added before:</p>
+
+<pre><code class="language-text">--launcher.appendVmargs
+</code></pre>
+
+<h3 id="pacman">pacman</h3>
+
+<p>pacman -Qo filename / pkgfile filename
+pactree 可以查看包依赖图, 在pacman-contrib包里面
+pacman -Sc 清除缓存包(系统里面没有安装的)</p>
+
+<h1 id="mitmproxy-1">mitmproxy</h1>
+
+<p>安装: <code>pacman -S mitmproxy</code>, 运行: <code>mitmweb</code>, 设置需要监控的程序走代理, 同时在浏览器打开监听网址, 就可以看到所有的web请求了</p>
+
+<p>如果是ssl, 可能需要信任mitmproxy的证书, 你可以在你的设备的浏览器上打开<code>mitm.it</code>这个网址, 安装证书即可. 你也可以收到安装, 默认mitmproxy会生成证书在<code>$HOME/.mitmproxy/</code>目录下, 也可以在mitmproxy启动的时候指定证书</p>
+
+<p>具体可以参考<a href="https://mitmproxy.org/doc/certinstall.html#docQuick">https://mitmproxy.org/doc/certinstall.html#docQuick</a></p>
+
+<h1 id="debug">DEBUG</h1>
+
+<p><a href="https://wiki.archlinux.org/index.php/Debug_-_Getting_Traces">https://wiki.archlinux.org/index.php/Debug_-_Getting_Traces</a>
+<a href="https://wiki.archlinux.org/index.php/Patching_packages">https://wiki.archlinux.org/index.php/Patching_packages</a>
+ABS/asp</p>
+
+<p>ldd</p>
+
+<h1 id="fs">FS</h1>
+
+<h2 id="major-minor">major/minor</h2>
+
+<p>通过lsblk可以查看major:minor
+ls -l /dev 也可以查看major:minor
+<code>brw-rw----  1 root disk     8,   0 Dec 19 07:59 sda</code>
+最前面的b代表block设备</p>
+
+<h2 id="debugfs-ext4-3-fs">debugfs（ext4/3 fs)</h2>
+
+<p>通过inode找文件：</p>
+
+<pre><code class="language-shell">sudo debugfs /dev/sda6
+debugfs: ncheck &lt;inode number&gt;
+Inode Pathname
+10403886  /home/tacy/i2p
+</code></pre>
+
+<h2 id="lsof">lsof</h2>
+
+<p>列出系统内打开的所有文件</p>
+
+<h2 id="file-lock">file lock</h2>
+
+<p>lslocks  -&gt; utils-linux
+/proc/locks</p>
+
+<h1 id="network-1">Network</h1>
+
+<p>iproute2替换之前的大部分网络工具， 例如netstat/ifconfig/route等</p>
+
+<p>以后常用的工具ip和ss</p>
+
+<h2 id="ss">ss</h2>
+
+<h3 id="查看当前tcp状态">查看当前tcp状态</h3>
+
+<p>ss -top
+可以查看当前所有的连接：包括状态/定时器（retrans/keepalive)，发送和接受队列，那个进程发起，用户是谁都能看到</p>
+
+<pre><code class="language-shell">ss -o state established '( dport = :ssh or sport = :ssh )'
+  Display all established ssh connections.
+
+ss -x src /tmp/.X11-unix/*
+  Find all local processes connected to X server.
+</code></pre>
+
+<h2 id="sockdump">sockdump</h2>
+
+<p>这是别人用brf写的一个监控unix socket的小工具，可以查看unix socket间的通讯记录
+用<code>ss -xlp</code>可以查看系统处于listen状态下的unix socket</p>
+
+<h1 id="utils">Utils</h1>
+
+<h2 id="coreutils">coreutils</h2>
+
+<p>这个工具集里面的所有工具你都看一遍man，基本上都是些很常用的工具，例如：cat/mkdir/cp/rm/tail/head/sort/nohup/mv啥的</p>
+
+<h2 id="sysstat-procps-ng">sysstat &amp; procps-ng</h2>
+
+<p>这里面基本都是系统状态有关的工具，例如：top/vmstat/iostat/mpstat/ps/free/pidof/sysctl/pgrep/sar/pidstat</p>
+
+<h2 id="iproute2">iproute2</h2>
+
+<p>网络配置和状态查看相关工具：ip/ifcfg/bridge/ss/tc</p>
+
+<h2 id="util-linux">util-linux</h2>
+
+<p>大工具包，里面的工具包括：kill/fdisk/su/lslogins/lscpu/lsns/dmesg/nsenter/fsck/namei</p>
+
+<h2 id="binutils">binutils</h2>
+
+<p>库相关工具，例如:ld/nm/strings/objdump/objcopy</p>
+
+<h2 id="iptables">iptables</h2>
+
+<p>防火墙相关软件，主要是iptables</p>
+
+<h2 id="systemd-1">systemd</h2>
+
+<p>服务相关工具： systemd/journalctl/coredumpctl/busctl/gdbus</p>
+
+<h2 id="其他">其他</h2>
+
+<p>man / debugfs / gdb / lsof</p>
+
+<h1 id="my-server-configuration">my server configuration</h1>
+
+<p><a href="https://www.digitalocean.com/community/tutorials/how-to-install-dropbox-client-as-a-service-on-centos-7">https://www.digitalocean.com/community/tutorials/how-to-install-dropbox-client-as-a-service-on-centos-7</a>
+<a href="https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-centos-7">https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-centos-7</a></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">春龙</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">2019-01-04</span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">License</span>
+    <span class="item-content">true</span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="http://tacy.github.io/tags/tech/">tech</a>
+          <a href="http://tacy.github.io/tags/linux/">linux</a>
+          <a href="http://tacy.github.io/tags/archlinux/">archlinux</a>
+          <a href="http://tacy.github.io/tags/notes/">notes</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+          <a class="prev" href="/post/ceph/">
+            
+            <i class="iconfont">
+              <svg  class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417 757.434875 204.940602c11.338233-12.190647 11.035334-32.285311-0.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-0.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891 0.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"></path>
+</svg>
+
+            </i>
+            <span class="prev-text nav-default">ceph notes</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        
+          <a class="next" href="/post/l2tp-ipsec-in-linode/">
+            <span class="next-text nav-default">l2tp ipsec in linode</span>
+            <span class="prev-text nav-mobile">Next</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+
+  
+
+  <div class="disqus-comment">
+  <div class="disqus-button" id="load_disqus" onclick="load_disqus()">
+    Show Disqus Comments
+  </div>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_config = function () {
+      this.page.url = "http://tacy.github.io/post/archlinux/";
+    };
+    function load_disqus() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'tacyweblog';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+
+      $('#load_disqus').remove();
+    };
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+  
+  </div>
+  
+    
+
+
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+  
+  
+    <a href="mailto:your@email.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://stackoverflow.com/users/1225294/tacy-lee" rel="me noopener" class="iconfont"
+      title="stack-overflow"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M809.714286 932.571429l-638.857143 0 0-274.285714-91.428571 0 0 365.714286 821.714286 0 0-365.714286-91.428571 0 0 274.285714zm-538.285714-299.428571l18.857143-89.714286 447.428571 94.285714-18.857143 89.142857zm58.857143-213.714286l38.285714-83.428571 414.285714 193.714286-38.285714 82.857143zm114.857143-203.428571l58.285714-70.285714 350.857143 293.142857-58.285714 70.285714zm226.857143-216l272.571429 366.285714-73.142857 54.857143-272.571429-366.285714zm-410.285714 840.571429l0-90.857143 457.142857 0 0 90.857143-457.142857 0z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://twitter.com/tacy_lee" rel="me noopener" class="iconfont"
+      title="twitter"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1264 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M1229.8616 18.043658c0 0-117.852626 63.135335-164.151872 67.344358-105.225559-164.151872-505.082682-92.598492-437.738325 223.078185C278.622548 312.675223 89.216542 47.506814 89.216542 47.506814s-117.852626 189.406006 75.762402 345.139833C127.097743 396.85567 55.544363 371.601535 55.544363 371.601535S26.081207 535.753407 253.368414 615.724832c-21.045112 29.463156-113.643603 8.418045-113.643603 8.418045s25.254134 143.10676 231.496229 180.987961c-143.10676 130.479693-387.230056 92.598492-370.393967 105.225559 206.242095 189.406006 1119.599946 231.496229 1128.01799-643.98042C1179.353331 249.539887 1263.533778 123.269217 1263.533778 123.269217s-130.479693 37.881201-138.897738 33.672179C1225.652577 98.015083 1229.8616 18.043658 1229.8616 18.043658"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/tacy" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://weibo.com/p/1005051970158087" rel="me noopener" class="iconfont"
+      title="weibo"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M385.714286 733.714286q12-19.428571 6.285714-39.428571t-25.714286-28.571429q-19.428571-8-41.714286-0.571429t-34.285714 26.285714q-12.571429 19.428571-7.428571 39.142857t24.571429 28.857143 42.571429 1.428571 35.714286-27.142857zm53.714286-69.142857q4.571429-7.428571 2-15.142857t-10-10.571429q-8-2.857143-16.285714 2.857143t-12.285714 10.571429q-9.714286 17.714286 7.428571 25.714286 8 2.857143 16.571429 2.857143t12.571429-10.571429zm99.428571 61.142857q-25.714286 58.285714-90.285714 85.714286t-128 6.857143q-61.142857-19.428571-84.285714-72.285714t3.714286-107.142857q26.857143-53.142857 86.571429-79.428571t120.285714-10.857143q63.428571 16.571429 90.571429 68.285714t1.428571 108.857143zm178.285714-91.428571q-5.142857-54.857143-50.857143-97.142857t-119.142857-62.285714-156.857143-12q-127.428571 13.142857-211.142857 80.857143t-75.714286 151.142857q5.142857 54.857143 50.857143 97.142857t119.142857 62.285714 156.857143 12q127.428571-13.142857 211.142857-80.857143t75.714286-151.142857zm176 2.285714q0 38.857143-21.142857 79.714286t-62.285714 78.285714-96.285714 67.142857-129.142857 47.428571-154.571429 17.714286-157.142857-19.142857-137.428571-53.142857-98-86.285714-37.142857-114q0-65.714286 39.714286-140t112.857143-147.428571q96.571429-96.571429 195.142857-134.857143t140.857143 4q37.142857 36.571429 11.428571 119.428571-2.285714 8-0.571429 11.428571t5.714286 4 8.285714 2.857143 7.714286-2l3.428571-1.142857q79.428571-33.714286 140.571429-33.714286t87.428571 34.857143q25.714286 36 0 101.714286-1.142857 7.428571-2.571429 11.428571t2.571429 7.142857 6.857143 4.285714 9.714286 3.428571q32.571429 10.285714 58.857143 26.857143t45.714286 46.571429 19.428571 66.571429zm-42.285714-356.571429q24 26.857143 31.142857 62t-3.714286 67.142857q-4.571429 13.142857-16.857143 19.428571t-25.428571 2.285714q-13.142857-4.571429-19.428571-16.857143t-2.285714-25.428571q11.428571-36-13.714286-63.428571t-61.142857-20q-13.714286 2.857143-25.714286-4.571429t-14.285714-21.142857q-2.857143-13.714286 4.571429-25.428571t21.142857-14.571429q34.285714-7.428571 68 3.142857t57.714286 37.428571zm103.428571-93.142857q49.714286 54.857143 64.285714 127.142857t-7.714286 138q-5.142857 15.428571-19.428571 22.857143t-29.714286 2.285714-22.857143-19.428571-2.857143-29.714286q16-46.857143 5.714286-98.285714t-45.714286-90.285714q-35.428571-39.428571-84.571429-54.571429t-98.857143-4.857143q-16 3.428571-29.714286-5.428571t-17.142857-24.857143 5.428571-29.428571 24.857143-16.857143q70.285714-14.857143 139.428571 6.571429t118.857143 76.857143z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://www.douban.com/people/tacy_lee/" rel="me noopener" class="iconfont"
+      title="douban"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M926.917973 37.80608C959.65184 37.80608 986.19392 64.34816 986.19392 97.082027L986.19392 926.917973C986.19392 959.65184 959.65184 986.19392 926.917973 986.19392L97.082027 986.19392C64.34816 986.19392 37.80608 959.65184 37.80608 926.917973L37.80608 97.082027C37.80608 64.34816 64.34816 37.80608 97.082027 37.80608zM176.653653 176.19968 176.653653 252.678827 825.658027 252.678827 825.658027 176.19968zM217.719467 316.146347 217.719467 628.08064 273.524053 628.08064 341.292373 770.39616 157.259093 770.39616 157.259093 845.417813 842.949973 845.417813 842.949973 770.39616 654.226773 770.39616 722.899627 628.08064 783.67744 628.08064 783.67744 316.146347zM684.885333 392.891733 684.885333 553.987413 312.576 553.987413 312.576 392.891733zM570.770773 770.39616 426.653013 770.39616 359.621973 628.08064 639.443627 628.08064z"></path>
+</svg>
+
+    </a>
+
+
+<a href="http://tacy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+  
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2012 -
+    2019
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        春龙
+        
+      </span></span>
+
+  
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

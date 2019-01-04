@@ -68,7 +68,7 @@
 
 <meta itemprop="datePublished" content="2012-08-16T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2012-08-16T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="3151">
+<meta itemprop="wordCount" content="5024">
 
 
 
@@ -354,6 +354,85 @@ if (!doNotTrack) {
 </code></pre>
 
 <p>tcp A 发送FIN到tcp B，请求终止连接，tcp A来到FIN-WAIT-1状态；tcp B接收到FIN之后处于CLOSE-WAIT状态，tcp B发送ACK到TCP A；TCP A接收到ACK之后来到FIN-WAIT-2状态，这个时候，tcp A到tcp B的发送数据通道其实已经结束，但是由于连接是双向的，所以tcp A依然要等待tcp B发送完数据；tcp B处理完剩余的数据之后，发送FIN到tcp A，tcp B处于LAST-ACK状态，这个时候tcp A处于TIME-WAIT状态，tcp A应答ACK，tcp B CLOSED，tcp A等待2 MSL（一般是2毫秒）之后CLOSED。</p>
+
+<h2 id="rto">RTO</h2>
+
+<p>计算方法有很多种, 首先是采样RTT, 然后计算SRTT, 计算SRTT的公式:
+<code>SRTT = (SRTT*0.9) + RTT*0.1</code>, TCPIP只需要记住一个旧的SRTT即可, 新采样的RTT比例占0.1~0.2</p>
+
+<p>然后计算RTO: <code>RTO = min(ubound, max(lbound, SRTT*(1.3~2))</code>, ubound代表上线, 建议设置, 例如1分钟, 同样, lbound建议设置, 例如1秒.</p>
+
+<h2 id="min-rto">min rto</h2>
+
+<p>The minimum RTO can be changed. TCP_RTO_MIN, which is a kernel configu-
+ration constant, can be changed prior to recompiling and installing the kernel.
+Some Linux versions also allow it to be changed using the ip route command.
+When TCP is used in data-center networks where RTTs may be a few microsec-
+onds, 200ms minimum RTO can lead to severe performance degradations due to
+slow TCP recovery after packet loss in local switches. This is the so-called TCP
+\u201cincast\u201d problem. Various solutions exist to this problem, including modification of
+the TCP timer granularity and minimum RTO to be on the order of microseconds
+[V09]. Such small minimum RTO values are not recommended for use on the
+global Internet.</p>
+
+<h2 id="fast-retransmit">Fast Retransmit</h2>
+
+<p>一般如果接受端收到乱序的包, 会立即发送dupack, 但是如果网络异常也会导致dupack, 所以发送端会等到duplicate ACK threshold or dupthresh达到, 然后就会重传包, 如果不支持sack, 一次只会重传一个包, 然后继续发送新包</p>
+
+<p>如果支持sack, 可以一次触发多个包重传.</p>
+
+<h2 id="receiver-windows">Receiver Windows</h2>
+
+<p>如果sequence number小于left edge, 丢弃(重传包), 如果大于right edge, 丢弃(不应该出现的包, 无法保存).</p>
+
+<p>reveiver只会ack连续的left edge的包, 如果不连续的包接收到, 会通过sack通知sender(out-of-order)</p>
+
+<h2 id="windows-size">Windows size</h2>
+
+<p>TCP window scale option is needed for efficient transfer of data when the bandwidth-delay product (BDP) is greater than 64K. For instance, if a T1 transmission line of 1.5 Mbit/second was used over a satellite link with a 513 millisecond round trip time (RTT), the bandwidth-delay product is (1,500,000 * 0.513) = 769,500 bits or about 96,187 bytes. Using a maximum buffer size of 64 KiB only allows the buffer to be filled to (65,535 / 96,187) = 68% of the theoretical maximum speed of 1.5 Mbits/second, or 1.02 Mbit/s.</p>
+
+<p>For example if the receive window is 2^15=32,768 bytes(receive window is the 2 bytes in the TCP header). If the window scale factor(options in TCP) is 3, calculation is as follows: (2^15) * (2^3) = 262,144 bytes. In essence, this is 2^18 = 262,144. (Shifting 3 bits to the left) Note that in the options field, window scale factor is sent in the SYN packet. Also, the value of the Window scale factor can go until 255 (2^8 = 1 byte) but the maximum allowed is 14. The reason why maximum value is 14 is because (2^16)*(2^14) = 1,073,741,824. If it increases beyond this then it will surpass the Sequence no#. Sequence no# is 4 bytes (2^32) and the size of the window can&rsquo;t go beyond the maximum value of the sequence no#.[1]</p>
+
+<p>By using the window scale option, the receive window size may be increased up to a maximum value of 1,073,725,440 bytes. This is done by specifying a one byte shift count in the header options field. The true receive window size is left shifted by the value in shift count. A maximum value of 14 may be used for the shift count value. This would allow a single TCP connection to transfer data over the example satellite link at 1.5 Mbit/second utilizing all of the available bandwidth.</p>
+
+<p>Essentially, not more than one full transmission window can be transferred within one round-trip time period. The window scale option enables a single TCP connection to fully utilize an LFN with a BDP of up to 1 GB, e.g. a 10 Gbit/s link with round-trip time of 800 ms.</p>
+
+<p>Linux kernels (from 2.6.8, August 2004) have enabled TCP Window Scaling by default. The configuration parameters are found in the /proc filesystem, see pseudo-file /proc/sys/net/ipv4/tcp_window_scaling and its companions /proc/sys/net/ipv4/tcp_rmem and /proc/sys/net/ipv4/tcp_wmem (more information: man tcp, section sysctl).[7]</p>
+
+<p>Scaling can be turned off by issuing the command sysctl -w &ldquo;net.ipv4.tcp_window_scaling=0&rdquo; as root. To maintain the changes after a restart, include the line &ldquo;net.ipv4.tcp_window_scaling=0&rdquo; in /etc/sysctl.conf (or /etc/sysctl.d/99-sysctl.conf as of systemd 207).</p>
+
+<h3 id="rwnd">RWND</h3>
+
+<p>TODO</p>
+
+<h3 id="cwnd">CWND</h3>
+
+<p>拥塞窗口, 一般tcp/ip能明确知道两端的buffer windows大小(ack/syn都携带窗口信息), 但是不能知道链路的拥塞情况, 所以在开始的时候会使用slow start机制, 也就是先试探着发送几个MSS, 如果情况良好, 继续增加CWND, 发送几个MSS由initcwnd控制, 该参数可以调整:</p>
+
+<pre><code class="language-shell">shell&gt; ip route | while read r; do
+           ip route change $r initcwnd 10;
+       done
+</code></pre>
+
+<h2 id="mss">MSS</h2>
+
+<p>只计算data, 不计算header, SYN会携带MSS信息, 如果没有MSS携带, 默认是536(IP数据包包大小+最小的ip头+最小的tcp头结果不能小于576, 这是规范定义的)</p>
+
+<h2 id="sack-selective-acknowledgment">SACK (Selective Acknowledgment)</h2>
+
+<p>In Chapter 12 we introduced the concept of a sliding window, and we described how TCP handles its sequence numbers and acknowledgments. Because it uses cumulative ACKs, TCP is never able to acknowledge data it has received correctly but that is not contiguous, in terms of sequence numbers, with data it has received previously. In such cases, the TCP receiver is said to have holes in its received data queue. A receiving TCP prevents applications from consuming data beyond a hole because of the byte stream abstraction it provides.</p>
+
+<p>If a TCP sender were able to learn of the existence of holes (and out-of-sequence data blocks beyond holes in the sequence space) at the receiver, it could better select which particular TCP segments to retransmit when segments are lost or otherwise missing at the receiver. The TCP selective acknowledgment (SACK) options [RFC2018][RFC2883] provide this capability. The scheme works effectively, however, only if the TCP sender logic is able to make effective use of the SACK information it receives from a SACK-capable receiver.</p>
+
+<p>A TCP learns that its peer is capable of advertising SACK information by receiving the SACK-Permitted option in a SYN (or SYN + ACK) segment. Once this has taken place, the TCP receiving out-of-sequence data may provide a SACK option that describes the out-of-sequence data to help its peer perform retransmissions more efficiently. SACK information contained in a SACK option consists of a range of sequence numbers representing data blocks the receiver has successfully received. Each range is called a SACK block and is represented by a pair of 32-bit sequence numbers. Thus, a SACK option containing n SACK blocks is (8n + 2) bytes long. Two bytes are used to hold the kind and length of the SACK option.</p>
+
+<h2 id="ack">ACK</h2>
+
+<p>ack应答, 会告诉对端, 之前的包我都收到了, 这样能应对ack包丢包的情况
+When TCP receives data from the other end of the connection, it sends an acknowledgment. This acknowledgment may not be sent immediately but is normally delayed a fraction of a second. The ACKs used by TCP are cumulative in thesense that an ACK indicating byte number N implies that all bytes up to number N (but not including it) have already been received successfully. This provides some robustness against ACK loss\u2014if an ACK is lost, it is very likely that a subsequent ACK is sufficient to ACK the previous segments.</p>
+
+<p>syn和fin包都需要占用一个sequence number, 而在tcp中, 需要消耗sequence number的包都需要重传机制, 而ack不消耗, 无需重传
+When a new connection is being established, the SYN bit field is turned on in the first segment sent from client to server. Such segments are called SYN segments,or simply SYNs. The Sequence Number field then contains the first sequence number to be used on that direction of the connection for subsequent sequence numbers and in returning ACK numbers (recall that connections are all bidirectional). Note that this number is not 0 or 1 but instead is another number, often randomly chooen, called the initial sequence number (ISN). The reason for the ISN not being 0 or 1 is a security measure and will be discussed in Chapter 13. The sequence number of the first byte of data sent on this direction of the connection is the ISN plus 1 because the SYN bit field consumes one sequence number. As we shall see later,consuming a sequence number also implies reliable delivery using retransmission.Thus, SYNs and application bytes (and FINs, which we will see later) are reliably delivered. ACKs, which do not consume sequence numbers, are not.</p>
 
 <h1 id="hub-bridge-switch-router">Hub &amp; Bridge &amp; Switch &amp; Router</h1>
 
