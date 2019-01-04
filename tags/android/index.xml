@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Android on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/android/</link>
+    <description>Recent content in Android on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 29 Jul 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/android/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>android notes</title>
+      <link>http://tacy.github.io/post/android/</link>
+      <pubDate>Tue, 29 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/android/</guid>
+      <description>Android emulator 只需加载kvm模块，同时启动命令上添加‘-qemu -enable-kvm’ 参数即可，启动命令： emulator64-x86 -avd test -data userdata.img -qemu -m 2048 -enable-kvm vm’ 参数即可，启动命令</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tcpip on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/tcpip/</link>
+    <description>Recent content in Tcpip on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 21 Aug 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/tcpip/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>wireshark和tcpdump相关笔记</title>
+      <link>http://tacy.github.io/post/wireshark-tcpdump/</link>
+      <pubDate>Thu, 21 Aug 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/wireshark-tcpdump/</guid>
+      <description>一个问题诊断 系统做了单点登录，用的是CAS，用户反馈偶尔系统登出之后，重新用其他帐号登入，查询 到的用户资料依然是上一个用户的，只有关闭浏览器</description>
+    </item>
+    
+    <item>
+      <title>Knowledge of network</title>
+      <link>http://tacy.github.io/post/knowledge-of-network/</link>
+      <pubDate>Thu, 16 Aug 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/knowledge-of-network/</guid>
+      <description>tcp/ip 一些基本概念 ip在网络层，只负责发送和路由，不保证有序、正确、送达；tcp负责保证包有序、正确、送达，流量控制这种事自然也是tcp负责；端</description>
+    </item>
+    
+  </channel>
+</rss>

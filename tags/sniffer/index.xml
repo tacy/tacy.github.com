@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Sniffer on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/sniffer/</link>
+    <description>Recent content in Sniffer on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 21 Aug 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/sniffer/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>wireshark和tcpdump相关笔记</title>
+      <link>http://tacy.github.io/post/wireshark-tcpdump/</link>
+      <pubDate>Thu, 21 Aug 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/wireshark-tcpdump/</guid>
+      <description>一个问题诊断 系统做了单点登录，用的是CAS，用户反馈偶尔系统登出之后，重新用其他帐号登入，查询 到的用户资料依然是上一个用户的，只有关闭浏览器</description>
+    </item>
+    
+  </channel>
+</rss>

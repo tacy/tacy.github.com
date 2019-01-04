@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Notes on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/notes/</link>
+    <description>Recent content in Notes on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 29 Jul 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/notes/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>android notes</title>
+      <link>http://tacy.github.io/post/android/</link>
+      <pubDate>Tue, 29 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/android/</guid>
+      <description>Android emulator 只需加载kvm模块，同时启动命令上添加‘-qemu -enable-kvm’ 参数即可，启动命令： emulator64-x86 -avd test -data userdata.img -qemu -m 2048 -enable-kvm vm’ 参数即可，启动命令</description>
+    </item>
+    
+    <item>
+      <title>linux kernel</title>
+      <link>http://tacy.github.io/post/linux-kernel/</link>
+      <pubDate>Thu, 19 Jun 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/linux-kernel/</guid>
+      <description>linux kernel vm vfs_cache_pressure 简单说，就是控制page cache的回收，是优先回收data block还是meta block(page cache 包括这两部分），一般情况下建议还是保留meta</description>
+    </item>
+    
+    <item>
+      <title>emacs notes</title>
+      <link>http://tacy.github.io/post/emacs-tips/</link>
+      <pubDate>Sat, 28 Sep 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/emacs-tips/</guid>
+      <description>Display too long line highlight (setq whitespace-style &#39;(lines)) (setq whitespace-line-column 78) (global-whitespace-mode 1) Macro | key sequence | comment | |--------------+-------------------------------| | F3 | start record macro | | F4 | end record macro | | C-x ( | start record macro | | C-x ) | end record macro | | C-x e | execute last macro | | C-u 10 C-x e | execute last macro repeat 100</description>
+    </item>
+    
+    <item>
+      <title>openstack notes</title>
+      <link>http://tacy.github.io/post/openstack/</link>
+      <pubDate>Wed, 28 Aug 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/openstack/</guid>
+      <description>Swift Ring builder 读了一下ringbuilder代码，简单记录一下，免的忘了 Add device 添加device的时候可以指定每个device的meta信息和repli</description>
+    </item>
+    
+    <item>
+      <title>python notes</title>
+      <link>http://tacy.github.io/post/python/</link>
+      <pubDate>Tue, 23 Jul 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/python/</guid>
+      <description>enviroment virtualenv virtualenv myenv source .myenv/bin/activate deactivate Core type integer, string, tuple is immutable, can&amp;rsquo;t by change in-place keep in mind that the mutable type is share reference, if you need to change them You can copy sequence type by slice, but it only copy top-level, if you want to completely copy the object, use deepcopy #+BEGIN_SRC python &amp;gt;&amp;gt;&amp;gt;x = [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt;y = [&amp;lsquo;aa&amp;rsquo;, x[:]] &amp;gt;&amp;gt;&amp;gt;x[0] =</description>
+    </item>
+    
+  </channel>
+</rss>

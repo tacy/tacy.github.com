@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kernel on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/kernel/</link>
+    <description>Recent content in Kernel on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 19 Jun 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/kernel/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>linux kernel</title>
+      <link>http://tacy.github.io/post/linux-kernel/</link>
+      <pubDate>Thu, 19 Jun 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/linux-kernel/</guid>
+      <description>linux kernel vm vfs_cache_pressure 简单说，就是控制page cache的回收，是优先回收data block还是meta block(page cache 包括这两部分），一般情况下建议还是保留meta</description>
+    </item>
+    
+  </channel>
+</rss>

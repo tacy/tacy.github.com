@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Multimedia on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/multimedia/</link>
+    <description>Recent content in Multimedia on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 14 Apr 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/multimedia/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>FFmpeg使用笔记</title>
+      <link>http://tacy.github.io/post/ffmpeg/</link>
+      <pubDate>Mon, 14 Apr 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/ffmpeg/</guid>
+      <description>FFmpeg 视频压缩首先想到的自然是FFmpeg，我用的是Ubuntu，很不幸Ubuntu用Libav提到了FFmpeg ，具体为啥有了Libav建议l</description>
+    </item>
+    
+  </channel>
+</rss>

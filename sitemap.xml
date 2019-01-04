@@ -17,10 +17,255 @@
   </url>
   
   <url>
+    <loc>http://tacy.github.io/post/ceph/</loc>
+    <lastmod>2015-04-08T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/l2tp-ipsec-in-linode/</loc>
+    <lastmod>2014-12-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/%E6%9C%AC%E5%9C%B0kvm%E7%8E%AF%E5%A2%83%E8%BF%90%E8%A1%8Ckubernetes%E9%9B%86%E7%BE%A4/</loc>
+    <lastmod>2014-11-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/cloud-init/</loc>
+    <lastmod>2014-11-07T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/raspberry-pi-wirelessap/</loc>
+    <lastmod>2014-10-29T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/marathon-in-mesos/</loc>
+    <lastmod>2014-08-30T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/wireshark-tcpdump/</loc>
+    <lastmod>2014-08-21T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/android/</loc>
+    <lastmod>2014-07-29T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/flamegraph/</loc>
+    <lastmod>2014-07-16T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/linux-kernel/</loc>
+    <lastmod>2014-06-19T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/byteman/</loc>
+    <lastmod>2014-06-11T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/systemtap/</loc>
+    <lastmod>2014-06-10T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/linux-perf/</loc>
+    <lastmod>2014-06-04T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/ffmpeg/</loc>
+    <lastmod>2014-04-14T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/docker/</loc>
+    <lastmod>2014-04-04T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/db2-locks-and-isolation-level/</loc>
+    <lastmod>2014-04-01T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/hotspot-gc/</loc>
+    <lastmod>2014-03-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/oracle-awr/</loc>
+    <lastmod>2014-03-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/storage/</loc>
+    <lastmod>2014-03-21T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/strace/</loc>
+    <lastmod>2014-03-18T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/baidu-online-input/</loc>
+    <lastmod>2014-01-18T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/qq-video-download-url/</loc>
+    <lastmod>2014-01-14T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/emacs-tips/</loc>
+    <lastmod>2013-09-28T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/openstack/</loc>
+    <lastmod>2013-08-28T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/neteaseopencourse-xbmc-plugin/</loc>
+    <lastmod>2013-07-23T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/python/</loc>
+    <lastmod>2013-07-23T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/linux-kvm/</loc>
+    <lastmod>2013-02-18T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/raspberry-pi-notes/</loc>
+    <lastmod>2013-02-10T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/xmodmap-configure/</loc>
+    <lastmod>2013-02-08T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/hypervisor/</loc>
+    <lastmod>2012-08-31T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/openvswitch/</loc>
+    <lastmod>2012-08-31T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/knowledge-of-network/</loc>
+    <lastmod>2012-08-16T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/emacs-orgmode-jekyll-blog/</loc>
+    <lastmod>2012-08-15T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/post/openstack-question-diagnose/</loc>
+    <lastmod>2012-07-31T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>http://tacy.github.io/post/write-something/</loc>
     <lastmod>2012-07-26T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/android/</loc>
+    <lastmod>2014-07-29T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
   </url>
   
   <url>
@@ -30,14 +275,91 @@
   </url>
   
   <url>
-    <loc>http://tacy.github.io/tags/life/</loc>
-    <lastmod>2012-07-26T00:00:00+00:00</lastmod>
+    <loc>http://tacy.github.io/tags/ceph/</loc>
+    <lastmod>2015-04-08T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/cloud/</loc>
+    <lastmod>2014-08-30T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/container/</loc>
+    <lastmod>2014-11-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/database/</loc>
+    <lastmod>2014-04-01T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/db2/</loc>
+    <lastmod>2014-04-01T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/emacs/</loc>
+    <lastmod>2013-09-28T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/hypervisor/</loc>
+    <lastmod>2013-02-18T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/java/</loc>
+    <lastmod>2014-07-16T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/kernel/</loc>
+    <lastmod>2014-06-19T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/kubernetes/</loc>
+    <lastmod>2014-11-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/kvm/</loc>
+    <lastmod>2014-11-07T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://tacy.github.io/categories/life/</loc>
+    <lastmod>2012-07-26T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/life/</loc>
     <lastmod>2012-07-26T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
@@ -51,8 +373,92 @@
   </url>
   
   <url>
+    <loc>http://tacy.github.io/tags/multimedia/</loc>
+    <lastmod>2014-04-14T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/network/</loc>
+    <lastmod>2014-08-21T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/notes/</loc>
+    <lastmod>2014-07-29T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/openstack/</loc>
+    <lastmod>2013-08-28T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/oracle/</loc>
+    <lastmod>2014-03-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/performance/</loc>
+    <lastmod>2014-07-16T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>http://tacy.github.io/post/</loc>
     <lastmod>2019-01-02T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/python/</loc>
+    <lastmod>2014-01-18T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/raspberrypi/</loc>
+    <lastmod>2014-10-29T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/sniffer/</loc>
+    <lastmod>2014-08-21T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/spice/</loc>
+    <lastmod>2013-02-18T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/storage/</loc>
+    <lastmod>2015-04-08T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/strace/</loc>
+    <lastmod>2014-03-18T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -66,20 +472,27 @@
   
   <url>
     <loc>http://tacy.github.io/tags/</loc>
-    <lastmod>2012-07-26T00:00:00+00:00</lastmod>
+    <lastmod>2014-07-29T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://tacy.github.io/tags/tech/</loc>
-    <lastmod>2019-01-02T00:00:00+00:00</lastmod>
+    <loc>http://tacy.github.io/tags/tcpip/</loc>
+    <lastmod>2014-08-21T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://tacy.github.io/categories/tech/</loc>
+    <lastmod>2019-01-02T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/tech/</loc>
     <lastmod>2019-01-02T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
@@ -93,6 +506,13 @@
   </url>
   
   <url>
+    <loc>http://tacy.github.io/tags/tools/</loc>
+    <lastmod>2014-08-21T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>http://tacy.github.io/tags/trace/</loc>
     <lastmod>2019-01-02T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -100,8 +520,50 @@
   </url>
   
   <url>
+    <loc>http://tacy.github.io/tags/troubeshooting/</loc>
+    <lastmod>2014-06-11T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>http://tacy.github.io/tags/troubleshooting/</loc>
     <lastmod>2019-01-02T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/tuning/</loc>
+    <lastmod>2014-07-16T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/ubuntu/</loc>
+    <lastmod>2013-02-08T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/virtualization/</loc>
+    <lastmod>2015-04-08T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/vpn/</loc>
+    <lastmod>2014-12-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://tacy.github.io/tags/xmbc/</loc>
+    <lastmod>2014-01-18T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>

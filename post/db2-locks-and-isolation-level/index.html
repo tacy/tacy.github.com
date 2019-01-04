@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>DB2锁和隔离级别 - Tacy - Notes</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="春龙" /><meta name="description" content="DB2锁相关信息以及和隔离级别对于锁的影响" />
+
+  <meta name="keywords" content="Tacy, tech, life, linux, performance, kubernetes, golang, java, troubleshooting" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.51" />
+
+
+<link rel="canonical" href="http://tacy.github.io/post/db2-locks-and-isolation-level/" />
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.c8c1ff75dee09b44060a6c38f41b9036bac2512ccdb22d7f296cec12dc786375.css" integrity="sha256-yMH/dd7gm0QGCmw49BuQNrrCUSzNsi1/KWzsEtx4Y3U=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="DB2锁和隔离级别" />
+<meta property="og:description" content="DB2锁相关信息以及和隔离级别对于锁的影响" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://tacy.github.io/post/db2-locks-and-isolation-level/" /><meta property="article:published_time" content="2014-04-01T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2014-04-01T00:00:00&#43;00:00"/>
+
+<meta itemprop="name" content="DB2锁和隔离级别">
+<meta itemprop="description" content="DB2锁相关信息以及和隔离级别对于锁的影响">
+
+
+<meta itemprop="datePublished" content="2014-04-01T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2014-04-01T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="5072">
+
+
+
+<meta itemprop="keywords" content="tech,database,db2,tuning," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="DB2锁和隔离级别"/>
+<meta name="twitter:description" content="DB2锁相关信息以及和隔离级别对于锁的影响"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33694554-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Tacy&#39;s notes</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/">Home</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/post/">Archives</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/tags/">Tags</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/categories/">Categories</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/about/">About</a>
+          
+        
+      </li>
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      Tacy's notes
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/">Home</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/post/">Archives</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/tags/">Tags</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/categories/">Categories</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/about/">About</a>
+          
+
+        
+
+      </li>
+    
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">DB2锁和隔离级别</h1>
+      
+      <div class="post-meta">
+        <time datetime="2014-04-01" class="post-time">
+          2014-04-01
+        </time>
+        <div class="post-category">
+            <a href="http://tacy.github.io/categories/tech/"> tech </a>
+            
+          </div>
+        
+
+        
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    
+    <div class="post-content">
+      
+
+<h1 id="db2的锁">DB2的锁</h1>
+
+<p>DB2的锁实现机制很复杂，它没有实现类似Oracle的undo机制，导致操作之间容易阻塞，
+比如你经常会听到有人说DB2查询阻塞更新，更新不同记录导致阻塞等！这其中到底是
+如何导致的？是否有迹可循？Oracle的应用迁移到DB2是否就是简单的SQL兼容测试？同
+样的应用逻辑为何在DB2上会发生死锁？如何能够提高DB2的并发能力？针对这些问题，
+本文尝试做一些解读。</p>
+
+<h2 id="锁列表-fn-1">锁列表[fn:1]</h2>
+
+<p>首先我们先来看看DB2的锁列表，下表里面列出了DB2使用到的所有锁。表中的Lock Mode
+一列是锁的名称；第二列Applicable Object Type表示锁适用的对象范围，例如IN不是
+一个Row锁；第三列Description是对锁的一个简单描述。</p>
+
+<p>首先我们来看锁名称，DB2将锁分为Intent Locks和Non-intent Locks，也就是人们通常
+所说的意向锁和非意向锁，锁名称中带“I”子母的都是意向锁，剩下的都是非意向锁，
+意向锁是粗粒度锁，不能锁行。从字面意思理解，表示有意向做什么操作，举个例子：
+我有一条Update语句希望对A表做Update操作，那么DB2会首先对A表加IX（意象排他）锁
+，然后结合行级X锁实现（具体会更复杂，后面我们会讲到）。除了IN锁之外，其他的意
+向锁（IS，IX，SIX）都需要结合行级锁实现具体操作。IN锁是一个特例，基本可以理解
+为不锁（只是排他Z锁，后续的兼容列表可以看到，UR隔离级别使用）。</p>
+
+<p>非意向锁中，NS、S、U为读请求锁，其中：NS是行级别锁，只使用在RS和CS隔离级别，RR
+隔离级别直接加S锁；select for update语句对行加U锁，表级U锁使用于比如LOAD、REORG
+。X、Z、NW为写请求锁，Z锁基本都是DDL操作，X锁也是排他的，只有UR隔离级别允许读，
+NW锁应该不常发生，只有在RR隔离级别做索引扫描的时候，同时对扫描的索引插入一个Key
+，这时插入操作无法完成，需要等待事物完成，这时候，插入操作会在插入Key的下一个
+Key加NW锁。</p>
+
+<p>锁适用的对象范围表示锁能加在哪些对象上。对于锁的描述我也不重复了。</p>
+
+<p>|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-|
+| Lock Mode              | Applicable Object Type  | Description                                     |
+|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-|
+| IN(Intent None)        | Table spaces, blocks,   | The lock owner can read any data in the         |
+|                        | tables, data partitions | object, including uncommitted data, but         |
+|                        |                         | cannot update any of it. Other concurrent       |
+|                        |                         | applications can read or update the table.      |
+|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-|
+| IS (Intent Share)      | Table spaces, blocks,   | The lock owner can read data in the locked      |
+|                        | tables, data partitions | table. but cannot update this data. Other       |
+|                        |                         | applications can read or update the table.      |
+|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-|
+| IX (Intent Exclusive)  | Table spaces, blocks,   | The lock owner and concurrent applications      |
+|                        | tables, data partitions | can read and update data. Other concurrent      |
+|                        |                         | applications can both read and update the       |
+|                        |                         | table.                                          |
+|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-|
+| NS (Scan Share)        | Rows                    | The lock owner and all concurrent applica-      |
+|                        |                         | -tions can read, but not update, the locked     |
+|                        |                         | row. This lock is acquired on rows of a ta-     |
+|                        |                         | -ble, instead of an S lock, where the isol-     |
+|                        |                         | -ation level of the application is either RS    |
+|                        |                         | or CS.                                          |
+|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-|
+| NW (Next Key Weak      | Rows                    | When a row is inserted into an index, an NW     |
+| Exclusive)             |                         | lock is acquired on the next row. This occurs   |
+|                        |                         | only if the next row is currently locked by an  |
+|                        |                         | RR scan. The lock owner can read but not update |
+|                        |                         | the locked row. This lock mode is similar to an |
+|                        |                         | X lock, except that it is also compatible with  |
+|                        |                         | NS locks.                                       |
+|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-|
+| S (Share)              | Rows, blocks, tables,   | The lock owner and all concurrent applications  |
+|                        | data partitions         | can read, but not update, the locked data.      |
+|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-|
+| SIX (Share with intent | Tables, blocks, data    | The lock owner can read and update data. Other  |
+| Exclusive)             | partitions              | concurrent applications can read the table.     |
+|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-|
+| U (Update)             | Rows, blocks, tables,   | The lock owner can update data. Other units of  |
+|                        | data partitions         | work can read the data in the locked object,    |
+|                        |                         | but cannot update it.                           |
+|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-|
+| X (Exclusive)          | Rows, blocks, tables,   | The lock owner can both read and update data in |
+|                        | buffer pools, data      | the locked object. Only uncommitted read (UR)   |
+|                        | partitions              | applications can access the locked object.      |
+|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-|
+| Z (Supper Exclusive)   | Tables spaces, tables,  | This lock is acquired on a table under certain  |
+|                        | data partitions, blocks | conditions, such as when the table is altered   |
+|                        |                         | or dropped, an index on the table is created or |
+|                        |                         | dropped, or for some types of table reorganiza- |
+|                        |                         | -tion. No other concurrent application can read |
+|                        |                         | or update the table.                            |
+|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-|</p>
+
+<h2 id="锁兼容表-fn-2">锁兼容表[fn:2]</h2>
+
+<p>当A请求获取了某个对象的锁，B请求同时需要对该对象申请加锁的时候，如果两个锁不
+兼容，B请求需要等待，直到A请求释放该锁。</p>
+
+<p>下表列出了锁之间的兼容关系，横轴表示对象上已有的锁，纵轴表示申请在该对象上加锁</p>
+
+<p>|      | None | IN | IS | NS | S | IX | SIX | U | X | Z | NW |
+|&mdash;&mdash;+&mdash;&mdash;+&mdash;-+&mdash;-+&mdash;-+&mdash;+&mdash;-+&mdash;&ndash;+&mdash;+&mdash;+&mdash;+&mdash;-|
+| None | Y    | Y  | Y  | Y  | Y | Y  | Y   | Y | Y | Y | Y  |
+| IN   | Y    | Y  | Y  | Y  | Y | Y  | Y   | Y | Y | N | Y  |
+| IS   | Y    | Y  | Y  | Y  | Y | Y  | Y   | Y | N | N | N  |
+| NS   | Y    | Y  | Y  | Y  | Y | N  | N   | Y | N | N | Y  |
+| S    | Y    | Y  | Y  | Y  | Y | N  | N   | Y | N | N | N  |
+| IX   | Y    | Y  | Y  | N  | N | Y  | N   | N | N | N | N  |
+| SIX  | Y    | Y  | Y  | N  | N | N  | N   | N | N | N | N  |
+| U    | Y    | Y  | Y  | Y  | Y | N  | N   | N | N | N | N  |
+| X    | Y    | Y  | N  | N  | N | N  | N   | N | N | N | N  |
+| Z    | Y    | N  | N  | N  | N | N  | N   | N | N | N | N  |
+| NW   | Y    | Y  | N  | Y  | N | N  | N   | N | N | N | N  |</p>
+
+<h2 id="执行计划-锁和隔离级别之间的关系-fn-3">执行计划、锁和隔离级别之间的关系[fn:3]</h2>
+
+<p>对于DB2开发人员来说，掌握执行计划、锁和隔离级别之间的关系，可以很好的避免应用程
+序deadlock/timeout wait(SQLCODE -911 reason 2 和SQLCODE -911 reason 68)，增加应
+用程序并发能力。</p>
+
+<p>首先DB2的隔离级别分为RR、RS、CS、UR四种，具体的区别这里不做详细描述，有兴趣的人
+可以自己搜索相关资料了解。</p>
+
+<p>对于同样一条SQL语句，隔离级别和SQL执行计划都能影响到锁的使用，下面列出了相互之
+间的关系表。</p>
+
+<p>下面列表中斜杠前面的是表锁，斜杠后面的是行锁，&rsquo;-&lsquo;表示不加锁。</p>
+
+<p>在说明的时候，会用到TEST表，表数据如下：</p>
+
+<pre><code class="language-shell">db2inst1@tacy:~$ db2 'select * from test'
+A           B
+----------- -----------
+          1           1
+          2           2
+          3           3
+          4           4
+          5           5
+          6           6
+          7           7
+          8           8
+          9           9
+
+  9 record(s) selected.
+</code></pre>
+
+<h3 id="lock-modes-for-table-scans-with-no-predicates">Lock Modes for Table Scans with No Predicates</h3>
+
+<dl>
+<dt>DB2使用扫描表的方式执行SQL，同时SQL没有谓词，例如：</dt>
+<dd><p>select * from test 或者 update test set a=1</p></dd>
+</dl>
+
+<p>锁的使用情况如下表：</p>
+
+<p>[[img:db2-locks-1.png][db2locks table 1]]</p>
+
+<p>[[../images/db2-locks-1.png]]</p>
+
+<p>如果是只读的操作，比如Select，RR隔离级别时，直接对表加S锁；RS/CS是先对表加IS锁
+，然后对行加NS锁。UR隔离级别只对表加IN锁，兼容除Z以外的所有锁，并发性很高，但是
+要慎用，有脏读问题。</p>
+
+<p>如果是修改操作，比如Update，需要指出的是，数据库在执行Update操作的时候，会分为
+Scan和Update两部分：先是找到需要更新的行，然后对行做更新操作。Scan阶段，DB2会对
+所有需要扫描的数据行加锁，如果发现不是目标，则释放该行上的锁，换句话说，DB2会对
+所有需要扫描的数据加锁，不管是不是目标，理解这一点非常重要。Update阶段则保持目
+标行上的锁，或者升级锁（如果Scan阶段在目标行上锁级别不够，这种情况后续可以看到）
+。由于没有谓词，是对全表操作，RR隔离级别直接对表加X锁，RS/CS/UR先对表加IX锁，然
+后对行加X锁，两阶段锁一致。</p>
+
+<dl>
+<dt>例如下面语句：</dt>
+<dd><p>update test set a=1 where current of cursor_name</p></dd>
+</dl>
+
+<dl>
+<dt>例如下面语句：</dt>
+<dd><p>update test set a=1 where current of cursor_name</p></dd>
+</dl>
+
+<p>where current of cursor_name</p>
+
+<p>效果类似select for update操作，他们两者加锁的情况一致。</p>
+
+<p>针对上表的情况，建议你在事务中尽量不要对表做没有谓词的查询，如果你做了类似的操
+作，DB2会对表中的每条记录加NS/S锁，那么其他对该表的修改请求全部阻塞，因为X锁和
+NS/S锁不兼容，除非你使用UR隔离级别（IN兼容X）。</p>
+
+<h3 id="lock-modes-for-table-scans-with-predicates">Lock Modes for Table Scans with Predicates</h3>
+
+<dl>
+<dt>DB2使用表扫描方式执行SQL，带谓词，条件字段无索引，例如:</dt>
+<dd><p>select * from test where a=1 或者 update test set b=4 where a=1</p></dd>
+</dl>
+
+<p>针对test表的操作，a字段上无索引。</p>
+
+<p>[[img:db2-locks-2.png][db2locks table 2]]</p>
+
+<p>[[../images/db2-locks-2.png]]</p>
+
+<dl>
+<dt>事务一先执行操作：</dt>
+<dd>select * from test where a=1
+事物二后执行操作：</dd>
+<dd>update test set b=10 where a=3
+由于NS锁兼容U锁，当事物一在test表中”a=1“的行上加NS锁之后，允许事物二的Update语
+句对事物一锁定的行加U锁，当他发现这些行不是它需要更新的行时，就不会升级成X锁，这
+样他们相安无事。</dd>
+</dl>
+
+<dl>
+<dd>update test set b=10 where a=3
+由于NS锁兼容U锁，当事物一在test表中”a=1“的行上加NS锁之后，允许事物二的Update语
+句对事物一锁定的行加U锁，当他发现这些行不是它需要更新的行时，就不会升级成X锁，这
+样他们相安无事。</dd>
+</dl>
+
+<p>但是你思考一下，反过来这里可就不行了。如果是事物二先执行，事物一后执行，情况就
+不妙了。由于没有索引条件，两条语句必须扫描表，如果Update先执行，会对符合条件的
+行加X锁，Select后续扫描这些行的时候，虽然不是它的目标行，但是它需要先尝试加NS
+锁，X锁和NS锁不兼容，只能等待。</p>
+
+<dl>
+<dt>事物一执行：</dt>
+<dd>update test set b=11 where a=1
+事物二执行：</dd>
+<dd>update test set b=12 where a=2</dd>
+</dl>
+
+<dl>
+<dt>事物二执行：</dt>
+<dd>update test set b=12 where a=2</dd>
+</dl>
+
+<p>update test set b=12 where a=2</p>
+
+<h3 id="lock-modes-for-rid-index-scans-with-no-predicates">Lock Modes for RID Index Scans with No Predicates</h3>
+
+<dl>
+<dt>DB2使用索引扫描方式执行SQL，不带谓词，例如：</dt>
+<dd><p>select a from test 或者 update test set a=1</p></dd>
+</dl>
+
+<p>这里，我们的test表上，对a字段有索引。</p>
+
+<p>[[img:db2-locks-3.png][db2locks table 3]]
+[[../images/db2-locks-3.png]]</p>
+
+<p>和前两者的区别在于，这里不再是扫表了，而是扫描索引，但是由于没有任何条件，都是
+全表操作，并发能力和表一类似。</p>
+
+<h3 id="lock-modes-for-rid-index-scans-with-a-single-qualifying-row">Lock Modes for RID Index Scans with a Single Qualifying Row</h3>
+
+<dl>
+<dt>DB2使用索引扫描方式执行SQL，带谓词，例如：</dt>
+<dd><p>select a from test where a=2 或者 update test set b=1 where a=4</p></dd>
+</dl>
+
+<p>这里，我们的test表上，对a字段有索引。</p>
+
+<p>[[img:db2-locks-4.png][db2locks table 4]]
+[[../images/db2-locks-4.png]]</p>
+
+<dl>
+<dt>这种情况下，表二中的情况都能并行，但是别太乐观，如果我们往表里面增加一条记录：</dt>
+<dd>insert into test values(6,0)
+这个时候你再尝试先在事务一执行：</dd>
+<dd>update test set b=11 where a=5 with rs
+然后在事务二执行：</dd>
+<dd>update test set b=11 where a=9 and a=3 with rs
+不幸的是，事务二被阻塞了，你可以通过db2top获取事务二SQL的执行计划就知道原因，该
+update没有走索引，而是使用了全表扫描。</dd>
+</dl>
+
+<h3 id="lock-modes-for-rid-index-scans-with-start-and-stop-predicates-only">Lock Modes for RID Index Scans with Start and Stop Predicates Only</h3>
+
+<dl>
+<dt>DB2使用索引扫描方式执行SQL，带谓词，类似语句：</dt>
+<dd>select * from test where a&gt;1 and a&lt;5</dd>
+</dl>
+
+<p>基本情况都和上面类似，就不详述了，关键点就是执行计划会影响锁的使用。</p>
+
+<p>[[img:db2-locks-5.png][db2locks table 5]]
+[[../images/db2-locks-5.png]]</p>
+
+<h3 id="lock-modes-for-rid-index-scans-with-index-and-other-predicates-sargs-resids-only">Lock Modes for RID Index Scans with Index and Other Predicates (sargs, resids) Only</h3>
+
+<p>[[img:db2-locks-6.png][db2locks table 6]]
+[[../images/db2-locks-6.png]]</p>
+
+<h3 id="lock-modes-for-index-scans-used-for-deferred-data-page-access-rid-index-scan-with-no-predicates">Lock Modes for Index Scans Used for Deferred Data Page Access: RID Index Scan with No Predicates</h3>
+
+<p>后续的表主要理解Deferred Data Page Access这个概念，说的应该是多索引情况，感觉和
+前面的情况没有明显区别，可能情况更复杂点，比如先扫描A索引，获取ROW的bitmap和后
+续索引的bitmap做逻辑运算，获取最后结果，有可能更复杂，有待深入了解。</p>
+
+<p>[[img:db2-locks-7.png][db2locks table 7]]
+[[../images/db2-locks-7.png]]</p>
+
+<h3 id="lock-modes-for-index-scans-used-for-deferred-data-page-access-after-a-rid-index-scan-with-no-predicates">Lock Modes for Index Scans Used for Deferred Data Page Access: After a RID Index Scan with No Predicates</h3>
+
+<p>[[img:db2-locks-8.png][db2locks table 8]]
+[[../images/db2-locks-8.png]]</p>
+
+<h3 id="lock-modes-for-index-scans-used-for-deferred-data-page-access-rid-index-scan-with-predicates-sargs-resids">Lock Modes for Index Scans Used for Deferred Data Page Access: RID Index Scan with Predicates (sargs, resids)</h3>
+
+<p>[[img:db2-locks-9.png][db2locks table 9]]
+[[../images/db2-locks-9.png]]</p>
+
+<h3 id="lock-modes-for-index-scans-used-for-deferred-data-page-access-after-a-rid-index-scan-with-predicates-sargs-resids">Lock Modes for Index Scans Used for Deferred Data Page Access: After a RID Index Scan with Predicates (sargs, resids)</h3>
+
+<p>[[img:db2-locks-10.png][db2locks table 10]]
+[[../images/db2-locks-10.png]]</p>
+
+<h3 id="lock-modes-for-index-scans-used-for-deferred-data-page-access-rid-index-scan-with-start-and-stop-predicates-only">Lock Modes for Index Scans Used for Deferred Data Page Access: RID Index Scan with Start and Stop Predicates Only</h3>
+
+<p>[[img:db2-locks-11.png][db2locks table 11]]
+[[../images/db2-locks-11.png]]</p>
+
+<h3 id="lock-modes-for-index-scans-used-for-deferred-data-page-access-after-a-rid-index-scan-with-start-and-stop-predicates-only">Lock Modes for Index Scans Used for Deferred Data Page Access: After a RID Index Scan with Start and Stop Predicates Only</h3>
+
+<p>[[img:db2-locks-12.png][db2locks table 12]]
+[[../images/db2-locks-12.png]]</p>
+
+<h2 id="研究锁的一些方法">研究锁的一些方法</h2>
+
+<dl>
+<dt>验证RS隔离级别下两个SQL的并发情况，只需要写类似如下的SQL：</dt>
+<dd>db2 +c &lsquo;select * from test where a=1 with rs&rsquo;
+该SQL表明不自动提交，同时使用RS隔离级别。</dd>
+</dl>
+
+<dl>
+<dt>验证RS隔离级别下两个SQL的并发情况，只需要写类似如下的SQL：</dt>
+<dd>db2 +c &lsquo;select * from test where a=1 with rs&rsquo;
+该SQL表明不自动提交，同时使用RS隔离级别。</dd>
+</dl>
+
+<p>��，同时使用RS隔离级别。</p>
+
+<p>观察锁的情况，通过db2pd即可，比如我要观察阻塞的锁：</p>
+
+<pre><code class="language-shell">db2inst1@tacy:~$ db2pd -d tacy -wlocks
+Database Partition 0 -- Database TACY -- Active -- Up 0 days 02:21:36 -- Date 04/03/2014 22:16:53
+
+Locks being waited on :
+AppHandl [nod-index] TranHdl    Lockname                   Type       Mode Conv Sts CoorEDU    AppName  AuthID   AppID
+552      [000-00552] 12         02000400080000000000000052 Row        ..X       G   78         db2bp    DB2INST1 *LOCAL.db2inst1.140403115529
+541      [000-00541] 2          02000400080000000000000052 Row        ..U       W   20         db2bp    DB2INST1 *LOCAL.db2inst1.140403115517
+</code></pre>
+
+<p>简单解读一下，Lockname一致，表明他们希望是同样对象的锁，TranHdl表明事务ID，事务
+12持有Row上的X锁（Sts状态为G，表明获得锁），事务2等待（Sts状态未W，表明等待锁）
+。更详细信息可以通过下面命令：</p>
+
+<pre><code class="language-shell">db2inst1@tacy:~$ db2pd -db tacy -locks showlock wait
+
+Database Partition 0 -- Database TACY -- Active -- Up 0 days 02:31:33 -- Date 04/03/2014 22:26:50
+
+Locks:
+Address            TranHdl    Lockname                   Type       Mode Sts Owner      Dur HoldCount  Att        ReleaseFlg rrIID
+0x00007F0B562B1780 2          02000400080000000000000052 Row        ..U  W   12         1   0          0x00000000 0x40000000 0     	TbspaceID 2     TableID 4      PartitionID 0 Page 0 Slot 8
+0x00007F0B562B5A00 12         02000400080000000000000052 Row        ..X  G   12         1   0          0x00000000 0x40000000 0     	TbspaceID 2     TableID 4      PartitionID 0 Page 0 Slot 8
+</code></pre>
+
+<p>他们锁在了表空间ID为2上的一个表上的一行，该表的ID是4，行的位置在Page 0的Slot 8
+上。从锁的情况看，可能是一个Update语句阻塞了另一个Update语句，后一个Update语句
+走了全表扫描。</p>
+
+<dl>
+<dt>如果你想看看具体该SQL语句的执行计划，你可以通过db2top工具，使用方法是：</dt>
+<dd>db2top -d tacy
+首先进入Dyanmic sql视图；按‘/’键，输入‘test’，会列出所有包含‘test’关键字的SQL；
+键入‘L’键，输入对应SQL的‘SQL_Statement HashValue‘，会显示该SQL全文；键入‘e’键
+，能够得到该SQL的执行计划。如果想更详细了解db2top，请参考官方文档。</dd>
+<dt>更进一步，如果你想了解他们锁的对象以及锁在哪一行上，前者比较简单，通过下面SQL语
+句即可：</dt>
+<dd>select tabname,tbspace from syscat.tables where tableid=? and tbspaceid=?
+后者需要通过db2dart工具来实现，不过db2dart一般无法在生产环境使用，因为他要求数
+据库上不能有任何连接。如果你想知道上面的SQL到底阻塞在哪一行，可以使用下面命令：</dd>
+<dd>db2dart tacy /dd /oi 4 /tsi 2 /ps 0 /np 1 /v y
+工具会生成一个RPT文件，直接文本编辑器打开，找到‘Slot 8‘条目即可。</dd>
+</dl>
+
+<p>如果你不熟悉db2的系统表，用下面命令做个简单了解：</p>
+
+<pre><code class="language-shell">db2 list tables for all
+db2 describe table syscat.tables
+</code></pre>
+
+<h2 id="结尾">结尾</h2>
+
+<p>到这里结束本文，希望能对你了解DB2有一点帮助，当然了解的最好方法还是自己动手实验
+，DB2提供免费的C-Express版本，在Ubuntu上直接安装db2exc包即可，非常方便，做测试
+这个版本就够了。最后需要强调一点，不清楚的地方找DB2的InformationCenter。</p>
+
+<h1 id="footnotes">Footnotes</h1>
+
+<p>[fn:1] [[<a href="https://www.dropbox.com/sh/1wse9pmgvl81eay/35A7yi_49L/Lock%2520attributes.pdf][Lock">https://www.dropbox.com/sh/1wse9pmgvl81eay/35A7yi_49L/Lock%2520attributes.pdf][Lock</a> attributes]]</p>
+
+<p>[fn:2] [[<a href="https://www.dropbox.com/sh/1wse9pmgvl81eay/52lfCfqavV/Lock%2520type%2520compatibility.pdf][Lock">https://www.dropbox.com/sh/1wse9pmgvl81eay/52lfCfqavV/Lock%2520type%2520compatibility.pdf][Lock</a> type compatibility]]</p>
+
+<p>[fn:3] [[<a href="https://www.dropbox.com/sh/1wse9pmgvl81eay/DQeN41RvmW/Lock%25C2%25A0modes%25C2%25A0and%25C2%25A0access%25C2%25A0plans%25C2%25A0for%25C2%25A0standard%25C2%25A0tables.pdf][Lock">https://www.dropbox.com/sh/1wse9pmgvl81eay/DQeN41RvmW/Lock%25C2%25A0modes%25C2%25A0and%25C2%25A0access%25C2%25A0plans%25C2%25A0for%25C2%25A0standard%25C2%25A0tables.pdf][Lock</a> modes and access plans for standard tables]]</p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">春龙</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">2014-04-01</span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">License</span>
+    <span class="item-content">true</span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="http://tacy.github.io/tags/tech/">tech</a>
+          <a href="http://tacy.github.io/tags/database/">database</a>
+          <a href="http://tacy.github.io/tags/db2/">db2</a>
+          <a href="http://tacy.github.io/tags/tuning/">tuning</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+          <a class="prev" href="/post/docker/">
+            
+            <i class="iconfont">
+              <svg  class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417 757.434875 204.940602c11.338233-12.190647 11.035334-32.285311-0.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-0.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891 0.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"></path>
+</svg>
+
+            </i>
+            <span class="prev-text nav-default">Docker使用笔记</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        
+          <a class="next" href="/post/hotspot-gc/">
+            <span class="next-text nav-default">HotSpot GC日志解读</span>
+            <span class="prev-text nav-mobile">Next</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+
+  
+
+  <div class="disqus-comment">
+  <div class="disqus-button" id="load_disqus" onclick="load_disqus()">
+    Show Disqus Comments
+  </div>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_config = function () {
+      this.page.url = "http://tacy.github.io/post/db2-locks-and-isolation-level/";
+    };
+    function load_disqus() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'tacyweblog';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+
+      $('#load_disqus').remove();
+    };
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+  
+  </div>
+  
+    
+
+
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+  
+  
+    <a href="mailto:your@email.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://stackoverflow.com/users/1225294/tacy-lee" rel="me noopener" class="iconfont"
+      title="stack-overflow"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M809.714286 932.571429l-638.857143 0 0-274.285714-91.428571 0 0 365.714286 821.714286 0 0-365.714286-91.428571 0 0 274.285714zm-538.285714-299.428571l18.857143-89.714286 447.428571 94.285714-18.857143 89.142857zm58.857143-213.714286l38.285714-83.428571 414.285714 193.714286-38.285714 82.857143zm114.857143-203.428571l58.285714-70.285714 350.857143 293.142857-58.285714 70.285714zm226.857143-216l272.571429 366.285714-73.142857 54.857143-272.571429-366.285714zm-410.285714 840.571429l0-90.857143 457.142857 0 0 90.857143-457.142857 0z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://twitter.com/tacy_lee" rel="me noopener" class="iconfont"
+      title="twitter"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1264 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M1229.8616 18.043658c0 0-117.852626 63.135335-164.151872 67.344358-105.225559-164.151872-505.082682-92.598492-437.738325 223.078185C278.622548 312.675223 89.216542 47.506814 89.216542 47.506814s-117.852626 189.406006 75.762402 345.139833C127.097743 396.85567 55.544363 371.601535 55.544363 371.601535S26.081207 535.753407 253.368414 615.724832c-21.045112 29.463156-113.643603 8.418045-113.643603 8.418045s25.254134 143.10676 231.496229 180.987961c-143.10676 130.479693-387.230056 92.598492-370.393967 105.225559 206.242095 189.406006 1119.599946 231.496229 1128.01799-643.98042C1179.353331 249.539887 1263.533778 123.269217 1263.533778 123.269217s-130.479693 37.881201-138.897738 33.672179C1225.652577 98.015083 1229.8616 18.043658 1229.8616 18.043658"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/tacy" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://weibo.com/p/1005051970158087" rel="me noopener" class="iconfont"
+      title="weibo"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M385.714286 733.714286q12-19.428571 6.285714-39.428571t-25.714286-28.571429q-19.428571-8-41.714286-0.571429t-34.285714 26.285714q-12.571429 19.428571-7.428571 39.142857t24.571429 28.857143 42.571429 1.428571 35.714286-27.142857zm53.714286-69.142857q4.571429-7.428571 2-15.142857t-10-10.571429q-8-2.857143-16.285714 2.857143t-12.285714 10.571429q-9.714286 17.714286 7.428571 25.714286 8 2.857143 16.571429 2.857143t12.571429-10.571429zm99.428571 61.142857q-25.714286 58.285714-90.285714 85.714286t-128 6.857143q-61.142857-19.428571-84.285714-72.285714t3.714286-107.142857q26.857143-53.142857 86.571429-79.428571t120.285714-10.857143q63.428571 16.571429 90.571429 68.285714t1.428571 108.857143zm178.285714-91.428571q-5.142857-54.857143-50.857143-97.142857t-119.142857-62.285714-156.857143-12q-127.428571 13.142857-211.142857 80.857143t-75.714286 151.142857q5.142857 54.857143 50.857143 97.142857t119.142857 62.285714 156.857143 12q127.428571-13.142857 211.142857-80.857143t75.714286-151.142857zm176 2.285714q0 38.857143-21.142857 79.714286t-62.285714 78.285714-96.285714 67.142857-129.142857 47.428571-154.571429 17.714286-157.142857-19.142857-137.428571-53.142857-98-86.285714-37.142857-114q0-65.714286 39.714286-140t112.857143-147.428571q96.571429-96.571429 195.142857-134.857143t140.857143 4q37.142857 36.571429 11.428571 119.428571-2.285714 8-0.571429 11.428571t5.714286 4 8.285714 2.857143 7.714286-2l3.428571-1.142857q79.428571-33.714286 140.571429-33.714286t87.428571 34.857143q25.714286 36 0 101.714286-1.142857 7.428571-2.571429 11.428571t2.571429 7.142857 6.857143 4.285714 9.714286 3.428571q32.571429 10.285714 58.857143 26.857143t45.714286 46.571429 19.428571 66.571429zm-42.285714-356.571429q24 26.857143 31.142857 62t-3.714286 67.142857q-4.571429 13.142857-16.857143 19.428571t-25.428571 2.285714q-13.142857-4.571429-19.428571-16.857143t-2.285714-25.428571q11.428571-36-13.714286-63.428571t-61.142857-20q-13.714286 2.857143-25.714286-4.571429t-14.285714-21.142857q-2.857143-13.714286 4.571429-25.428571t21.142857-14.571429q34.285714-7.428571 68 3.142857t57.714286 37.428571zm103.428571-93.142857q49.714286 54.857143 64.285714 127.142857t-7.714286 138q-5.142857 15.428571-19.428571 22.857143t-29.714286 2.285714-22.857143-19.428571-2.857143-29.714286q16-46.857143 5.714286-98.285714t-45.714286-90.285714q-35.428571-39.428571-84.571429-54.571429t-98.857143-4.857143q-16 3.428571-29.714286-5.428571t-17.142857-24.857143 5.428571-29.428571 24.857143-16.857143q70.285714-14.857143 139.428571 6.571429t118.857143 76.857143z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://www.douban.com/people/tacy_lee/" rel="me noopener" class="iconfont"
+      title="douban"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M926.917973 37.80608C959.65184 37.80608 986.19392 64.34816 986.19392 97.082027L986.19392 926.917973C986.19392 959.65184 959.65184 986.19392 926.917973 986.19392L97.082027 986.19392C64.34816 986.19392 37.80608 959.65184 37.80608 926.917973L37.80608 97.082027C37.80608 64.34816 64.34816 37.80608 97.082027 37.80608zM176.653653 176.19968 176.653653 252.678827 825.658027 252.678827 825.658027 176.19968zM217.719467 316.146347 217.719467 628.08064 273.524053 628.08064 341.292373 770.39616 157.259093 770.39616 157.259093 845.417813 842.949973 845.417813 842.949973 770.39616 654.226773 770.39616 722.899627 628.08064 783.67744 628.08064 783.67744 316.146347zM684.885333 392.891733 684.885333 553.987413 312.576 553.987413 312.576 392.891733zM570.770773 770.39616 426.653013 770.39616 359.621973 628.08064 639.443627 628.08064z"></path>
+</svg>
+
+    </a>
+
+
+<a href="http://tacy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+  
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2012 -
+    2019
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        春龙
+        
+      </span></span>
+
+  
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

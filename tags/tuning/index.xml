@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tuning on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/tuning/</link>
+    <description>Recent content in Tuning on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 16 Jul 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/tuning/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Java性能分析之火焰图</title>
+      <link>http://tacy.github.io/post/flamegraph/</link>
+      <pubDate>Wed, 16 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/flamegraph/</guid>
+      <description>FlameGraph 火焰图[fn:1]，简单通过x轴横条宽度来度量时间指标，y轴代表线程栈的层次，简单明了， 容易找出具体的可优化点，非常方便，当然前提是我们通</description>
+    </item>
+    
+    <item>
+      <title>systemtap notes</title>
+      <link>http://tacy.github.io/post/systemtap/</link>
+      <pubDate>Tue, 10 Jun 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/systemtap/</guid>
+      <description>Systemtap systemtap是红帽开发的一款分析工具，如果你需要使用的话，最好在redhat的系统上，在 Ubuntu上兼容性不好，坑非常多，Ubun</description>
+    </item>
+    
+    <item>
+      <title>perf notes</title>
+      <link>http://tacy.github.io/post/linux-perf/</link>
+      <pubDate>Wed, 04 Jun 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/linux-perf/</guid>
+      <description>perf strace相性对于很多熟悉linux的人来说应该都有所了解，使用起来也非常方便，但是他也 有很多问题，容易导致进程响应缓慢等，当然他对于诊</description>
+    </item>
+    
+    <item>
+      <title>DB2锁和隔离级别</title>
+      <link>http://tacy.github.io/post/db2-locks-and-isolation-level/</link>
+      <pubDate>Tue, 01 Apr 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/db2-locks-and-isolation-level/</guid>
+      <description>DB2的锁 DB2的锁实现机制很复杂，它没有实现类似Oracle的undo机制，导致操作之间容易阻塞， 比如你经常会听到有人说DB2查询阻塞更新</description>
+    </item>
+    
+    <item>
+      <title>HotSpot GC日志解读</title>
+      <link>http://tacy.github.io/post/hotspot-gc/</link>
+      <pubDate>Mon, 24 Mar 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/hotspot-gc/</guid>
+      <description>HotSpot GC 对于Java应用的优化，GC是重要的一环，而读懂GC日志是调优GC的关键，本文尝试对GC 做一些解读，测试使用的JVM版本是1.6.0_4</description>
+    </item>
+    
+    <item>
+      <title>理解Oracle AWR报告</title>
+      <link>http://tacy.github.io/post/oracle-awr/</link>
+      <pubDate>Mon, 24 Mar 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/oracle-awr/</guid>
+      <description>Oracle AWR报告</description>
+    </item>
+    
+  </channel>
+</rss>

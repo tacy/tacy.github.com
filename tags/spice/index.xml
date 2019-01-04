@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Spice on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/spice/</link>
+    <description>Recent content in Spice on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 18 Feb 2013 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/spice/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>linux kvm notes</title>
+      <link>http://tacy.github.io/post/linux-kvm/</link>
+      <pubDate>Mon, 18 Feb 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/linux-kvm/</guid>
+      <description>背景信息 本文档是自己在工作中对kvm使用上的一些记录，基于ubuntu 12.04 desktop， 在我的工作笔记本电脑实现，机器带一块以太网卡和一块无</description>
+    </item>
+    
+  </channel>
+</rss>

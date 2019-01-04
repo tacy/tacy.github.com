@@ -331,15 +331,15 @@ if (!doNotTrack) {
   <header class="post-header">
     <h1 class="post-title">
       
-      <a class="post-link" href="/post/write-something/">Linux trace</a>
+      <a class="post-link" href="/post/ceph/">ceph notes</a>
     </h1>
     
     <div class="post-meta">
-      <time datetime="2012-07-26" class="post-time">
-        2012-07-26
+      <time datetime="2015-04-08" class="post-time">
+        2015-04-08
       </time>
       <div class="post-category">
-          <a href="http://tacy.github.io/categories/life/"> life </a>
+          <a href="http://tacy.github.io/categories/tech/"> tech </a>
           
         </div>
       
@@ -351,10 +351,112 @@ if (!doNotTrack) {
   <div class="post-content">
     
     <div class="post-summary">
-      查了一下自己在网上写的最后一篇blog，时间竟然停留在2008年11月！ 一晃这么多年过去了，漂到了帝都，暂住着。值得高兴的事情是女儿出生了，
+      ceph重要的概念 ceph底层是RADOS(A reliable, autonomous, distributed object storage), RADOS由OSD和MON组成, 是ceph核心. - OSD: Object Storage Device - MON: 维护整个ceph集群的
     </div>
     <div class="read-more">
-      <a href="/post/write-something/" class="read-more-link">Read more</a>
+      <a href="/post/ceph/" class="read-more-link">Read more</a>
+    </div>
+    
+  </div>
+</article>
+
+    
+      <article class="post bg-white">
+  <header class="post-header">
+    <h1 class="post-title">
+      
+      <a class="post-link" href="/post/l2tp-ipsec-in-linode/">l2tp ipsec in linode</a>
+    </h1>
+    
+    <div class="post-meta">
+      <time datetime="2014-12-24" class="post-time">
+        2014-12-24
+      </time>
+      <div class="post-category">
+          <a href="http://tacy.github.io/categories/tech/"> tech </a>
+          
+        </div>
+      
+      
+      
+    </div>
+  </header>
+  
+  <div class="post-content">
+    
+    <div class="post-summary">
+      我参考的配置帖子: https://raymii.org/s/tutorials/IPSEC_L2TP_vpn_with_Ubuntu_14.04.html 先注意下面问题: Two or more interfaces found, checking IP forwarding Failed 我的环境是: My Ubuntu 14.04 LTS Profile (Latest 64 bit (3.16.7-x86_64-linode49)) 如果已经配置了ip_forward, 没啥好说的, 直接升级
+    </div>
+    <div class="read-more">
+      <a href="/post/l2tp-ipsec-in-linode/" class="read-more-link">Read more</a>
+    </div>
+    
+  </div>
+</article>
+
+    
+      <article class="post bg-white">
+  <header class="post-header">
+    <h1 class="post-title">
+      
+      <a class="post-link" href="/post/%E6%9C%AC%E5%9C%B0kvm%E7%8E%AF%E5%A2%83%E8%BF%90%E8%A1%8Ckubernetes%E9%9B%86%E7%BE%A4/">本地KVM环境运行Kubernetes集群</a>
+    </h1>
+    
+    <div class="post-meta">
+      <time datetime="2014-11-24" class="post-time">
+        2014-11-24
+      </time>
+      <div class="post-category">
+          <a href="http://tacy.github.io/categories/tech/"> tech </a>
+          
+        </div>
+      
+      
+      
+    </div>
+  </header>
+  
+  <div class="post-content">
+    
+    <div class="post-summary">
+      Kubernetes(后面简称为K8S)作为目前热门的容器集群管理软件, 很多人都希望能一探究竟, 但是它的文档大部分都是运行在IaaS平台之上
+    </div>
+    <div class="read-more">
+      <a href="/post/%E6%9C%AC%E5%9C%B0kvm%E7%8E%AF%E5%A2%83%E8%BF%90%E8%A1%8Ckubernetes%E9%9B%86%E7%BE%A4/" class="read-more-link">Read more</a>
+    </div>
+    
+  </div>
+</article>
+
+    
+      <article class="post bg-white">
+  <header class="post-header">
+    <h1 class="post-title">
+      
+      <a class="post-link" href="/post/cloud-init/">在本地kvm环节下使用cloud image</a>
+    </h1>
+    
+    <div class="post-meta">
+      <time datetime="2014-11-07" class="post-time">
+        2014-11-07
+      </time>
+      <div class="post-category">
+          <a href="http://tacy.github.io/categories/tech/"> tech </a>
+          
+        </div>
+      
+      
+      
+    </div>
+  </header>
+  
+  <div class="post-content">
+    
+    <div class="post-summary">
+      在本地kvm环境下使用cloud image 大量的cloud image, 其实在本地虚拟环境也能使用, 这里简单介绍一下在我本机kvm环境下使用cloud image
+    </div>
+    <div class="read-more">
+      <a href="/post/cloud-init/" class="read-more-link">Read more</a>
     </div>
     
   </div>
@@ -380,6 +482,46 @@ if (!doNotTrack) {
 
   
   
+
+  
+  
+  <nav class="pagination">
+    <ul>
+      
+      <li  class="active" >
+        <a href="/">1</a>
+      </li>
+      
+      <li >
+        <a href="/page/2/">2</a>
+      </li>
+      
+      <li >
+        <a href="/page/3/">3</a>
+      </li>
+      
+      <li >
+        <a href="/page/4/">4</a>
+      </li>
+      
+      <li >
+        <a href="/page/5/">5</a>
+      </li>
+      
+      <li >
+        <a href="/page/6/">6</a>
+      </li>
+      
+      <li >
+        <a href="/page/7/">7</a>
+      </li>
+      
+      <li >
+        <a href="/page/8/">8</a>
+      </li>
+      
+    </ul>
+  </nav>
 
   
   

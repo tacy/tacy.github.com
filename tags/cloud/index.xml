@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Cloud on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/cloud/</link>
+    <description>Recent content in Cloud on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sat, 30 Aug 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/cloud/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>marathon in mesos</title>
+      <link>http://tacy.github.io/post/marathon-in-mesos/</link>
+      <pubDate>Sat, 30 Aug 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/marathon-in-mesos/</guid>
+      <description>mesos 记录一下最近一周的工作，最近一周一直在看PaaS，主要是结合Docker的方案，简单看了 看，成熟的东西没有，基本都有各种问题，可以参考一下</description>
+    </item>
+    
+    <item>
+      <title>openstack notes</title>
+      <link>http://tacy.github.io/post/openstack/</link>
+      <pubDate>Wed, 28 Aug 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/openstack/</guid>
+      <description>Swift Ring builder 读了一下ringbuilder代码，简单记录一下，免的忘了 Add device 添加device的时候可以指定每个device的meta信息和repli</description>
+    </item>
+    
+    <item>
+      <title>linux kvm notes</title>
+      <link>http://tacy.github.io/post/linux-kvm/</link>
+      <pubDate>Mon, 18 Feb 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/linux-kvm/</guid>
+      <description>背景信息 本文档是自己在工作中对kvm使用上的一些记录，基于ubuntu 12.04 desktop， 在我的工作笔记本电脑实现，机器带一块以太网卡和一块无</description>
+    </item>
+    
+    <item>
+      <title>Hypervisor</title>
+      <link>http://tacy.github.io/post/hypervisor/</link>
+      <pubDate>Fri, 31 Aug 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/hypervisor/</guid>
+      <description>Oracle M-series（Dynamic Domains） 收购sun获得，支持dynamic domains，支持动态资源划分，可以动态分配资源(cp</description>
+    </item>
+    
+    <item>
+      <title>Openstack quastion diagnose</title>
+      <link>http://tacy.github.io/post/openstack-question-diagnose/</link>
+      <pubDate>Tue, 31 Jul 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/openstack-question-diagnose/</guid>
+      <description>在单nova-network service下错误配置multi-host导致的问题 在配置openstack的时候，由于开始的时候很多东西没摸</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kubernetes on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/kubernetes/</link>
+    <description>Recent content in Kubernetes on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 24 Nov 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>本地KVM环境运行Kubernetes集群</title>
+      <link>http://tacy.github.io/post/%E6%9C%AC%E5%9C%B0kvm%E7%8E%AF%E5%A2%83%E8%BF%90%E8%A1%8Ckubernetes%E9%9B%86%E7%BE%A4/</link>
+      <pubDate>Mon, 24 Nov 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/%E6%9C%AC%E5%9C%B0kvm%E7%8E%AF%E5%A2%83%E8%BF%90%E8%A1%8Ckubernetes%E9%9B%86%E7%BE%A4/</guid>
+      <description>Kubernetes(后面简称为K8S)作为目前热门的容器集群管理软件, 很多人都希望能一探究竟, 但是它的文档大部分都是运行在IaaS平台之上</description>
+    </item>
+    
+  </channel>
+</rss>

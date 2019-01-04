@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ceph on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/ceph/</link>
+    <description>Recent content in Ceph on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 08 Apr 2015 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/ceph/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>ceph notes</title>
+      <link>http://tacy.github.io/post/ceph/</link>
+      <pubDate>Wed, 08 Apr 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/ceph/</guid>
+      <description>ceph重要的概念 ceph底层是RADOS(A reliable, autonomous, distributed object storage), RADOS由OSD和MON组成, 是ceph核心. - OSD: Object Storage Device - MON: 维护整个ceph集群的</description>
+    </item>
+    
+  </channel>
+</rss>

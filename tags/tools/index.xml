@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tools on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/tools/</link>
+    <description>Recent content in Tools on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 21 Aug 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/tools/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>wireshark和tcpdump相关笔记</title>
+      <link>http://tacy.github.io/post/wireshark-tcpdump/</link>
+      <pubDate>Thu, 21 Aug 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/wireshark-tcpdump/</guid>
+      <description>一个问题诊断 系统做了单点登录，用的是CAS，用户反馈偶尔系统登出之后，重新用其他帐号登入，查询 到的用户资料依然是上一个用户的，只有关闭浏览器</description>
+    </item>
+    
+    <item>
+      <title>Java性能分析之火焰图</title>
+      <link>http://tacy.github.io/post/flamegraph/</link>
+      <pubDate>Wed, 16 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/flamegraph/</guid>
+      <description>FlameGraph 火焰图[fn:1]，简单通过x轴横条宽度来度量时间指标，y轴代表线程栈的层次，简单明了， 容易找出具体的可优化点，非常方便，当然前提是我们通</description>
+    </item>
+    
+    <item>
+      <title>Byteman notes</title>
+      <link>http://tacy.github.io/post/byteman/</link>
+      <pubDate>Wed, 11 Jun 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/byteman/</guid>
+      <description>Byteman byteman是jboss下的一个项目，是一个非常方便的java分析工具，能够拦截字节码执行，执 行代码和修改变量，是一个诊断问题的利器。 在</description>
+    </item>
+    
+    <item>
+      <title>systemtap notes</title>
+      <link>http://tacy.github.io/post/systemtap/</link>
+      <pubDate>Tue, 10 Jun 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/systemtap/</guid>
+      <description>Systemtap systemtap是红帽开发的一款分析工具，如果你需要使用的话，最好在redhat的系统上，在 Ubuntu上兼容性不好，坑非常多，Ubun</description>
+    </item>
+    
+    <item>
+      <title>perf notes</title>
+      <link>http://tacy.github.io/post/linux-perf/</link>
+      <pubDate>Wed, 04 Jun 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/linux-perf/</guid>
+      <description>perf strace相性对于很多熟悉linux的人来说应该都有所了解，使用起来也非常方便，但是他也 有很多问题，容易导致进程响应缓慢等，当然他对于诊</description>
+    </item>
+    
+    <item>
+      <title>strace notes</title>
+      <link>http://tacy.github.io/post/strace/</link>
+      <pubDate>Tue, 18 Mar 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/strace/</guid>
+      <description>Strace notes strace是linux下的一个进程trace工具，通过strace，能够trace进程的所有系统调用， 对于解决一些棘手问题有很大帮助。</description>
+    </item>
+    
+    <item>
+      <title>用emacs写blog</title>
+      <link>http://tacy.github.io/post/emacs-orgmode-jekyll-blog/</link>
+      <pubDate>Wed, 15 Aug 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/emacs-orgmode-jekyll-blog/</guid>
+      <description>断断续续写过一些blog，很多原因没有继续下去，当然自己懒是最主要的。总觉得写blog是一件很麻烦的事情：首先要找到合适的服务提供商，很多人</description>
+    </item>
+    
+  </channel>
+</rss>

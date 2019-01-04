@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Vpn on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/vpn/</link>
+    <description>Recent content in Vpn on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 24 Dec 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/vpn/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>l2tp ipsec in linode</title>
+      <link>http://tacy.github.io/post/l2tp-ipsec-in-linode/</link>
+      <pubDate>Wed, 24 Dec 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/l2tp-ipsec-in-linode/</guid>
+      <description>我参考的配置帖子: https://raymii.org/s/tutorials/IPSEC_L2TP_vpn_with_Ubuntu_14.04.html 先注意下面问题: Two or more interfaces found, checking IP forwarding Failed 我的环境是: My Ubuntu 14.04 LTS Profile (Latest 64 bit (3.16.7-x86_64-linode49)) 如果已经配置了ip_forward, 没啥好说的, 直接升级</description>
+    </item>
+    
+  </channel>
+</rss>

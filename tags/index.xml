@@ -6,10 +6,118 @@
     <description>Recent content in Tags on Tacy - Notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 26 Jul 2012 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 29 Jul 2014 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://tacy.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Android</title>
+      <link>http://tacy.github.io/tags/android/</link>
+      <pubDate>Tue, 29 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/tags/android/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Ceph</title>
+      <link>http://tacy.github.io/tags/ceph/</link>
+      <pubDate>Wed, 08 Apr 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/tags/ceph/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Cloud</title>
+      <link>http://tacy.github.io/tags/cloud/</link>
+      <pubDate>Sat, 30 Aug 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/tags/cloud/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Container</title>
+      <link>http://tacy.github.io/tags/container/</link>
+      <pubDate>Mon, 24 Nov 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/tags/container/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Database</title>
+      <link>http://tacy.github.io/tags/database/</link>
+      <pubDate>Tue, 01 Apr 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/tags/database/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Db2</title>
+      <link>http://tacy.github.io/tags/db2/</link>
+      <pubDate>Tue, 01 Apr 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/tags/db2/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Emacs</title>
+      <link>http://tacy.github.io/tags/emacs/</link>
+      <pubDate>Sat, 28 Sep 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/tags/emacs/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Hypervisor</title>
+      <link>http://tacy.github.io/tags/hypervisor/</link>
+      <pubDate>Mon, 18 Feb 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/tags/hypervisor/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Java</title>
+      <link>http://tacy.github.io/tags/java/</link>
+      <pubDate>Wed, 16 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/tags/java/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Kernel</title>
+      <link>http://tacy.github.io/tags/kernel/</link>
+      <pubDate>Thu, 19 Jun 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/tags/kernel/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Kubernetes</title>
+      <link>http://tacy.github.io/tags/kubernetes/</link>
+      <pubDate>Mon, 24 Nov 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/tags/kubernetes/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Kvm</title>
+      <link>http://tacy.github.io/tags/kvm/</link>
+      <pubDate>Fri, 07 Nov 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/tags/kvm/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Life</title>
@@ -30,38 +138,56 @@
     </item>
     
     <item>
-      <title>Tech</title>
-      <link>http://tacy.github.io/tags/tech/</link>
-      <pubDate>Wed, 02 Jan 2019 00:00:00 +0000</pubDate>
+      <title>Multimedia</title>
+      <link>http://tacy.github.io/tags/multimedia/</link>
+      <pubDate>Mon, 14 Apr 2014 00:00:00 +0000</pubDate>
       
-      <guid>http://tacy.github.io/tags/tech/</guid>
+      <guid>http://tacy.github.io/tags/multimedia/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Thinking</title>
-      <link>http://tacy.github.io/tags/thinking/</link>
-      <pubDate>Thu, 26 Jul 2012 00:00:00 +0000</pubDate>
+      <title>Network</title>
+      <link>http://tacy.github.io/tags/network/</link>
+      <pubDate>Thu, 21 Aug 2014 00:00:00 +0000</pubDate>
       
-      <guid>http://tacy.github.io/tags/thinking/</guid>
+      <guid>http://tacy.github.io/tags/network/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Trace</title>
-      <link>http://tacy.github.io/tags/trace/</link>
-      <pubDate>Wed, 02 Jan 2019 00:00:00 +0000</pubDate>
+      <title>Notes</title>
+      <link>http://tacy.github.io/tags/notes/</link>
+      <pubDate>Tue, 29 Jul 2014 00:00:00 +0000</pubDate>
       
-      <guid>http://tacy.github.io/tags/trace/</guid>
+      <guid>http://tacy.github.io/tags/notes/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Troubleshooting</title>
-      <link>http://tacy.github.io/tags/troubleshooting/</link>
-      <pubDate>Wed, 02 Jan 2019 00:00:00 +0000</pubDate>
+      <title>Openstack</title>
+      <link>http://tacy.github.io/tags/openstack/</link>
+      <pubDate>Wed, 28 Aug 2013 00:00:00 +0000</pubDate>
       
-      <guid>http://tacy.github.io/tags/troubleshooting/</guid>
+      <guid>http://tacy.github.io/tags/openstack/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Oracle</title>
+      <link>http://tacy.github.io/tags/oracle/</link>
+      <pubDate>Mon, 24 Mar 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/tags/oracle/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Performance</title>
+      <link>http://tacy.github.io/tags/performance/</link>
+      <pubDate>Wed, 16 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/tags/performance/</guid>
       <description></description>
     </item>
     

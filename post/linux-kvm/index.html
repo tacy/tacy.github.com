@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>linux kvm notes - Tacy - Notes</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="春龙" /><meta name="description" content="kvm介绍，包括配置，不使用libvirt层实现的命令行模式虚拟机操作，一些主要参数介绍，以及kvm虚拟机优化等，都是自己在使用上的一些记录，不定期动态更新。" />
+
+  <meta name="keywords" content="Tacy, tech, life, linux, performance, kubernetes, golang, java, troubleshooting" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.51" />
+
+
+<link rel="canonical" href="http://tacy.github.io/post/linux-kvm/" />
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.c8c1ff75dee09b44060a6c38f41b9036bac2512ccdb22d7f296cec12dc786375.css" integrity="sha256-yMH/dd7gm0QGCmw49BuQNrrCUSzNsi1/KWzsEtx4Y3U=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="linux kvm notes" />
+<meta property="og:description" content="kvm介绍，包括配置，不使用libvirt层实现的命令行模式虚拟机操作，一些主要参数介绍，以及kvm虚拟机优化等，都是自己在使用上的一些记录，不定期动态更新。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://tacy.github.io/post/linux-kvm/" /><meta property="article:published_time" content="2013-02-18T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2013-02-18T00:00:00&#43;00:00"/>
+
+<meta itemprop="name" content="linux kvm notes">
+<meta itemprop="description" content="kvm介绍，包括配置，不使用libvirt层实现的命令行模式虚拟机操作，一些主要参数介绍，以及kvm虚拟机优化等，都是自己在使用上的一些记录，不定期动态更新。">
+
+
+<meta itemprop="datePublished" content="2013-02-18T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2013-02-18T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="6431">
+
+
+
+<meta itemprop="keywords" content="tech,kvm,hypervisor,cloud,kvm,spice," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="linux kvm notes"/>
+<meta name="twitter:description" content="kvm介绍，包括配置，不使用libvirt层实现的命令行模式虚拟机操作，一些主要参数介绍，以及kvm虚拟机优化等，都是自己在使用上的一些记录，不定期动态更新。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33694554-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Tacy&#39;s notes</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/">Home</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/post/">Archives</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/tags/">Tags</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/categories/">Categories</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/about/">About</a>
+          
+        
+      </li>
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      Tacy's notes
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/">Home</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/post/">Archives</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/tags/">Tags</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/categories/">Categories</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/about/">About</a>
+          
+
+        
+
+      </li>
+    
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">linux kvm notes</h1>
+      
+      <div class="post-meta">
+        <time datetime="2013-02-18" class="post-time">
+          2013-02-18
+        </time>
+        <div class="post-category">
+            <a href="http://tacy.github.io/categories/tech/"> tech </a>
+            
+          </div>
+        
+
+        
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    
+    <div class="post-content">
+      
+
+<h1 id="背景信息">背景信息</h1>
+
+<hr />
+
+<p>本文档是自己在工作中对kvm使用上的一些记录，基于ubuntu 12.04 desktop，
+在我的工作笔记本电脑实现，机器带一块以太网卡和一块无线网卡，无线网卡连互联网。</p>
+
+<h1 id="文档目的">文档目的</h1>
+
+<hr />
+
+<p>介绍kvm，包括配置，不使用libvirt层实现的命令行模式虚拟机操作，一些主要参数介绍，
+以及kvm虚拟机优化等。在文档中，我会利用kvm命令行方式，实现一个nat模式的虚拟化网
+络，虚拟机通过nat访问外网，外网无法访问虚拟机。</p>
+
+<h1 id="kvm安装">KVM安装</h1>
+
+<hr />
+
+<dl>
+<dt>在ubuntu下需要安装的kvm包：</dt>
+<dd>sudo apt-get install kvm uml-utilities bridge-utils
+加载kvm模块：</dd>
+<dd>modprobe kvm-intel
+可以先确认是否加载，没有的话可以自己加载（我用的是intel cpu，如果是amd可以通过
+kvm-amd加载），修改/etc/modules，在里面添加如下行，使其自动加载：</dd>
+<dd>kvm_intel
+如果需要kvm nest功能，上面行需要修改为：</dd>
+<dd>kvm_intel nested=1
+同时guest启动命令需要带上如下参数：</dd>
+<dd>-cpu host 或者 -cpu qemu64,+vmx</dd>
+</dl>
+
+<h1 id="nat模式虚拟网络">NAT模式虚拟网络</h1>
+
+<hr />
+
+<p>在这里没有使用libvirt，其实用libvirt操作kvm非常方便，这里没用主要是自己希望了解
+一下kvm的一些细节，包括虚拟网络创建、参数使用和优化参数等等。</p>
+
+<p>虚拟网络创建通过bridge实现，相比xen的虚拟网络实现，kvm要简单的多，基本就是创建一
+个bridge，但是不用绑定到物理网卡上，配置nat策略，同时启用dnsmasq负责guest dhcp即
+可，实现方式可以直接修改/etc/qemu-ifup脚本内容如下：</p>
+
+<pre><code class="language-shell">#!/bin/sh
+#
+# Copyright IBM, Corp. 2010
+#
+# Authors:
+#  Anthony Liguori &lt;aliguori@us.ibm.com&gt;
+#
+# This work is licensed under the terms of the GNU GPL, version 2.  See
+# the COPYING file in the top-level directory.
+
+# Set to the name of your bridge
+BRIDGE=virbr0
+
+# Network information
+NETWORK=192.168.122.0
+NETMASK=255.255.255.0
+GATEWAY=192.168.122.1
+DHCPRANGE=192.168.122.2,192.168.122.254
+
+# Optionally parameters to enable PXE support
+TFTPROOT=
+BOOTP=
+
+do_brctl() {
+    brctl &quot;$@&quot;
+}
+
+do_ifconfig() {
+    ifconfig &quot;$@&quot;
+}
+
+do_dd() {
+    dd &quot;$@&quot;
+}
+
+do_iptables_restore() {
+    iptables-restore &quot;$@&quot;
+}
+
+do_dnsmasq() {
+    dnsmasq &quot;$@&quot;
+}
+
+check_bridge() {
+    if do_brctl show | grep &quot;^$1&quot; &gt; /dev/null 2&gt; /dev/null; then
+        return 1
+    else
+        return 0
+    fi
+}
+
+create_bridge() {
+    do_brctl addbr &quot;$1&quot;
+    do_brctl stp &quot;$1&quot; off
+    do_brctl setfd &quot;$1&quot; 0
+    do_ifconfig &quot;$1&quot; &quot;$GATEWAY&quot; netmask &quot;$NETMASK&quot; up
+}
+
+enable_ip_forward() {
+    echo 1 | do_dd of=/proc/sys/net/ipv4/ip_forward &gt; /dev/null
+}
+
+add_filter_rules() {
+do_iptables_restore &lt;&lt;EOF
+# Generated by iptables-save v1.3.6 on Fri Aug 24 15:20:25 2007
+*nat
+:PREROUTING ACCEPT [61:9671]
+:POSTROUTING ACCEPT [121:7499]
+:OUTPUT ACCEPT [132:8691]
+-A POSTROUTING -s $NETWORK/$NETMASK -j MASQUERADE
+COMMIT
+# Completed on Fri Aug 24 15:20:25 2007
+# Generated by iptables-save v1.3.6 on Fri Aug 24 15:20:25 2007
+*filter
+:INPUT ACCEPT [1453:976046]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [1605:194911]
+-A INPUT -i $BRIDGE -p tcp -m tcp --dport 67 -j ACCEPT
+-A INPUT -i $BRIDGE -p udp -m udp --dport 67 -j ACCEPT
+-A INPUT -i $BRIDGE -p tcp -m tcp --dport 53 -j ACCEPT
+-A INPUT -i $BRIDGE -p udp -m udp --dport 53 -j ACCEPT
+-A FORWARD -i $1 -o $1 -j ACCEPT
+-A FORWARD -s $NETWORK/$NETMASK -i $BRIDGE -j ACCEPT
+-A FORWARD -d $NETWORK/$NETMASK -o $BRIDGE -m state --state RELATED,ESTABLISHED
+   -j ACCEPT
+-A FORWARD -o $BRIDGE -j REJECT --reject-with icmp-port-unreachable
+-A FORWARD -i $BRIDGE -j REJECT --reject-with icmp-port-unreachable
+COMMIT
+# Completed on Fri Aug 24 15:20:25 2007
+EOF
+}
+
+start_dnsmasq() {
+    do_dnsmasq \
+	--strict-order \
+	--except-interface=lo \
+	--interface=$BRIDGE \
+	--listen-address=$GATEWAY \
+	--bind-interfaces \
+	--dhcp-range=$DHCPRANGE \
+	--conf-file=&quot;&quot; \
+	--pid-file=/var/run/qemu-dnsmasq-$BRIDGE.pid \
+	--dhcp-leasefile=/var/run/qemu-dnsmasq-$BRIDGE.leases \
+	--dhcp-no-override \
+	${TFTPROOT:+&quot;--enable-tftp&quot;} \
+	${TFTPROOT:+&quot;--tftp-root=$TFTPROOT&quot;} \
+	${BOOTP:+&quot;--dhcp-boot=$BOOTP&quot;}
+}
+
+setup_bridge_nat() {
+    if check_bridge &quot;$1&quot; ; then
+	create_bridge &quot;$1&quot;
+	enable_ip_forward
+	add_filter_rules &quot;$1&quot;
+	start_dnsmasq &quot;$1&quot;
+    fi
+}
+
+setup_bridge_vlan() {
+    if check_bridge &quot;$1&quot; ; then
+	create_bridge &quot;$1&quot;
+	start_dnsmasq &quot;$1&quot;
+    fi
+}
+
+setup_bridge_nat &quot;$BRIDGE&quot;
+
+if test &quot;$1&quot; ; then
+    do_ifconfig &quot;$1&quot; 0.0.0.0 up
+    do_brctl addif &quot;$BRIDGE&quot; &quot;$1&quot;
+fi
+cmdcmd
+</code></pre>
+
+<p>这样当你在启动一个kvm guest的时候，就会自动创建一个nat模式的网络，bridge名字是
+virbr0，guest通过dhcp获得一个192.168.122.0/24网段的ip地址，可以联通互联网。</p>
+
+<h1 id="创建虚拟机">创建虚拟机</h1>
+
+<hr />
+
+<h2 id="创建镜像">创建镜像</h2>
+
+<dl>
+<dt>以创建centos虚拟机为例，你首先需要创建一个磁盘镜像文件，也可以是一个块设备：</dt>
+<dd>$kvm-img create -f raw centos.img 10G</dd>
+</dl>
+
+<p>这里我们创建了一个raw格式的磁盘镜像文件，大小为10g，注意文件实际并不占用10g空
+间，而是按需分配[fn:1]。关于文件格式的区别简单描述如下：</p>
+
+<ul>
+<li>raw格式在文件镜像中性能最优，但是功能支持也少，比如不支持快照，精简分配需要文
+件系统支持holes。</li>
+<li>qcow2是功能丰富，精简配置无须文件系统支持holes，支持压缩和加密，支持快照和
+backing_file功能。</li>
+<li>vdi/vmdk/vpc，分别对应virtualbox/vmware/ms virtualpc</li>
+</ul>
+
+<p>当然你也可以通过lvm来分配一个lv给虚拟机用，块设备性能最佳，当然也有很多问题，可
+维护性一般，而且一般也不支持精简配置，其他的分布式块系统比如sheepdog这里就不多说
+了。最终目的只有一个，给虚拟机提供磁盘块安装操作系统。</p>
+
+<h2 id="配置启动参数">配置启动参数</h2>
+
+<p>有了磁盘镜像文件之后，你就可以启动虚拟机了，由于我们这里直接通过KVM命令行启动虚
+拟机，不需要创建额外的xml配置文件。启动虚拟机涉及到组成计算机的几个核心组件：
+cpu/ram/storage/network/cdrom/soundcard/display，我们一一描述：</p>
+
+<ul>
+<li>cpu</li>
+</ul>
+
+<p>可以通过下面命令查看kvm支持的cpu类型：
+  : kvm -cpu ?</p>
+
+<p>主要涉及到一些指令集多少问题，qemu32/qemu64兼容性最好，如果你需要支持特定的指
+  令集，添加即可，比如你需要添加vt指令集，直接&rdquo;qemu64,+vmx&rdquo;即可[fn:2]</p>
+
+<p>如果你的所有主机CPU一样，可以直接用“-cpu host&rdquo;，这样虚拟机的cpu和宿主机一致，
+  性能最佳。通过-smp参数设置多cpu支持，通过“-numa”参数模拟多节点numa。</p>
+
+<ul>
+<li>storage</li>
+</ul>
+
+<p>通过下面参数设置：</p>
+
+<p>: -drive file=centos.img if=virtio,cache=none,aio=native</p>
+
+<p>这里涉及到两个参数if和cache:
+  1. if用来指定驱动类型，这里我们用的是virtio, virtio绕开qemu模拟层，是优化io的
+     重要部分，当然前提是你的guest os需要支持virtio，安装对应的驱动。</p>
+
+<ol>
+<li><p>cache指定缓存模式</p>
+
+<p>| Mode        | host page cache | guest disk write cache |
+ | none        | off             | on                     |
+ | writethough | on              | off                    |
+ | writeback   | on              | on                     |
+ | unsafe      | on              | ignored                |</p>
+
+<p>cache设置涉及到两个层面的影响，一个是宿主机的缓存，一个是guest的缓存：[fn:3]</p>
+
+<p>host page cache打开意味着数据copy到宿主机缓存即完成写操作，通过fsync刷新缓
+ 存，能够从缓存完成读，但是问题在于guest也会缓存同样的数据，也就意味着同样的
+ 数据在内存中保留两份，一般建议如果是本地设备（包括文件和块设备），建议关闭
+ 宿主机缓存。</p>
+
+<p>guest disk write cache打开意味着写操作进入缓存即完成，可能存在数据丢失风险
+ ，能提高写性能。</p>
+
+<p>一般情况下本地设备建议选择none,性能最佳，如果是远程设备，建议选择writeback
+ 或者writethrough。unsafe一般很少使用，在安装系统的时候使用能加快安装速度，
+ 但是如果进入正式环境使用，需要切换到对应模式。</p>
+
+<p>另外对于磁盘镜像文件模式，还需要考虑块对齐问题，一般保持和宿主机同样的块大
+ 小，分区块对齐，否则可能引发跨块的io操作，影响io性能。</p></li>
+
+<li><p>aio指定io的模式，支持thread和native，native性能更佳。</p></li>
+</ol>
+
+<ul>
+<li>network</li>
+</ul>
+
+<p>通过下面参数设置：
+  #+begin_example
+  -net nic,vlan=0,model=virtio,macaddr=DE:AD:BE:EF:FC:70 <br />
+  -net tap,vlan=0,vhost=on <br />
+  #+end_example</p>
+
+<p>缺省qemu使用user mode网络，完全和宿主机隔离，性能差，通常都需要使用tap模式，同
+  时打开vhost-net特性，vhost-net完全bypass qemu，并且运行在kernel层，能大大降低
+  cs的开销，性能接近宿主机网络。</p>
+
+<p>同时采用virtio半虚拟化驱动，相比模拟驱动性能提升明显，前提同样是guest os需要支
+  持virtio驱动。同时打开两者获取最好的网络性能。另外注意vhost需要加载vhost_net模块：
+  : modprobe vhost_net</p>
+
+<p>确保使用了vhost_net特性，你只需在启动guest的时候，查看是否有vhost线程存在：
+  #+begin_example
+  ps -ef | grep vhost- | grep -v grep
+  root      1563     2  0 Feb18 ?        00:00:00 [vhost-1561]
+  #+end_example</p>
+
+<ul>
+<li>qemu monitor</li>
+</ul>
+
+<p>qemu和guest交互的一个控制台，支持多种模式交互，比如unix socket，tcp socket等，
+  通过下面参数设置：
+  : -monitor unix:/home/tacy/vm/monitor/centos.monitor,server,nowait</p>
+
+<p>上面是unix socket模式, 这样你可以直接发送system_powerdown指令关机了，相当于按
+  power键；system_reset相当于按reset键，这个要小心:
+  : socat - UNIX-CONNECT:/home/tacy/vm/monitor/centos.monitor</p>
+
+<p>直接关闭虚拟机可以通过下面指令:
+  : echo system_reset|socat - UNIX-CONNECT:/home/tacy/vm/monitor/centos.monitor</p>
+
+<ul>
+<li>other</li>
+</ul>
+
+<p>时间同步可以采用ntp或者&rdquo;-rtc base=localtime,clock=vm&rdquo;, vnc鼠标同步用
+  &ldquo;-usbdevice tablet&rdquo;, pass-through usb口用&rdquo;-usbdevice host:19d2:0117&rdquo;, 关闭
+  console用&rdquo;-nographic&rdquo;.</p>
+
+<h2 id="启动虚拟机">启动虚拟机</h2>
+
+<p>下面是我的启动命令：</p>
+
+<pre><code class="language-shell">sudo kvm -m 2048 -smp 2 -cpu host -enable-kvm -boot c \
+    -drive file=/home/tacy/software/CentOS-6.3-x86_64.iso,media=cdrom -boot d \
+    -drive file=centos.img,if=virtio,cache=none,aio=native \
+    -net nic,vlan=0,model=virtio,macaddr=DE:AD:BE:EF:FC:70 \
+    -net tap,vlan=0,vhost=on \
+    -soundhw es1370 \
+    -rtc base=localtime,clock=vm \
+    -usbdevice host:19d2:0117 -usbdevice tablet \
+    -monitor unix:/home/tacy/vm/monitor/centos.monitor,server,nowait \
+    -vga std -nographic -vnc :0 \
+    &gt;/dev/null 2&gt;&amp;1 &amp;
+</code></pre>
+
+<p>上面我指定了光驱,和从光驱启动，这样你通过vnc就可以连接上虚拟机，进行系统安装了。</p>
+
+<h1 id="虚拟机串口">虚拟机串口</h1>
+
+<hr />
+
+<p>如果你设置了nographic启动参数，你就看不到虚拟机的console了，有时候你希望能看看
+console上的一些异常，比如导致启动失败的异常，这时候，你就可以利用虚拟机串口重定
+向功能来解决，简单来说，就是让虚拟机把console重定向到串口输出，然后再通过qemu设
+置虚拟机串口输出到host设备上，可以是tcp/udp/unix socket/file/pipe，然后在host上
+查看虚拟机console信息。</p>
+
+<dl>
+<dt>首先需要完成虚拟机重定向console设置，简单修改grub.conf，添加参数：</dt>
+<dd>console=/dev/tty0 console=/dev/ttyS0,115200</dd>
+<dt>设置qemu启动参数，添加如下启动项：</dt>
+<dd>-serial telnet::4446,server,nowait</dd>
+</dl>
+
+<p>重启虚拟机，然后你就可以通过telnet连接到虚拟机console上了。这里只是以telnet为例
+子，其他的你可以参考qemu man实现，比如你可以直接设置虚拟机串口输出到host当前终端
+的stdio，试试就知道了，非常方便。</p>
+
+<h1 id="windows7-guest">Windows7 guest</h1>
+
+<hr />
+
+<h2 id="virtio">virtio</h2>
+
+<p>如果把系统安装在virtio磁盘上，安装的时候必须指定驱动，否则找不到磁盘，驱动下载地
+址可以参考[[<a href="http://www.linux-kvm.org/page/WindowsGuestDrivers][Windows">http://www.linux-kvm.org/page/WindowsGuestDrivers][Windows</a> guest drivers]]，另外注意，在安装的时候加载virtio驱动，需要把驱
+动光盘防止在第一个光盘驱动器，否则会无法启动，例如：</p>
+
+<pre><code class="language-shell">sudo kvm -m 2048 -smp 2 -cpu host -enable-kvm -boot d \
+    -drive file=/home/tacy/vm/software/virtio-win-0.1-30.iso,media=cdrom \
+    -drive file=/home/tacy/vm/software/win7/win7_ultimate_sp1.iso,media=cdrom \
+    -drive file=win7.template.img,if=virtio,cache=none,aio=native \
+</code></pre>
+
+<p>采用virtio磁盘安装，我测试了一下，在我机器上不超过15分钟就完成了。</p>
+
+<h2 id="audio">audio</h2>
+
+<p>直接用ac97，不过你需要自己去下载驱动，注意下载win7版本的就行</p>
+
+<h2 id="usb">usb</h2>
+
+<dl>
+<dt>式加载usb：</dt>
+<dd>-usb -usbdevice host:0951:1624</dd>
+<dt>恭喜你，是有八九你能碰到和我同样的问题，在windows上能发现设备，但是在设备管理器
+里面有警告：</dt>
+<dd>usb mass storage usb cannot start code 10</dd>
+</dl>
+
+<dl>
+<dt>里面有警告：</dt>
+<dd>usb mass storage usb cannot start code 10</dd>
+</dl>
+
+<dl>
+<dt>��告：</dt>
+<dd>usb mass storage usb cannot start code 10</dd>
+</dl>
+
+<p>就为这问题，害我重复编译了好几遍qemu，最后看到这两个帖子太恍然大悟[fn:4][fn:5]，
+查了一下我机器上的usb口：</p>
+
+<pre><code class="language-shell">tacy@tacy:~$ lspci|grep USB
+00:1a.0 USB controller: Intel Corporation 6 Series/C200 Series Chipset Family USB Enhanced Host Controller #2 (rev 05)
+00:1d.0 USB controller: Intel Corporation 6 Series/C200 Series Chipset Family USB Enhanced Host Controller #1 (rev 05)
+</code></pre>
+
+<p>没错，我的是ehci，不是uhci，而qemu用-usb方式模拟出来的是uhci，搞半天，在uhci上接
+了2.0的设备，不能正常驱动，知道原因，解决起来就简单了：</p>
+
+<pre><code class="language-shell">-device usb-ehci,id=ehci \
+-drive if=none,id=usbstick,file=/dev/sdX \
+-device usb-storage,bus=ehci.0,drive=usbstick \
+</code></pre>
+
+<p>其中的sdX是你的usb驱动名，这样你就可以正常在windows上看到usb驱动器了，后面两行可
+以通过monitor动态添加，但是第一行必须带上：</p>
+
+<pre><code class="language-shell">drive_add 0 id=usbdrive,if=none,file=/dev/sdX
+device_add usb-storage,id=usbdrive,bus=ehci.0,drive=usbdrive
+</code></pre>
+
+<h2 id="shutdown-about-winxp-and-win2003">shutdown（about winxp and win2003)</h2>
+
+<p>gpedit.msc  (允许无用户登入关机）</p>
+
+<pre><code class="language-shell">Computer Configuration\Windows Settings\Security Settings\Local Policies\
+Security Options\Shutdown: Allow system to be shut down without having to log on
+</code></pre>
+
+<dl>
+<dt>regedit  （有用户登入时，提示超时关机）</dt>
+<dd>[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows]  &ldquo;ShutdownWarningDialogTimeout&rdquo;=dword:00000001</dd>
+</dl>
+
+<h1 id="spice">Spice</h1>
+
+<hr />
+
+<p>很不幸，在ubuntu12.04上要用spice缺省是不行的，首先，缺省的kvm包不带spice功能，需
+要另外安装qemu-kvm-spice，但是这个版本有bug[fn:6]，用这个包启动黑屏并且CPU 100%
+，没法启动虚拟机。查了一圈，有人说是seabios问题，也有人说改改配置就可以，我试了
+试都不好使。bug里面说ubuntu 12.10里面的版本已经解决了这个问题，但咱这是工作电脑
+，不能随便升级，所以只能自己动手编译。</p>
+
+<p>更悲剧的事情是，spice由于是redhat开发的，对ubuntu极不友好，依赖的一些包在fedora
+上是标准包但在ubuntu上都没有，必须自己去编译，我这里主要参考了两个文档[fn:7][fn:8]</p>
+
+<h2 id="准备软件包">准备软件包</h2>
+
+<p>下载相关依赖包和代码[fn:9]</p>
+
+<pre><code class="language-shell">sudo apt-get install libtool libnss3-dev libxrandr-dev libxfixes-dev
+  libaio-dev libsasl2-dev libjpeg8-dev libpixman-1-dev libcap-dev
+  libattr1-dev libusb-1.0.0-dev texinfo
+wget http://downloads.us.xiph.org/releases/celt/celt-0.5.1.3.tar.gz
+wget http://spice-space.org/download/releases/spice-protocol-0.12.4.tar.bz2
+wget http://spice-space.org/download/releases/spice-0.12.2.tar.bz2
+wget http://spice-space.org/download/libcacard/libcacard-0.1.2.tar.bz2
+wget http://spice-space.org/download/usbredir/usbredir-0.6.tar.bz2
+wget http://wiki.qemu-project.org/download/qemu-1.3.1.tar.bz2
+</code></pre>
+
+<p>这里的celt版本是指定版本，缺省ubuntu 12.04上的版本不行，必须安装这个版本，注意，
+我这里由于没有使用virt-manager,使用系统里面相关的spice包都被我删除了，一般你的情
+况不一样，应该不用从头编译[fn:10]，另外这里没用spice代码库里的qemu，而是直接用的
+qemu代码库里的代码，我试了试没问题，应该是合并了。</p>
+
+<h2 id="编译软件包">编译软件包</h2>
+
+<ol>
+<li><p>celt，注意我们这里缺省都安装在/usr/local下，以免出现覆盖系统包的情况
+#+begin_example
+tar zxvf celt-0.5.1.3.tar.gz
+cd celt-0.5.1.3
+./configure &ndash;prefix=/usr/local
+make -j5
+sudo make install
+#+end_example</p></li>
+
+<li><p>libcacard
+#+begin_example
+cd libcacard
+./configure &ndash;prefix=/usr/local
+make -j5
+sudo make install
+#+end_example</p></li>
+
+<li><p>usbredir
+#+begin_example
+cd usbredir
+./configure &ndash;prefix=/usr/local
+make -j5
+sudo make install
+#+end_example</p></li>
+
+<li><p>spice-protocol
+#+begin_example
+cd spice-protocol
+#./configure &ndash;prefix=/usr/local
+make -j5
+sudo make install
+#+end_example</p></li>
+
+<li><p>spice
+#+begin_example
+cd spice
+./configure &ndash;prefix=/usr/local &ndash;enable-client &ndash;enable-smartcard
+make j5
+sudo make install
+#+end_example</p></li>
+
+<li><p>qemu，这里编译没有带sdl，这样qemu启动不会弹出窗口，如果你需要，添加相关编译参数即可
+#+begin_example
+cd qemu
+./configure &ndash;prefix=/usr/local <br />
+   &ndash;target-list=x86_64-softmmu <br />
+   &ndash;extra-cflags=&ldquo;-march=native -O2 -no-omit-framepoint -pipe&rdquo; <br />
+   &ndash;extra-ldflags=&ldquo;-Wl,-Bsymbolic-functions -Wl,-z,relro&rdquo; <br />
+   &ndash;audio-drv-list=&ldquo;pa,alsa,oss&rdquo; <br />
+   &ndash;enable-kvm &ndash;enable-linux-aio &ndash;enable-spice <br />
+   &ndash;enable-vhost-net &ndash;enable-vnc &ndash;enable-virtfs <br />
+   &ndash;enable-system &ndash;enable-usb-redir &ndash;enable-docs
+make j5
+sudo make install
+#+end_example
+参考了ubuntu qemu-kvm包编译[fn:11]和gentoo编译优化[fn:12]</p></li>
+</ol>
+
+<p>编译过程中，可能会出现动态库找不到的情况，确保LD_LIBRARY_PATH包括/usr/local/lib
+目录，这样你就可以用spice了。[fn:13]</p>
+
+<h2 id="启动虚拟机-1">启动虚拟机</h2>
+
+<p>启动windows虚拟机</p>
+
+<pre><code class="language-shell">sudo LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH} qemu-system-x86_64 \
+    -m 2048 -smp 2 -cpu host -enable-kvm -boot d \
+    -drive file=win7.template.img,if=virtio,cache=none,aio=native \
+    -net nic,vlan=0,model=virtio,macaddr=DE:AD:BE:EF:FC:74 \
+    -net tap,vlan=0,vhost=on \
+    -soundhw ac97 \
+    -rtc base=localtime,clock=vm \
+    -device virtio-serial-pci \
+    -device usb-ehci,id=ehci \
+    -drive if=none,id=usbstick,file=/dev/sdc \
+    -device usb-storage,bus=ehci.0,drive=usbstick \
+    -device virtserialport,chardev=spicechannel0,name=com.redhat.spice.0 \
+    -chardev spicevmc,id=spicechannel0,name=vdagent \
+    -monitor unix:/home/tacy/vm/monitor/win7.monitor,server,nowait \
+    -vga qxl -spice port=5900,addr=127.0.0.1,disable-ticketing \
+    &gt;/dev/null 2&gt;&amp;1 &amp;
+</code></pre>
+
+<h2 id="客户端连接">客户端连接</h2>
+
+<dl>
+<dt>启动spice客户端spicec</dt>
+<dd>/usr/local/bin/spicec -h localhost -p 5900 -f</dd>
+</dl>
+
+<p>为了获得更好的性能，需要在虚拟机上安装spice guest tools，直接去spice网站下载
+spice-guest-tools即可：<a href="http://www.spice-space.org/download.html，">http://www.spice-space.org/download.html，</a> 里面已经包括
+了qxl驱动和guest agent。</p>
+
+<h2 id="usbredir-fn-14">usbredir[fn:14]</h2>
+
+<p>简单来说，就是客户端机器上插入的usb存储设备能够在vm上发现并使用，举例来说，你用
+你的笔记本电脑通过网络访问远程虚拟机，那么插入你笔记本电脑上的usb存储设备能在虚
+拟机上使用。目前支持usbredir的spice客户端只有spice-gtk，我们下面来编译spice-gtk
+，使他具有usbredir功能：</p>
+
+<ol>
+<li><p>下载spice-gtk代码：</p>
+
+<dl>
+<dd>wget <a href="http://spice-space.org/download/gtk/spice-gtk-0.18.tar.bz2">http://spice-space.org/download/gtk/spice-gtk-0.18.tar.bz2</a></dd>
+</dl></li>
+
+<li><p>编译包：
+#+begin_example
+cd spice-gtk
+./configure &ndash;prefix=/usr/local &ndash;with-gtk=2.0 &ndash;enable-usbredir=yes <br />
+ &ndash;enable-smartcard=yes &ndash;with-python=yes
+make
+sudo make install
+#+end_example</p></li>
+
+<li><p>运行虚拟机命令增加usbredir设置：
+首先需要一个ich9-ehci-uhci.cfg文件，你可以从qemu代码里面找，在
+src/qemu1.3.1/docs目录下，拷贝到/usr/local/etc/qemu/目录下</p>
+
+<dl>
+<dd>cp qemu1.3.1/docs/ich9-ehci-uhci.cfg /usr/local/etc/qemu/</dd>
+</dl></li>
+</ol>
+
+<p>然后需要修改虚拟机启动脚本，添加如下三行
+   #+begin_example
+   -readconfig /usr/local/etc/qemu/ich9-ehci-uhci.cfg <br />
+   -chardev spicevmc,name=usbredir,id=usbredirchardev1 <br />
+   -device usb-redir,chardev=usbredirchardev1,id=usbredirdev1,debug=3 <br />
+   #+end_example</p>
+
+<p>然后启动虚拟机，并用spicy连接
+   : sudo spicy -h localhost -p 5900</p>
+
+<p>选中spicy option菜单中的auto connection选项，在客户端中插入usb设备，不出意外
+   的话，你就能在虚拟机上看到插入的usb设备了。</p>
+
+<h1 id="base-image-snapshot">Base image &amp; Snapshot</h1>
+
+<hr />
+
+<h2 id="base-image-fn-15">base image[fn:15]</h2>
+
+<p>base image简单可以理解为模板，举个例子，你在部署公司的虚拟化环境，公司的所有的系
+统都跑在centos上，只是上面配置的应用各有不同，有c开发的，有java开发的等等，简单
+来说，你会先安装一个base image</p>
+
+<pre><code class="language-shell">$kvm-img create -f qcow2 centos.qcow2 10g
+$kvm -drive file=centos.qcow2 -m 1024 -boot d -drive file=centos.iso,media=cdrom
+</code></pre>
+
+<dl>
+<dt>安装完操作系统和相应补丁之后，你可以从你的base image创建一个新的image:</dt>
+<dd>$kvm-img create -b centos.qcow2 -f qcow2 centos-clone.qcow2</dd>
+</dl>
+
+<p>新的image文件并不会实际占用空间，他链接在base image上，只有修改之后，才会通过
+copy on write方式保存修改内容到新的image文件：
+#+begin_example
+$kvm-img info centos-clone.qcow2
+image: centos-clone.qcow2
+file format: qcow2
+virtual size: 10G (10737418240 bytes)
+disk size: 136K
+cluster_size: 65536
+backing file: centos.qcow2 (actual path: centos.qcow2)
+#+end_example</p>
+
+<dl>
+<dt>新的base image:</dt>
+<dd>kvm-img convert centos-clone.qcow2 -O qcow2 centos-base-java.qcow2</dd>
+</dl>
+
+<dl>
+<dt>新的base image:</dt>
+<dd>kvm-img convert centos-clone.qcow2 -O qcow2 centos-base-java.qcow2</dd>
+</dl>
+
+<p>base-java.qcow2</p>
+
+<h2 id="移动base-image">移动base image</h2>
+
+<dl>
+<dt>关的clone，否则clone就会出错：</dt>
+<dd>kvm-img rebase -f qcow2 -u -b centos54.img -F raw centos-clone.qcow2</dd>
+</dl>
+
+<dl>
+<dt>��的clone，否则clone就会出错：</dt>
+<dd>kvm-img rebase -f qcow2 -u -b centos54.img -F raw centos-clone.qcow2</dd>
+</dl>
+
+<h2 id="snapshot-fn-16">snapshot[fn:16]</h2>
+
+<p>快照是虚拟机一个常用的功能，你可以利用快照功能来保留某个时间点的虚拟机状态，方便
+虚拟机回滚。离线快照参考man手册即可。在线快照通过monitor或者QMP实现。</p>
+
+<h1 id="qemu概念">qemu概念</h1>
+
+<h2 id="arm-softmmu和arm-linux-user区别">arm-softmmu和arm-linux-user区别</h2>
+
+<p>前者是指模拟的硬件平台；后者是直接在宿主平台运行arm程序，无须安装android系统即
+可运行。</p>
+
+<h1 id="其他相关">其他相关</h1>
+
+<hr />
+
+<h2 id="查看虚拟机ip地址">查看虚拟机ip地址</h2>
+
+<p>如果虚拟机很少，简单通过“arp -an”查看即可，如果虚拟机很多，你不容易找到ip和mac的
+对应关系，需要自己写脚本去实现了[fn:17].</p>
+
+<h2 id="查看设备信息">查看设备信息</h2>
+
+<p>进入monitor, 然后用info qtree命令查看设备信息.</p>
+
+<h1 id="footnotes">Footnotes</h1>
+
+<hr />
+
+<p>[fn:1] [[<a href="http://en.wikipedia.org/wiki/Sparse_file][sparse">http://en.wikipedia.org/wiki/Sparse_file][sparse</a> file]]</p>
+
+<p>[fn:2] [[<a href="http://www.linux-kvm.org/page/Tuning_KVM][tuning">http://www.linux-kvm.org/page/Tuning_KVM][tuning</a> kvm]]</p>
+
+<p>[fn:3] Optimizing the QEMU Storage Stack by Stefan Hajnoczi</p>
+
+<p>[fn:4] [[<a href="http://www.spinics.net/lists/kvm/msg56923.html][The">http://www.spinics.net/lists/kvm/msg56923.html][The</a> usb mass storage driver can&rsquo;t be installed successfully]]</p>
+
+<p>[fn:5] [[<a href="http://en.wikipedia.org/wiki/Host_controller_interface_(USB,_Firewire)][Host">http://en.wikipedia.org/wiki/Host_controller_interface_(USB,_Firewire)][Host</a> controller interface]]</p>
+
+<p>[fn:6] [[<a href="https://bugs.launchpad.net/ubuntu/%2Bsource/qemu-kvm-spice/%2Bbug/970234][Selecting">https://bugs.launchpad.net/ubuntu/%2Bsource/qemu-kvm-spice/%2Bbug/970234][Selecting</a> spice and qxl mode results in blank screen]]</p>
+
+<p>[fn:7] [[<a href="http://docs.cslabs.clarkson.edu/wiki/SPICE][Spice">http://docs.cslabs.clarkson.edu/wiki/SPICE][Spice</a> on ubuntu]]</p>
+
+<p>[fn:8] [[<a href="http://www.spice-space.org/page/Building_Instructions][Spice">http://www.spice-space.org/page/Building_Instructions][Spice</a> build instructions]]</p>
+
+<p>[fn:9] [[<a href="http://spice-space.org/download.html][Spice">http://spice-space.org/download.html][Spice</a> download]]</p>
+
+<p>[fn:10] [[<a href="http://huang.yunsong.net/2012/spice-gtk-ubuntu.html][Build">http://huang.yunsong.net/2012/spice-gtk-ubuntu.html][Build</a> and Install SPICE-GTK on UBUNTU]]</p>
+
+<p>[fn:11] [[<a href="https://launchpad.net/ubuntu/%2Bsource/qemu-kvm/1.2.0%2Bnoroms-0ubuntu2.12.10.3][Ubuntu">https://launchpad.net/ubuntu/%2Bsource/qemu-kvm/1.2.0%2Bnoroms-0ubuntu2.12.10.3][Ubuntu</a> qemu-kvm build log]]</p>
+
+<p>[fn:12] [[<a href="http://wiki.gentoo.org/wiki/Dell_XPS_15z][Gentoo">http://wiki.gentoo.org/wiki/Dell_XPS_15z][Gentoo</a> build on dell xps 15z]]</p>
+
+<p>[fn:13] [[<a href="http://www.linux-kvm.org/page/SPICE][Spice">http://www.linux-kvm.org/page/SPICE][Spice</a> KVM]]</p>
+
+<p>[fn:14] [[<a href="http://hansdegoede.livejournal.com/11686.html][Using">http://hansdegoede.livejournal.com/11686.html][Using</a> spice from the qemu cmdline]]</p>
+
+<p>[fn:15] [[<a href="http://www.linux-kvm.com/content/how-you-can-use-qemukvm-base-images-be-more-productive-part-1][how">http://www.linux-kvm.com/content/how-you-can-use-qemukvm-base-images-be-more-productive-part-1][how</a> to use base image]]</p>
+
+<p>[fn:16] [[<a href="http://wiki.qemu.org/Features/Snapshots][kvm">http://wiki.qemu.org/Features/Snapshots][kvm</a> snapshot]]</p>
+
+<p>[fn:17] [[<a href="http://rwmj.wordpress.com/2010/10/26/tip-find-the-ip-address-of-a-virtual-machine/][find">http://rwmj.wordpress.com/2010/10/26/tip-find-the-ip-address-of-a-virtual-machine/][find</a> the ip address of a vm]]</p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">春龙</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">2013-02-18</span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">License</span>
+    <span class="item-content">true</span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="http://tacy.github.io/tags/tech/">tech</a>
+          <a href="http://tacy.github.io/tags/kvm/">kvm</a>
+          <a href="http://tacy.github.io/tags/hypervisor/">hypervisor</a>
+          <a href="http://tacy.github.io/tags/cloud/">cloud</a>
+          <a href="http://tacy.github.io/tags/kvm/">kvm</a>
+          <a href="http://tacy.github.io/tags/spice/">spice</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+          <a class="prev" href="/post/python/">
+            
+            <i class="iconfont">
+              <svg  class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417 757.434875 204.940602c11.338233-12.190647 11.035334-32.285311-0.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-0.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891 0.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"></path>
+</svg>
+
+            </i>
+            <span class="prev-text nav-default">python notes</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        
+          <a class="next" href="/post/raspberry-pi-notes/">
+            <span class="next-text nav-default">Raspberry Pi安装配置和问题记录</span>
+            <span class="prev-text nav-mobile">Next</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+
+  
+
+  <div class="disqus-comment">
+  <div class="disqus-button" id="load_disqus" onclick="load_disqus()">
+    Show Disqus Comments
+  </div>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_config = function () {
+      this.page.url = "http://tacy.github.io/post/linux-kvm/";
+    };
+    function load_disqus() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'tacyweblog';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+
+      $('#load_disqus').remove();
+    };
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+  
+  </div>
+  
+    
+
+
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+  
+  
+    <a href="mailto:your@email.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://stackoverflow.com/users/1225294/tacy-lee" rel="me noopener" class="iconfont"
+      title="stack-overflow"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M809.714286 932.571429l-638.857143 0 0-274.285714-91.428571 0 0 365.714286 821.714286 0 0-365.714286-91.428571 0 0 274.285714zm-538.285714-299.428571l18.857143-89.714286 447.428571 94.285714-18.857143 89.142857zm58.857143-213.714286l38.285714-83.428571 414.285714 193.714286-38.285714 82.857143zm114.857143-203.428571l58.285714-70.285714 350.857143 293.142857-58.285714 70.285714zm226.857143-216l272.571429 366.285714-73.142857 54.857143-272.571429-366.285714zm-410.285714 840.571429l0-90.857143 457.142857 0 0 90.857143-457.142857 0z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://twitter.com/tacy_lee" rel="me noopener" class="iconfont"
+      title="twitter"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1264 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M1229.8616 18.043658c0 0-117.852626 63.135335-164.151872 67.344358-105.225559-164.151872-505.082682-92.598492-437.738325 223.078185C278.622548 312.675223 89.216542 47.506814 89.216542 47.506814s-117.852626 189.406006 75.762402 345.139833C127.097743 396.85567 55.544363 371.601535 55.544363 371.601535S26.081207 535.753407 253.368414 615.724832c-21.045112 29.463156-113.643603 8.418045-113.643603 8.418045s25.254134 143.10676 231.496229 180.987961c-143.10676 130.479693-387.230056 92.598492-370.393967 105.225559 206.242095 189.406006 1119.599946 231.496229 1128.01799-643.98042C1179.353331 249.539887 1263.533778 123.269217 1263.533778 123.269217s-130.479693 37.881201-138.897738 33.672179C1225.652577 98.015083 1229.8616 18.043658 1229.8616 18.043658"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/tacy" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://weibo.com/p/1005051970158087" rel="me noopener" class="iconfont"
+      title="weibo"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M385.714286 733.714286q12-19.428571 6.285714-39.428571t-25.714286-28.571429q-19.428571-8-41.714286-0.571429t-34.285714 26.285714q-12.571429 19.428571-7.428571 39.142857t24.571429 28.857143 42.571429 1.428571 35.714286-27.142857zm53.714286-69.142857q4.571429-7.428571 2-15.142857t-10-10.571429q-8-2.857143-16.285714 2.857143t-12.285714 10.571429q-9.714286 17.714286 7.428571 25.714286 8 2.857143 16.571429 2.857143t12.571429-10.571429zm99.428571 61.142857q-25.714286 58.285714-90.285714 85.714286t-128 6.857143q-61.142857-19.428571-84.285714-72.285714t3.714286-107.142857q26.857143-53.142857 86.571429-79.428571t120.285714-10.857143q63.428571 16.571429 90.571429 68.285714t1.428571 108.857143zm178.285714-91.428571q-5.142857-54.857143-50.857143-97.142857t-119.142857-62.285714-156.857143-12q-127.428571 13.142857-211.142857 80.857143t-75.714286 151.142857q5.142857 54.857143 50.857143 97.142857t119.142857 62.285714 156.857143 12q127.428571-13.142857 211.142857-80.857143t75.714286-151.142857zm176 2.285714q0 38.857143-21.142857 79.714286t-62.285714 78.285714-96.285714 67.142857-129.142857 47.428571-154.571429 17.714286-157.142857-19.142857-137.428571-53.142857-98-86.285714-37.142857-114q0-65.714286 39.714286-140t112.857143-147.428571q96.571429-96.571429 195.142857-134.857143t140.857143 4q37.142857 36.571429 11.428571 119.428571-2.285714 8-0.571429 11.428571t5.714286 4 8.285714 2.857143 7.714286-2l3.428571-1.142857q79.428571-33.714286 140.571429-33.714286t87.428571 34.857143q25.714286 36 0 101.714286-1.142857 7.428571-2.571429 11.428571t2.571429 7.142857 6.857143 4.285714 9.714286 3.428571q32.571429 10.285714 58.857143 26.857143t45.714286 46.571429 19.428571 66.571429zm-42.285714-356.571429q24 26.857143 31.142857 62t-3.714286 67.142857q-4.571429 13.142857-16.857143 19.428571t-25.428571 2.285714q-13.142857-4.571429-19.428571-16.857143t-2.285714-25.428571q11.428571-36-13.714286-63.428571t-61.142857-20q-13.714286 2.857143-25.714286-4.571429t-14.285714-21.142857q-2.857143-13.714286 4.571429-25.428571t21.142857-14.571429q34.285714-7.428571 68 3.142857t57.714286 37.428571zm103.428571-93.142857q49.714286 54.857143 64.285714 127.142857t-7.714286 138q-5.142857 15.428571-19.428571 22.857143t-29.714286 2.285714-22.857143-19.428571-2.857143-29.714286q16-46.857143 5.714286-98.285714t-45.714286-90.285714q-35.428571-39.428571-84.571429-54.571429t-98.857143-4.857143q-16 3.428571-29.714286-5.428571t-17.142857-24.857143 5.428571-29.428571 24.857143-16.857143q70.285714-14.857143 139.428571 6.571429t118.857143 76.857143z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://www.douban.com/people/tacy_lee/" rel="me noopener" class="iconfont"
+      title="douban"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M926.917973 37.80608C959.65184 37.80608 986.19392 64.34816 986.19392 97.082027L986.19392 926.917973C986.19392 959.65184 959.65184 986.19392 926.917973 986.19392L97.082027 986.19392C64.34816 986.19392 37.80608 959.65184 37.80608 926.917973L37.80608 97.082027C37.80608 64.34816 64.34816 37.80608 97.082027 37.80608zM176.653653 176.19968 176.653653 252.678827 825.658027 252.678827 825.658027 176.19968zM217.719467 316.146347 217.719467 628.08064 273.524053 628.08064 341.292373 770.39616 157.259093 770.39616 157.259093 845.417813 842.949973 845.417813 842.949973 770.39616 654.226773 770.39616 722.899627 628.08064 783.67744 628.08064 783.67744 316.146347zM684.885333 392.891733 684.885333 553.987413 312.576 553.987413 312.576 392.891733zM570.770773 770.39616 426.653013 770.39616 359.621973 628.08064 639.443627 628.08064z"></path>
+</svg>
+
+    </a>
+
+
+<a href="http://tacy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+  
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2012 -
+    2019
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        春龙
+        
+      </span></span>
+
+  
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

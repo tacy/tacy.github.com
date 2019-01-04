@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Java on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/java/</link>
+    <description>Recent content in Java on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 16 Jul 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Java性能分析之火焰图</title>
+      <link>http://tacy.github.io/post/flamegraph/</link>
+      <pubDate>Wed, 16 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/flamegraph/</guid>
+      <description>FlameGraph 火焰图[fn:1]，简单通过x轴横条宽度来度量时间指标，y轴代表线程栈的层次，简单明了， 容易找出具体的可优化点，非常方便，当然前提是我们通</description>
+    </item>
+    
+    <item>
+      <title>Byteman notes</title>
+      <link>http://tacy.github.io/post/byteman/</link>
+      <pubDate>Wed, 11 Jun 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/byteman/</guid>
+      <description>Byteman byteman是jboss下的一个项目，是一个非常方便的java分析工具，能够拦截字节码执行，执 行代码和修改变量，是一个诊断问题的利器。 在</description>
+    </item>
+    
+    <item>
+      <title>HotSpot GC日志解读</title>
+      <link>http://tacy.github.io/post/hotspot-gc/</link>
+      <pubDate>Mon, 24 Mar 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/hotspot-gc/</guid>
+      <description>HotSpot GC 对于Java应用的优化，GC是重要的一环，而读懂GC日志是调优GC的关键，本文尝试对GC 做一些解读，测试使用的JVM版本是1.6.0_4</description>
+    </item>
+    
+  </channel>
+</rss>

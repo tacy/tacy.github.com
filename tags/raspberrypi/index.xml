@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Raspberrypi on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/raspberrypi/</link>
+    <description>Recent content in Raspberrypi on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 29 Oct 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/raspberrypi/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Raspberry Pi WirelessAP</title>
+      <link>http://tacy.github.io/post/raspberry-pi-wirelessap/</link>
+      <pubDate>Wed, 29 Oct 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/raspberry-pi-wirelessap/</guid>
+      <description>Raspberry Pi WirelessAP 有时候, 希望能做一些其他设备的抓包分析, 不想去折腾路由器, 就把手上的Raspberry Pi改造了一下, 当然你也能让他当成翻墙工具, 可以</description>
+    </item>
+    
+    <item>
+      <title>XBMC插件之网易公开课</title>
+      <link>http://tacy.github.io/post/neteaseopencourse-xbmc-plugin/</link>
+      <pubDate>Tue, 23 Jul 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/neteaseopencourse-xbmc-plugin/</guid>
+      <description>自从迷上了Raspberry Pi之后，开始玩上了XBMC，确实是个好东西，非常简单就把小树莓变成了一个媒体中心，看电影非常方便，自己之前在i</description>
+    </item>
+    
+    <item>
+      <title>Raspberry Pi安装配置和问题记录</title>
+      <link>http://tacy.github.io/post/raspberry-pi-notes/</link>
+      <pubDate>Sun, 10 Feb 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/raspberry-pi-notes/</guid>
+      <description>Raspberry Pi简单来说就是一个低功耗的卡片PC主机，当然他的处理能力要弱很多，可以是 用来教孩子编程，放高清（带GPU和HDMI输出），当然你可以用它</description>
+    </item>
+    
+  </channel>
+</rss>

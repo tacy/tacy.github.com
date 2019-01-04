@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Xmbc on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/xmbc/</link>
+    <description>Recent content in Xmbc on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sat, 18 Jan 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/xmbc/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>百度在线输入法Python代码</title>
+      <link>http://tacy.github.io/post/baidu-online-input/</link>
+      <pubDate>Sat, 18 Jan 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/baidu-online-input/</guid>
+      <description>代码里面有一些xbmc的语句，可以忽略，脚本只是提供了一个基本逻辑，供参考。 def __init__( self, *args, **kwargs ): self.totalpage = 0 self.nowpage = 0 self.words = &#39;&#39; self.py = &#39;&#39; self.bg = 0 self.ed = 20 self.wordpgs = [] #word page metadata self.inputString =</description>
+    </item>
+    
+    <item>
+      <title>腾讯视频下载地址解析</title>
+      <link>http://tacy.github.io/post/qq-video-download-url/</link>
+      <pubDate>Tue, 14 Jan 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/qq-video-download-url/</guid>
+      <description>写XBMC视频插件的时候，希望能播放腾讯视频，网上找了找，能发现的方法只能解析低码率 的地址，自己扒了一下，顺利完成，贴出来给有需要的同学 def qq(self):</description>
+    </item>
+    
+    <item>
+      <title>XBMC插件之网易公开课</title>
+      <link>http://tacy.github.io/post/neteaseopencourse-xbmc-plugin/</link>
+      <pubDate>Tue, 23 Jul 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/neteaseopencourse-xbmc-plugin/</guid>
+      <description>自从迷上了Raspberry Pi之后，开始玩上了XBMC，确实是个好东西，非常简单就把小树莓变成了一个媒体中心，看电影非常方便，自己之前在i</description>
+    </item>
+    
+  </channel>
+</rss>

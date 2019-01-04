@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>HotSpot GC日志解读 - Tacy - Notes</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="春龙" /><meta name="description" content="对于java应用的优化，GC是重要的一环，而读懂GC日志是调优GC的关键，这里尝试对GC日志做一些解读。" />
+
+  <meta name="keywords" content="Tacy, tech, life, linux, performance, kubernetes, golang, java, troubleshooting" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.51" />
+
+
+<link rel="canonical" href="http://tacy.github.io/post/hotspot-gc/" />
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.c8c1ff75dee09b44060a6c38f41b9036bac2512ccdb22d7f296cec12dc786375.css" integrity="sha256-yMH/dd7gm0QGCmw49BuQNrrCUSzNsi1/KWzsEtx4Y3U=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="HotSpot GC日志解读" />
+<meta property="og:description" content="对于java应用的优化，GC是重要的一环，而读懂GC日志是调优GC的关键，这里尝试对GC日志做一些解读。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://tacy.github.io/post/hotspot-gc/" /><meta property="article:published_time" content="2014-03-24T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2014-03-24T00:00:00&#43;00:00"/>
+
+<meta itemprop="name" content="HotSpot GC日志解读">
+<meta itemprop="description" content="对于java应用的优化，GC是重要的一环，而读懂GC日志是调优GC的关键，这里尝试对GC日志做一些解读。">
+
+
+<meta itemprop="datePublished" content="2014-03-24T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2014-03-24T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="6557">
+
+
+
+<meta itemprop="keywords" content="tech,java,tuning,performance," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="HotSpot GC日志解读"/>
+<meta name="twitter:description" content="对于java应用的优化，GC是重要的一环，而读懂GC日志是调优GC的关键，这里尝试对GC日志做一些解读。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33694554-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Tacy&#39;s notes</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/">Home</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/post/">Archives</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/tags/">Tags</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/categories/">Categories</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/about/">About</a>
+          
+        
+      </li>
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      Tacy's notes
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/">Home</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/post/">Archives</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/tags/">Tags</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/categories/">Categories</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/about/">About</a>
+          
+
+        
+
+      </li>
+    
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">HotSpot GC日志解读</h1>
+      
+      <div class="post-meta">
+        <time datetime="2014-03-24" class="post-time">
+          2014-03-24
+        </time>
+        <div class="post-category">
+            <a href="http://tacy.github.io/categories/tech/"> tech </a>
+            
+          </div>
+        
+
+        
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    
+    <div class="post-content">
+      
+
+<h1 id="hotspot-gc">HotSpot GC</h1>
+
+<p>对于Java应用的优化，GC是重要的一环，而读懂GC日志是调优GC的关键，本文尝试对GC
+做一些解读，测试使用的JVM版本是1.6.0_45-b06（64Bit）。</p>
+
+<h2 id="几个概念">几个概念</h2>
+
+<h3 id="serial-parallel">Serial &amp; Parallel</h3>
+
+<p>Serial收集意味着单线程操作，而Parallel是尽可能的并行，在多CPU机器上，切分收集
+任务到多个CPU运行，能够更快的完成收集操作，相对更复杂。</p>
+
+<h3 id="concurrent-stop-the-world">Concurrent &amp; Stop-the-world</h3>
+
+<p>STW收集策略指在GC期间，应用挂起，完成GC操作之后，应用继续运行，Concurrent策略
+是指GC操作和应用并行，只是在做一些必要操作的时候挂起应用。STP相比Concurrent简
+单，因为STW冻结了VM Heap，收集期间对象不会改变，能更快的完成GC操作，缺点是带来
+比较长时间的应用挂起，有些应用无法接受；而Concurrent在收集期间应用同时运行，会
+带来VM Heap内对象的变化，设计起来更复杂，需要更大的VM Heap来完成，调优起来也更
+复杂。</p>
+
+<h3 id="compacting-non-compacting-copying">Compacting &amp; Non-compacting &amp; Copying</h3>
+
+<p>Compacting是指GC之后，移动所有的活着的对象到一起，形成连续的空闲空间，能够高效
+的完成后续的对象分配任务，只需简单的移动指针。Non-compacting则是就地释放对象，
+也不会移动活着的对象，相对Compacting能更快完成，缺点是分配对象复杂，需要管理
+碎片空间。Copying是指拷贝存活对象到另外的内存空间，清空源内存空间，后续对象分配
+更容易，缺点是拷贝对象的开销。</p>
+
+<h2 id="hotspot-jvm组成">HotSpot JVM组成</h2>
+
+<p>包括两块，一块是JVM heap，另一块是Permanent Generation，主要我们关注JVM heap，
+JVM heap又分为两块：Young Generation和Old Generation（Tenured）。新分配对象和
+短生命周期对象一般都在Young Generation（大对象会直接分配到Old Generation中）,
+Old Generation主要是长生命周期的对象。</p>
+
+<p>JVM heap大小通过-Xms和-Xmx控制，一般生产环境会设置相同的值，如果不是设置相同
+大小，每一次JVM调整heap时候都会导致Full GC，对系统运行产生一定影响。</p>
+
+<p>Permanent Generation大小通过-XX:PermSize和-XX：MaxPermSize控制，大小主要看
+项目jar包的多少，这里主要存放的是class元数据和VM自己运行的数据，设置大小一致
+能避免Permanent空间调整导致的Full GC。</p>
+
+<p>Young Generation分为三块，一块是Eden space，另外两块是大小相等的Survivor space，
+我们这里简称S0、S1。Young Generation大小的控制有下面参数：
+-XX:NewSize / -XX:MaxNewSize (最大最小）
+-XX:NewRatio=3 指定Young Generation和Old Generation的比例是1：3
+-Xmn 最大最小保持一致
+JVM也提供了自适应的调整策略，如果你没有明确指定这些值，JVM会自己调整大小（搜索
+HotSport VM Adaptive）。</p>
+
+<p>Eden space和Survivor space大小通过-XX:SurvivorRatio=6参数可以控制，等于6表示
+Survivor space大小是Eden Space的1/6，是整个Young Generation的1/8（注意是两个
+Survivor space）。一般这个参数不会设置，JVM会自动计算最优比例，如果设置不合理
+容易导致Survivor space overflow（过小）或者Survivor space浪费(过大），Overflow
+的后果会导致放不下的对象直接迁移到Old Generation，带来不必要的Full GC。具体的
+行为可以通过-XX:+PrintTenuringDistribution观察。</p>
+
+<h2 id="gc的策略">GC的策略</h2>
+
+<p>记住几点：
+- GC的回收策略有不同的作用区域；
+- 所有的Serial和Parallel策略都是STW的；
+- 所有对Young Gen的回收都是Copying策略；
+- Concurrent策略都是非STW的；</p>
+
+<p>作用域和参数参考下表[fn:5]：</p>
+
+<p>| Young Collector   | Old Collector               | JVM Option             |
+|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;|
+| Serial(DefNew)    | Serial Mark-Sweep-Compact   | -XX:+UseSerialGC       |
+|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;|
+| Parallel scavenge | Serial Mark-Sweep-Compact   | -XX:+UseParallelGC     |
+| (PSYoungGen)      | (PSOldGen)                  |                        |
+|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;|
+| Parallel scavenge | Parallel Mark-Sweep-Compact | -XX:+UseParallelOldGC  |
+| (PSYoungGen)      | (ParOldGen)                 |                        |
+|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;|
+| Parallel(ParNew)  | Serial Mark-Sweep-Compact   | -XX:+UseParNewGC       |
+|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;|
+| Serial(DefNew)    | Concurrent Mark Sweep       | -XX:UseConcMarkSweepGC |
+|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;|
+| Parallel(ParNew)  | Concurrent Mark Sweep       | -XX:UseConcMarkSweepGC |
+|                   |                             | -XX:+UseParNewGC       |
+|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;|
+| G1                | G1                          | -XX:+UseG1             |</p>
+
+<h3 id="serialgc">SerialGC</h3>
+
+<p>YoungGen和OldGen回收策略，GC使用单线程，回收期间STP，适用于单处理器服务器和小的
+堆（一两百兆）。</p>
+
+<pre><code class="language-shell">10.590: [GC 10.590: [DefNew: 34944K-&gt;3140K(39296K), 0.0171370 secs] 95253K-&gt;63449K(126720K), 0.0171930 secs] [Times: user=0.02 sys=0.00, real=0.02 secs]
+10.787: [GC 10.787: [DefNew: 38084K-&gt;1913K(39296K), 0.0242650 secs] 98393K-&gt;65358K(126720K), 0.0243320 secs] [Times: user=0.02 sys=0.00, real=0.02 secs]
+10.842: [GC 10.842: [DefNew: 36857K-&gt;3477K(39296K), 0.0134890 secs] 100302K-&gt;66922K(126720K), 0.0136120 secs] [Times: user=0.01 sys=0.00, real=0.02 secs]
+11.012: [Full GC 11.012: [Tenured: 63445K-&gt;67278K(87424K), 0.2908000 secs] 82061K-&gt;67278K(126720K), [Perm : 64767K-&gt;64760K(64768K)], 0.2908740 secs] [Times: user=0.29 sys=0.00, real=0.29 secs]
+11.954: [Full GC 11.954: [Tenured: 67278K-&gt;69894K(87424K), 0.2313190 secs] 91392K-&gt;69894K(126720K), [Perm : 70207K-&gt;70207K(70208K)], 0.2313890 secs] [Times: user=0.24 sys=0.00, real=0.23 secs]
+</code></pre>
+
+<p>日志中的DefNew表示Serial回收，OldGen回收也是采用Serial Mark-Sweep-Compact。从日
+志里面能获取到很多信息：
+看第一行，34944K表示回收之前YoungGen对象大小，3140K表示回收之后存活的对象大小(结
+合后续MinorGC小节里面的TargetSurvivorRatio可以准确计算出Survivor space大小），耗
+时0.017930S，95253K表示回收之前JVM Heap对象占用空间大小，63449K表示回收之后堆内对
+象大小，126720K表示整个堆大小。（126720K-39296K）=87424K是Old Gen大小，被回收的
+垃圾对象为（95253K-63449K）=31804K，移动到OldGen对象（34944K-3140K-31804K）=0K，
+回收所用的User时间为0.02S，系统调用时间0S，时间周期0.02S，三个值区别参考[fn:10]。
+看第四行，你会发现Old Gen还有空间，触发GC的是Perm Gen，已经满了，尝试回收，发现
+回收不了64767K -&gt; 64760K，扩容Perm Gen，触发Full GC。</p>
+
+<h3 id="parallel-scavenge">Parallel Scavenge</h3>
+
+<p>Young Gen回收策略，并发回收，回收期间STW。</p>
+
+<pre><code class="language-shell">13.782: [GC [PSYoungGen: 18768K-&gt;3368K(29632K)] 93584K-&gt;80361K(117056K), 0.0082680 secs] [Times: user=0.03 sys=0.00, real=0.01 secs]
+14.015: [GC [PSYoungGen: 19944K-&gt;5449K(31424K)] 96937K-&gt;85551K(118848K), 0.0097840 secs] [Times: user=0.03 sys=0.00, real=0.01 secs]
+14.024: [Full GC [PSYoungGen: 5449K-&gt;0K(31424K)] [PSOldGen: 80101K-&gt;85415K(87424K)] 85551K-&gt;85415K(118848K) [PSPermGen: 76528K-&gt;76528K(153344K)], 0.2642610 secs] [Times: user=0.27 sys=0.00, real=0.27 secs]
+</code></pre>
+
+<p>日志中的PSYoungGen表示Parallel Scavenge，并行对YoungGen回收，PSOldGen表示Serial
+Mark-Sweep-Compact，单线程对OldGen进行回收。这里Minor GC中的user时间大于real时
+间是由于多线程并行导致。</p>
+
+<h3 id="parallel-mark-sweep-compact">Parallel Mark-Sweep-Compact</h3>
+
+<p>Old Gen回收策略，并发回收，回收期间STW。</p>
+
+<pre><code class="language-shell">14.488: [GC [PSYoungGen: 19568K-&gt;7759K(29760K)] 96421K-&gt;87358K(117184K), 0.0180290 secs] [Times: user=0.06 sys=0.00, real=0.02 secs]
+14.632: [GC [PSYoungGen: 25551K-&gt;288K(30720K)] 105150K-&gt;87492K(118144K), 0.0135020 secs] [Times: user=0.03 sys=0.00, real=0.02 secs]
+14.646: [Full GC [PSYoungGen: 288K-&gt;0K(30720K)] [ParOldGen: 87204K-&gt;66401K(87424K)] 87492K-&gt;66401K(118144K) [PSPermGen: 76492K-&gt;76370K(153408K)], 0.8717190 secs] [Times: user=2.76 sys=0.00, real=0.87 secs]
+</code></pre>
+
+<p>日志中的ParOldGen表示Paralle Mark-Sweep-Compact，并行对OldGen进行回收。</p>
+
+<p>两个Parallel策略也被称为Throught回收策略，由于并行进行GC操作，提高GC效率，获取
+更高的应用吞吐量，但是Parallel同时会导致比较长的STW，对延迟敏感的应用不适用。</p>
+
+<h3 id="concurrent-mark-sweep">Concurrent-Mark-Sweep</h3>
+
+<p>Old Gen回收策略，也被称为低延迟的GC策略，很少的STP操作，但是需要Old Gen保持一定
+的空闲空间来防止碎片问题（没有Compact，YoungGen promotion进来的对象需要连续的空
+间，容易导致fragmentation）。它分为六个步骤执行[fn:6]：
+- Initial Mark (STW)
+  标记root object直接引用的对象
+- Concurrent Mark
+  应用线程继续响应，标记第一步标记对象引用的所有对象。
+- Concurrent Preclean
+- Remark (STW)
+- Concurrent Sweep
+- Concurrent Reset
+打开CMS同时缺省打开ParNewGC策略对YoungGen进行并行回收。
+下面日志是一个完整的CMS周期，详细解释请参考[fn:7]，注意这里的日志是JDK8的，
+主要是大牛写的很详细，我就懒得自己整理了。</p>
+
+<pre><code class="language-shell">1.[GC [1 CMS-initial-mark: 463236K(515960K)] 464178K(522488K), 0.0018216 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]
+2.[GC[ParNew: 6528K-&gt;702K(6528K), 0.0130227 secs] 469764K-&gt;465500K(522488K), 0.0130578 secs] [Times: user=0.05 sys=0.00,real=0.01 secs]
+3.[GC[ParNew: 6526K-&gt;702K(6528K), 0.0136447 secs] 471324K-&gt;467077K(522488K), 0.0136804 secs] [Times: user=0.04 sys=0.01,real=0.01 secs]
+4.[GC[ParNew: 6526K-&gt;702K(6528K), 0.0161873 secs] 472901K-&gt;468830K(522488K), 0.0162411 secs] [Times: user=0.05 sys=0.00,real=0.02 secs]
+5.[GC[ParNew: 6526K-&gt;702K(6528K), 0.0152107 secs] 474654K-&gt;470569K(522488K), 0.0152543 secs] [Times: user=0.05 sys=0.00,real=0.02 secs]
+...
+6.[GC[ParNew: 6526K-&gt;702K(6528K), 0.0144212 secs] 481073K-&gt;476809K(522488K), 0.0144719 secs] [Times: user=0.05 sys=0.00,real=0.01 secs]
+7.[CMS-concurrent-mark: 1.039/1.154 secs] [Times: user=2.32 sys=0.02, real=1.15 secs]
+8.[CMS-concurrent-preclean: 0.006/0.007 secs] [Times: user=0.01 sys=0.00, real=0.01 secs]
+9.[GC[ParNew: 6526K-&gt;702K(6528K), 0.0141896 secs] 482633K-&gt;478368K(522488K), 0.0142292 secs] [Times: user=0.04 sys=0.00,real=0.01 secs]
+10.[GC[ParNew: 6526K-&gt;702K(6528K), 0.0162142 secs] 484192K-&gt;480082K(522488K), 0.0162509 secs] [Times: user=0.05 sys=0.00,real=0.02 secs]
+11.[CMS-concurrent-abortable-preclean: 0.022/0.175 secs] [Times: user=0.36 sys=0.00, real=0.17 secs]
+12.[GC[YG occupancy: 820 K (6528 K)][Rescan (parallel) , 0.0024157 secs][weak refs processing, 0.0000143 secs][scrub string table, 0.0000258 secs] [1 CMS-remark: 479379K(515960K)] 480200K(522488K), 0.0025249 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]
+13.[GC[ParNew: 6526K-&gt;702K(6528K), 0.0133250 secs] 441217K-&gt;437145K(522488K), 0.0133739 secs] [Times: user=0.04 sys=0.00, real=0.01 secs]
+14.[GC[ParNew: 6526K-&gt;702K(6528K), 0.0125530 secs] 407061K-&gt;402841K(522488K), 0.0125880 secs] [Times: user=0.04 sys=0.00,real=0.01 secs]
+...
+15.[GC[ParNew: 6526K-&gt;702K(6528K), 0.0121435 secs] 330503K-&gt;326239K(522488K), 0.0121996 secs] [Times: user=0.04 sys=0.00,real=0.01 secs]
+16.[CMS-concurrent-sweep: 0.756/0.833 secs] [Times: user=1.68 sys=0.01, real=0.83 secs]
+17.[CMS-concurrent-reset: 0.009/0.009 secs] [Times: user=0.01 sys=0.00, real=0.01 secs]
+</code></pre>
+
+<p>这里时间统计多说一句，比如倒数第二行中的0.<sup>756</sup>&frasl;<sub>0</sub>.833 secs，0.756表示运行sweep
+时间，0.833表示时钟运行的时间（等于real），由于sweep操作是并行的，所以user大
+于real。</p>
+
+<p>CMS周期期间，因为Minor GC会继续运行（Minor GC进入会挂起CMS的concurrent操作），
+会出现Minor GC promotion failure的情况（YoungOld中的长生命周期对象需要移动到
+Old Gen中，但是Old Gen空间不足或者没有连续的空间块来容纳移动的对象），这会导
+致CMS中断，同时触发Full GC操作，参考下面日志：</p>
+
+<pre><code class="language-shell">64.528: [GC 64.528: [ParNew: 19128K-&gt;2112K(19136K), 0.0088010 secs] 108133K-&gt;94575K(128960K), 0.0088840 secs] [Times: user=0.02 sys=0.01, real=0.01 secs]
+64.538: [GC [1 CMS-initial-mark: 92463K(109824K)] 94693K(128960K), 0.0057310 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]
+64.544: [CMS-concurrent-mark-start]
+64.732: [GC 64.732: [ParNew: 19122K-&gt;2112K(19136K), 0.0158700 secs] 111585K-&gt;98845K(128960K), 0.0159520 secs] [Times: user=0.06 sys=0.00, real=0.02 secs]
+64.874: [CMS-concurrent-mark: 0.312/0.330 secs] [Times: user=1.17 sys=0.02, real=0.34 secs]
+64.874: [CMS-concurrent-preclean-start]
+64.886: [CMS-concurrent-preclean: 0.012/0.012 secs] [Times: user=0.05 sys=0.00, real=0.01 secs]
+64.886: [CMS-concurrent-abortable-preclean-start]
+64.933: [GC 64.933: [ParNew: 19136K-&gt;2112K(19136K), 0.0106420 secs] 115869K-&gt;102790K(128960K), 0.0107100 secs] [Times: user=0.03 sys=0.00, real=0.01 secs]
+65.060: [GC 65.060: [ParNew: 19136K-&gt;2112K(19136K), 0.0145130 secs] 119814K-&gt;105946K(128960K), 0.0146300 secs] [Times: user=0.04 sys=0.00, real=0.02 secs]
+65.156: [CMS-concurrent-abortable-preclean: 0.151/0.269 secs] [Times: user=0.89 sys=0.01, real=0.27 secs]
+65.156: [GC[YG occupancy: 11152 K (19136 K)]65.156: [Rescan (parallel) , 0.0068730 secs]65.163: [weak refs processing, 0.0000630 secs] [1 CMS-remark: 103834K(109824K)] 114987K(128960K), 0.0070350 secs] [Times: user=0.02 sys=0.00, real=0.00 secs]
+65.163: [CMS-concurrent-sweep-start]
+65.250: [GC 65.250: [ParNew (promotion failed): 19136K-&gt;19136K(19136K), 0.8336480 secs]66.084: [CMS66.109: [CMS-concurrent-sweep: 0.112/0.946 secs] [Times: user=1.50 sys=0.22, real=0.95 secs]
+ (concurrent mode failure): 107755K-&gt;92385K(109824K), 0.4802380 secs] 121588K-&gt;92385K(128960K), [CMS Perm : 80068K-&gt;78975K(133032K)], 1.3140100 secs] [Times: user=1.61 sys=0.22, real=1.31 secs]
+66.816: [GC 66.816: [ParNew: 17024K-&gt;2112K(19136K), 0.0097300 secs] 109409K-&gt;95636K(128960K), 0.0098010 secs] [Times: user=0.03 sys=0.00, real=0.01 secs]
+</code></pre>
+
+<dl>
+<dt>值JVM会动态调整，你可以通过观察日志计算它，比如下面日志中：</dt>
+<dd><p>29.542: [GC [1 CMS-initial-mark: 56351K(109824K)] 58400K(128960K), 0.0031880 secs] [Times: user=0.00 sys=0.00, real=0.01 secs]</p></dd>
+</dl>
+
+<dl>
+<dt>值JVM会动态调整，你可以通过观察日志计算它，比如下面日志中：</dt>
+<dd><p>29.542: [GC [1 CMS-initial-mark: 56351K(109824K)] 58400K(128960K), 0.0031880 secs] [Times: user=0.00 sys=0.00, real=0.01 secs]</p></dd>
+</dl>
+
+<dl>
+<dt>�整，你可以通过观察日志计算它，比如下面日志中：</dt>
+<dd><p>29.542: [GC [1 CMS-initial-mark: 56351K(109824K)] 58400K(128960K), 0.0031880 secs] [Times: user=0.00 sys=0.00, real=0.01 secs]</p></dd>
+</dl>
+
+<p>该值在51左右（56351/109824=0.51），如果需要提前触发CMS，通过下面两个参数：
+CMSInitiatingOccupancyFraction和UseCMSInitiatingOccupancyOnly（需要两个都设置，
+否则只是第一次生效，后续JVM还是会自己调整）。另外就是避免对象移动过快，通过调优
+Young Gen参数实现，当然治标的办法自然是减少对象分配速度。当然你也能增加OldGen。</p>
+
+<dl>
+<dt>前面一样：</dt>
+<dd><p>62.231: [GC 62.231: [ParNew (promotion failed): 19137K-&gt;19136K(19136K), 0.0403870 secs]62.271: [CMS: 99459K-&gt;77486K(109824K), 0.4331580 secs] 116817K-&gt;77486K(128960K), [CMS Perm : 80178K-&gt;79817K(132164K)], 0.4737430 secs] [Times: user=0.50 sys=0.01, real=0.47 secs]</p></dd>
+</dl>
+
+<p>), [CMS Perm : 80178K-&gt;79817K(132164K)], 0.4737430 secs] [Times: user=0.50 sys=0.01, real=0.47 secs]</p>
+
+<p>另外一个触发Full GC的是PermGen，CMS缺省不会收集PermGen，容易导致Perm空间满，你
+可以设置参数CMSClassUnloadingEnabled，让CMS也对PermGen进行收集：</p>
+
+<p>还有一个参数‑XX:+ExplicitGCInvokesConcurrent，该参数可以让System.gc()不会触发
+Full GC，这个比较有用。貌似-XX:+DisableExplicitGC会带来DirectByteMemory OOM问
+题，如果你的程序中大量用了NIO。</p>
+
+<h2 id="gc">GC</h2>
+
+<p>GC分为Minor GC、Full GC（Major GC）。</p>
+
+<h3 id="minor-gc">Minor GC</h3>
+
+<p>主要对Young Generation进行回收，Minor GC之后，eden space和一块survivor
+space清空，一些生命周期长的对象会移动到Old Generation，另外的对象都会移动到另一
+块Survivor space中（如果之前是S0清空，那么所有活着的对象都会被移动到S1，反之同
+理），理解这一点对于分析GC log非常关键。</p>
+
+<p>多长生命周期的对象会被移动[fn:4]，通俗点来说就是通过年龄控制。对象经历一次Minor GC增
+加一岁。至于说多大年龄的对象会被移动，通过几个参数控制：TargetSurvivorRatio、
+Survivor space size、MaxTenuringThreshold。每次Minor GC都会计算Survivor space
+中期望保留的对象多少，通过（TargetSurvivorRatio * Survivor space size）计算得出
+，具体的值可以通过打开-XX:+PrintTenuringDistribution参数查看日志中的Desired
+survivor size。如果保留的对象大小超出期望的值，TenuringThreshold（对象年龄阀值
+，超出会被迁移）就会降低，让更多的对象移动到Old Gen中，如果小于期望的值，当前值
+不变。TenuringThreshold最大值通过MaxTenuringThreshold控制，范围是0～15。
+TargetSurvivorRatio缺省是50，MaxTenuringThreshold缺省是15（ParalleGC,CMS是4）。</p>
+
+<p>VM中的对象分配都在Eden中进行，由于每次Minor GC都会清空Eden，所以Eden中的
+空间都是连续的（没有碎片），为了保证分配对象的高效[fn:1][fn:3]，VM使用了两个技术：
+- bump-the-pointer
+  由于是连续的空间，VM只需记住最晚分配对象的空间地址（在Eden顶上），下次分配的时
+  候，只需变更地址就行。
+- Thread-Local Allocation Buffers (TLAB)
+  考虑到多线程的情况，如果多个线程去更新保存的地址，需要加锁，为了避免锁VM引入了
+  TLAB技术，每个线程都会有一块自己的空间（TLAB）来分配对象（也采用BTP技术，TLAB
+  位于Eden），这样就不需要引入锁。当一个TLAB分配满了之后（或者Minor GC来临），
+  TLAB释放，GC完成之后，线程会在需要分配对象的时候申请TLAB。如果线程的TLAB满了需
+  要继续申请对象，同时Eden还有空间的时候，那就要锁了。关于TLAB相关细节可以参考[fn:2]</p>
+
+<p>考虑到有些Young Gen中的对象会被Old Gen引用，Minor GC也需要扫描Old Gen，未了避免
+扫描整个Old Gen，VM采用Card table技术，尽量减少扫描的范围。VM会把Old Gen分隔为
+512 bytes的块，card table是一个byte array，一个byte对应一个块，如果块的对象引用
+到Young Gen对象，标示该card为dirty，这样Minor GC的时候只需要扫描dirty的table。</p>
+
+<h3 id="full-gc">Full GC</h3>
+
+<p>会对整个JVM Heap进行回收，包括YoungGen、OldGen、PermGen。主要是由Old Generation
+空间不足触发（当然有很多种触发因素，比如system.gc()调用、Remote distributed GC
+等），耗时会比较长，而且是STW操作（停止应用响应）。</p>
+
+<h3 id="concurrent-gc">Concurrent GC</h3>
+
+<p>另外这里特别说明一下，Concurrent应该算是一个独立的GC类型，只对OldGen收集（可以包
+括PernGen，目的就是尽量减少FullGC操作（对延迟敏感的应用无法忍受这么长的STP）。</p>
+
+<h2 id="几个相关参数">几个相关参数</h2>
+
+<h3 id="gc日志">GC日志</h3>
+
+<dl>
+<dt>打印GC日志，建议在线上环境打开，开销很小，调优GC必不可少：</dt>
+<dd>-XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -Xloggc:file
+更多的信息：</dd>
+<dd>-XX:+PrintHeapAtGC -XX:+PrintTLAB</dd>
+</dl>
+
+<h3 id="vm参数查看">VM参数查看</h3>
+
+<dl>
+<dt>研究，也可以参考这篇blog[fn:9]，说明了输出的一些细节：</dt>
+<dd><p>-XX:+PrintCommandLineFlags
+这个参数的作用是显示出VM初始化完毕后所有跟最初的默认值不同的参数及它们的值。这
+个参数至少在Sun JDK 5上已经开始支持，Oracle/Sun JDK 6以及Oracle JDK 7上也可以使
+用。Sun JDK 1.4.2还不支持这个参数。</p></dd>
+<dd><p>-XX:+PrintFlagsFinal
+前一个参数只显示跟默认值不同的，而这个参数则可以显示所有可设置的参数及它们的值。
+不过这个参数本身只从JDK 6 update 21开始才可以用，之前的Oracle/Sun JDK则用不了。
+可以设置的参数默认是不包括diagnostic或experimental系的。要在-XX:+PrintFlagsFinal
+的输出里看到这两种参数的信息，分别需要显式指定-XX:+UnlockDiagnosticVMOptions /
+-XX:+UnlockExperimentalVMOptions 。</p></dd>
+<dd><p>-XX:+PrintFlagsInitial
+这个参数显示在处理参数之前所有可设置的参数及它们的值，然后直接退出程序。“参数
+处理”包括许多步骤，例如说检查参数之间是否有冲突，通过ergonomics调整某些参数的值
+，之类的。结合-XX:+PrintFlagsInitial与-XX:+PrintFlagsFinal，对比两者的差异，就可
+以知道ergonomics对哪些参数做了怎样的调整。</p></dd>
+</dl>
+
+<p>+PrintFlagsFinal，对比两者的差异，就可
+以知道ergonomics对哪些参数做了怎样的调整。</p>
+
+<h2 id="其他推荐阅读">其他推荐阅读</h2>
+
+<h3 id="一些值得阅读的blog-待补全">一些值得阅读的blog，待补全</h3>
+
+<ul>
+<li>[[<a href="https://blogs.oracle.com/jonthecollector/][Jon">https://blogs.oracle.com/jonthecollector/][Jon</a> Masamitsu&rsquo;s Weblog]]</li>
+<li>[[<a href="http://rednaxelafx.iteye.com][Script">http://rednaxelafx.iteye.com][Script</a> Ahead, Code Behind]]</li>
+</ul>
+
+<h1 id="footnotes">Footnotes</h1>
+
+<p>[fn:1] [[<a href="http://www.cubrid.org/blog/dev-platform/understanding-java-garbage-collection/][Understanding">http://www.cubrid.org/blog/dev-platform/understanding-java-garbage-collection/][Understanding</a> Java Garbage Collection]]</p>
+
+<p>[fn:3] [[<a href="http://www.oracle.com/technetwork/java/javase/tech/memorymanagement-whitepaper-1-150020.pdf][Memory">http://www.oracle.com/technetwork/java/javase/tech/memorymanagement-whitepaper-1-150020.pdf][Memory</a> Management in the Java Hotspot VM]]</p>
+
+<p>[fn:4] Java performance by Charlie Hunt, Binu John</p>
+
+<p>[fn:5] [[<a href="http://blog.ragozin.info/2011/09/hotspot-jvm-garbage-collection-options.html][HotSpot">http://blog.ragozin.info/2011/09/hotspot-jvm-garbage-collection-options.html][HotSpot</a> JVM garbage collection options cheat sheet]]</p>
+
+<p>[fn:6] [[<a href="https://blogs.oracle.com/jonthecollector/entry/hey_joe_phases_of_cms][The">https://blogs.oracle.com/jonthecollector/entry/hey_joe_phases_of_cms][The</a> Unspoken - Phases of CMS]]</p>
+
+<p>[fn:7] [[<a href="https://blogs.oracle.com/jonthecollector/entry/the_unspoken_cms_and_printgcdetails][The">https://blogs.oracle.com/jonthecollector/entry/the_unspoken_cms_and_printgcdetails][The</a> Unspoken - CMS and PrintGCDetails]]</p>
+
+<p>[fn:8] [[<a href="http://hllvm.group.iteye.com/group/topic/27945][JVM调优的&quot;标准参数&quot;的各种陷阱]">http://hllvm.group.iteye.com/group/topic/27945][JVM调优的&quot;标准参数&quot;的各种陷阱]</a>]</p>
+
+<p>[fn:2] [[<a href="https://blogs.oracle.com/jonthecollector/entry/the_real_thing][The">https://blogs.oracle.com/jonthecollector/entry/the_real_thing][The</a> real thing]]</p>
+
+<p>[fn:9] [[<a href="https://blog.codecentric.de/en/2012/07/useful-jvm-flags-part-3-printing-all-xx-flags-and-their-values/][Useful">https://blog.codecentric.de/en/2012/07/useful-jvm-flags-part-3-printing-all-xx-flags-and-their-values/][Useful</a> JVM Flags – Part 3 (Printing all XX Flags and their Values)]]</p>
+
+<p>[fn:10] [[<a href="http://stackoverflow.com/questions/556405/what-do-real-user-and-sys-mean-in-the-output-of-time1][What">http://stackoverflow.com/questions/556405/what-do-real-user-and-sys-mean-in-the-output-of-time1][What</a> do &lsquo;real&rsquo;, &lsquo;user&rsquo; and &lsquo;sys&rsquo; mean]]</p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">春龙</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">2014-03-24</span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">License</span>
+    <span class="item-content">true</span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="http://tacy.github.io/tags/tech/">tech</a>
+          <a href="http://tacy.github.io/tags/java/">java</a>
+          <a href="http://tacy.github.io/tags/tuning/">tuning</a>
+          <a href="http://tacy.github.io/tags/performance/">performance</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+          <a class="prev" href="/post/db2-locks-and-isolation-level/">
+            
+            <i class="iconfont">
+              <svg  class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417 757.434875 204.940602c11.338233-12.190647 11.035334-32.285311-0.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-0.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891 0.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"></path>
+</svg>
+
+            </i>
+            <span class="prev-text nav-default">DB2锁和隔离级别</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        
+          <a class="next" href="/post/oracle-awr/">
+            <span class="next-text nav-default">理解Oracle AWR报告</span>
+            <span class="prev-text nav-mobile">Next</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+
+  
+
+  <div class="disqus-comment">
+  <div class="disqus-button" id="load_disqus" onclick="load_disqus()">
+    Show Disqus Comments
+  </div>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_config = function () {
+      this.page.url = "http://tacy.github.io/post/hotspot-gc/";
+    };
+    function load_disqus() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'tacyweblog';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+
+      $('#load_disqus').remove();
+    };
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+  
+  </div>
+  
+    
+
+
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+  
+  
+    <a href="mailto:your@email.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://stackoverflow.com/users/1225294/tacy-lee" rel="me noopener" class="iconfont"
+      title="stack-overflow"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M809.714286 932.571429l-638.857143 0 0-274.285714-91.428571 0 0 365.714286 821.714286 0 0-365.714286-91.428571 0 0 274.285714zm-538.285714-299.428571l18.857143-89.714286 447.428571 94.285714-18.857143 89.142857zm58.857143-213.714286l38.285714-83.428571 414.285714 193.714286-38.285714 82.857143zm114.857143-203.428571l58.285714-70.285714 350.857143 293.142857-58.285714 70.285714zm226.857143-216l272.571429 366.285714-73.142857 54.857143-272.571429-366.285714zm-410.285714 840.571429l0-90.857143 457.142857 0 0 90.857143-457.142857 0z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://twitter.com/tacy_lee" rel="me noopener" class="iconfont"
+      title="twitter"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1264 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M1229.8616 18.043658c0 0-117.852626 63.135335-164.151872 67.344358-105.225559-164.151872-505.082682-92.598492-437.738325 223.078185C278.622548 312.675223 89.216542 47.506814 89.216542 47.506814s-117.852626 189.406006 75.762402 345.139833C127.097743 396.85567 55.544363 371.601535 55.544363 371.601535S26.081207 535.753407 253.368414 615.724832c-21.045112 29.463156-113.643603 8.418045-113.643603 8.418045s25.254134 143.10676 231.496229 180.987961c-143.10676 130.479693-387.230056 92.598492-370.393967 105.225559 206.242095 189.406006 1119.599946 231.496229 1128.01799-643.98042C1179.353331 249.539887 1263.533778 123.269217 1263.533778 123.269217s-130.479693 37.881201-138.897738 33.672179C1225.652577 98.015083 1229.8616 18.043658 1229.8616 18.043658"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/tacy" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://weibo.com/p/1005051970158087" rel="me noopener" class="iconfont"
+      title="weibo"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M385.714286 733.714286q12-19.428571 6.285714-39.428571t-25.714286-28.571429q-19.428571-8-41.714286-0.571429t-34.285714 26.285714q-12.571429 19.428571-7.428571 39.142857t24.571429 28.857143 42.571429 1.428571 35.714286-27.142857zm53.714286-69.142857q4.571429-7.428571 2-15.142857t-10-10.571429q-8-2.857143-16.285714 2.857143t-12.285714 10.571429q-9.714286 17.714286 7.428571 25.714286 8 2.857143 16.571429 2.857143t12.571429-10.571429zm99.428571 61.142857q-25.714286 58.285714-90.285714 85.714286t-128 6.857143q-61.142857-19.428571-84.285714-72.285714t3.714286-107.142857q26.857143-53.142857 86.571429-79.428571t120.285714-10.857143q63.428571 16.571429 90.571429 68.285714t1.428571 108.857143zm178.285714-91.428571q-5.142857-54.857143-50.857143-97.142857t-119.142857-62.285714-156.857143-12q-127.428571 13.142857-211.142857 80.857143t-75.714286 151.142857q5.142857 54.857143 50.857143 97.142857t119.142857 62.285714 156.857143 12q127.428571-13.142857 211.142857-80.857143t75.714286-151.142857zm176 2.285714q0 38.857143-21.142857 79.714286t-62.285714 78.285714-96.285714 67.142857-129.142857 47.428571-154.571429 17.714286-157.142857-19.142857-137.428571-53.142857-98-86.285714-37.142857-114q0-65.714286 39.714286-140t112.857143-147.428571q96.571429-96.571429 195.142857-134.857143t140.857143 4q37.142857 36.571429 11.428571 119.428571-2.285714 8-0.571429 11.428571t5.714286 4 8.285714 2.857143 7.714286-2l3.428571-1.142857q79.428571-33.714286 140.571429-33.714286t87.428571 34.857143q25.714286 36 0 101.714286-1.142857 7.428571-2.571429 11.428571t2.571429 7.142857 6.857143 4.285714 9.714286 3.428571q32.571429 10.285714 58.857143 26.857143t45.714286 46.571429 19.428571 66.571429zm-42.285714-356.571429q24 26.857143 31.142857 62t-3.714286 67.142857q-4.571429 13.142857-16.857143 19.428571t-25.428571 2.285714q-13.142857-4.571429-19.428571-16.857143t-2.285714-25.428571q11.428571-36-13.714286-63.428571t-61.142857-20q-13.714286 2.857143-25.714286-4.571429t-14.285714-21.142857q-2.857143-13.714286 4.571429-25.428571t21.142857-14.571429q34.285714-7.428571 68 3.142857t57.714286 37.428571zm103.428571-93.142857q49.714286 54.857143 64.285714 127.142857t-7.714286 138q-5.142857 15.428571-19.428571 22.857143t-29.714286 2.285714-22.857143-19.428571-2.857143-29.714286q16-46.857143 5.714286-98.285714t-45.714286-90.285714q-35.428571-39.428571-84.571429-54.571429t-98.857143-4.857143q-16 3.428571-29.714286-5.428571t-17.142857-24.857143 5.428571-29.428571 24.857143-16.857143q70.285714-14.857143 139.428571 6.571429t118.857143 76.857143z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://www.douban.com/people/tacy_lee/" rel="me noopener" class="iconfont"
+      title="douban"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M926.917973 37.80608C959.65184 37.80608 986.19392 64.34816 986.19392 97.082027L986.19392 926.917973C986.19392 959.65184 959.65184 986.19392 926.917973 986.19392L97.082027 986.19392C64.34816 986.19392 37.80608 959.65184 37.80608 926.917973L37.80608 97.082027C37.80608 64.34816 64.34816 37.80608 97.082027 37.80608zM176.653653 176.19968 176.653653 252.678827 825.658027 252.678827 825.658027 176.19968zM217.719467 316.146347 217.719467 628.08064 273.524053 628.08064 341.292373 770.39616 157.259093 770.39616 157.259093 845.417813 842.949973 845.417813 842.949973 770.39616 654.226773 770.39616 722.899627 628.08064 783.67744 628.08064 783.67744 316.146347zM684.885333 392.891733 684.885333 553.987413 312.576 553.987413 312.576 392.891733zM570.770773 770.39616 426.653013 770.39616 359.621973 628.08064 639.443627 628.08064z"></path>
+</svg>
+
+    </a>
+
+
+<a href="http://tacy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+  
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2012 -
+    2019
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        春龙
+        
+      </span></span>
+
+  
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

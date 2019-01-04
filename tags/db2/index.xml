@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Db2 on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/db2/</link>
+    <description>Recent content in Db2 on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 01 Apr 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/db2/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>DB2锁和隔离级别</title>
+      <link>http://tacy.github.io/post/db2-locks-and-isolation-level/</link>
+      <pubDate>Tue, 01 Apr 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/db2-locks-and-isolation-level/</guid>
+      <description>DB2的锁 DB2的锁实现机制很复杂，它没有实现类似Oracle的undo机制，导致操作之间容易阻塞， 比如你经常会听到有人说DB2查询阻塞更新</description>
+    </item>
+    
+  </channel>
+</rss>

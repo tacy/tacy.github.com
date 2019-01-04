@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Virtualization on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/virtualization/</link>
+    <description>Recent content in Virtualization on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 08 Apr 2015 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/virtualization/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>ceph notes</title>
+      <link>http://tacy.github.io/post/ceph/</link>
+      <pubDate>Wed, 08 Apr 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/ceph/</guid>
+      <description>ceph重要的概念 ceph底层是RADOS(A reliable, autonomous, distributed object storage), RADOS由OSD和MON组成, 是ceph核心. - OSD: Object Storage Device - MON: 维护整个ceph集群的</description>
+    </item>
+    
+    <item>
+      <title>本地KVM环境运行Kubernetes集群</title>
+      <link>http://tacy.github.io/post/%E6%9C%AC%E5%9C%B0kvm%E7%8E%AF%E5%A2%83%E8%BF%90%E8%A1%8Ckubernetes%E9%9B%86%E7%BE%A4/</link>
+      <pubDate>Mon, 24 Nov 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/%E6%9C%AC%E5%9C%B0kvm%E7%8E%AF%E5%A2%83%E8%BF%90%E8%A1%8Ckubernetes%E9%9B%86%E7%BE%A4/</guid>
+      <description>Kubernetes(后面简称为K8S)作为目前热门的容器集群管理软件, 很多人都希望能一探究竟, 但是它的文档大部分都是运行在IaaS平台之上</description>
+    </item>
+    
+    <item>
+      <title>在本地kvm环节下使用cloud image</title>
+      <link>http://tacy.github.io/post/cloud-init/</link>
+      <pubDate>Fri, 07 Nov 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/cloud-init/</guid>
+      <description>在本地kvm环境下使用cloud image 大量的cloud image, 其实在本地虚拟环境也能使用, 这里简单介绍一下在我本机kvm环境下使用cloud image</description>
+    </item>
+    
+    <item>
+      <title>Docker使用笔记</title>
+      <link>http://tacy.github.io/post/docker/</link>
+      <pubDate>Fri, 04 Apr 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/docker/</guid>
+      <description>Docker[fn:1] Docker是对LXC的一个抽象，依赖于LXC，相比KVM这种Hypervisor，LXC要轻量级很多[fn:2] ，但是LXC很难打包分发</description>
+    </item>
+    
+    <item>
+      <title>Hypervisor</title>
+      <link>http://tacy.github.io/post/hypervisor/</link>
+      <pubDate>Fri, 31 Aug 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/hypervisor/</guid>
+      <description>Oracle M-series（Dynamic Domains） 收购sun获得，支持dynamic domains，支持动态资源划分，可以动态分配资源(cp</description>
+    </item>
+    
+    <item>
+      <title>OpenVSwitch notes</title>
+      <link>http://tacy.github.io/post/openvswitch/</link>
+      <pubDate>Fri, 31 Aug 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/openvswitch/</guid>
+      <description>tunnel GRE (Generic Routing Encapsulation) 采用GRE隧道协议实现网络虚拟化，基于IP网络，由于NIC的性能优化特性都工作在tcp层，无法利用，导致性能地下。 STT (stateless Transport Tunnelling Protocol 解决网</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Emacs on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/emacs/</link>
+    <description>Recent content in Emacs on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sat, 28 Sep 2013 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/emacs/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>emacs notes</title>
+      <link>http://tacy.github.io/post/emacs-tips/</link>
+      <pubDate>Sat, 28 Sep 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/emacs-tips/</guid>
+      <description>Display too long line highlight (setq whitespace-style &#39;(lines)) (setq whitespace-line-column 78) (global-whitespace-mode 1) Macro | key sequence | comment | |--------------+-------------------------------| | F3 | start record macro | | F4 | end record macro | | C-x ( | start record macro | | C-x ) | end record macro | | C-x e | execute last macro | | C-u 10 C-x e | execute last macro repeat 100</description>
+    </item>
+    
+    <item>
+      <title>Xmodmap配置介绍</title>
+      <link>http://tacy.github.io/post/xmodmap-configure/</link>
+      <pubDate>Fri, 08 Feb 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/xmodmap-configure/</guid>
+      <description>introduce xmodmap能够重新映射键盘上键的布局，通常情况下，你不会需要对键盘做重新映射，只有在特定情况下，比如emacs，需要频繁操作Ctrl键</description>
+    </item>
+    
+    <item>
+      <title>用emacs写blog</title>
+      <link>http://tacy.github.io/post/emacs-orgmode-jekyll-blog/</link>
+      <pubDate>Wed, 15 Aug 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/emacs-orgmode-jekyll-blog/</guid>
+      <description>断断续续写过一些blog，很多原因没有继续下去，当然自己懒是最主要的。总觉得写blog是一件很麻烦的事情：首先要找到合适的服务提供商，很多人</description>
+    </item>
+    
+  </channel>
+</rss>

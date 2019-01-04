@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Openstack on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/openstack/</link>
+    <description>Recent content in Openstack on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 28 Aug 2013 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/openstack/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>openstack notes</title>
+      <link>http://tacy.github.io/post/openstack/</link>
+      <pubDate>Wed, 28 Aug 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/openstack/</guid>
+      <description>Swift Ring builder 读了一下ringbuilder代码，简单记录一下，免的忘了 Add device 添加device的时候可以指定每个device的meta信息和repli</description>
+    </item>
+    
+    <item>
+      <title>Openstack quastion diagnose</title>
+      <link>http://tacy.github.io/post/openstack-question-diagnose/</link>
+      <pubDate>Tue, 31 Jul 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/openstack-question-diagnose/</guid>
+      <description>在单nova-network service下错误配置multi-host导致的问题 在配置openstack的时候，由于开始的时候很多东西没摸</description>
+    </item>
+    
+  </channel>
+</rss>

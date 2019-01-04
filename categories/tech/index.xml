@@ -20,5 +20,176 @@
       <description>TRACE[^4]1 linux下的trace，这里只讨论function相关的分析，event和计数器不涉及。从两个维度讨论，首先是根据运行态：分为kerne</description>
     </item>
     
+    <item>
+      <title>ceph notes</title>
+      <link>http://tacy.github.io/post/ceph/</link>
+      <pubDate>Wed, 08 Apr 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/ceph/</guid>
+      <description>ceph重要的概念 ceph底层是RADOS(A reliable, autonomous, distributed object storage), RADOS由OSD和MON组成, 是ceph核心. - OSD: Object Storage Device - MON: 维护整个ceph集群的</description>
+    </item>
+    
+    <item>
+      <title>l2tp ipsec in linode</title>
+      <link>http://tacy.github.io/post/l2tp-ipsec-in-linode/</link>
+      <pubDate>Wed, 24 Dec 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/l2tp-ipsec-in-linode/</guid>
+      <description>我参考的配置帖子: https://raymii.org/s/tutorials/IPSEC_L2TP_vpn_with_Ubuntu_14.04.html 先注意下面问题: Two or more interfaces found, checking IP forwarding Failed 我的环境是: My Ubuntu 14.04 LTS Profile (Latest 64 bit (3.16.7-x86_64-linode49)) 如果已经配置了ip_forward, 没啥好说的, 直接升级</description>
+    </item>
+    
+    <item>
+      <title>本地KVM环境运行Kubernetes集群</title>
+      <link>http://tacy.github.io/post/%E6%9C%AC%E5%9C%B0kvm%E7%8E%AF%E5%A2%83%E8%BF%90%E8%A1%8Ckubernetes%E9%9B%86%E7%BE%A4/</link>
+      <pubDate>Mon, 24 Nov 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/%E6%9C%AC%E5%9C%B0kvm%E7%8E%AF%E5%A2%83%E8%BF%90%E8%A1%8Ckubernetes%E9%9B%86%E7%BE%A4/</guid>
+      <description>Kubernetes(后面简称为K8S)作为目前热门的容器集群管理软件, 很多人都希望能一探究竟, 但是它的文档大部分都是运行在IaaS平台之上</description>
+    </item>
+    
+    <item>
+      <title>在本地kvm环节下使用cloud image</title>
+      <link>http://tacy.github.io/post/cloud-init/</link>
+      <pubDate>Fri, 07 Nov 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/cloud-init/</guid>
+      <description>在本地kvm环境下使用cloud image 大量的cloud image, 其实在本地虚拟环境也能使用, 这里简单介绍一下在我本机kvm环境下使用cloud image</description>
+    </item>
+    
+    <item>
+      <title>Raspberry Pi WirelessAP</title>
+      <link>http://tacy.github.io/post/raspberry-pi-wirelessap/</link>
+      <pubDate>Wed, 29 Oct 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/raspberry-pi-wirelessap/</guid>
+      <description>Raspberry Pi WirelessAP 有时候, 希望能做一些其他设备的抓包分析, 不想去折腾路由器, 就把手上的Raspberry Pi改造了一下, 当然你也能让他当成翻墙工具, 可以</description>
+    </item>
+    
+    <item>
+      <title>marathon in mesos</title>
+      <link>http://tacy.github.io/post/marathon-in-mesos/</link>
+      <pubDate>Sat, 30 Aug 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/marathon-in-mesos/</guid>
+      <description>mesos 记录一下最近一周的工作，最近一周一直在看PaaS，主要是结合Docker的方案，简单看了 看，成熟的东西没有，基本都有各种问题，可以参考一下</description>
+    </item>
+    
+    <item>
+      <title>wireshark和tcpdump相关笔记</title>
+      <link>http://tacy.github.io/post/wireshark-tcpdump/</link>
+      <pubDate>Thu, 21 Aug 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/wireshark-tcpdump/</guid>
+      <description>一个问题诊断 系统做了单点登录，用的是CAS，用户反馈偶尔系统登出之后，重新用其他帐号登入，查询 到的用户资料依然是上一个用户的，只有关闭浏览器</description>
+    </item>
+    
+    <item>
+      <title>android notes</title>
+      <link>http://tacy.github.io/post/android/</link>
+      <pubDate>Tue, 29 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/android/</guid>
+      <description>Android emulator 只需加载kvm模块，同时启动命令上添加‘-qemu -enable-kvm’ 参数即可，启动命令： emulator64-x86 -avd test -data userdata.img -qemu -m 2048 -enable-kvm vm’ 参数即可，启动命令</description>
+    </item>
+    
+    <item>
+      <title>Java性能分析之火焰图</title>
+      <link>http://tacy.github.io/post/flamegraph/</link>
+      <pubDate>Wed, 16 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/flamegraph/</guid>
+      <description>FlameGraph 火焰图[fn:1]，简单通过x轴横条宽度来度量时间指标，y轴代表线程栈的层次，简单明了， 容易找出具体的可优化点，非常方便，当然前提是我们通</description>
+    </item>
+    
+    <item>
+      <title>linux kernel</title>
+      <link>http://tacy.github.io/post/linux-kernel/</link>
+      <pubDate>Thu, 19 Jun 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/linux-kernel/</guid>
+      <description>linux kernel vm vfs_cache_pressure 简单说，就是控制page cache的回收，是优先回收data block还是meta block(page cache 包括这两部分），一般情况下建议还是保留meta</description>
+    </item>
+    
+    <item>
+      <title>Byteman notes</title>
+      <link>http://tacy.github.io/post/byteman/</link>
+      <pubDate>Wed, 11 Jun 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/byteman/</guid>
+      <description>Byteman byteman是jboss下的一个项目，是一个非常方便的java分析工具，能够拦截字节码执行，执 行代码和修改变量，是一个诊断问题的利器。 在</description>
+    </item>
+    
+    <item>
+      <title>systemtap notes</title>
+      <link>http://tacy.github.io/post/systemtap/</link>
+      <pubDate>Tue, 10 Jun 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/systemtap/</guid>
+      <description>Systemtap systemtap是红帽开发的一款分析工具，如果你需要使用的话，最好在redhat的系统上，在 Ubuntu上兼容性不好，坑非常多，Ubun</description>
+    </item>
+    
+    <item>
+      <title>perf notes</title>
+      <link>http://tacy.github.io/post/linux-perf/</link>
+      <pubDate>Wed, 04 Jun 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/linux-perf/</guid>
+      <description>perf strace相性对于很多熟悉linux的人来说应该都有所了解，使用起来也非常方便，但是他也 有很多问题，容易导致进程响应缓慢等，当然他对于诊</description>
+    </item>
+    
+    <item>
+      <title>FFmpeg使用笔记</title>
+      <link>http://tacy.github.io/post/ffmpeg/</link>
+      <pubDate>Mon, 14 Apr 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/ffmpeg/</guid>
+      <description>FFmpeg 视频压缩首先想到的自然是FFmpeg，我用的是Ubuntu，很不幸Ubuntu用Libav提到了FFmpeg ，具体为啥有了Libav建议l</description>
+    </item>
+    
+    <item>
+      <title>Docker使用笔记</title>
+      <link>http://tacy.github.io/post/docker/</link>
+      <pubDate>Fri, 04 Apr 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/docker/</guid>
+      <description>Docker[fn:1] Docker是对LXC的一个抽象，依赖于LXC，相比KVM这种Hypervisor，LXC要轻量级很多[fn:2] ，但是LXC很难打包分发</description>
+    </item>
+    
+    <item>
+      <title>DB2锁和隔离级别</title>
+      <link>http://tacy.github.io/post/db2-locks-and-isolation-level/</link>
+      <pubDate>Tue, 01 Apr 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/db2-locks-and-isolation-level/</guid>
+      <description>DB2的锁 DB2的锁实现机制很复杂，它没有实现类似Oracle的undo机制，导致操作之间容易阻塞， 比如你经常会听到有人说DB2查询阻塞更新</description>
+    </item>
+    
+    <item>
+      <title>HotSpot GC日志解读</title>
+      <link>http://tacy.github.io/post/hotspot-gc/</link>
+      <pubDate>Mon, 24 Mar 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/hotspot-gc/</guid>
+      <description>HotSpot GC 对于Java应用的优化，GC是重要的一环，而读懂GC日志是调优GC的关键，本文尝试对GC 做一些解读，测试使用的JVM版本是1.6.0_4</description>
+    </item>
+    
+    <item>
+      <title>理解Oracle AWR报告</title>
+      <link>http://tacy.github.io/post/oracle-awr/</link>
+      <pubDate>Mon, 24 Mar 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/oracle-awr/</guid>
+      <description>Oracle AWR报告</description>
+    </item>
+    
+    <item>
+      <title>Storage notes</title>
+      <link>http://tacy.github.io/post/storage/</link>
+      <pubDate>Fri, 21 Mar 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/storage/</guid>
+      <description>硬盘IOPS[fn:3][fn:4] | size | RPM | Seek time | Avg Rota latency | Throught | Random IOPS | | | | | 0.5/(RPM/60) | | 1/(seek+latency) | |&amp;mdash;&amp;mdash;+&amp;mdash;&amp;mdash;-+&amp;mdash;&amp;mdash;&amp;mdash;&amp;ndash;+&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;+&amp;mdash;&amp;mdash;&amp;mdash;-+&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;| | 2.5 | 15000 | 4ms | 2ms | 6Gbps | ~175-210 | | 2.5 | 10000 | 4ms | 3ms | 6Gbps | ~175-210</description>
+    </item>
+    
   </channel>
 </rss>

@@ -20,5 +20,86 @@
       <description>TRACE[^4]1 linux下的trace，这里只讨论function相关的分析，event和计数器不涉及。从两个维度讨论，首先是根据运行态：分为kerne</description>
     </item>
     
+    <item>
+      <title>l2tp ipsec in linode</title>
+      <link>http://tacy.github.io/post/l2tp-ipsec-in-linode/</link>
+      <pubDate>Wed, 24 Dec 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/l2tp-ipsec-in-linode/</guid>
+      <description>我参考的配置帖子: https://raymii.org/s/tutorials/IPSEC_L2TP_vpn_with_Ubuntu_14.04.html 先注意下面问题: Two or more interfaces found, checking IP forwarding Failed 我的环境是: My Ubuntu 14.04 LTS Profile (Latest 64 bit (3.16.7-x86_64-linode49)) 如果已经配置了ip_forward, 没啥好说的, 直接升级</description>
+    </item>
+    
+    <item>
+      <title>Raspberry Pi WirelessAP</title>
+      <link>http://tacy.github.io/post/raspberry-pi-wirelessap/</link>
+      <pubDate>Wed, 29 Oct 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/raspberry-pi-wirelessap/</guid>
+      <description>Raspberry Pi WirelessAP 有时候, 希望能做一些其他设备的抓包分析, 不想去折腾路由器, 就把手上的Raspberry Pi改造了一下, 当然你也能让他当成翻墙工具, 可以</description>
+    </item>
+    
+    <item>
+      <title>linux kernel</title>
+      <link>http://tacy.github.io/post/linux-kernel/</link>
+      <pubDate>Thu, 19 Jun 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/linux-kernel/</guid>
+      <description>linux kernel vm vfs_cache_pressure 简单说，就是控制page cache的回收，是优先回收data block还是meta block(page cache 包括这两部分），一般情况下建议还是保留meta</description>
+    </item>
+    
+    <item>
+      <title>systemtap notes</title>
+      <link>http://tacy.github.io/post/systemtap/</link>
+      <pubDate>Tue, 10 Jun 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/systemtap/</guid>
+      <description>Systemtap systemtap是红帽开发的一款分析工具，如果你需要使用的话，最好在redhat的系统上，在 Ubuntu上兼容性不好，坑非常多，Ubun</description>
+    </item>
+    
+    <item>
+      <title>perf notes</title>
+      <link>http://tacy.github.io/post/linux-perf/</link>
+      <pubDate>Wed, 04 Jun 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/linux-perf/</guid>
+      <description>perf strace相性对于很多熟悉linux的人来说应该都有所了解，使用起来也非常方便，但是他也 有很多问题，容易导致进程响应缓慢等，当然他对于诊</description>
+    </item>
+    
+    <item>
+      <title>FFmpeg使用笔记</title>
+      <link>http://tacy.github.io/post/ffmpeg/</link>
+      <pubDate>Mon, 14 Apr 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/ffmpeg/</guid>
+      <description>FFmpeg 视频压缩首先想到的自然是FFmpeg，我用的是Ubuntu，很不幸Ubuntu用Libav提到了FFmpeg ，具体为啥有了Libav建议l</description>
+    </item>
+    
+    <item>
+      <title>Docker使用笔记</title>
+      <link>http://tacy.github.io/post/docker/</link>
+      <pubDate>Fri, 04 Apr 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/docker/</guid>
+      <description>Docker[fn:1] Docker是对LXC的一个抽象，依赖于LXC，相比KVM这种Hypervisor，LXC要轻量级很多[fn:2] ，但是LXC很难打包分发</description>
+    </item>
+    
+    <item>
+      <title>strace notes</title>
+      <link>http://tacy.github.io/post/strace/</link>
+      <pubDate>Tue, 18 Mar 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/strace/</guid>
+      <description>Strace notes strace是linux下的一个进程trace工具，通过strace，能够trace进程的所有系统调用， 对于解决一些棘手问题有很大帮助。</description>
+    </item>
+    
+    <item>
+      <title>Raspberry Pi安装配置和问题记录</title>
+      <link>http://tacy.github.io/post/raspberry-pi-notes/</link>
+      <pubDate>Sun, 10 Feb 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/raspberry-pi-notes/</guid>
+      <description>Raspberry Pi简单来说就是一个低功耗的卡片PC主机，当然他的处理能力要弱很多，可以是 用来教孩子编程，放高清（带GPU和HDMI输出），当然你可以用它</description>
+    </item>
+    
   </channel>
 </rss>

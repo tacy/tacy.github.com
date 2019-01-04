@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ubuntu on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/ubuntu/</link>
+    <description>Recent content in Ubuntu on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Fri, 08 Feb 2013 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/ubuntu/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Xmodmap配置介绍</title>
+      <link>http://tacy.github.io/post/xmodmap-configure/</link>
+      <pubDate>Fri, 08 Feb 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/xmodmap-configure/</guid>
+      <description>introduce xmodmap能够重新映射键盘上键的布局，通常情况下，你不会需要对键盘做重新映射，只有在特定情况下，比如emacs，需要频繁操作Ctrl键</description>
+    </item>
+    
+  </channel>
+</rss>
