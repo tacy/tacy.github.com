@@ -362,11 +362,8 @@ git config &ndash;global http.proxy https.proxy</p>
 <p>恢复项目依赖的命令: <code>godep restore</code></p>
 
 <p>更新依赖操作：</p>
-
-<pre><code>go get -u foo/bar
-godep update foo/bar
-</code></pre>
-
+<div class="highlight"><pre class="chroma">go get -u foo/bar
+godep update foo/bar</pre></div>
 <h2 id="govendor">govendor</h2>
 
 <p>govendor init
@@ -398,22 +395,16 @@ dlv exec运行程序的时候, 如果程序有参数, 用<code>--</code>提供, 
 <ol>
 <li>如果你需要测试单个文件, 而且test文件的包名和被测代码的包名一样, 需要带上被测试文件:</li>
 </ol>
-
-<pre><code>go test openfalcon_sink_test.go openfalcon_sink.go
-</code></pre>
-
+<div class="highlight"><pre class="chroma">go test openfalcon_sink_test.go openfalcon_sink.go</pre></div>
 <ol>
 <li>测试覆盖率</li>
 </ol>
-
-<pre><code>go test -coverprofile=coverage.out
+<div class="highlight"><pre class="chroma">go test -coverprofile=coverage.out
 go tool conver -html=coverage.out -o coverage.html
 
 or
 
-go test -cover test.go
-</code></pre>
-
+go test -cover test.go</pre></div>
 <h1 id="study">Study</h1>
 
 <h2 id="declaration">declaration</h2>
@@ -421,32 +412,22 @@ go test -cover test.go
 <ol>
 <li>返回pointer</li>
 </ol>
-
-<pre><code>var a *T = new(T)
+<div class="highlight"><pre class="chroma">var a *T = new(T)
 a := new(T)
-a := &amp;T{}
-</code></pre>
-
+a := &amp;T{}</pre></div>
 <ol>
 <li>返回value</li>
 </ol>
-
-<pre><code>a := T{}
-var a T
-
-</code></pre>
-
+<div class="highlight"><pre class="chroma">a := T{}
+var a T</pre></div>
 <ol>
 <li>channel &amp; map &amp; slice
 只能用make申明, 返回value, 但是注意channel和map都是引用类型, 无需用pointer传递</li>
 </ol>
-
-<pre><code>a := make(chan string, 10)
+<div class="highlight"><pre class="chroma">a := make(chan string, 10)
 var a chan string = make(chan string, 10)
 a := make([]string, 10, 20) //分配一个array, 返回一个slice引用到这个array
-var a []string = new([20]int)[:10]
-</code></pre>
-
+var a []string = new([20]int)[:10]</pre></div>
 <p>slice需要注意的是, 如果你的slice长度固定(底下的array无需重新分配), slice也无需通过pointer传递, 否则需要</p>
 
 <h2 id="method">method</h2>
@@ -456,17 +437,13 @@ var a []string = new([20]int)[:10]
 <p>Slices are one place where it&rsquo;s not always obvious at first. The Slice header is small, so copying it is cheap, and the underlying array is referenced via a pointer, so you can manipulate the contents of a slice with a value receiver. You can see this in the sort package, where the methods for the sortable types are defined without pointers.</p>
 
 <p>The only time you need to use a pointer with a slice, is if you&rsquo;re going to manipulate the slice header, which means changing the length or capacity. For an Append method, you would want:</p>
-
-<pre><code>func (p *ByteSlice) Append(data []byte) {
+<div class="highlight"><pre class="chroma">func (p *ByteSlice) Append(data []byte) {
     *p = append(*p, data...)
-}
-</code></pre>
-
+}</pre></div>
 <p><a href="https://play.golang.org/p/43OM90PVTN">测试代码, 看pointer receiver和value receiver的区别</a></p>
 
 <p>value receiver和python不同, 举例如下:</p>
-
-<pre><code>type Val struct {
+<div class="highlight"><pre class="chroma">type Val struct {
     val int
 }
 
@@ -482,9 +459,7 @@ func main() {
     a := new(Val)
     a.Set(1)
     fmt.Println(a.Get())
-}
-</code></pre>
-
+}</pre></div>
 <p>上面这段代码输出: &lsquo;0&rsquo;, 也就是说, 如果你需要修改receiver, 必须用point receiver. 这里理解起来比较麻烦, 和很多编程语言有点区别, 一定要结合 <a href="https://golang.org/ref/spec#Method_expressions">Method expressions</a>来理解:
 上面这段代码中, Val.Set这个method expressions其实代表的是一个function: func(v Val, a int), 这里的v就是receiver, 作为func的第一个参数, 这样就容易理解了, 如果是value receiver, 就是copy receiver传入func, 所以Set方法对val的修改并不会影响原始的receiver, 如果你想修改receiver的变量, 必须用pointer receiver</p>
 

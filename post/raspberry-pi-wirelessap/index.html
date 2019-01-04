@@ -352,16 +352,13 @@ if (!doNotTrack) {
 <h2 id="配置无线网卡和网络路由">配置无线网卡和网络路由</h2>
 
 <p>配置无线网卡为静态地址, 当然不要和eth0地址段冲突了, 如果你家里是192.168.1.0/24, 那么这里你需要设置为该网段以外的其他网段.</p>
-
-<pre><code class="language-shell">pi@raspbmc:/etc/dhcp$ cat /etc/network/interfaces
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">pi@raspbmc:/etc/dhcp$ cat /etc/network/interfaces
 auto wlan0
 allow-hotplug wlan0
 iface wlan0 inet static
-    address 192.168.42.1
-    netmask 255.255.255.0
-up iptables-restore &lt; /etc/iptables.ipv4.nat
-</code></pre>
-
+    address <span class="m">192</span>.168.42.1
+    netmask <span class="m">255</span>.255.255.0
+up iptables-restore &lt; /etc/iptables.ipv4.nat</code></pre></div>
 <dl>
 <dt>接下来你需要启用ip转发功能, 简单做法是编辑/etc/sysctl.conf, 找到下面这样, 取消注释.</dt>
 <dd>#net.ipv4.ip_forward=1
@@ -370,12 +367,9 @@ up iptables-restore &lt; /etc/iptables.ipv4.nat
 </dl>
 
 <p>设置NAT规则, 让包能够正常路由到其他网段:</p>
-
-<pre><code class="language-shell">sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 sudo iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
-sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT
-</code></pre>
-
+sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT</code></pre></div>
 <dl>
 <dt>保存iptables配置:</dt>
 <dd>sudo sh -c &ldquo;iptables-save &gt; /etc/iptables.ipv4.nat&rdquo;</dd>
@@ -386,212 +380,194 @@ sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT
 <p>你需要给连接AP的客户端自动分配ip地址信息, 所有你需要有dhcp服务, 当然你也能手动制定, 但是对于客户端太麻烦了.</p>
 
 <p>先编写dhcp配置文件, 主要是注释下面两行:</p>
-
-<pre><code class="language-shell">option domain-name &quot;example.org&quot;;
-option domain-name-servers ns1.example.org, ns2.example.org;
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">option domain-name <span class="s2">&#34;example.org&#34;</span><span class="p">;</span>
+option domain-name-servers ns1.example.org, ns2.example.org<span class="p">;</span></code></pre></div>
 <dl>
 <dt>取消注释下面一行:</dt>
 <dd>#authoritative;</dd>
 </dl>
 
 <p>添加下面内容到文件结尾, 注意这里的ip地址段和无线网卡匹配:</p>
-
-<pre><code class="language-shell">subnet 192.168.42.0 netmask 255.255.255.0 {
-    range 192.168.42.10 192.168.42.50;
-    option broadcast-address 192.168.42.255;
-    option routers 192.168.42.1;
-    default-lease-time 600;
-    max-lease-time 7200;
-    option domain-name &quot;local&quot;;
-    option domain-name-servers 8.8.8.8, 8.8.4.4;
-}
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">subnet <span class="m">192</span>.168.42.0 netmask <span class="m">255</span>.255.255.0 <span class="o">{</span>
+    range <span class="m">192</span>.168.42.10 <span class="m">192</span>.168.42.50<span class="p">;</span>
+    option broadcast-address <span class="m">192</span>.168.42.255<span class="p">;</span>
+    option routers <span class="m">192</span>.168.42.1<span class="p">;</span>
+    default-lease-time <span class="m">600</span><span class="p">;</span>
+    max-lease-time <span class="m">7200</span><span class="p">;</span>
+    option domain-name <span class="s2">&#34;local&#34;</span><span class="p">;</span>
+    option domain-name-servers <span class="m">8</span>.8.8.8, <span class="m">8</span>.8.4.4<span class="p">;</span>
+<span class="o">}</span></code></pre></div>
 <p>完整内容如下:</p>
-
-<pre><code class="language-shell">pi@raspbmc:/etc/dhcp$ cat dhcpd.conf
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">pi@raspbmc:/etc/dhcp$ cat dhcpd.conf
 #
-# Sample configuration file for ISC dhcpd for Debian
+<span class="c1"># Sample configuration file for ISC dhcpd for Debian</span>
 #
 #
 
-# The ddns-updates-style parameter controls whether or not the server will
-# attempt to do a DNS update when a lease is confirmed. We default to the
-# behavior of the version 2 packages ('none', since DHCP v2 didn't
-# have support for DDNS.)
-ddns-update-style none;
+<span class="c1"># The ddns-updates-style parameter controls whether or not the server will</span>
+<span class="c1"># attempt to do a DNS update when a lease is confirmed. We default to the</span>
+<span class="c1"># behavior of the version 2 packages (&#39;none&#39;, since DHCP v2 didn&#39;t</span>
+<span class="c1"># have support for DDNS.)</span>
+ddns-update-style none<span class="p">;</span>
 
-# option definitions common to all supported networks...
-#option domain-name &quot;example.org&quot;;
-#option domain-name-servers ns1.example.org, ns2.example.org;
+<span class="c1"># option definitions common to all supported networks...</span>
+<span class="c1">#option domain-name &#34;example.org&#34;;</span>
+<span class="c1">#option domain-name-servers ns1.example.org, ns2.example.org;</span>
 
-default-lease-time 600;
-max-lease-time 7200;
+default-lease-time <span class="m">600</span><span class="p">;</span>
+max-lease-time <span class="m">7200</span><span class="p">;</span>
 
-# If this DHCP server is the official DHCP server for the local
-# network, the authoritative directive should be uncommented.
-authoritative;
+<span class="c1"># If this DHCP server is the official DHCP server for the local</span>
+<span class="c1"># network, the authoritative directive should be uncommented.</span>
+authoritative<span class="p">;</span>
 
-# Use this to send dhcp log messages to a different log file (you also
-# have to hack syslog.conf to complete the redirection).
-log-facility local7;
+<span class="c1"># Use this to send dhcp log messages to a different log file (you also</span>
+<span class="c1"># have to hack syslog.conf to complete the redirection).</span>
+log-facility local7<span class="p">;</span>
 
-# No service will be given on this subnet, but declaring it helps the
-# DHCP server to understand the network topology.
+<span class="c1"># No service will be given on this subnet, but declaring it helps the</span>
+<span class="c1"># DHCP server to understand the network topology.</span>
 
-#subnet 10.152.187.0 netmask 255.255.255.0 {
-#}
+<span class="c1">#subnet 10.152.187.0 netmask 255.255.255.0 {</span>
+<span class="c1">#}</span>
 
-# This is a very basic subnet declaration.
+<span class="c1"># This is a very basic subnet declaration.</span>
 
-#subnet 10.254.239.0 netmask 255.255.255.224 {
-#  range 10.254.239.10 10.254.239.20;
-#  option routers rtr-239-0-1.example.org, rtr-239-0-2.example.org;
-#}
+<span class="c1">#subnet 10.254.239.0 netmask 255.255.255.224 {</span>
+<span class="c1">#  range 10.254.239.10 10.254.239.20;</span>
+<span class="c1">#  option routers rtr-239-0-1.example.org, rtr-239-0-2.example.org;</span>
+<span class="c1">#}</span>
 
-# This declaration allows BOOTP clients to get dynamic addresses,
-# which we don't really recommend.
+<span class="c1"># This declaration allows BOOTP clients to get dynamic addresses,</span>
+<span class="c1"># which we don&#39;t really recommend.</span>
 
-#subnet 10.254.239.32 netmask 255.255.255.224 {
-#  range dynamic-bootp 10.254.239.40 10.254.239.60;
-#  option broadcast-address 10.254.239.31;
-#  option routers rtr-239-32-1.example.org;
-#}
+<span class="c1">#subnet 10.254.239.32 netmask 255.255.255.224 {</span>
+<span class="c1">#  range dynamic-bootp 10.254.239.40 10.254.239.60;</span>
+<span class="c1">#  option broadcast-address 10.254.239.31;</span>
+<span class="c1">#  option routers rtr-239-32-1.example.org;</span>
+<span class="c1">#}</span>
 
-# A slightly different configuration for an internal subnet.
-#subnet 10.5.5.0 netmask 255.255.255.224 {
-#  range 10.5.5.26 10.5.5.30;
-#  option domain-name-servers ns1.internal.example.org;
-#  option domain-name &quot;internal.example.org&quot;;
-#  option routers 10.5.5.1;
-#  option broadcast-address 10.5.5.31;
-#  default-lease-time 600;
-#  max-lease-time 7200;
-#}
+<span class="c1"># A slightly different configuration for an internal subnet.</span>
+<span class="c1">#subnet 10.5.5.0 netmask 255.255.255.224 {</span>
+<span class="c1">#  range 10.5.5.26 10.5.5.30;</span>
+<span class="c1">#  option domain-name-servers ns1.internal.example.org;</span>
+<span class="c1">#  option domain-name &#34;internal.example.org&#34;;</span>
+<span class="c1">#  option routers 10.5.5.1;</span>
+<span class="c1">#  option broadcast-address 10.5.5.31;</span>
+<span class="c1">#  default-lease-time 600;</span>
+<span class="c1">#  max-lease-time 7200;</span>
+<span class="c1">#}</span>
 
-# Hosts which require special configuration options can be listed in
-# host statements.   If no address is specified, the address will be
-# allocated dynamically (if possible), but the host-specific information
-# will still come from the host declaration.
+<span class="c1"># Hosts which require special configuration options can be listed in</span>
+<span class="c1"># host statements.   If no address is specified, the address will be</span>
+<span class="c1"># allocated dynamically (if possible), but the host-specific information</span>
+<span class="c1"># will still come from the host declaration.</span>
 
-#host passacaglia {
-#  hardware ethernet 0:0:c0:5d:bd:95;
-#  filename &quot;vmunix.passacaglia&quot;;
-#  server-name &quot;toccata.fugue.com&quot;;
-#}
+<span class="c1">#host passacaglia {</span>
+<span class="c1">#  hardware ethernet 0:0:c0:5d:bd:95;</span>
+<span class="c1">#  filename &#34;vmunix.passacaglia&#34;;</span>
+<span class="c1">#  server-name &#34;toccata.fugue.com&#34;;</span>
+<span class="c1">#}</span>
 
-# Fixed IP addresses can also be specified for hosts.   These addresses
-# should not also be listed as being available for dynamic assignment.
-# Hosts for which fixed IP addresses have been specified can boot using
-# BOOTP or DHCP.   Hosts for which no fixed address is specified can only
-# be booted with DHCP, unless there is an address range on the subnet
-# to which a BOOTP client is connected which has the dynamic-bootp flag
-# set.
-#host fantasia {
-#  hardware ethernet 08:00:07:26:c0:a5;
-#  fixed-address fantasia.fugue.com;
-#}
+<span class="c1"># Fixed IP addresses can also be specified for hosts.   These addresses</span>
+<span class="c1"># should not also be listed as being available for dynamic assignment.</span>
+<span class="c1"># Hosts for which fixed IP addresses have been specified can boot using</span>
+<span class="c1"># BOOTP or DHCP.   Hosts for which no fixed address is specified can only</span>
+<span class="c1"># be booted with DHCP, unless there is an address range on the subnet</span>
+<span class="c1"># to which a BOOTP client is connected which has the dynamic-bootp flag</span>
+<span class="c1"># set.</span>
+<span class="c1">#host fantasia {</span>
+<span class="c1">#  hardware ethernet 08:00:07:26:c0:a5;</span>
+<span class="c1">#  fixed-address fantasia.fugue.com;</span>
+<span class="c1">#}</span>
 
-# You can declare a class of clients and then do address allocation
-# based on that.   The example below shows a case where all clients
-# in a certain class get addresses on the 10.17.224/24 subnet, and all
-# other clients get addresses on the 10.0.29/24 subnet.
+<span class="c1"># You can declare a class of clients and then do address allocation</span>
+<span class="c1"># based on that.   The example below shows a case where all clients</span>
+<span class="c1"># in a certain class get addresses on the 10.17.224/24 subnet, and all</span>
+<span class="c1"># other clients get addresses on the 10.0.29/24 subnet.</span>
 
-#class &quot;foo&quot; {
-#  match if substring (option vendor-class-identifier, 0, 4) = &quot;SUNW&quot;;
-#}
+<span class="c1">#class &#34;foo&#34; {</span>
+<span class="c1">#  match if substring (option vendor-class-identifier, 0, 4) = &#34;SUNW&#34;;</span>
+<span class="c1">#}</span>
 
-#shared-network 224-29 {
-#  subnet 10.17.224.0 netmask 255.255.255.0 {
-#    option routers rtr-224.example.org;
-#  }
-#  subnet 10.0.29.0 netmask 255.255.255.0 {
-#    option routers rtr-29.example.org;
-#  }
-#  pool {
-#    allow members of &quot;foo&quot;;
-#    range 10.17.224.10 10.17.224.250;
-#  }
-#  pool {
-#    deny members of &quot;foo&quot;;
-#    range 10.0.29.10 10.0.29.230;
-#  }
-#}
+<span class="c1">#shared-network 224-29 {</span>
+<span class="c1">#  subnet 10.17.224.0 netmask 255.255.255.0 {</span>
+<span class="c1">#    option routers rtr-224.example.org;</span>
+<span class="c1">#  }</span>
+<span class="c1">#  subnet 10.0.29.0 netmask 255.255.255.0 {</span>
+<span class="c1">#    option routers rtr-29.example.org;</span>
+<span class="c1">#  }</span>
+<span class="c1">#  pool {</span>
+<span class="c1">#    allow members of &#34;foo&#34;;</span>
+<span class="c1">#    range 10.17.224.10 10.17.224.250;</span>
+<span class="c1">#  }</span>
+<span class="c1">#  pool {</span>
+<span class="c1">#    deny members of &#34;foo&#34;;</span>
+<span class="c1">#    range 10.0.29.10 10.0.29.230;</span>
+<span class="c1">#  }</span>
+<span class="c1">#}</span>
 
-subnet 192.168.42.0 netmask 255.255.255.0 {
-    range 192.168.42.10 192.168.42.50;
-    option broadcast-address 192.168.42.255;
-    option routers 192.168.42.1;
-    default-lease-time 600;
-    max-lease-time 7200;
-    option domain-name &quot;local&quot;;
-    option domain-name-servers 8.8.8.8, 8.8.4.4;
-}
-</code></pre>
-
+subnet <span class="m">192</span>.168.42.0 netmask <span class="m">255</span>.255.255.0 <span class="o">{</span>
+    range <span class="m">192</span>.168.42.10 <span class="m">192</span>.168.42.50<span class="p">;</span>
+    option broadcast-address <span class="m">192</span>.168.42.255<span class="p">;</span>
+    option routers <span class="m">192</span>.168.42.1<span class="p">;</span>
+    default-lease-time <span class="m">600</span><span class="p">;</span>
+    max-lease-time <span class="m">7200</span><span class="p">;</span>
+    option domain-name <span class="s2">&#34;local&#34;</span><span class="p">;</span>
+    option domain-name-servers <span class="m">8</span>.8.8.8, <span class="m">8</span>.8.4.4<span class="p">;</span>
+<span class="o">}</span></code></pre></div>
 <p>接下来需要告诉dhcp, 它需要绑定在哪个网卡上, 简单修改isc-dhcp-server文件, 设置INTERFACES=&ldquo;wlan0&rdquo;:</p>
-
-<pre><code class="language-shell">pi@raspbmc:/etc/dhcp$ cat /etc/default/isc-dhcp-server
-# Defaults for isc-dhcp-server initscript
-# sourced by /etc/init.d/isc-dhcp-server
-# installed at /etc/default/isc-dhcp-server by the maintainer scripts
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">pi@raspbmc:/etc/dhcp$ cat /etc/default/isc-dhcp-server
+<span class="c1"># Defaults for isc-dhcp-server initscript</span>
+<span class="c1"># sourced by /etc/init.d/isc-dhcp-server</span>
+<span class="c1"># installed at /etc/default/isc-dhcp-server by the maintainer scripts</span>
 
 #
-# This is a POSIX shell fragment
+<span class="c1"># This is a POSIX shell fragment</span>
 #
 
-# Path to dhcpd's config file (default: /etc/dhcp/dhcpd.conf).
-#DHCPD_CONF=/etc/dhcp/dhcpd.conf
+<span class="c1"># Path to dhcpd&#39;s config file (default: /etc/dhcp/dhcpd.conf).</span>
+<span class="c1">#DHCPD_CONF=/etc/dhcp/dhcpd.conf</span>
 
-# Path to dhcpd's PID file (default: /var/run/dhcpd.pid).
-#DHCPD_PID=/var/run/dhcpd.pid
+<span class="c1"># Path to dhcpd&#39;s PID file (default: /var/run/dhcpd.pid).</span>
+<span class="c1">#DHCPD_PID=/var/run/dhcpd.pid</span>
 
-# Additional options to start dhcpd with.
-#	Don't use options -cf or -pf here; use DHCPD_CONF/ DHCPD_PID instead
-#OPTIONS=&quot;&quot;
+<span class="c1"># Additional options to start dhcpd with.</span>
+<span class="c1">#	Don&#39;t use options -cf or -pf here; use DHCPD_CONF/ DHCPD_PID instead</span>
+<span class="c1">#OPTIONS=&#34;&#34;</span>
 
-# On what interfaces should the DHCP server (dhcpd) serve DHCP requests?
-#	Separate multiple interfaces with spaces, e.g. &quot;eth0 eth1&quot;.
-INTERFACES=&quot;wlan0&quot;
-</code></pre>
-
+<span class="c1"># On what interfaces should the DHCP server (dhcpd) serve DHCP requests?</span>
+<span class="c1">#	Separate multiple interfaces with spaces, e.g. &#34;eth0 eth1&#34;.</span>
+<span class="nv">INTERFACES</span><span class="o">=</span><span class="s2">&#34;wlan0&#34;</span></code></pre></div>
 <h2 id="配置hostapd">配置hostapd</h2>
 
 <p>编写hostapd.conf文件, 内容如下:</p>
-
-<pre><code class="language-shell">pi@raspbmc:/etc/hostapd$ cat hostapd.conf
-interface=wlan0
-driver=rtl871xdrv
-ssid=Pi_AP
-hw_mode=g
-channel=6
-macaddr_acl=0
-auth_algs=1
-ignore_broadcast_ssid=0
-wpa=2
-wpa_passphrase=Raspberry
-wpa_key_mgmt=WPA-PSK
-wpa_pairwise=TKIP
-rsn_pairwise=CCMP
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">pi@raspbmc:/etc/hostapd$ cat hostapd.conf
+<span class="nv">interface</span><span class="o">=</span>wlan0
+<span class="nv">driver</span><span class="o">=</span>rtl871xdrv
+<span class="nv">ssid</span><span class="o">=</span>Pi_AP
+<span class="nv">hw_mode</span><span class="o">=</span>g
+<span class="nv">channel</span><span class="o">=</span><span class="m">6</span>
+<span class="nv">macaddr_acl</span><span class="o">=</span><span class="m">0</span>
+<span class="nv">auth_algs</span><span class="o">=</span><span class="m">1</span>
+<span class="nv">ignore_broadcast_ssid</span><span class="o">=</span><span class="m">0</span>
+<span class="nv">wpa</span><span class="o">=</span><span class="m">2</span>
+<span class="nv">wpa_passphrase</span><span class="o">=</span>Raspberry
+<span class="nv">wpa_key_mgmt</span><span class="o">=</span>WPA-PSK
+<span class="nv">wpa_pairwise</span><span class="o">=</span>TKIP
+<span class="nv">rsn_pairwise</span><span class="o">=</span>CCMP</code></pre></div>
 <p>修改hostapd.conf文件, 指定配置文件位置DAEMON_CONF=&ldquo;/etc/hostapd/hostapd.conf&rdquo;:</p>
-
-<pre><code class="language-shell">pi@raspbmc:/etc/hostapd$ cat /etc/default/hostapd
-# Defaults for hostapd initscript
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">pi@raspbmc:/etc/hostapd$ cat /etc/default/hostapd
+<span class="c1"># Defaults for hostapd initscript</span>
 #
-# See /usr/share/doc/hostapd/README.Debian for information about alternative
-# methods of managing hostapd.
+<span class="c1"># See /usr/share/doc/hostapd/README.Debian for information about alternative</span>
+<span class="c1"># methods of managing hostapd.</span>
 #
-# Uncomment and set DAEMON_CONF to the absolute path of a hostapd configuration
-# file and hostapd will be started during system boot. An example configuration
-# file can be found at /usr/share/doc/hostapd/examples/hostapd.conf.gz
+<span class="c1"># Uncomment and set DAEMON_CONF to the absolute path of a hostapd configuration</span>
+<span class="c1"># file and hostapd will be started during system boot. An example configuration</span>
+<span class="c1"># file can be found at /usr/share/doc/hostapd/examples/hostapd.conf.gz</span>
 #
-DAEMON_CONF=&quot;/etc/hostapd/hostapd.conf&quot;
-</code></pre>
-
+<span class="nv">DAEMON_CONF</span><span class="o">=</span><span class="s2">&#34;/etc/hostapd/hostapd.conf&#34;</span></code></pre></div>
 <dl>
 <dt>用下面hack过的hostapd替换原始的:</dt>
 <dd>wget <a href="http://www.adafruit.com/downloads/adafruit_hostapd.zip">http://www.adafruit.com/downloads/adafruit_hostapd.zip</a></dd>

@@ -68,7 +68,7 @@
 
 <meta itemprop="datePublished" content="2014-06-11T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2014-06-11T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="2404">
+<meta itemprop="wordCount" content="2403">
 
 
 
@@ -344,41 +344,38 @@ if (!doNotTrack) {
 
 <p>一般情况下，我们指定classloader不太容易导致争用，毕竟class只需要加载一次。但是有
 些情况下可不向你想象的那样，看下面这个这个线程栈：</p>
-
-<pre><code class="language-shell">&quot;[ACTIVE] ExecuteThread: '1' for queue: 'weblogic.kernel.Default (self-tuning)'&quot; daemon prio=10 tid=0x00007fbccc001000 nid=0x6dbc waiting for monitor entry [0x00007fbd11e20000]
-   java.lang.Thread.State: BLOCKED (on object monitor)
-	at java.lang.Class.forName0(Native Method)
-	at java.lang.Class.forName(Class.java:270)
-	at java.io.ObjectInputStream.resolveClass(ObjectInputStream.java:624)
-	at java.io.ObjectInputStream.readNonProxyDesc(ObjectInputStream.java:1611)
-	at java.io.ObjectInputStream.readClassDesc(ObjectInputStream.java:1516)
-	at java.io.ObjectInputStream.readClass(ObjectInputStream.java:1482)
-	at java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1332)
-	at java.io.ObjectInputStream.readArray(ObjectInputStream.java:1705)
-	at java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1343)
-	at java.io.ObjectInputStream.readObject(ObjectInputStream.java:369)
-	at java.util.HashMap.readObject(HashMap.java:1047)
-	at sun.reflect.GeneratedMethodAccessor2.invoke(Unknown Source)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:622)
-	at java.io.ObjectStreamClass.invokeReadObject(ObjectStreamClass.java:1001)
-	at java.io.ObjectInputStream.readSerialData(ObjectInputStream.java:1892)
-	at java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:1797)
-	at java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1349)
-	at java.io.ObjectInputStream.defaultReadFields(ObjectInputStream.java:1989)
-	at java.io.ObjectInputStream.readSerialData(ObjectInputStream.java:1914)
-	at java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:1797)
-	at java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1349)
-	at java.io.ObjectInputStream.readArray(ObjectInputStream.java:1705)
-	at java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1343)
-	at java.io.ObjectInputStream.defaultReadFields(ObjectInputStream.java:1989)
-	at java.io.ObjectInputStream.readSerialData(ObjectInputStream.java:1914)
-	at java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:1797)
-	at java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1349)
-	at java.io.ObjectInputStream.readObject(ObjectInputStream.java:369)
-	at com.primeton.access.client.impl.processor.CommonServiceProcessor.process(CommonServiceProcessor.java:49)
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="s2">&#34;[ACTIVE] ExecuteThread: &#39;1&#39; for queue: &#39;weblogic.kernel.Default (self-tuning)&#39;&#34;</span> daemon <span class="nv">prio</span><span class="o">=</span><span class="m">10</span> <span class="nv">tid</span><span class="o">=</span>0x00007fbccc001000 <span class="nv">nid</span><span class="o">=</span>0x6dbc waiting <span class="k">for</span> monitor entry <span class="o">[</span>0x00007fbd11e20000<span class="o">]</span>
+   java.lang.Thread.State: BLOCKED <span class="o">(</span>on object monitor<span class="o">)</span>
+	at java.lang.Class.forName0<span class="o">(</span>Native Method<span class="o">)</span>
+	at java.lang.Class.forName<span class="o">(</span>Class.java:270<span class="o">)</span>
+	at java.io.ObjectInputStream.resolveClass<span class="o">(</span>ObjectInputStream.java:624<span class="o">)</span>
+	at java.io.ObjectInputStream.readNonProxyDesc<span class="o">(</span>ObjectInputStream.java:1611<span class="o">)</span>
+	at java.io.ObjectInputStream.readClassDesc<span class="o">(</span>ObjectInputStream.java:1516<span class="o">)</span>
+	at java.io.ObjectInputStream.readClass<span class="o">(</span>ObjectInputStream.java:1482<span class="o">)</span>
+	at java.io.ObjectInputStream.readObject0<span class="o">(</span>ObjectInputStream.java:1332<span class="o">)</span>
+	at java.io.ObjectInputStream.readArray<span class="o">(</span>ObjectInputStream.java:1705<span class="o">)</span>
+	at java.io.ObjectInputStream.readObject0<span class="o">(</span>ObjectInputStream.java:1343<span class="o">)</span>
+	at java.io.ObjectInputStream.readObject<span class="o">(</span>ObjectInputStream.java:369<span class="o">)</span>
+	at java.util.HashMap.readObject<span class="o">(</span>HashMap.java:1047<span class="o">)</span>
+	at sun.reflect.GeneratedMethodAccessor2.invoke<span class="o">(</span>Unknown Source<span class="o">)</span>
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke<span class="o">(</span>DelegatingMethodAccessorImpl.java:43<span class="o">)</span>
+	at java.lang.reflect.Method.invoke<span class="o">(</span>Method.java:622<span class="o">)</span>
+	at java.io.ObjectStreamClass.invokeReadObject<span class="o">(</span>ObjectStreamClass.java:1001<span class="o">)</span>
+	at java.io.ObjectInputStream.readSerialData<span class="o">(</span>ObjectInputStream.java:1892<span class="o">)</span>
+	at java.io.ObjectInputStream.readOrdinaryObject<span class="o">(</span>ObjectInputStream.java:1797<span class="o">)</span>
+	at java.io.ObjectInputStream.readObject0<span class="o">(</span>ObjectInputStream.java:1349<span class="o">)</span>
+	at java.io.ObjectInputStream.defaultReadFields<span class="o">(</span>ObjectInputStream.java:1989<span class="o">)</span>
+	at java.io.ObjectInputStream.readSerialData<span class="o">(</span>ObjectInputStream.java:1914<span class="o">)</span>
+	at java.io.ObjectInputStream.readOrdinaryObject<span class="o">(</span>ObjectInputStream.java:1797<span class="o">)</span>
+	at java.io.ObjectInputStream.readObject0<span class="o">(</span>ObjectInputStream.java:1349<span class="o">)</span>
+	at java.io.ObjectInputStream.readArray<span class="o">(</span>ObjectInputStream.java:1705<span class="o">)</span>
+	at java.io.ObjectInputStream.readObject0<span class="o">(</span>ObjectInputStream.java:1343<span class="o">)</span>
+	at java.io.ObjectInputStream.defaultReadFields<span class="o">(</span>ObjectInputStream.java:1989<span class="o">)</span>
+	at java.io.ObjectInputStream.readSerialData<span class="o">(</span>ObjectInputStream.java:1914<span class="o">)</span>
+	at java.io.ObjectInputStream.readOrdinaryObject<span class="o">(</span>ObjectInputStream.java:1797<span class="o">)</span>
+	at java.io.ObjectInputStream.readObject0<span class="o">(</span>ObjectInputStream.java:1349<span class="o">)</span>
+	at java.io.ObjectInputStream.readObject<span class="o">(</span>ObjectInputStream.java:369<span class="o">)</span>
+	at com.primeton.access.client.impl.processor.CommonServiceProcessor.process<span class="o">(</span>CommonServiceProcessor.java:49<span class="o">)</span></code></pre></div>
 <p>堵在classloader上了，正常情况下，我们当然想知道到底什么class需要这么频繁的加载。
 以前你只能debug，加日志调试，现在我们来看看神奇的byteman怎么做到的。</p>
 
@@ -393,14 +390,11 @@ if (!doNotTrack) {
 <h3 id="动态打开byteman监听">动态打开byteman监听</h3>
 
 <p>正常启动需要profile的weblogic应用，之后通过jps获取进程号：</p>
-
-<pre><code class="language-shell">root@tacy:/home/tacy/mytools/systemtap# jps -l
-14677 org.apache.catalina.startup.Bootstrap
-18224 weblogic.Server
-28485 /home/tacy/mytools/java/eclipse//plugins/org.eclipse.equinox.launcher_1.2.0.v20110502.jar
-18256 sun.tools.jps.
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">root@tacy:/home/tacy/mytools/systemtap# jps -l
+<span class="m">14677</span> org.apache.catalina.startup.Bootstrap
+<span class="m">18224</span> weblogic.Server
+<span class="m">28485</span> /home/tacy/mytools/java/eclipse//plugins/org.eclipse.equinox.launcher_1.2.0.v20110502.jar
+<span class="m">18256</span> sun.tools.jps.</code></pre></div>
 <dl>
 <dt>获取到weblogic的pid为18224，然后另开一终端，通过bminstall动态打开监听：</dt>
 <dd>root@tacy:~# bminstall.sh -b -Dorg.jboss.byteman.transform.all -Dorg.jboss.byteman.verbose -p 60000 18224
@@ -417,26 +411,20 @@ Setting org.jboss.byteman.verbose=
 
 <p>另外就是org.jboss.byteman.transform.all这个参数，如果你要拦截java.lang类似的包，
 必须设置，否则拦截不到。</p>
-
-<pre><code class="language-shell">org.jboss.byteman.transform.all
-is set then the agent will allow rules to be injected into methods of classes
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">org.jboss.byteman.transform.all
+is <span class="nb">set</span> <span class="k">then</span> the agent will allow rules to be injected into methods of classes
 in the java.lang hierarchy. Note that this will require the Byteman jar to be
 installed in the bootstrap classpath using the boot: option to the -javaagent
-JVM command line argument.
-</code></pre>
-
+JVM <span class="nb">command</span> line argument.</code></pre></div>
 <h3 id="脚本">脚本</h3>
 
 <p>接下来我们先写一个如下的byteman脚本：</p>
-
-<pre><code class="language-shell">RULE classloader profile
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">RULE classloader profile
 CLASS java.lang.ClassLoader
-METHOD loadClass(java.lang.String, boolean)
-IF callerCheck(&quot;com\.primeton.*&quot;, true, true,true,0,200)
-DO traceln(&quot;load class: &quot; + $1),traceStack(&quot;Thread Stack**********************:&quot;)
-ENDRULE
-</code></pre>
-
+METHOD loadClass<span class="o">(</span>java.lang.String, boolean<span class="o">)</span>
+IF callerCheck<span class="o">(</span><span class="s2">&#34;com\.primeton.*&#34;</span>, true, true,true,0,200<span class="o">)</span>
+DO traceln<span class="o">(</span><span class="s2">&#34;load class: &#34;</span> + <span class="nv">$1</span><span class="o">)</span>,traceStack<span class="o">(</span><span class="s2">&#34;Thread Stack**********************:&#34;</span><span class="o">)</span>
+ENDRULE</code></pre></div>
 <p>具体语法我就不解释了，自己看文档，简单说就是拦截loadclass方法，如果发现调用栈里
 面有匹配com.primeton.*字符串，就输出方法参数和调用栈。</p>
 
@@ -445,85 +433,76 @@ ENDRULE
 <h3 id="提交脚本">提交脚本</h3>
 
 <p>直接使用bmsubmit进行脚本提交：</p>
-
-<pre><code class="language-shell">root@tacy:~# bmsubmit.sh -p 60000 -l test.bm
-define rule classloader profile
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">root@tacy:~# bmsubmit.sh -p <span class="m">60000</span> -l test.bm
+define rule classloader profile</code></pre></div>
 <p>之后回到weblogic终端窗口就能看到效果了</p>
 
 <h3 id="输出">输出</h3>
 
 <p>执行你的业务功能，你可以看到如下输出：</p>
-
-<pre><code class="language-shell">load class: long
-Thread Stack**********************:java.lang.ClassLoader.loadClass(ClassLoader.java:-1)
-java.lang.ClassLoader.loadClass(ClassLoader.java:295)
-sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:301)
-java.lang.ClassLoader.loadClass(ClassLoader.java:295)
-java.lang.ClassLoader.loadClass(ClassLoader.java:295)
-java.lang.ClassLoader.loadClass(ClassLoader.java:247)
-weblogic.utils.classloaders.GenericClassLoader.loadClass(GenericClassLoader.java:179)
-weblogic.utils.classloaders.FilteringClassLoader.findClass(FilteringClassLoader.java:101)
-weblogic.utils.classloaders.FilteringClassLoader.loadClass(FilteringClassLoader.java:86)
-java.lang.ClassLoader.loadClass(ClassLoader.java:295)
-java.lang.ClassLoader.loadClass(ClassLoader.java:295)
-java.lang.ClassLoader.loadClass(ClassLoader.java:247)
-weblogic.utils.classloaders.GenericClassLoader.loadClass(GenericClassLoader.java:179)
-weblogic.utils.classloaders.ChangeAwareClassLoader.loadClass(ChangeAwareClassLoader.java:52)
-java.lang.Class.forName0(Class.java:-2)
-java.lang.Class.forName(Class.java:249)
-java.io.ObjectInputStream.resolveClass(ObjectInputStream.java:602)
-java.io.ObjectInputStream.readNonProxyDesc(ObjectInputStream.java:1589)
-java.io.ObjectInputStream.readClassDesc(ObjectInputStream.java:1494)
-java.io.ObjectInputStream.readClass(ObjectInputStream.java:1460)
-java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1310)
-java.io.ObjectInputStream.readArray(ObjectInputStream.java:1683)
-java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1321)
-java.io.ObjectInputStream.readObject(ObjectInputStream.java:349)
-java.util.HashMap.readObject(HashMap.java:1030)
-sun.reflect.GeneratedMethodAccessor2.invoke (Unknown Source)
-sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-java.lang.reflect.Method.invoke(Method.java:597)
-java.io.ObjectStreamClass.invokeReadObject(ObjectStreamClass.java:969)
-java.io.ObjectInputStream.readSerialData(ObjectInputStream.java:1871)
-java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:1775)
-java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1327)
-java.io.ObjectInputStream.defaultReadFields(ObjectInputStream.java:1969)
-java.io.ObjectInputStream.readSerialData(ObjectInputStream.java:1893)
-java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:1775)
-java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1327)
-java.io.ObjectInputStream.readArray(ObjectInputStream.java:1683)
-java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1321)
-java.io.ObjectInputStream.defaultReadFields(ObjectInputStream.java:1969)
-java.io.ObjectInputStream.readSerialData(ObjectInputStream.java:1893)
-java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:1775)
-java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1327)
-java.io.ObjectInputStream.readObject(ObjectInputStream.java:349)
-com.primeton.access.client.impl.processor.CommonServiceProcessor.process(CommonServiceProcessor.java:49)
-...
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">load class: long
+Thread Stack**********************:java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:-1<span class="o">)</span>
+java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:295<span class="o">)</span>
+sun.misc.Launcher<span class="nv">$AppClassLoader</span>.loadClass<span class="o">(</span>Launcher.java:301<span class="o">)</span>
+java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:295<span class="o">)</span>
+java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:295<span class="o">)</span>
+java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:247<span class="o">)</span>
+weblogic.utils.classloaders.GenericClassLoader.loadClass<span class="o">(</span>GenericClassLoader.java:179<span class="o">)</span>
+weblogic.utils.classloaders.FilteringClassLoader.findClass<span class="o">(</span>FilteringClassLoader.java:101<span class="o">)</span>
+weblogic.utils.classloaders.FilteringClassLoader.loadClass<span class="o">(</span>FilteringClassLoader.java:86<span class="o">)</span>
+java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:295<span class="o">)</span>
+java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:295<span class="o">)</span>
+java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:247<span class="o">)</span>
+weblogic.utils.classloaders.GenericClassLoader.loadClass<span class="o">(</span>GenericClassLoader.java:179<span class="o">)</span>
+weblogic.utils.classloaders.ChangeAwareClassLoader.loadClass<span class="o">(</span>ChangeAwareClassLoader.java:52<span class="o">)</span>
+java.lang.Class.forName0<span class="o">(</span>Class.java:-2<span class="o">)</span>
+java.lang.Class.forName<span class="o">(</span>Class.java:249<span class="o">)</span>
+java.io.ObjectInputStream.resolveClass<span class="o">(</span>ObjectInputStream.java:602<span class="o">)</span>
+java.io.ObjectInputStream.readNonProxyDesc<span class="o">(</span>ObjectInputStream.java:1589<span class="o">)</span>
+java.io.ObjectInputStream.readClassDesc<span class="o">(</span>ObjectInputStream.java:1494<span class="o">)</span>
+java.io.ObjectInputStream.readClass<span class="o">(</span>ObjectInputStream.java:1460<span class="o">)</span>
+java.io.ObjectInputStream.readObject0<span class="o">(</span>ObjectInputStream.java:1310<span class="o">)</span>
+java.io.ObjectInputStream.readArray<span class="o">(</span>ObjectInputStream.java:1683<span class="o">)</span>
+java.io.ObjectInputStream.readObject0<span class="o">(</span>ObjectInputStream.java:1321<span class="o">)</span>
+java.io.ObjectInputStream.readObject<span class="o">(</span>ObjectInputStream.java:349<span class="o">)</span>
+java.util.HashMap.readObject<span class="o">(</span>HashMap.java:1030<span class="o">)</span>
+sun.reflect.GeneratedMethodAccessor2.invoke <span class="o">(</span>Unknown Source<span class="o">)</span>
+sun.reflect.DelegatingMethodAccessorImpl.invoke<span class="o">(</span>DelegatingMethodAccessorImpl.java:25<span class="o">)</span>
+java.lang.reflect.Method.invoke<span class="o">(</span>Method.java:597<span class="o">)</span>
+java.io.ObjectStreamClass.invokeReadObject<span class="o">(</span>ObjectStreamClass.java:969<span class="o">)</span>
+java.io.ObjectInputStream.readSerialData<span class="o">(</span>ObjectInputStream.java:1871<span class="o">)</span>
+java.io.ObjectInputStream.readOrdinaryObject<span class="o">(</span>ObjectInputStream.java:1775<span class="o">)</span>
+java.io.ObjectInputStream.readObject0<span class="o">(</span>ObjectInputStream.java:1327<span class="o">)</span>
+java.io.ObjectInputStream.defaultReadFields<span class="o">(</span>ObjectInputStream.java:1969<span class="o">)</span>
+java.io.ObjectInputStream.readSerialData<span class="o">(</span>ObjectInputStream.java:1893<span class="o">)</span>
+java.io.ObjectInputStream.readOrdinaryObject<span class="o">(</span>ObjectInputStream.java:1775<span class="o">)</span>
+java.io.ObjectInputStream.readObject0<span class="o">(</span>ObjectInputStream.java:1327<span class="o">)</span>
+java.io.ObjectInputStream.readArray<span class="o">(</span>ObjectInputStream.java:1683<span class="o">)</span>
+java.io.ObjectInputStream.readObject0<span class="o">(</span>ObjectInputStream.java:1321<span class="o">)</span>
+java.io.ObjectInputStream.defaultReadFields<span class="o">(</span>ObjectInputStream.java:1969<span class="o">)</span>
+java.io.ObjectInputStream.readSerialData<span class="o">(</span>ObjectInputStream.java:1893<span class="o">)</span>
+java.io.ObjectInputStream.readOrdinaryObject<span class="o">(</span>ObjectInputStream.java:1775<span class="o">)</span>
+java.io.ObjectInputStream.readObject0<span class="o">(</span>ObjectInputStream.java:1327<span class="o">)</span>
+java.io.ObjectInputStream.readObject<span class="o">(</span>ObjectInputStream.java:349<span class="o">)</span>
+com.primeton.access.client.impl.processor.CommonServiceProcessor.process<span class="o">(</span>CommonServiceProcessor.java:49<span class="o">)</span>
+...</code></pre></div>
 <p>问题一目了然了吧，人家在加载long.class，我们知道这是个java的原生类型，哪有啥
 class啊，其实这个问题是ObjectInputStream里没有处理好，请看下面代码：</p>
-
-<pre><code class="language-shell">    protected Class&lt;?&gt; resolveClass(ObjectStreamClass desc)
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">    protected Class&lt;?&gt; resolveClass<span class="o">(</span>ObjectStreamClass desc<span class="o">)</span>
 	throws IOException, ClassNotFoundException
-    {
-	String name = desc.getName();
-	try {
-	    return Class.forName(name, false, latestUserDefinedLoader());
-	} catch (ClassNotFoundException ex) {
-	    Class cl = (Class) primClasses.get(name);
-	    if (cl != null) {
-		return cl;
-	    } else {
-		throw ex;
-	    }
-	}
-    }
-</code></pre>
-
+    <span class="o">{</span>
+	String <span class="nv">name</span> <span class="o">=</span> desc.getName<span class="o">()</span><span class="p">;</span>
+	try <span class="o">{</span>
+	    <span class="k">return</span> Class.forName<span class="o">(</span>name, false, latestUserDefinedLoader<span class="o">())</span><span class="p">;</span>
+	<span class="o">}</span> catch <span class="o">(</span>ClassNotFoundException ex<span class="o">)</span> <span class="o">{</span>
+	    Class <span class="nv">cl</span> <span class="o">=</span> <span class="o">(</span>Class<span class="o">)</span> primClasses.get<span class="o">(</span>name<span class="o">)</span><span class="p">;</span>
+	    <span class="k">if</span> <span class="o">(</span>cl !<span class="o">=</span> null<span class="o">)</span> <span class="o">{</span>
+		<span class="k">return</span> cl<span class="p">;</span>
+	    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+		throw ex<span class="p">;</span>
+	    <span class="o">}</span>
+	<span class="o">}</span>
+    <span class="o">}</span></code></pre></div>
 <p>这里他先去通过class.forName找，classloader也比较蠢，不分青红皂白，发现没有加载过
 ，就去加载，发现找不到就扔异常，然后resolvClass尝试看看是不是原生类型。解决这个
 问题你可以自己写一个扩展类，把primClasses.get(name)放到前面即可。</p>
@@ -534,18 +513,12 @@ class啊，其实这个问题是ObjectInputStream里没有处理好，请看下�
 <h2 id="property">property</h2>
 
 <p>两个和性能相关的property：</p>
-
-<pre><code class="language-shell">If system property
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">If system property
 org.jboss.byteman.compileToBytecode
-is set (with any value) then the rule execution engine will compile rules to bytecode before executing them. If this property is unset it will execute rules by interpreting the rule parse tree.
-Transformations performed by the agent can be observed by setting several environment variables which cause the transformed bytecode to be dumped to disk.
-</code></pre>
-
-<pre><code class="language-shell">If system property
+is <span class="nb">set</span> <span class="o">(</span>with any value<span class="o">)</span> <span class="k">then</span> the rule execution engine will compile rules to bytecode before executing them. If this property is <span class="nb">unset</span> it will execute rules by interpreting the rule parse tree.
+Transformations performed by the agent can be observed by setting several environment variables which cause the transformed bytecode to be dumped to disk.</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">If system property
 org.jboss.byteman.skip.overriding.rules
-is set then the agent will not perform injection into overriding method implementations. If an overriding rule is installed the agent will print a warning to System.err and treat the rule as if it applies only to the class named in the CLASS clause. This setting is not actually provided to allow rules to be misused in this way. It is a performance tuning option. The agent has to check every class as it is loaded in order to see if there are rules which apply to it. It also has to check all loaded classes when rules are dynamically loaded via the agent listener. This requires traversing the superclass chain to locate overriding rules attached to superclasses. This increases the cost of running the agent (testig indicates that the cost goes from negligible (&lt;&lt; 1%) to, at worst, noticeable (~ 2%) but not to significant) So, if you do not intend to use overriding rules then setting this property helps to minimise the extent to which the agent perturbs the timing of application runs. This is particularly important when testing multi-threaded applications where timing is highly significant.
-</code></pre>
-
+is <span class="nb">set</span> <span class="k">then</span> the agent will not perform injection into overriding method implementations. If an overriding rule is installed the agent will print a warning to System.err and treat the rule as <span class="k">if</span> it applies only to the class named in the CLASS clause. This setting is not actually provided to allow rules to be misused in this way. It is a performance tuning option. The agent has to check every class as it is loaded in order to see <span class="k">if</span> there are rules which apply to it. It also has to check all loaded classes when rules are dynamically loaded via the agent listener. This requires traversing the superclass chain to locate overriding rules attached to superclasses. This increases the cost of running the agent <span class="o">(</span>testig indicates that the cost goes from negligible <span class="o">(</span>&lt;&lt; <span class="m">1</span>%<span class="o">)</span> to, at worst, noticeable <span class="o">(</span>~ <span class="m">2</span>%<span class="o">)</span> but not to significant<span class="o">)</span> So, <span class="k">if</span> you <span class="k">do</span> not intend to use overriding rules <span class="k">then</span> setting this property helps to minimise the extent to which the agent perturbs the timing of application runs. This is particularly important when testing multi-threaded applications where timing is highly significant.</code></pre></div>
 <h2 id="脚本编写tips">脚本编写TIPS</h2>
 
 <p>脚本编写的时候有些地方比较晦涩，下面一些例子</p>
@@ -568,24 +541,21 @@ is set then the agent will not perform injection into overriding method implemen
 <h2 id="脚本例子">脚本例子</h2>
 
 <h3 id="方法执行效率统计-methodexectime">方法执行效率统计（methodExectime）</h3>
-
-<pre><code class="language-shell">RULE entey readobject
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">RULE entey readobject
 CLASS com.primeton.access.client.impl.processor.CommonServiceProcessor
 METHOD process
 AT INVOKE readObject
-IF true
-DO resetTimer($0)
+IF <span class="nb">true</span>
+DO resetTimer<span class="o">(</span><span class="nv">$0</span><span class="o">)</span>
 ENDRULE
 
-RULE exit readobject
+RULE <span class="nb">exit</span> readobject
 CLASS com.primeton.access.client.impl.processor.CommonServiceProcessor
 METHOD process
 AFTER INVOKE readObject
-IF true
-DO System.out.println(String.valueOf(getElapsedTimeFromTimer($0)))
-ENDRULE
-</code></pre>
-
+IF <span class="nb">true</span>
+DO System.out.println<span class="o">(</span>String.valueOf<span class="o">(</span>getElapsedTimeFromTimer<span class="o">(</span><span class="nv">$0</span><span class="o">)))</span>
+ENDRULE</code></pre></div>
 <p>注意这里的输出用的是Systemoutprint，byteman内置的traceln有性能问题。</p>
 
 <h2 id="自定义rule-helper">自定义RULE Helper</h2>

@@ -446,23 +446,20 @@ Key加NW锁。</p>
 <p>下面列表中斜杠前面的是表锁，斜杠后面的是行锁，&rsquo;-&lsquo;表示不加锁。</p>
 
 <p>在说明的时候，会用到TEST表，表数据如下：</p>
-
-<pre><code class="language-shell">db2inst1@tacy:~$ db2 'select * from test'
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">db2inst1@tacy:~$ db2 <span class="s1">&#39;select * from test&#39;</span>
 A           B
 ----------- -----------
-          1           1
-          2           2
-          3           3
-          4           4
-          5           5
-          6           6
-          7           7
-          8           8
-          9           9
+          <span class="m">1</span>           <span class="m">1</span>
+          <span class="m">2</span>           <span class="m">2</span>
+          <span class="m">3</span>           <span class="m">3</span>
+          <span class="m">4</span>           <span class="m">4</span>
+          <span class="m">5</span>           <span class="m">5</span>
+          <span class="m">6</span>           <span class="m">6</span>
+          <span class="m">7</span>           <span class="m">7</span>
+          <span class="m">8</span>           <span class="m">8</span>
+          <span class="m">9</span>           <span class="m">9</span>
 
-  9 record(s) selected.
-</code></pre>
-
+  <span class="m">9</span> record<span class="o">(</span>s<span class="o">)</span> selected.</code></pre></div>
 <h3 id="lock-modes-for-table-scans-with-no-predicates">Lock Modes for Table Scans with No Predicates</h3>
 
 <dl>
@@ -661,30 +658,24 @@ update没有走索引，而是使用了全表扫描。</dd>
 <p>��，同时使用RS隔离级别。</p>
 
 <p>观察锁的情况，通过db2pd即可，比如我要观察阻塞的锁：</p>
-
-<pre><code class="language-shell">db2inst1@tacy:~$ db2pd -d tacy -wlocks
-Database Partition 0 -- Database TACY -- Active -- Up 0 days 02:21:36 -- Date 04/03/2014 22:16:53
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">db2inst1@tacy:~$ db2pd -d tacy -wlocks
+Database Partition <span class="m">0</span> -- Database TACY -- Active -- Up <span class="m">0</span> days <span class="m">02</span>:21:36 -- Date <span class="m">04</span>/03/2014 <span class="m">22</span>:16:53
 
 Locks being waited on :
-AppHandl [nod-index] TranHdl    Lockname                   Type       Mode Conv Sts CoorEDU    AppName  AuthID   AppID
-552      [000-00552] 12         02000400080000000000000052 Row        ..X       G   78         db2bp    DB2INST1 *LOCAL.db2inst1.140403115529
-541      [000-00541] 2          02000400080000000000000052 Row        ..U       W   20         db2bp    DB2INST1 *LOCAL.db2inst1.140403115517
-</code></pre>
-
+AppHandl <span class="o">[</span>nod-index<span class="o">]</span> TranHdl    Lockname                   Type       Mode Conv Sts CoorEDU    AppName  AuthID   AppID
+<span class="m">552</span>      <span class="o">[</span><span class="m">000</span>-00552<span class="o">]</span> <span class="m">12</span>         <span class="m">02000400080000000000000052</span> Row        ..X       G   <span class="m">78</span>         db2bp    DB2INST1 *LOCAL.db2inst1.140403115529
+<span class="m">541</span>      <span class="o">[</span><span class="m">000</span>-00541<span class="o">]</span> <span class="m">2</span>          <span class="m">02000400080000000000000052</span> Row        ..U       W   <span class="m">20</span>         db2bp    DB2INST1 *LOCAL.db2inst1.140403115517</code></pre></div>
 <p>简单解读一下，Lockname一致，表明他们希望是同样对象的锁，TranHdl表明事务ID，事务
 12持有Row上的X锁（Sts状态为G，表明获得锁），事务2等待（Sts状态未W，表明等待锁）
 。更详细信息可以通过下面命令：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">db2inst1@tacy:~$ db2pd -db tacy -locks showlock <span class="nb">wait</span>
 
-<pre><code class="language-shell">db2inst1@tacy:~$ db2pd -db tacy -locks showlock wait
-
-Database Partition 0 -- Database TACY -- Active -- Up 0 days 02:31:33 -- Date 04/03/2014 22:26:50
+Database Partition <span class="m">0</span> -- Database TACY -- Active -- Up <span class="m">0</span> days <span class="m">02</span>:31:33 -- Date <span class="m">04</span>/03/2014 <span class="m">22</span>:26:50
 
 Locks:
 Address            TranHdl    Lockname                   Type       Mode Sts Owner      Dur HoldCount  Att        ReleaseFlg rrIID
-0x00007F0B562B1780 2          02000400080000000000000052 Row        ..U  W   12         1   0          0x00000000 0x40000000 0     	TbspaceID 2     TableID 4      PartitionID 0 Page 0 Slot 8
-0x00007F0B562B5A00 12         02000400080000000000000052 Row        ..X  G   12         1   0          0x00000000 0x40000000 0     	TbspaceID 2     TableID 4      PartitionID 0 Page 0 Slot 8
-</code></pre>
-
+0x00007F0B562B1780 <span class="m">2</span>          <span class="m">02000400080000000000000052</span> Row        ..U  W   <span class="m">12</span>         <span class="m">1</span>   <span class="m">0</span>          0x00000000 0x40000000 <span class="m">0</span>     	TbspaceID <span class="m">2</span>     TableID <span class="m">4</span>      PartitionID <span class="m">0</span> Page <span class="m">0</span> Slot <span class="m">8</span>
+0x00007F0B562B5A00 <span class="m">12</span>         <span class="m">02000400080000000000000052</span> Row        ..X  G   <span class="m">12</span>         <span class="m">1</span>   <span class="m">0</span>          0x00000000 0x40000000 <span class="m">0</span>     	TbspaceID <span class="m">2</span>     TableID <span class="m">4</span>      PartitionID <span class="m">0</span> Page <span class="m">0</span> Slot <span class="m">8</span></code></pre></div>
 <p>他们锁在了表空间ID为2上的一个表上的一行，该表的ID是4，行的位置在Page 0的Slot 8
 上。从锁的情况看，可能是一个Update语句阻塞了另一个Update语句，后一个Update语句
 走了全表扫描。</p>
@@ -705,11 +696,8 @@ Address            TranHdl    Lockname                   Type       Mode Sts Own
 </dl>
 
 <p>如果你不熟悉db2的系统表，用下面命令做个简单了解：</p>
-
-<pre><code class="language-shell">db2 list tables for all
-db2 describe table syscat.tables
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">db2 list tables <span class="k">for</span> all
+db2 describe table syscat.tables</code></pre></div>
 <h2 id="结尾">结尾</h2>
 
 <p>到这里结束本文，希望能对你了解DB2有一点帮助，当然了解的最好方法还是自己动手实验

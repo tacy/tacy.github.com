@@ -68,7 +68,7 @@
 
 <meta itemprop="datePublished" content="2017-10-11T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2017-10-11T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1533">
+<meta itemprop="wordCount" content="1531">
 
 
 
@@ -367,11 +367,8 @@ Or if you want to restrict access to only one database:</p>
 <p>描述怎么把lelewu mysql定时备份到google storage</p>
 
 <h2 id="安装percona-xtrabackup-1">安装percona-xtrabackup<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">2</a></sup></h2>
-
-<pre><code>yum install http://www.percona.com/downloads/percona-release/redhat/0.1-4/percona-release-0.1-4.noarch.rpm
-yum install percona-xtrabackup-24
-</code></pre>
-
+<div class="highlight"><pre class="chroma">yum install http://www.percona.com/downloads/percona-release/redhat/0.1-4/percona-release-0.1-4.noarch.rpm
+yum install percona-xtrabackup-24</pre></div>
 <h2 id="配置备份用户">配置备份用户</h2>
 
 <p>需要创建数据库用户和系统用户</p>
@@ -383,294 +380,274 @@ CREATE USER &lsquo;tacy_lee&rsquo;@&lsquo;localhost&rsquo; IDENTIFIED BY &lsquo;
 GRANT RELOAD, LOCK TABLES, REPLICATION CLIENT, CREATE TABLESPACE, PROCESS, SUPER, CREATE, INSERT, SELECT ON <em>.</em> TO &lsquo;tacy_lee&rsquo;@&lsquo;localhost&rsquo;;
 FLUSH PRIVILEGES;</li>
 </ol>
-
-<pre><code>
-2. 创建系统用户
+<div class="highlight"><pre class="chroma">2. 创建系统用户
 
 这里需要注意一下, 因为需要备份到google storage, 我用tacy_lee, 否则包oauth2认证错误
 
 ``` shell
 sudo usermod -aG mysql tacy_lee
 SELECT @@datadir; //获取mysql数据文件位置
-sudo find /var/lib/mysql -type d -exec chmod 750 {} \;  //权限设置为750
-</code></pre>
-
+sudo find /var/lib/mysql -type d -exec chmod 750 {} \;  //权限设置为750</pre></div>
 <h2 id="创建mysql备份配置参数">创建Mysql备份配置参数</h2>
-
-<pre><code class="language-shell">$ sudo vi /etc/my.cnf.d/backup.conf
-[client]
-user=tacy_lee
-password=tacy_lee
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ sudo vi /etc/my.cnf.d/backup.conf
+<span class="o">[</span>client<span class="o">]</span>
+<span class="nv">user</span><span class="o">=</span>tacy_lee
+<span class="nv">password</span><span class="o">=</span>tacy_lee
 
 $ sudo chown tacy_lee /etc/my.cnf.d/backup.cnf
-$ sudo chown 600 /etc/my.cnf.d/backup.cnf
-
-</code></pre>
-
+$ sudo chown <span class="m">600</span> /etc/my.cnf.d/backup.cnf</code></pre></div>
 <h2 id="备份脚本">备份脚本</h2>
 
 <h3 id="usr-local-bin-backup-mysql-sh">/usr/local/bin/backup-mysql.sh</h3>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/bin/bash
+</span><span class="cp"></span>
+<span class="nb">export</span> <span class="nv">LC_ALL</span><span class="o">=</span>C
 
-<pre><code class="language-shell">#!/bin/bash
+<span class="nv">days_of_backups</span><span class="o">=</span><span class="m">2</span>  <span class="c1"># Must be less than 7</span>
+<span class="nv">backup_owner</span><span class="o">=</span><span class="s2">&#34;tacy_lee&#34;</span>
+<span class="nv">parent_dir</span><span class="o">=</span><span class="s2">&#34;/home/tacy_lee/backups&#34;</span>
+<span class="nv">defaults_file</span><span class="o">=</span><span class="s2">&#34;/etc/my.cnf.d/backup.cnf&#34;</span>
+<span class="nv">todays_dir</span><span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">parent_dir</span><span class="si">}</span><span class="s2">/</span><span class="k">$(</span>date +%a<span class="k">)</span><span class="s2">&#34;</span>
+<span class="nv">log_file</span><span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">todays_dir</span><span class="si">}</span><span class="s2">/backup-progress.log&#34;</span>
+<span class="nv">now</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span>date +%m-%d-%Y_%H-%M-%S<span class="k">)</span><span class="s2">&#34;</span>
+<span class="nv">processors</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span>nproc --all<span class="k">)</span><span class="s2">&#34;</span>
 
-export LC_ALL=C
+<span class="c1"># Use this to echo to standard error</span>
+error <span class="o">()</span> <span class="o">{</span>
+    <span class="nb">printf</span> <span class="s2">&#34;%s: %s\n&#34;</span> <span class="s2">&#34;</span><span class="k">$(</span>basename <span class="s2">&#34;</span><span class="si">${</span><span class="nv">BASH_SOURCE</span><span class="si">}</span><span class="s2">&#34;</span><span class="k">)</span><span class="s2">&#34;</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&#34;</span> &gt;<span class="p">&amp;</span><span class="m">2</span>
+    <span class="nb">exit</span> <span class="m">1</span>
+<span class="o">}</span>
 
-days_of_backups=2  # Must be less than 7
-backup_owner=&quot;tacy_lee&quot;
-parent_dir=&quot;/home/tacy_lee/backups&quot;
-defaults_file=&quot;/etc/my.cnf.d/backup.cnf&quot;
-todays_dir=&quot;${parent_dir}/$(date +%a)&quot;
-log_file=&quot;${todays_dir}/backup-progress.log&quot;
-now=&quot;$(date +%m-%d-%Y_%H-%M-%S)&quot;
-processors=&quot;$(nproc --all)&quot;
+<span class="nb">trap</span> <span class="s1">&#39;error &#34;An unexpected error occurred.&#34;&#39;</span> ERR
 
-# Use this to echo to standard error
-error () {
-    printf &quot;%s: %s\n&quot; &quot;$(basename &quot;${BASH_SOURCE}&quot;)&quot; &quot;${1}&quot; &gt;&amp;2
-    exit 1
-}
+sanity_check <span class="o">()</span> <span class="o">{</span>
+    <span class="c1"># Check user running the script</span>
+    <span class="k">if</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">&#34;</span> !<span class="o">=</span> <span class="s2">&#34;</span><span class="nv">$backup_owner</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+        error <span class="s2">&#34;Script can only be run as the \&#34;</span><span class="nv">$backup_owner</span><span class="s2">\&#34; user&#34;</span>
+    <span class="k">fi</span>
+<span class="o">}</span>
 
-trap 'error &quot;An unexpected error occurred.&quot;' ERR
+set_options <span class="o">()</span> <span class="o">{</span>
+    <span class="c1"># List the xtrabackup arguments</span>
+    <span class="nv">xtrabackup_args</span><span class="o">=(</span>
+        <span class="s2">&#34;--defaults-file=</span><span class="si">${</span><span class="nv">defaults_file</span><span class="si">}</span><span class="s2">&#34;</span>
+        <span class="s2">&#34;--backup&#34;</span>
+        <span class="s2">&#34;--extra-lsndir=</span><span class="si">${</span><span class="nv">todays_dir</span><span class="si">}</span><span class="s2">&#34;</span>
+        <span class="s2">&#34;--compress&#34;</span>
+        <span class="s2">&#34;--stream=xbstream&#34;</span>
+        <span class="s2">&#34;--parallel=</span><span class="si">${</span><span class="nv">processors</span><span class="si">}</span><span class="s2">&#34;</span>
+        <span class="s2">&#34;--compress-threads=</span><span class="si">${</span><span class="nv">processors</span><span class="si">}</span><span class="s2">&#34;</span>
+        <span class="s2">&#34;--slave-info&#34;</span>
+    <span class="o">)</span>
 
-sanity_check () {
-    # Check user running the script
-    if [ &quot;$USER&quot; != &quot;$backup_owner&quot; ]; then
-        error &quot;Script can only be run as the \&quot;$backup_owner\&quot; user&quot;
-    fi
-}
+    <span class="nv">backup_type</span><span class="o">=</span><span class="s2">&#34;full&#34;</span>
 
-set_options () {
-    # List the xtrabackup arguments
-    xtrabackup_args=(
-        &quot;--defaults-file=${defaults_file}&quot;
-        &quot;--backup&quot;
-        &quot;--extra-lsndir=${todays_dir}&quot;
-        &quot;--compress&quot;
-        &quot;--stream=xbstream&quot;
-        &quot;--parallel=${processors}&quot;
-        &quot;--compress-threads=${processors}&quot;
-        &quot;--slave-info&quot;
-    )
+    <span class="c1"># Add option to read LSN (log sequence number) if a full backup has been</span>
+    <span class="c1"># taken today.</span>
+    <span class="k">if</span> grep -q -s <span class="s2">&#34;to_lsn&#34;</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">todays_dir</span><span class="si">}</span><span class="s2">/xtrabackup_checkpoints&#34;</span><span class="p">;</span> <span class="k">then</span>
+        <span class="nv">backup_type</span><span class="o">=</span><span class="s2">&#34;incremental&#34;</span>
+        <span class="nv">lsn</span><span class="o">=</span><span class="k">$(</span>awk <span class="s1">&#39;/to_lsn/ {print $3;}&#39;</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">todays_dir</span><span class="si">}</span><span class="s2">/xtrabackup_checkpoints&#34;</span><span class="k">)</span>
+        <span class="nv">xtrabackup_args</span><span class="o">+=(</span> <span class="s2">&#34;--incremental-lsn=</span><span class="si">${</span><span class="nv">lsn</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">)</span>
+    <span class="k">fi</span>
+<span class="o">}</span>
 
-    backup_type=&quot;full&quot;
+rotate_old <span class="o">()</span> <span class="o">{</span>
+    <span class="c1"># Remove the oldest backup in rotation</span>
+    <span class="nv">day_dir_to_remove</span><span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">parent_dir</span><span class="si">}</span><span class="s2">/</span><span class="k">$(</span>date --date<span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">days_of_backups</span><span class="si">}</span><span class="s2"> days ago&#34;</span> +%a<span class="k">)</span><span class="s2">&#34;</span>
 
-    # Add option to read LSN (log sequence number) if a full backup has been
-    # taken today.
-    if grep -q -s &quot;to_lsn&quot; &quot;${todays_dir}/xtrabackup_checkpoints&quot;; then
-        backup_type=&quot;incremental&quot;
-        lsn=$(awk '/to_lsn/ {print $3;}' &quot;${todays_dir}/xtrabackup_checkpoints&quot;)
-        xtrabackup_args+=( &quot;--incremental-lsn=${lsn}&quot; )
-    fi
-}
+    <span class="k">if</span> <span class="o">[</span> -d <span class="s2">&#34;</span><span class="si">${</span><span class="nv">day_dir_to_remove</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+        rm -rf <span class="s2">&#34;</span><span class="si">${</span><span class="nv">day_dir_to_remove</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="k">fi</span>
+<span class="o">}</span>
 
-rotate_old () {
-    # Remove the oldest backup in rotation
-    day_dir_to_remove=&quot;${parent_dir}/$(date --date=&quot;${days_of_backups} days ago&quot; +%a)&quot;
+take_backup <span class="o">()</span> <span class="o">{</span>
+    <span class="c1"># Make sure today&#39;s backup directory is available and take the actual backup</span>
+    mkdir -p <span class="s2">&#34;</span><span class="si">${</span><span class="nv">todays_dir</span><span class="si">}</span><span class="s2">&#34;</span>
+    find <span class="s2">&#34;</span><span class="si">${</span><span class="nv">todays_dir</span><span class="si">}</span><span class="s2">&#34;</span> -type f -name <span class="s2">&#34;*.incomplete&#34;</span> -delete
+    xtrabackup <span class="s2">&#34;</span><span class="si">${</span><span class="nv">xtrabackup_args</span><span class="p">[@]</span><span class="si">}</span><span class="s2">&#34;</span> --target-dir<span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">todays_dir</span><span class="si">}</span><span class="s2">&#34;</span> &gt; <span class="s2">&#34;</span><span class="si">${</span><span class="nv">todays_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">backup_type</span><span class="si">}</span><span class="s2">-</span><span class="si">${</span><span class="nv">now</span><span class="si">}</span><span class="s2">.xbstream.incomplete&#34;</span> <span class="m">2</span>&gt; <span class="s2">&#34;</span><span class="si">${</span><span class="nv">log_file</span><span class="si">}</span><span class="s2">&#34;</span>
 
-    if [ -d &quot;${day_dir_to_remove}&quot; ]; then
-        rm -rf &quot;${day_dir_to_remove}&quot;
-    fi
-}
+    mv <span class="s2">&#34;</span><span class="si">${</span><span class="nv">todays_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">backup_type</span><span class="si">}</span><span class="s2">-</span><span class="si">${</span><span class="nv">now</span><span class="si">}</span><span class="s2">.xbstream.incomplete&#34;</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">todays_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">backup_type</span><span class="si">}</span><span class="s2">-</span><span class="si">${</span><span class="nv">now</span><span class="si">}</span><span class="s2">.xbstream&#34;</span>
 
-take_backup () {
-    # Make sure today's backup directory is available and take the actual backup
-    mkdir -p &quot;${todays_dir}&quot;
-    find &quot;${todays_dir}&quot; -type f -name &quot;*.incomplete&quot; -delete
-    xtrabackup &quot;${xtrabackup_args[@]}&quot; --target-dir=&quot;${todays_dir}&quot; &gt; &quot;${todays_dir}/${backup_type}-${now}.xbstream.incomplete&quot; 2&gt; &quot;${log_file}&quot;
+    <span class="c1"># upload backup to google storage</span>
+	<span class="k">if</span> <span class="o">[</span> <span class="si">${</span><span class="nv">backup_type</span><span class="si">}</span> <span class="o">==</span> <span class="s1">&#39;full&#39;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+	  gsutil cp -r <span class="si">${</span><span class="nv">todays_dir</span><span class="si">}</span> gs://lelewu_mysql_backup
+	<span class="k">else</span>
+	  gsutil cp <span class="si">${</span><span class="nv">todays_dir</span><span class="si">}</span>/<span class="si">${</span><span class="nv">log_file</span><span class="si">}</span> gs://lelewu_mysql_backup/<span class="k">$(</span>date +%a<span class="k">)</span>
+	  gsutil cp <span class="si">${</span><span class="nv">todays_dir</span><span class="si">}</span>/xtrabackup_info gs://lelewu_mysql_backup/<span class="k">$(</span>date +%a<span class="k">)</span>
+	  gsutil cp <span class="si">${</span><span class="nv">todays_dir</span><span class="si">}</span>/xtrabackup_checkpoints gs://lelewu_mysql_backup/<span class="k">$(</span>date +%a<span class="k">)</span>
+	  gsutil cp <span class="si">${</span><span class="nv">todays_dir</span><span class="si">}</span>/<span class="si">${</span><span class="nv">backup_type</span><span class="si">}</span>-<span class="si">${</span><span class="nv">now</span><span class="si">}</span>.xbstream gs://lelewu_mysql_backup/<span class="k">$(</span>date +%a<span class="k">)</span>
+	<span class="k">fi</span>
+<span class="o">}</span>
 
-    mv &quot;${todays_dir}/${backup_type}-${now}.xbstream.incomplete&quot; &quot;${todays_dir}/${backup_type}-${now}.xbstream&quot;
+sanity_check <span class="o">&amp;&amp;</span> set_options <span class="o">&amp;&amp;</span> rotate_old <span class="o">&amp;&amp;</span> take_backup
 
-    # upload backup to google storage
-	if [ ${backup_type} == 'full' ]; then
-	  gsutil cp -r ${todays_dir} gs://lelewu_mysql_backup
-	else
-	  gsutil cp ${todays_dir}/${log_file} gs://lelewu_mysql_backup/$(date +%a)
-	  gsutil cp ${todays_dir}/xtrabackup_info gs://lelewu_mysql_backup/$(date +%a)
-	  gsutil cp ${todays_dir}/xtrabackup_checkpoints gs://lelewu_mysql_backup/$(date +%a)
-	  gsutil cp ${todays_dir}/${backup_type}-${now}.xbstream gs://lelewu_mysql_backup/$(date +%a)
-	fi
-}
-
-sanity_check &amp;&amp; set_options &amp;&amp; rotate_old &amp;&amp; take_backup
-
-# Check success and print message
-if tail -1 &quot;${log_file}&quot; | grep -q &quot;completed OK&quot;; then
-    printf &quot;Backup successful!\n&quot;
-    printf &quot;Backup created at %s/%s-%s.xbstream\n&quot; &quot;${todays_dir}&quot; &quot;${backup_type}&quot; &quot;${now}&quot;
-else
-    error &quot;Backup failure! Check ${log_file} for more information&quot;
-fi
-</code></pre>
-
+<span class="c1"># Check success and print message</span>
+<span class="k">if</span> tail -1 <span class="s2">&#34;</span><span class="si">${</span><span class="nv">log_file</span><span class="si">}</span><span class="s2">&#34;</span> <span class="p">|</span> grep -q <span class="s2">&#34;completed OK&#34;</span><span class="p">;</span> <span class="k">then</span>
+    <span class="nb">printf</span> <span class="s2">&#34;Backup successful!\n&#34;</span>
+    <span class="nb">printf</span> <span class="s2">&#34;Backup created at %s/%s-%s.xbstream\n&#34;</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">todays_dir</span><span class="si">}</span><span class="s2">&#34;</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">backup_type</span><span class="si">}</span><span class="s2">&#34;</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">now</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="k">else</span>
+    error <span class="s2">&#34;Backup failure! Check </span><span class="si">${</span><span class="nv">log_file</span><span class="si">}</span><span class="s2"> for more information&#34;</span>
+<span class="k">fi</span></code></pre></div>
 <h3 id="usr-local-bin-extract-mysql-sh">/usr/local/bin/extract-mysql.sh</h3>
 
 <p>解压缩脚本, 运行该脚本会在解压之前的备份到当前目录的restore目录下</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/bin/bash
+</span><span class="cp"></span>
+<span class="nb">export</span> <span class="nv">LC_ALL</span><span class="o">=</span>C
 
-<pre><code class="language-shell">#!/bin/bash
+<span class="nv">backup_owner</span><span class="o">=</span><span class="s2">&#34;tacy_lee&#34;</span>
+<span class="nv">log_file</span><span class="o">=</span><span class="s2">&#34;extract-progress.log&#34;</span>
+<span class="nv">number_of_args</span><span class="o">=</span><span class="s2">&#34;</span><span class="si">${#}</span><span class="s2">&#34;</span>
+<span class="nv">processors</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span>nproc --all<span class="k">)</span><span class="s2">&#34;</span>
 
-export LC_ALL=C
+<span class="c1"># Use this to echo to standard error</span>
+error <span class="o">()</span> <span class="o">{</span>
+    <span class="nb">printf</span> <span class="s2">&#34;%s: %s\n&#34;</span> <span class="s2">&#34;</span><span class="k">$(</span>basename <span class="s2">&#34;</span><span class="si">${</span><span class="nv">BASH_SOURCE</span><span class="si">}</span><span class="s2">&#34;</span><span class="k">)</span><span class="s2">&#34;</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&#34;</span> &gt;<span class="p">&amp;</span><span class="m">2</span>
+    <span class="nb">exit</span> <span class="m">1</span>
+<span class="o">}</span>
 
-backup_owner=&quot;tacy_lee&quot;
-log_file=&quot;extract-progress.log&quot;
-number_of_args=&quot;${#}&quot;
-processors=&quot;$(nproc --all)&quot;
+<span class="nb">trap</span> <span class="s1">&#39;error &#34;An unexpected error occurred.  Try checking the \&#34;${log_file}\&#34; file for more information.&#34;&#39;</span> ERR
 
-# Use this to echo to standard error
-error () {
-    printf &quot;%s: %s\n&quot; &quot;$(basename &quot;${BASH_SOURCE}&quot;)&quot; &quot;${1}&quot; &gt;&amp;2
-    exit 1
-}
+sanity_check <span class="o">()</span> <span class="o">{</span>
+    <span class="c1"># Check user running the script</span>
+    <span class="k">if</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">USER</span><span class="si">}</span><span class="s2">&#34;</span> !<span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">backup_owner</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+        error <span class="s2">&#34;Script can only be run as the \&#34;</span><span class="si">${</span><span class="nv">backup_owner</span><span class="si">}</span><span class="s2">\&#34; user&#34;</span>
+    <span class="k">fi</span>
 
-trap 'error &quot;An unexpected error occurred.  Try checking the \&quot;${log_file}\&quot; file for more information.&quot;' ERR
+    <span class="c1"># Check whether the qpress binary is installed</span>
+    <span class="k">if</span> ! <span class="nb">command</span> -v qpress &gt;/dev/null <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="p">;</span> <span class="k">then</span>
+        error <span class="s2">&#34;Could not find the \&#34;qpress\&#34; command.  Please install it and try again.&#34;</span>
+    <span class="k">fi</span>
 
-sanity_check () {
-    # Check user running the script
-    if [ &quot;${USER}&quot; != &quot;${backup_owner}&quot; ]; then
-        error &quot;Script can only be run as the \&quot;${backup_owner}\&quot; user&quot;
-    fi
+    <span class="c1"># Check whether any arguments were passed</span>
+    <span class="k">if</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">number_of_args</span><span class="si">}</span><span class="s2">&#34;</span> -lt <span class="m">1</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+        error <span class="s2">&#34;Script requires at least one \&#34;.xbstream\&#34; file as an argument.&#34;</span>
+    <span class="k">fi</span>
+<span class="o">}</span>
 
-    # Check whether the qpress binary is installed
-    if ! command -v qpress &gt;/dev/null 2&gt;&amp;1; then
-        error &quot;Could not find the \&quot;qpress\&quot; command.  Please install it and try again.&quot;
-    fi
+do_extraction <span class="o">()</span> <span class="o">{</span>
+    <span class="k">for</span> file in <span class="s2">&#34;</span><span class="si">${</span><span class="p">@</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">;</span> <span class="k">do</span>
+        <span class="nv">base_filename</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span>basename <span class="s2">&#34;</span><span class="si">${</span><span class="nv">file</span><span class="p">%.xbstream</span><span class="si">}</span><span class="s2">&#34;</span><span class="k">)</span><span class="s2">&#34;</span>
+        <span class="nv">restore_dir</span><span class="o">=</span><span class="s2">&#34;./restore/</span><span class="si">${</span><span class="nv">base_filename</span><span class="si">}</span><span class="s2">&#34;</span>
 
-    # Check whether any arguments were passed
-    if [ &quot;${number_of_args}&quot; -lt 1 ]; then
-        error &quot;Script requires at least one \&quot;.xbstream\&quot; file as an argument.&quot;
-    fi
-}
+        <span class="nb">printf</span> <span class="s2">&#34;\n\nExtracting file %s\n\n&#34;</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">file</span><span class="si">}</span><span class="s2">&#34;</span>
 
-do_extraction () {
-    for file in &quot;${@}&quot;; do
-        base_filename=&quot;$(basename &quot;${file%.xbstream}&quot;)&quot;
-        restore_dir=&quot;./restore/${base_filename}&quot;
+        <span class="c1"># Extract the directory structure from the backup file</span>
+        mkdir --verbose -p <span class="s2">&#34;</span><span class="si">${</span><span class="nv">restore_dir</span><span class="si">}</span><span class="s2">&#34;</span>
+        xbstream -x -C <span class="s2">&#34;</span><span class="si">${</span><span class="nv">restore_dir</span><span class="si">}</span><span class="s2">&#34;</span> &lt; <span class="s2">&#34;</span><span class="si">${</span><span class="nv">file</span><span class="si">}</span><span class="s2">&#34;</span>
 
-        printf &quot;\n\nExtracting file %s\n\n&quot; &quot;${file}&quot;
+        <span class="nv">xtrabackup_args</span><span class="o">=(</span>
+            <span class="s2">&#34;--parallel=</span><span class="si">${</span><span class="nv">processors</span><span class="si">}</span><span class="s2">&#34;</span>
+            <span class="s2">&#34;--decompress&#34;</span>
+        <span class="o">)</span>
 
-        # Extract the directory structure from the backup file
-        mkdir --verbose -p &quot;${restore_dir}&quot;
-        xbstream -x -C &quot;${restore_dir}&quot; &lt; &quot;${file}&quot;
+        xtrabackup <span class="s2">&#34;</span><span class="si">${</span><span class="nv">xtrabackup_args</span><span class="p">[@]</span><span class="si">}</span><span class="s2">&#34;</span> --target-dir<span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">restore_dir</span><span class="si">}</span><span class="s2">&#34;</span>
+        find <span class="s2">&#34;</span><span class="si">${</span><span class="nv">restore_dir</span><span class="si">}</span><span class="s2">&#34;</span> -name <span class="s2">&#34;*.qp&#34;</span> -exec rm <span class="o">{}</span> <span class="se">\;</span>
 
-        xtrabackup_args=(
-            &quot;--parallel=${processors}&quot;
-            &quot;--decompress&quot;
-        )
+        <span class="nb">printf</span> <span class="s2">&#34;\n\nFinished work on %s\n\n&#34;</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">file</span><span class="si">}</span><span class="s2">&#34;</span>
 
-        xtrabackup &quot;${xtrabackup_args[@]}&quot; --target-dir=&quot;${restore_dir}&quot;
-        find &quot;${restore_dir}&quot; -name &quot;*.qp&quot; -exec rm {} \;
+    <span class="k">done</span> &gt; <span class="s2">&#34;</span><span class="si">${</span><span class="nv">log_file</span><span class="si">}</span><span class="s2">&#34;</span> <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+<span class="o">}</span>
 
-        printf &quot;\n\nFinished work on %s\n\n&quot; &quot;${file}&quot;
+sanity_check <span class="o">&amp;&amp;</span> do_extraction <span class="s2">&#34;</span><span class="nv">$@</span><span class="s2">&#34;</span>
 
-    done &gt; &quot;${log_file}&quot; 2&gt;&amp;1
-}
+<span class="nv">ok_count</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span>grep -c <span class="s1">&#39;completed OK&#39;</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">log_file</span><span class="si">}</span><span class="s2">&#34;</span><span class="k">)</span><span class="s2">&#34;</span>
 
-sanity_check &amp;&amp; do_extraction &quot;$@&quot;
-
-ok_count=&quot;$(grep -c 'completed OK' &quot;${log_file}&quot;)&quot;
-
-# Check the number of reported completions.  For each file, there is an
-# informational &quot;completed OK&quot;.  If the processing was successful, an
-# additional &quot;completed OK&quot; is printed. Together, this means there should be 2
-# notices per backup file if the process was successful.
-if (( $ok_count !=  $# )); then
-    error &quot;It looks like something went wrong. Please check the \&quot;${log_file}\&quot; file for additional information&quot;
-else
-    printf &quot;Extraction complete! Backup directories have been extracted to the \&quot;restore\&quot; directory.\n&quot;
-fi
-</code></pre>
-
+<span class="c1"># Check the number of reported completions.  For each file, there is an</span>
+<span class="c1"># informational &#34;completed OK&#34;.  If the processing was successful, an</span>
+<span class="c1"># additional &#34;completed OK&#34; is printed. Together, this means there should be 2</span>
+<span class="c1"># notices per backup file if the process was successful.</span>
+<span class="k">if</span> <span class="o">((</span> <span class="nv">$ok_count</span> !<span class="o">=</span>  <span class="nv">$#</span> <span class="o">))</span><span class="p">;</span> <span class="k">then</span>
+    error <span class="s2">&#34;It looks like something went wrong. Please check the \&#34;</span><span class="si">${</span><span class="nv">log_file</span><span class="si">}</span><span class="s2">\&#34; file for additional information&#34;</span>
+<span class="k">else</span>
+    <span class="nb">printf</span> <span class="s2">&#34;Extraction complete! Backup directories have been extracted to the \&#34;restore\&#34; directory.\n&#34;</span>
+<span class="k">fi</span></code></pre></div>
 <h3 id="usr-local-bin-prepare-mysql-sh">/usr/local/bin/prepare-mysql.sh</h3>
 
 <p>restore之前需要做prepare操作, 这是prepare脚本, 脚本会apply增量备份, 所以如果你需要移除一些增量备份, 你只需要移除restore里面的对应目录就行了</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/bin/bash
+</span><span class="cp"></span>
+<span class="nb">export</span> <span class="nv">LC_ALL</span><span class="o">=</span>C
 
-<pre><code class="language-shell">#!/bin/bash
+<span class="nb">shopt</span> -s nullglob
+<span class="nv">incremental_dirs</span><span class="o">=(</span> ./incremental-*/ <span class="o">)</span>
+<span class="nv">full_dirs</span><span class="o">=(</span> ./full-*/ <span class="o">)</span>
+<span class="nb">shopt</span> -u nullglob
 
-export LC_ALL=C
+<span class="nv">backup_owner</span><span class="o">=</span><span class="s2">&#34;tacy_lee&#34;</span>
+<span class="nv">log_file</span><span class="o">=</span><span class="s2">&#34;prepare-progress.log&#34;</span>
+<span class="nv">full_backup_dir</span><span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">full_dirs</span><span class="p">[0]</span><span class="si">}</span><span class="s2">&#34;</span>
 
-shopt -s nullglob
-incremental_dirs=( ./incremental-*/ )
-full_dirs=( ./full-*/ )
-shopt -u nullglob
+<span class="c1"># Use this to echo to standard error</span>
+error<span class="o">()</span> <span class="o">{</span>
+    <span class="nb">printf</span> <span class="s2">&#34;%s: %s\n&#34;</span> <span class="s2">&#34;</span><span class="k">$(</span>basename <span class="s2">&#34;</span><span class="si">${</span><span class="nv">BASH_SOURCE</span><span class="si">}</span><span class="s2">&#34;</span><span class="k">)</span><span class="s2">&#34;</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&#34;</span> &gt;<span class="p">&amp;</span><span class="m">2</span>
+    <span class="nb">exit</span> <span class="m">1</span>
+<span class="o">}</span>
 
-backup_owner=&quot;tacy_lee&quot;
-log_file=&quot;prepare-progress.log&quot;
-full_backup_dir=&quot;${full_dirs[0]}&quot;
+<span class="nb">trap</span> <span class="s1">&#39;error &#34;An unexpected error occurred.  Try checking the \&#34;${log_file}\&#34; file for more information.&#34;&#39;</span> ERR
 
-# Use this to echo to standard error
-error() {
-    printf &quot;%s: %s\n&quot; &quot;$(basename &quot;${BASH_SOURCE}&quot;)&quot; &quot;${1}&quot; &gt;&amp;2
-    exit 1
-}
+sanity_check <span class="o">()</span> <span class="o">{</span>
+    <span class="c1"># Check user running the script</span>
+    <span class="k">if</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">USER</span><span class="si">}</span><span class="s2">&#34;</span> !<span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">backup_owner</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+        error <span class="s2">&#34;Script can only be run as the \&#34;</span><span class="si">${</span><span class="nv">backup_owner</span><span class="si">}</span><span class="s2">\&#34; user.&#34;</span>
+    <span class="k">fi</span>
 
-trap 'error &quot;An unexpected error occurred.  Try checking the \&quot;${log_file}\&quot; file for more information.&quot;' ERR
+    <span class="c1"># Check whether a single full backup directory are available</span>
+    <span class="k">if</span> <span class="o">((</span> <span class="si">${#</span><span class="nv">full_dirs</span><span class="p">[@]</span><span class="si">}</span> !<span class="o">=</span> <span class="m">1</span> <span class="o">))</span><span class="p">;</span> <span class="k">then</span>
+        error <span class="s2">&#34;Exactly one full backup directory is required.&#34;</span>
+    <span class="k">fi</span>
+<span class="o">}</span>
 
-sanity_check () {
-    # Check user running the script
-    if [ &quot;${USER}&quot; != &quot;${backup_owner}&quot; ]; then
-        error &quot;Script can only be run as the \&quot;${backup_owner}\&quot; user.&quot;
-    fi
+do_backup <span class="o">()</span> <span class="o">{</span>
+    <span class="c1"># Apply the logs to each of the backups</span>
+    <span class="nb">printf</span> <span class="s2">&#34;Initial prep of full backup %s\n&#34;</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">full_backup_dir</span><span class="si">}</span><span class="s2">&#34;</span>
+    xtrabackup --prepare --apply-log-only --target-dir<span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">full_backup_dir</span><span class="si">}</span><span class="s2">&#34;</span>
 
-    # Check whether a single full backup directory are available
-    if (( ${#full_dirs[@]} != 1 )); then
-        error &quot;Exactly one full backup directory is required.&quot;
-    fi
-}
+    <span class="k">for</span> increment in <span class="s2">&#34;</span><span class="si">${</span><span class="nv">incremental_dirs</span><span class="p">[@]</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">;</span> <span class="k">do</span>
+        <span class="nb">printf</span> <span class="s2">&#34;Applying incremental backup %s to %s\n&#34;</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">increment</span><span class="si">}</span><span class="s2">&#34;</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">full_backup_dir</span><span class="si">}</span><span class="s2">&#34;</span>
+        xtrabackup --prepare --apply-log-only --incremental-dir<span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">increment</span><span class="si">}</span><span class="s2">&#34;</span> --target-dir<span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">full_backup_dir</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="k">done</span>
 
-do_backup () {
-    # Apply the logs to each of the backups
-    printf &quot;Initial prep of full backup %s\n&quot; &quot;${full_backup_dir}&quot;
-    xtrabackup --prepare --apply-log-only --target-dir=&quot;${full_backup_dir}&quot;
+    <span class="nb">printf</span> <span class="s2">&#34;Applying final logs to full backup %s\n&#34;</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">full_backup_dir</span><span class="si">}</span><span class="s2">&#34;</span>
+    xtrabackup --prepare --target-dir<span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">full_backup_dir</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span>
 
-    for increment in &quot;${incremental_dirs[@]}&quot;; do
-        printf &quot;Applying incremental backup %s to %s\n&quot; &quot;${increment}&quot; &quot;${full_backup_dir}&quot;
-        xtrabackup --prepare --apply-log-only --incremental-dir=&quot;${increment}&quot; --target-dir=&quot;${full_backup_dir}&quot;
-    done
+sanity_check <span class="o">&amp;&amp;</span> do_backup &gt; <span class="s2">&#34;</span><span class="si">${</span><span class="nv">log_file</span><span class="si">}</span><span class="s2">&#34;</span> <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
 
-    printf &quot;Applying final logs to full backup %s\n&quot; &quot;${full_backup_dir}&quot;
-    xtrabackup --prepare --target-dir=&quot;${full_backup_dir}&quot;
-}
+<span class="c1"># Check the number of reported completions.  Each time a backup is processed,</span>
+<span class="c1"># an informational &#34;completed OK&#34; and a real version is printed.  At the end of</span>
+<span class="c1"># the process, a final full apply is performed, generating another 2 messages.</span>
+<span class="nv">ok_count</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span>grep -c <span class="s1">&#39;completed OK&#39;</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">log_file</span><span class="si">}</span><span class="s2">&#34;</span><span class="k">)</span><span class="s2">&#34;</span>
 
-sanity_check &amp;&amp; do_backup &gt; &quot;${log_file}&quot; 2&gt;&amp;1
-
-# Check the number of reported completions.  Each time a backup is processed,
-# an informational &quot;completed OK&quot; and a real version is printed.  At the end of
-# the process, a final full apply is performed, generating another 2 messages.
-ok_count=&quot;$(grep -c 'completed OK' &quot;${log_file}&quot;)&quot;
-
-if (( ${ok_count} == ${#full_dirs[@]} + ${#incremental_dirs[@]} + 1 )); then
-    cat &lt;&lt; EOF
-Backup looks to be fully prepared.  Please check the &quot;prepare-progress.log&quot; file
-to verify before continuing.
-
-If everything looks correct, you can apply the restored files.
-
-First, stop MySQL and move or remove the contents of the MySQL data directory:
-
-        sudo systemctl stop mysql
-        sudo mv /var/lib/mysql/ /tmp/
-
-Then, recreate the data directory and  copy the backup files:
-
-        sudo mkdir /var/lib/mysql
-        sudo xtrabackup --copy-back --target-dir=${PWD}/$(basename &quot;${full_backup_dir}&quot;)
-
-Afterward the files are copied, adjust the permissions and restart the service:
-
-        sudo chown -R mysql:mysql /var/lib/mysql
-        sudo find /var/lib/mysql -type d -exec chmod 750 {} \\;
-        sudo systemctl start mysql
-EOF
-else
-    error &quot;It looks like something went wrong.  Check the \&quot;${log_file}\&quot; file for more information.&quot;
-fi
-</code></pre>
-
+<span class="k">if</span> <span class="o">((</span> <span class="si">${</span><span class="nv">ok_count</span><span class="si">}</span> <span class="o">==</span> <span class="si">${#</span><span class="nv">full_dirs</span><span class="p">[@]</span><span class="si">}</span> + <span class="si">${#</span><span class="nv">incremental_dirs</span><span class="p">[@]</span><span class="si">}</span> + <span class="m">1</span> <span class="o">))</span><span class="p">;</span> <span class="k">then</span>
+    cat <span class="s">&lt;&lt; EOF
+</span><span class="s">Backup looks to be fully prepared.  Please check the &#34;prepare-progress.log&#34; file
+</span><span class="s">to verify before continuing.
+</span><span class="s">
+</span><span class="s">If everything looks correct, you can apply the restored files.
+</span><span class="s">
+</span><span class="s">First, stop MySQL and move or remove the contents of the MySQL data directory:
+</span><span class="s">
+</span><span class="s">        sudo systemctl stop mysql
+</span><span class="s">        sudo mv /var/lib/mysql/ /tmp/
+</span><span class="s">
+</span><span class="s">Then, recreate the data directory and  copy the backup files:
+</span><span class="s">
+</span><span class="s">        sudo mkdir /var/lib/mysql
+</span><span class="s">        sudo xtrabackup --copy-back --target-dir=${PWD}/$(basename &#34;${full_backup_dir}&#34;)
+</span><span class="s">
+</span><span class="s">Afterward the files are copied, adjust the permissions and restart the service:
+</span><span class="s">
+</span><span class="s">        sudo chown -R mysql:mysql /var/lib/mysql
+</span><span class="s">        sudo find /var/lib/mysql -type d -exec chmod 750 {} \\;
+</span><span class="s">        sudo systemctl start mysql
+</span><span class="s">EOF</span>
+<span class="k">else</span>
+    error <span class="s2">&#34;It looks like something went wrong.  Check the \&#34;</span><span class="si">${</span><span class="nv">log_file</span><span class="si">}</span><span class="s2">\&#34; file for more information.&#34;</span>
+<span class="k">fi</span></code></pre></div>
 <h2 id="设置定时任务">设置定时任务</h2>
-
-<pre><code class="language-shell">crontab -e (注意是设置tacy_lee的定时任务)
-0 */3 * * * /usr/local/bin/backup-mysql.sh
-</code></pre>
-<div class="footnotes">
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">crontab -e <span class="o">(</span>注意是设置tacy_lee的定时任务<span class="o">)</span>
+<span class="m">0</span> */3 * * * /usr/local/bin/backup-mysql.sh</code></pre></div><div class="footnotes">
 
 <hr />
 

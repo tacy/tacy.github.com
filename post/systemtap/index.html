@@ -68,7 +68,7 @@
 
 <meta itemprop="datePublished" content="2014-06-10T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2014-06-10T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="2193">
+<meta itemprop="wordCount" content="2192">
 
 
 
@@ -339,34 +339,28 @@ CFLAGS参数。</p>
 
 <p>systemtap依赖dbgsym包，你必须安装kernel的dbgsym包，这个包在ubuntu的ddeb源提供[fn:1]，
 系统缺省不包括，需要自己添加：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">tacy@tacy:~<span class="nv">$echo</span> <span class="s2">&#34;deb http://ddebs.ubuntu.com </span><span class="k">$(</span>lsb_release -cs<span class="k">)</span><span class="s2"> main restricted universe multiverse
+</span><span class="s2">deb http://ddebs.ubuntu.com </span><span class="k">$(</span>lsb_release -cs<span class="k">)</span><span class="s2">-updates main restricted universe multiverse
+</span><span class="s2">deb http://ddebs.ubuntu.com </span><span class="k">$(</span>lsb_release -cs<span class="k">)</span><span class="s2">-security main restricted universe multiverse
+</span><span class="s2">deb http://ddebs.ubuntu.com </span><span class="k">$(</span>lsb_release -cs<span class="k">)</span><span class="s2">-proposed main restricted universe multiverse&#34;</span> <span class="p">|</span> <span class="se">\
+</span><span class="se"></span>sudo tee -a /etc/apt/sources.list.d/ddebs.list
 
-<pre><code class="language-shell">tacy@tacy:~$echo &quot;deb http://ddebs.ubuntu.com $(lsb_release -cs) main restricted universe multiverse
-deb http://ddebs.ubuntu.com $(lsb_release -cs)-updates main restricted universe multiverse
-deb http://ddebs.ubuntu.com $(lsb_release -cs)-security main restricted universe multiverse
-deb http://ddebs.ubuntu.com $(lsb_release -cs)-proposed main restricted universe multiverse&quot; | \
-sudo tee -a /etc/apt/sources.list.d/ddebs.list
+tacy@tacy:~<span class="nv">$sudo</span> apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 428D7C01
 
-tacy@tacy:~$sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 428D7C01
-
-tacy@tacy:~$apt-get update
-</code></pre>
-
+tacy@tacy:~<span class="nv">$apt</span>-get update</code></pre></div>
 <p>然后你就能看到很多dbgsym包，先安装对应kernel的</p>
-
-<pre><code class="language-shell">tacy@tacy:~$ uname -a
-Linux tacy 3.13.0-27-generic #50~precise1-Ubuntu SMP Fri May 16 20:47:56 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">tacy@tacy:~$ uname -a
+Linux tacy <span class="m">3</span>.13.0-27-generic <span class="c1">#50~precise1-Ubuntu SMP Fri May 16 20:47:56 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux</span>
 tacy@tacy:~$ apt-cache policy linux-image-3.13.0-27-generic
 linux-image-3.13.0-27-generic:
-  已安装：  3.13.0-27.50~precise1
+  已安装：  <span class="m">3</span>.13.0-27.50~precise1
   候选软件包：3.13.0-27.50~precise1
   版本列表：
-### 3.13.0-27.50~precise1 0
-        500 http://mirrors.ustc.edu.cn/ubuntu/ precise-updates/main amd64 Packages
-        500 http://mirrors.ustc.edu.cn/ubuntu/ precise-security/main amd64 Packages
-        100 /var/lib/dpkg/status
-tacy@tacy:~$ sudo apt-get install linux-image-3.13.0-27-generic-dbgsym=3.13.0-27.50~precise1
-</code></pre>
-
+<span class="c1">### 3.13.0-27.50~precise1 0</span>
+        <span class="m">500</span> http://mirrors.ustc.edu.cn/ubuntu/ precise-updates/main amd64 Packages
+        <span class="m">500</span> http://mirrors.ustc.edu.cn/ubuntu/ precise-security/main amd64 Packages
+        <span class="m">100</span> /var/lib/dpkg/status
+tacy@tacy:~$ sudo apt-get install linux-image-3.13.0-27-generic-dbgsym<span class="o">=</span><span class="m">3</span>.13.0-27.50~precise1</code></pre></div>
 <p>当然上面的前提是ubuntu提供的kernel没问题的前提下，如果你想在ubuntu下跑systemtap
 可没那么轻松，必须自己编译kernel和dbgsym！</p>
 
@@ -376,10 +370,7 @@ tacy@tacy:~$ sudo apt-get install linux-image-3.13.0-27-generic-dbgsym=3.13.0-27
 
 <p>导致ubuntu提供的kernel不能运行的systemtap的根本问题还是gcc，gcc的一些bug导致
 产生了错误的debuginfo，无法正确定位变量[fn:3]，产生如下错误信息：</p>
-
-<pre><code class="language-shell">semantic error: not accessible at this address [man error::dwarf] (0xffffffff811b42b0, dieoffset: 0x177422e): identifier '$file' at /usr/share/systemtap/tapset/linux/vfs.stp:855:9
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">semantic error: not accessible at this address <span class="o">[</span>man error::dwarf<span class="o">]</span> <span class="o">(</span>0xffffffff811b42b0, dieoffset: 0x177422e<span class="o">)</span>: identifier <span class="s1">&#39;$file&#39;</span> at /usr/share/systemtap/tapset/linux/vfs.stp:855:9</code></pre></div>
 <p>当然systemtap对此问题进行了修正，但是它需要有gcc编译时使用的编译参数才行。gcc提
 供了一个参数来记录编译时参数，但是ubuntu编译kernel的时候并没有带上这个参数，导
 致systemtap无法正确定位参数的位置，另外gcc的这个参数只有在4.7以上版本才有，而
@@ -401,13 +392,10 @@ kernel，同时加上gcc参数来记录编译项。</p>
 </dl>
 
 <p>修改内容如下：</p>
-
-<pre><code class="language-shell">HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -grecord-gcc-switches -O2 -fno-omit-frame-pointer
-HOSTCXXFLAGS = -O2 -fno-omit-frame-pointer -grecord-gcc-switches
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">HOSTCFLAGS</span>   <span class="o">=</span> -Wall -Wmissing-prototypes -Wstrict-prototypes -grecord-gcc-switches -O2 -fno-omit-frame-pointer
+<span class="nv">HOSTCXXFLAGS</span> <span class="o">=</span> -O2 -fno-omit-frame-pointer -grecord-gcc-switches
 。。。
-KBUILD_CFLAGS   += -O2 -grecord-gcc-switches
-</code></pre>
-
+<span class="nv">KBUILD_CFLAGS</span>   <span class="o">+=</span> -O2 -grecord-gcc-switches</code></pre></div>
 <p>主要是添加‘-grecord-gcc-switches‘和’-fno-omit-frame-pointer‘参数。</p>
 
 <dl>
@@ -417,33 +405,30 @@ KBUILD_CFLAGS   += -O2 -grecord-gcc-switches
 </dl>
 
 <p>注意下面项需要打开[fn:6]</p>
-
-<pre><code class="language-shell"># for perf_events:
-CONFIG_PERF_EVENTS=y
-# for stack traces:
-CONFIG_FRAME_POINTER=y
-# kernel symbols:
-CONFIG_KALLSYMS=y
-# tracepoints:
-CONFIG_TRACEPOINTS=y
-# kernel function trace:
-CONFIG_FTRACE=y
-# kernel-level dynamic tracing:
-CONFIG_KPROBES=y
-CONFIG_KPROBE_EVENTS=y
-# user-level dynamic tracing:
-CONFIG_UPROBES=y
-CONFIG_UPROBE_EVENTS=y
-# full kernel debug info:
-CONFIG_DEBUG_INFO=y
-# kernel lock tracing:
-CONFIG_LOCKDEP=y
-# kernel lock tracing:
-CONFIG_LOCK_STAT=y
-# kernel dynamic tracepoint variables:
-CONFIG_DEBUG_INFO=y
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># for perf_events:</span>
+<span class="nv">CONFIG_PERF_EVENTS</span><span class="o">=</span>y
+<span class="c1"># for stack traces:</span>
+<span class="nv">CONFIG_FRAME_POINTER</span><span class="o">=</span>y
+<span class="c1"># kernel symbols:</span>
+<span class="nv">CONFIG_KALLSYMS</span><span class="o">=</span>y
+<span class="c1"># tracepoints:</span>
+<span class="nv">CONFIG_TRACEPOINTS</span><span class="o">=</span>y
+<span class="c1"># kernel function trace:</span>
+<span class="nv">CONFIG_FTRACE</span><span class="o">=</span>y
+<span class="c1"># kernel-level dynamic tracing:</span>
+<span class="nv">CONFIG_KPROBES</span><span class="o">=</span>y
+<span class="nv">CONFIG_KPROBE_EVENTS</span><span class="o">=</span>y
+<span class="c1"># user-level dynamic tracing:</span>
+<span class="nv">CONFIG_UPROBES</span><span class="o">=</span>y
+<span class="nv">CONFIG_UPROBE_EVENTS</span><span class="o">=</span>y
+<span class="c1"># full kernel debug info:</span>
+<span class="nv">CONFIG_DEBUG_INFO</span><span class="o">=</span>y
+<span class="c1"># kernel lock tracing:</span>
+<span class="nv">CONFIG_LOCKDEP</span><span class="o">=</span>y
+<span class="c1"># kernel lock tracing:</span>
+<span class="nv">CONFIG_LOCK_STAT</span><span class="o">=</span>y
+<span class="c1"># kernel dynamic tracepoint variables:</span>
+<span class="nv">CONFIG_DEBUG_INFO</span><span class="o">=</span>y</code></pre></div>
 <dl>
 <dt>编译：</dt>
 <dd><p>fakeroot debian/rules binary-generic skipdbg=false</p></dd>
@@ -460,29 +445,26 @@ CONFIG_DEBUG_INFO=y
 <h2 id="使用">使用</h2>
 
 <p>看看使用效果：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">tacy@tacy:/usr/local/share/doc/systemtap/examples/io$ sudo stap disktop.stp
 
-<pre><code class="language-shell">tacy@tacy:/usr/local/share/doc/systemtap/examples/io$ sudo stap disktop.stp
-
-Fri Jul  4 15:14:07 2014 , Average:  50Kb/sec, Read:     219Kb, Write:     32Kb
-
-     UID      PID     PPID                       CMD   DEVICE    T        BYTES
-    1000     2496     1861                    oracle     sda5    R       131072
-    1000     2832        1           unity-panel-ser     sda5    R        76217
-    1000     2496     1861                    oracle     sda5    W        32768
-    1000     2834        1               hud-service     dm-1    R        16192
-    1000     2689        1                   dropbox     sda5    R          894
-
-Fri Jul  4 15:14:12 2014 , Average:  42Kb/sec, Read:     192Kb, Write:     18Kb
+Fri Jul  <span class="m">4</span> <span class="m">15</span>:14:07 <span class="m">2014</span> , Average:  50Kb/sec, Read:     219Kb, Write:     32Kb
 
      UID      PID     PPID                       CMD   DEVICE    T        BYTES
-    1000     2496     1861                    oracle     sda5    R       131072
-    1000     8893     1861                    oracle     sda5    R        65944
-    1000     2496     1861                    oracle     sda5    W        16384
-    1000     5157        1           Chrome_CacheThr     dm-1    W         2033
-    1000     2953        1            gnome-terminal     sda5    W         1025
-    1000     5157        1           Chrome_CacheThr     dm-1    R           36
-</code></pre>
+    <span class="m">1000</span>     <span class="m">2496</span>     <span class="m">1861</span>                    oracle     sda5    R       <span class="m">131072</span>
+    <span class="m">1000</span>     <span class="m">2832</span>        <span class="m">1</span>           unity-panel-ser     sda5    R        <span class="m">76217</span>
+    <span class="m">1000</span>     <span class="m">2496</span>     <span class="m">1861</span>                    oracle     sda5    W        <span class="m">32768</span>
+    <span class="m">1000</span>     <span class="m">2834</span>        <span class="m">1</span>               hud-service     dm-1    R        <span class="m">16192</span>
+    <span class="m">1000</span>     <span class="m">2689</span>        <span class="m">1</span>                   dropbox     sda5    R          <span class="m">894</span>
 
+Fri Jul  <span class="m">4</span> <span class="m">15</span>:14:12 <span class="m">2014</span> , Average:  42Kb/sec, Read:     192Kb, Write:     18Kb
+
+     UID      PID     PPID                       CMD   DEVICE    T        BYTES
+    <span class="m">1000</span>     <span class="m">2496</span>     <span class="m">1861</span>                    oracle     sda5    R       <span class="m">131072</span>
+    <span class="m">1000</span>     <span class="m">8893</span>     <span class="m">1861</span>                    oracle     sda5    R        <span class="m">65944</span>
+    <span class="m">1000</span>     <span class="m">2496</span>     <span class="m">1861</span>                    oracle     sda5    W        <span class="m">16384</span>
+    <span class="m">1000</span>     <span class="m">5157</span>        <span class="m">1</span>           Chrome_CacheThr     dm-1    W         <span class="m">2033</span>
+    <span class="m">1000</span>     <span class="m">2953</span>        <span class="m">1</span>            gnome-terminal     sda5    W         <span class="m">1025</span>
+    <span class="m">1000</span>     <span class="m">5157</span>        <span class="m">1</span>           Chrome_CacheThr     dm-1    R           <span class="m">36</span></code></pre></div>
 <p>好了，ubuntu上也能systemtap啦～</p>
 
 <h2 id="systemtap-byteman">systemtap &amp; byteman</h2>
@@ -513,47 +495,43 @@ Fri Jul  4 15:14:12 2014 , Average:  42Kb/sec, Read:     192Kb, Write:     18Kb
 
 <p>解决上面问题之后，简单的例子能跑了[fn:2]，但是我尝试了一下对weblogic做profile，
 不行，一直抛如下错误，放弃～</p>
-
-<pre><code class="language-shell">org.jboss.byteman.rule.exception.ExecuteException: stap_672db8a0071794f3697f800e2d70a51_22140probe_2237  : caught java.lang.ClassCircularityError: sun/reflect/MethodAccessorImpl
-	at org.jboss.byteman.rule.Rule.execute(Rule.java:716)
-	at org.jboss.byteman.rule.Rule.execute(Rule.java:653)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java)
-	at sun.misc.Unsafe.defineClass(Native Method)
-	at sun.reflect.ClassDefiner.defineClass(ClassDefiner.java:45)
-	at sun.reflect.MethodAccessorGenerator$1.run(MethodAccessorGenerator.java:381)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at sun.reflect.MethodAccessorGenerator.generate(MethodAccessorGenerator.java:377)
-	at sun.reflect.MethodAccessorGenerator.generateMethod(MethodAccessorGenerator.java:59)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:28)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jboss.byteman.rule.expression.MethodExpression.interpret(MethodExpression.java:342)
-	at org.jboss.byteman.rule.Action.interpret(Action.java:144)
-	at org.systemtap.byteman.helper.HelperSDT_HelperAdapter_Interpreted_1.fire(tacy-22167.btm)
-	at org.systemtap.byteman.helper.HelperSDT_HelperAdapter_Interpreted_1.execute0(tacy-22167.btm)
-	at org.systemtap.byteman.helper.HelperSDT_HelperAdapter_Interpreted_1.execute(tacy-22167.btm)
-	at org.jboss.byteman.rule.Rule.execute(Rule.java:684)
-	at org.jboss.byteman.rule.Rule.execute(Rule.java:653)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java)
-	at java.lang.Class.forName0(Native Method)
-	at java.lang.Class.forName(Class.java:249)
-	at sun.rmi.server.LoaderHandler.loadClass(LoaderHandler.java:152)
-	at java.rmi.server.RMIClassLoader$2.loadClass(RMIClassLoader.java:620)
-	at java.rmi.server.RMIClassLoader.loadClass(RMIClassLoader.java:247)
-	at sun.rmi.server.MarshalInputStream.resolveClass(MarshalInputStream.java:201)
-	at java.io.ObjectInputStream.readNonProxyDesc(ObjectInputStream.java:1589)
-	at java.io.ObjectInputStream.readClassDesc(ObjectInputStream.java:1494)
-	at java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:1748)
-	at java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1327)
-	at java.io.ObjectInputStream.readObject(ObjectInputStream.java:349)
-	at sun.rmi.server.UnicastRef.unmarshalValue(UnicastRef.java:306)
-	at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:155)
-	at com.sun.jmx.remote.internal.PRef.invoke(Unknown Source)
-	at javax.management.remote.rmi.RMIConnectionImpl_Stub.getAttribute(Unknown Source)
-	at javax.management.remote.rmi.RMIConnector$RemoteMBeanServerConnection.getAttribute(RMIConnector.java:878)
-
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">org.jboss.byteman.rule.exception.ExecuteException: stap_672db8a0071794f3697f800e2d70a51_22140probe_2237  : caught java.lang.ClassCircularityError: sun/reflect/MethodAccessorImpl
+	at org.jboss.byteman.rule.Rule.execute<span class="o">(</span>Rule.java:716<span class="o">)</span>
+	at org.jboss.byteman.rule.Rule.execute<span class="o">(</span>Rule.java:653<span class="o">)</span>
+	at java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java<span class="o">)</span>
+	at sun.misc.Unsafe.defineClass<span class="o">(</span>Native Method<span class="o">)</span>
+	at sun.reflect.ClassDefiner.defineClass<span class="o">(</span>ClassDefiner.java:45<span class="o">)</span>
+	at sun.reflect.MethodAccessorGenerator<span class="nv">$1</span>.run<span class="o">(</span>MethodAccessorGenerator.java:381<span class="o">)</span>
+	at java.security.AccessController.doPrivileged<span class="o">(</span>Native Method<span class="o">)</span>
+	at sun.reflect.MethodAccessorGenerator.generate<span class="o">(</span>MethodAccessorGenerator.java:377<span class="o">)</span>
+	at sun.reflect.MethodAccessorGenerator.generateMethod<span class="o">(</span>MethodAccessorGenerator.java:59<span class="o">)</span>
+	at sun.reflect.NativeMethodAccessorImpl.invoke<span class="o">(</span>NativeMethodAccessorImpl.java:28<span class="o">)</span>
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke<span class="o">(</span>DelegatingMethodAccessorImpl.java:25<span class="o">)</span>
+	at java.lang.reflect.Method.invoke<span class="o">(</span>Method.java:597<span class="o">)</span>
+	at org.jboss.byteman.rule.expression.MethodExpression.interpret<span class="o">(</span>MethodExpression.java:342<span class="o">)</span>
+	at org.jboss.byteman.rule.Action.interpret<span class="o">(</span>Action.java:144<span class="o">)</span>
+	at org.systemtap.byteman.helper.HelperSDT_HelperAdapter_Interpreted_1.fire<span class="o">(</span>tacy-22167.btm<span class="o">)</span>
+	at org.systemtap.byteman.helper.HelperSDT_HelperAdapter_Interpreted_1.execute0<span class="o">(</span>tacy-22167.btm<span class="o">)</span>
+	at org.systemtap.byteman.helper.HelperSDT_HelperAdapter_Interpreted_1.execute<span class="o">(</span>tacy-22167.btm<span class="o">)</span>
+	at org.jboss.byteman.rule.Rule.execute<span class="o">(</span>Rule.java:684<span class="o">)</span>
+	at org.jboss.byteman.rule.Rule.execute<span class="o">(</span>Rule.java:653<span class="o">)</span>
+	at java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java<span class="o">)</span>
+	at java.lang.Class.forName0<span class="o">(</span>Native Method<span class="o">)</span>
+	at java.lang.Class.forName<span class="o">(</span>Class.java:249<span class="o">)</span>
+	at sun.rmi.server.LoaderHandler.loadClass<span class="o">(</span>LoaderHandler.java:152<span class="o">)</span>
+	at java.rmi.server.RMIClassLoader<span class="nv">$2</span>.loadClass<span class="o">(</span>RMIClassLoader.java:620<span class="o">)</span>
+	at java.rmi.server.RMIClassLoader.loadClass<span class="o">(</span>RMIClassLoader.java:247<span class="o">)</span>
+	at sun.rmi.server.MarshalInputStream.resolveClass<span class="o">(</span>MarshalInputStream.java:201<span class="o">)</span>
+	at java.io.ObjectInputStream.readNonProxyDesc<span class="o">(</span>ObjectInputStream.java:1589<span class="o">)</span>
+	at java.io.ObjectInputStream.readClassDesc<span class="o">(</span>ObjectInputStream.java:1494<span class="o">)</span>
+	at java.io.ObjectInputStream.readOrdinaryObject<span class="o">(</span>ObjectInputStream.java:1748<span class="o">)</span>
+	at java.io.ObjectInputStream.readObject0<span class="o">(</span>ObjectInputStream.java:1327<span class="o">)</span>
+	at java.io.ObjectInputStream.readObject<span class="o">(</span>ObjectInputStream.java:349<span class="o">)</span>
+	at sun.rmi.server.UnicastRef.unmarshalValue<span class="o">(</span>UnicastRef.java:306<span class="o">)</span>
+	at sun.rmi.server.UnicastRef.invoke<span class="o">(</span>UnicastRef.java:155<span class="o">)</span>
+	at com.sun.jmx.remote.internal.PRef.invoke<span class="o">(</span>Unknown Source<span class="o">)</span>
+	at javax.management.remote.rmi.RMIConnectionImpl_Stub.getAttribute<span class="o">(</span>Unknown Source<span class="o">)</span>
+	at javax.management.remote.rmi.RMIConnector<span class="nv">$RemoteMBeanServerConnection</span>.getAttribute<span class="o">(</span>RMIConnector.java:878<span class="o">)</span></code></pre></div>
 <h1 id="footnotes">Footnotes</h1>
 
 <p>[fn:1] [[<a href="https://wiki.ubuntu.com/DebuggingProgramCrash][Debugging">https://wiki.ubuntu.com/DebuggingProgramCrash][Debugging</a> Program Crash]]</p>

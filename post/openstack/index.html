@@ -379,21 +379,20 @@ if (!doNotTrack) {
    def rebalance(self, seed=None):
        &ldquo;&rdquo;&rdquo;
        Rebalance the ring.</p>
-
-<pre><code>   This is the main work function of the builder, as it will assign and
+<div class="highlight"><pre class="chroma">   This is the main work function of the builder, as it will assign and
    reassign partitions to devices in the ring based on weights, distinct
    zones, recent reassignments, etc.
 
-   The process doesn't always perfectly assign partitions (that'd take a
+   The process doesn&#39;t always perfectly assign partitions (that&#39;d take a
    lot more analysis and therefore a lot more time -- I had code that did
    that before). Because of this, it keeps rebalancing until the device
    skew (number of partitions a device wants compared to what it has) gets
-   below 1% or doesn't change by more than 1% (only happens with ring that
-   can't be balanced no matter what -- like with 3 zones of differing
+   below 1% or doesn&#39;t change by more than 1% (only happens with ring that
+   can&#39;t be balanced no matter what -- like with 3 zones of differing
    weights with replicas set to 3).
 
    :returns: (number_of_partitions_altered, resulting_balance)
-   &quot;&quot;&quot;
+   &#34;&#34;&#34;
 
    if seed:
        random.seed(seed)
@@ -419,7 +418,7 @@ if (!doNotTrack) {
        self._reassign_parts(reassign_parts)
        retval += len(reassign_parts)
        while self._remove_devs:
-           self.devs[self._remove_devs.pop()['id']] = None
+           self.devs[self._remove_devs.pop()[&#39;id&#39;]] = None
        balance = self.get_balance()
        if balance &lt; 1 or abs(last_balance - balance) &lt; 1 or \
                retval == self.parts:
@@ -427,9 +426,7 @@ if (!doNotTrack) {
        last_balance = balance
    self.devs_changed = False
    self.version += 1
-   return retval, balance
-</code></pre>
-
+   return retval, balance</pre></div>
 <p>#+END_SRC</p>
 
 <p>_reassign_parts()完成核心的part到dev的映射
@@ -445,8 +442,7 @@ if (!doNotTrack) {
        farthest-apart things, followed by zones, then different ip/port pairs
        within a zone; the least-far-apart things are different devices with
        the same ip/port pair in the same zone.</p>
-
-<pre><code>   If you want more replicas than devices, you won't get all your
+<div class="highlight"><pre class="chroma">   If you want more replicas than devices, you won&#39;t get all your
    replicas.
 
    :param reassign_parts: An iterable of (part, replicas_to_replace)
@@ -454,14 +450,14 @@ if (!doNotTrack) {
                           replica (an int) to replace for that partition.
                           replicas_to_replace may be shared for multiple
                           partitions, so be sure you do not modify it.
-   &quot;&quot;&quot;
+   &#34;&#34;&#34;
    for dev in self._iter_devs():
        #生成按照parts_wanted排序的key
-       dev['sort_key'] = self._sort_key_for(dev)
+       dev[&#39;sort_key&#39;] = self._sort_key_for(dev)
 
    available_devs = \
-       sorted((d for d in self._iter_devs() if d['weight']),
-              key=lambda x: x['sort_key'])
+       sorted((d for d in self._iter_devs() if d[&#39;weight&#39;]),
+              key=lambda x: x[&#39;sort_key&#39;])
 
    tier2devs = defaultdict(list)
    tier2sort_key = defaultdict(list)
@@ -473,7 +469,7 @@ if (!doNotTrack) {
            #{(region,zone,machine):[dev]}
            #{(region,zone,machine,id):[dev]}
            tier2devs[tier].append(dev)  # &lt;-- starts out sorted!
-           tier2sort_key[tier].append(dev['sort_key'])
+           tier2sort_key[tier].append(dev[&#39;sort_key&#39;])
            if len(tier) &gt; max_tier_depth:
                max_tier_depth = len(tier)
 
@@ -532,7 +528,7 @@ if (!doNotTrack) {
                # layout. If your layout is extremely unbalanced,
                # this may produce poor results.
                #
-               # This used to be a cute, recursive function, but it's been
+               # This used to be a cute, recursive function, but it&#39;s been
                # unrolled for performance.
                candidate_tiers = tier2children[tier]
                candidates_with_replicas = \
@@ -540,10 +536,10 @@ if (!doNotTrack) {
                if len(candidate_tiers) &gt; len(candidates_with_replicas):
                    # There exists at least one tier with 0 other replicas,
                    # so work backward among the candidates, accepting the
-                   # first which isn't in other_replicas.
+                   # first which isn&#39;t in other_replicas.
                    #
                    # This optimization is to avoid calling the min()
-                   # below, which is expensive if you've got thousands of
+                   # below, which is expensive if you&#39;ve got thousands of
                    # drives.
                    for t in reversed(candidate_tiers):
                        if other_replicas[t] == 0:
@@ -556,11 +552,11 @@ if (!doNotTrack) {
                            if other_replicas[t] == min_count).next()
                depth += 1
            dev = tier2devs[tier][-1]
-           dev['parts_wanted'] -= 1
-           dev['parts'] += 1
-           old_sort_key = dev['sort_key']
+           dev[&#39;parts_wanted&#39;] -= 1
+           dev[&#39;parts&#39;] += 1
+           old_sort_key = dev[&#39;sort_key&#39;]
            #重新根据新的parts_wanted计算sort key
-           new_sort_key = dev['sort_key'] = self._sort_key_for(dev)
+           new_sort_key = dev[&#39;sort_key&#39;] = self._sort_key_for(dev)
            for tier in tiers_for_dev(dev):
                other_replicas[tier] += 1
                unique_tiers_by_tier_len[len(tier)].add(tier)
@@ -595,13 +591,11 @@ if (!doNotTrack) {
                    new_index, new_last_sort_key)
 
            #建立part和dev映射
-           self._replica2part2dev[replica][part] = dev['id']
+           self._replica2part2dev[replica][part] = dev[&#39;id&#39;]
 
    # Just to save memory and keep from accidental reuse.
    for dev in self._iter_devs():
-       del dev['sort_key']
-</code></pre>
-
+       del dev[&#39;sort_key&#39;]</pre></div>
 <p>#+END_SRC</p>
 
 <h1 id="经典文章">经典文章</h1>

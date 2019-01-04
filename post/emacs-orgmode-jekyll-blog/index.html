@@ -334,15 +334,12 @@ if (!doNotTrack) {
 <p>基本的流程如下：</p>
 
 <p>先在自己电脑上建一个目录，比如就叫myblog，目录结构如下：</p>
-
-<pre><code class="language-shell">---myblog
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">---myblog
   ---org
      ---index.org
      ---_posts
         ---2012-07-06-title-name.org
-  ---jekyll
-</code></pre>
-
+  ---jekyll</code></pre></div>
 <p>jekyll目录直接从jekyllbootstrap check out下来的，你写文档就直接在/org/_posts写就可以了，写完之后可以通过M-x org-publish-all发布到jekyll目录下的_posts目录，然后按下面程序提交：</p>
 
 <p><code>M-x magit-status</code></p>
@@ -364,53 +361,50 @@ if (!doNotTrack) {
 <code>(if (and num)</code></p>
 
 <p>下面是我的emacs配置，供感兴趣的同学参考：</p>
+<div class="highlight"><pre class="chroma"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span class="c1">;;org-mode</span>
+<span class="p">(</span><span class="nv">add-to-list</span> <span class="ss">&#39;load-path</span> <span class="s">&#34;~/.emacs.d/lisp/org-7.8.11/lisp&#34;</span><span class="p">)</span>
+<span class="p">(</span><span class="nb">require</span> <span class="ss">&#39;org-install</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">add-to-list</span> <span class="ss">&#39;auto-mode-alist</span> <span class="o">&#39;</span><span class="p">(</span><span class="s">&#34;\\.org$&#34;</span> <span class="o">.</span> <span class="nv">org-mode</span><span class="p">))</span>
+<span class="p">(</span><span class="nf">define-key</span> <span class="nv">global-map</span> <span class="s">&#34;\C-cl&#34;</span> <span class="ss">&#39;org-store-link</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">define-key</span> <span class="nv">global-map</span> <span class="s">&#34;\C-ca&#34;</span> <span class="ss">&#39;org-agenda</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">global-set-key</span> <span class="s">&#34;\C-cb&#34;</span> <span class="ss">&#39;org-iswitchb</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">global-font-lock-mode</span> <span class="mi">1</span><span class="p">)</span>                     <span class="c1">; for all buffers</span>
+<span class="p">(</span><span class="nv">add-hook</span> <span class="ss">&#39;org-mode-hook</span> <span class="ss">&#39;turn-on-font-lock</span><span class="p">)</span>  <span class="c1">; Org buffers only</span>
+<span class="p">(</span><span class="nb">setq</span> <span class="nv">org-startup-indented</span> <span class="no">t</span><span class="p">)</span>
+<span class="p">(</span><span class="nb">setq</span> <span class="nv">org-log-done</span> <span class="no">t</span><span class="p">)</span>
+<span class="p">(</span><span class="nb">require</span> <span class="ss">&#39;org-publish</span><span class="p">)</span>
+<span class="p">(</span><span class="nb">setq</span> <span class="nv">org-publish-project-alist</span> <span class="o">&#39;</span><span class="p">(</span>
+  <span class="p">(</span><span class="s">&#34;org-myblog&#34;</span>
+          <span class="c1">;; Path to your org files.</span>
+          <span class="nb">:base-directory</span> <span class="s">&#34;~/myblog/org/&#34;</span>
+          <span class="nb">:base-extension</span> <span class="s">&#34;org&#34;</span>
 
-<pre><code class="language-emacs-lisp">;;org-mode
-(add-to-list 'load-path &quot;~/.emacs.d/lisp/org-7.8.11/lisp&quot;)
-(require 'org-install)
-(add-to-list 'auto-mode-alist '(&quot;\\.org$&quot; . org-mode))
-(define-key global-map &quot;\C-cl&quot; 'org-store-link)
-(define-key global-map &quot;\C-ca&quot; 'org-agenda)
-(global-set-key &quot;\C-cb&quot; 'org-iswitchb)
-(global-font-lock-mode 1)                     ; for all buffers
-(add-hook 'org-mode-hook 'turn-on-font-lock)  ; Org buffers only
-(setq org-startup-indented t)
-(setq org-log-done t)
-(require 'org-publish)
-(setq org-publish-project-alist '(
-  (&quot;org-myblog&quot;
-          ;; Path to your org files.
-          :base-directory &quot;~/myblog/org/&quot;
-          :base-extension &quot;org&quot;
+          <span class="c1">;; Path to your Jekyll project.</span>
+          <span class="nb">:publishing-directory</span> <span class="s">&#34;~/myblog/jekyll/&#34;</span>
+          <span class="nb">:recursive</span> <span class="no">t</span>
+          <span class="nb">:publishing-function</span> <span class="nv">org-publish-org-to-html</span>
+          <span class="nb">:headline-levels</span> <span class="mi">4</span>
+          <span class="nb">:html-extension</span> <span class="s">&#34;html&#34;</span>
+          <span class="nb">:body-only</span> <span class="no">t</span> <span class="c1">;; Only export section between &lt;body&gt; &lt;/body&gt;</span>
+    <span class="p">)</span>
 
-          ;; Path to your Jekyll project.
-          :publishing-directory &quot;~/myblog/jekyll/&quot;
-          :recursive t
-          :publishing-function org-publish-org-to-html
-          :headline-levels 4
-          :html-extension &quot;html&quot;
-          :body-only t ;; Only export section between &lt;body&gt; &lt;/body&gt;
-    )
+    <span class="p">(</span><span class="s">&#34;org-static-myblog&#34;</span>
+          <span class="nb">:base-directory</span> <span class="s">&#34;~/myblog/org/&#34;</span>
+          <span class="nb">:base-extension</span> <span class="s">&#34;css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php&#34;</span>
+          <span class="nb">:publishing-directory</span> <span class="s">&#34;~/myblog/jekyll/&#34;</span>
+          <span class="nb">:recursive</span> <span class="no">t</span>
+          <span class="nb">:publishing-function</span> <span class="nv">org-publish-attachment</span><span class="p">)</span>
 
-    (&quot;org-static-myblog&quot;
-          :base-directory &quot;~/myblog/org/&quot;
-          :base-extension &quot;css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php&quot;
-          :publishing-directory &quot;~/myblog/jekyll/&quot;
-          :recursive t
-          :publishing-function org-publish-attachment)
+    <span class="p">(</span><span class="s">&#34;myblog&#34;</span> <span class="nb">:components</span> <span class="p">(</span><span class="s">&#34;org-myblog&#34;</span> <span class="s">&#34;org-static-myblog&#34;</span><span class="p">))</span>
+<span class="p">))</span>
 
-    (&quot;myblog&quot; :components (&quot;org-myblog&quot; &quot;org-static-myblog&quot;))
-))
+<span class="c1">;; turn on soft wrapping mode for org mode</span>
+<span class="p">(</span><span class="nv">add-hook</span> <span class="ss">&#39;org-mode-hook</span> <span class="ss">&#39;turn-on-visual-line-mode</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">add-hook</span> <span class="ss">&#39;message-mode-hook</span> <span class="ss">&#39;turn-on-orgstruct</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">add-hook</span> <span class="ss">&#39;message-mode-hook</span> <span class="ss">&#39;turn-on-orgstruct++</span><span class="p">)</span>
 
-;; turn on soft wrapping mode for org mode
-(add-hook 'org-mode-hook 'turn-on-visual-line-mode)
-(add-hook 'message-mode-hook 'turn-on-orgstruct)
-(add-hook 'message-mode-hook 'turn-on-orgstruct++)
-
-(add-to-list 'load-path &quot;~/.emacs.d/lisp/magit&quot;)
-(require 'magit)
-</code></pre>
-
+<span class="p">(</span><span class="nv">add-to-list</span> <span class="ss">&#39;load-path</span> <span class="s">&#34;~/.emacs.d/lisp/magit&#34;</span><span class="p">)</span>
+<span class="p">(</span><span class="nb">require</span> <span class="ss">&#39;magit</span><span class="p">)</span></code></pre></div>
     </div>
 
     

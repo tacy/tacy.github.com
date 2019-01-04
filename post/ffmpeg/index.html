@@ -368,58 +368,52 @@ if (!doNotTrack) {
 <p>两者结果对比：</p>
 
 <p>命令一：</p>
-
-<pre><code class="language-shell">Stream mapping:
-  Stream #0:0 -&gt; #0:0 (h264 -&gt; libx264)
-  Stream #0:1 -&gt; #0:1 (aac -&gt; libfdk_aac)
-Press [q] to stop, [?] for help
-frame=11098 fps= 23 q=-1.0 Lsize=  111968kB time=00:07:42.33 bitrate=1983.9kbits/s dup=0 drop=5
-video:107236kB audio:4392kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.304443%
-[libx264 @ 0x27d10c0] frame I:70    Avg QP:27.89  size: 48280
-[libx264 @ 0x27d10c0] frame P:6228  Avg QP:30.50  size: 13988
-[libx264 @ 0x27d10c0] frame B:4800  Avg QP:32.41  size:  4024
-[libx264 @ 0x27d10c0] consecutive B-frames: 13.5% 86.4%  0.1%  0.0%
-[libx264 @ 0x27d10c0] mb I  I16..4: 15.7% 59.1% 25.2%
-[libx264 @ 0x27d10c0] mb P  I16..4:  0.9%  1.8%  0.4%  P16..4: 61.4%  9.1%  8.4%  0.0%  0.0%    skip:18.1%
-[libx264 @ 0x27d10c0] mb B  I16..4:  0.0%  0.0%  0.0%  B16..8: 48.7%  1.1%  0.1%  direct: 1.8%  skip:48.2%  L0:36.7% L1:62.5% BI: 0.8%
-[libx264 @ 0x27d10c0] 8x8 transform intra:59.8% inter:73.3%
-[libx264 @ 0x27d10c0] coded y,uvDC,uvAC intra: 58.3% 87.3% 46.3% inter: 15.6% 43.4% 2.3%
-[libx264 @ 0x27d10c0] i16 v,h,dc,p: 18% 20% 19% 43%
-[libx264 @ 0x27d10c0] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 11% 12% 27%  8% 10%  8% 10%  7%  8%
-[libx264 @ 0x27d10c0] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 15% 18% 27%  7%  8%  6%  7%  5%  6%
-[libx264 @ 0x27d10c0] i8c dc,h,v,p: 56% 18% 14% 11%
-[libx264 @ 0x27d10c0] Weighted P-Frames: Y:0.2% UV:0.1%
-[libx264 @ 0x27d10c0] ref P L0: 65.0% 14.6% 13.7%  6.8%  0.0%
-[libx264 @ 0x27d10c0] ref B L0: 91.7%  8.3%  0.0%
-[libx264 @ 0x27d10c0] ref B L1: 100.0%  0.0%
-[libx264 @ 0x27d10c0] kb/s:1899.73
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">Stream mapping:
+  Stream <span class="c1">#0:0 -&gt; #0:0 (h264 -&gt; libx264)</span>
+  Stream <span class="c1">#0:1 -&gt; #0:1 (aac -&gt; libfdk_aac)</span>
+Press <span class="o">[</span>q<span class="o">]</span> to stop, <span class="o">[</span>?<span class="o">]</span> <span class="k">for</span> <span class="nb">help</span>
+<span class="nv">frame</span><span class="o">=</span><span class="m">11098</span> <span class="nv">fps</span><span class="o">=</span> <span class="m">23</span> <span class="nv">q</span><span class="o">=</span>-1.0 <span class="nv">Lsize</span><span class="o">=</span>  111968kB <span class="nv">time</span><span class="o">=</span><span class="m">00</span>:07:42.33 <span class="nv">bitrate</span><span class="o">=</span><span class="m">1983</span>.9kbits/s <span class="nv">dup</span><span class="o">=</span><span class="m">0</span> <span class="nv">drop</span><span class="o">=</span><span class="m">5</span>
+video:107236kB audio:4392kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: <span class="m">0</span>.304443%
+<span class="o">[</span>libx264 @ 0x27d10c0<span class="o">]</span> frame I:70    Avg QP:27.89  size: <span class="m">48280</span>
+<span class="o">[</span>libx264 @ 0x27d10c0<span class="o">]</span> frame P:6228  Avg QP:30.50  size: <span class="m">13988</span>
+<span class="o">[</span>libx264 @ 0x27d10c0<span class="o">]</span> frame B:4800  Avg QP:32.41  size:  <span class="m">4024</span>
+<span class="o">[</span>libx264 @ 0x27d10c0<span class="o">]</span> consecutive B-frames: <span class="m">13</span>.5% <span class="m">86</span>.4%  <span class="m">0</span>.1%  <span class="m">0</span>.0%
+<span class="o">[</span>libx264 @ 0x27d10c0<span class="o">]</span> mb I  I16..4: <span class="m">15</span>.7% <span class="m">59</span>.1% <span class="m">25</span>.2%
+<span class="o">[</span>libx264 @ 0x27d10c0<span class="o">]</span> mb P  I16..4:  <span class="m">0</span>.9%  <span class="m">1</span>.8%  <span class="m">0</span>.4%  P16..4: <span class="m">61</span>.4%  <span class="m">9</span>.1%  <span class="m">8</span>.4%  <span class="m">0</span>.0%  <span class="m">0</span>.0%    skip:18.1%
+<span class="o">[</span>libx264 @ 0x27d10c0<span class="o">]</span> mb B  I16..4:  <span class="m">0</span>.0%  <span class="m">0</span>.0%  <span class="m">0</span>.0%  B16..8: <span class="m">48</span>.7%  <span class="m">1</span>.1%  <span class="m">0</span>.1%  direct: <span class="m">1</span>.8%  skip:48.2%  L0:36.7% L1:62.5% BI: <span class="m">0</span>.8%
+<span class="o">[</span>libx264 @ 0x27d10c0<span class="o">]</span> 8x8 transform intra:59.8% inter:73.3%
+<span class="o">[</span>libx264 @ 0x27d10c0<span class="o">]</span> coded y,uvDC,uvAC intra: <span class="m">58</span>.3% <span class="m">87</span>.3% <span class="m">46</span>.3% inter: <span class="m">15</span>.6% <span class="m">43</span>.4% <span class="m">2</span>.3%
+<span class="o">[</span>libx264 @ 0x27d10c0<span class="o">]</span> i16 v,h,dc,p: <span class="m">18</span>% <span class="m">20</span>% <span class="m">19</span>% <span class="m">43</span>%
+<span class="o">[</span>libx264 @ 0x27d10c0<span class="o">]</span> i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: <span class="m">11</span>% <span class="m">12</span>% <span class="m">27</span>%  <span class="m">8</span>% <span class="m">10</span>%  <span class="m">8</span>% <span class="m">10</span>%  <span class="m">7</span>%  <span class="m">8</span>%
+<span class="o">[</span>libx264 @ 0x27d10c0<span class="o">]</span> i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: <span class="m">15</span>% <span class="m">18</span>% <span class="m">27</span>%  <span class="m">7</span>%  <span class="m">8</span>%  <span class="m">6</span>%  <span class="m">7</span>%  <span class="m">5</span>%  <span class="m">6</span>%
+<span class="o">[</span>libx264 @ 0x27d10c0<span class="o">]</span> i8c dc,h,v,p: <span class="m">56</span>% <span class="m">18</span>% <span class="m">14</span>% <span class="m">11</span>%
+<span class="o">[</span>libx264 @ 0x27d10c0<span class="o">]</span> Weighted P-Frames: Y:0.2% UV:0.1%
+<span class="o">[</span>libx264 @ 0x27d10c0<span class="o">]</span> ref P L0: <span class="m">65</span>.0% <span class="m">14</span>.6% <span class="m">13</span>.7%  <span class="m">6</span>.8%  <span class="m">0</span>.0%
+<span class="o">[</span>libx264 @ 0x27d10c0<span class="o">]</span> ref B L0: <span class="m">91</span>.7%  <span class="m">8</span>.3%  <span class="m">0</span>.0%
+<span class="o">[</span>libx264 @ 0x27d10c0<span class="o">]</span> ref B L1: <span class="m">100</span>.0%  <span class="m">0</span>.0%
+<span class="o">[</span>libx264 @ 0x27d10c0<span class="o">]</span> kb/s:1899.73</code></pre></div>
 <p>命令二：</p>
-
-<pre><code class="language-shell">Stream mapping:
-  Stream #0:0 -&gt; #0:0 (h264 -&gt; libx264)
-  Stream #0:1 -&gt; #0:1 (aac -&gt; libfdk_aac)
-Press [q] to stop, [?] for help
-frame=11098 fps= 68 q=-1.0 Lsize=   89166kB time=00:07:42.33 bitrate=1579.9kbits/s dup=0 drop=5
-video:84434kB audio:4392kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.382292%
-[libx264 @ 0x367f940] frame I:69    Avg QP:27.91  size: 44978
-[libx264 @ 0x367f940] frame P:6244  Avg QP:30.60  size: 11357
-[libx264 @ 0x367f940] frame B:4785  Avg QP:32.14  size:  2600
-[libx264 @ 0x367f940] consecutive B-frames: 13.8% 86.1%  0.1%  0.0%
-[libx264 @ 0x367f940] mb I  I16..4: 45.3% 31.8% 23.0%
-[libx264 @ 0x367f940] mb P  I16..4: 16.9%  2.9%  0.1%  P16..4: 38.6% 11.3%  3.8%  0.0%  0.0%    skip:26.3%
-[libx264 @ 0x367f940] mb B  I16..4:  0.7%  0.1%  0.0%  B16..8:  9.9%  1.8%  0.1%  direct:17.4%  skip:70.0%  L0:36.8% L1:53.3% BI: 9.9%
-[libx264 @ 0x367f940] 8x8 transform intra:15.2% inter:10.3%
-[libx264 @ 0x367f940] coded y,uvDC,uvAC intra: 18.6% 73.0% 27.4% inter: 7.1% 29.0% 0.6%
-[libx264 @ 0x367f940] i16 v,h,dc,p: 41% 26% 26%  8%
-[libx264 @ 0x367f940] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 10% 15% 47%  4%  5%  4%  5%  4%  5%
-[libx264 @ 0x367f940] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 15% 20% 25%  8%  8%  6%  7%  5%  7%
-[libx264 @ 0x367f940] i8c dc,h,v,p: 59% 19% 17%  5%
-[libx264 @ 0x367f940] Weighted P-Frames: Y:0.2% UV:0.1%
-[libx264 @ 0x367f940] kb/s:1495.79
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">Stream mapping:
+  Stream <span class="c1">#0:0 -&gt; #0:0 (h264 -&gt; libx264)</span>
+  Stream <span class="c1">#0:1 -&gt; #0:1 (aac -&gt; libfdk_aac)</span>
+Press <span class="o">[</span>q<span class="o">]</span> to stop, <span class="o">[</span>?<span class="o">]</span> <span class="k">for</span> <span class="nb">help</span>
+<span class="nv">frame</span><span class="o">=</span><span class="m">11098</span> <span class="nv">fps</span><span class="o">=</span> <span class="m">68</span> <span class="nv">q</span><span class="o">=</span>-1.0 <span class="nv">Lsize</span><span class="o">=</span>   89166kB <span class="nv">time</span><span class="o">=</span><span class="m">00</span>:07:42.33 <span class="nv">bitrate</span><span class="o">=</span><span class="m">1579</span>.9kbits/s <span class="nv">dup</span><span class="o">=</span><span class="m">0</span> <span class="nv">drop</span><span class="o">=</span><span class="m">5</span>
+video:84434kB audio:4392kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: <span class="m">0</span>.382292%
+<span class="o">[</span>libx264 @ 0x367f940<span class="o">]</span> frame I:69    Avg QP:27.91  size: <span class="m">44978</span>
+<span class="o">[</span>libx264 @ 0x367f940<span class="o">]</span> frame P:6244  Avg QP:30.60  size: <span class="m">11357</span>
+<span class="o">[</span>libx264 @ 0x367f940<span class="o">]</span> frame B:4785  Avg QP:32.14  size:  <span class="m">2600</span>
+<span class="o">[</span>libx264 @ 0x367f940<span class="o">]</span> consecutive B-frames: <span class="m">13</span>.8% <span class="m">86</span>.1%  <span class="m">0</span>.1%  <span class="m">0</span>.0%
+<span class="o">[</span>libx264 @ 0x367f940<span class="o">]</span> mb I  I16..4: <span class="m">45</span>.3% <span class="m">31</span>.8% <span class="m">23</span>.0%
+<span class="o">[</span>libx264 @ 0x367f940<span class="o">]</span> mb P  I16..4: <span class="m">16</span>.9%  <span class="m">2</span>.9%  <span class="m">0</span>.1%  P16..4: <span class="m">38</span>.6% <span class="m">11</span>.3%  <span class="m">3</span>.8%  <span class="m">0</span>.0%  <span class="m">0</span>.0%    skip:26.3%
+<span class="o">[</span>libx264 @ 0x367f940<span class="o">]</span> mb B  I16..4:  <span class="m">0</span>.7%  <span class="m">0</span>.1%  <span class="m">0</span>.0%  B16..8:  <span class="m">9</span>.9%  <span class="m">1</span>.8%  <span class="m">0</span>.1%  direct:17.4%  skip:70.0%  L0:36.8% L1:53.3% BI: <span class="m">9</span>.9%
+<span class="o">[</span>libx264 @ 0x367f940<span class="o">]</span> 8x8 transform intra:15.2% inter:10.3%
+<span class="o">[</span>libx264 @ 0x367f940<span class="o">]</span> coded y,uvDC,uvAC intra: <span class="m">18</span>.6% <span class="m">73</span>.0% <span class="m">27</span>.4% inter: <span class="m">7</span>.1% <span class="m">29</span>.0% <span class="m">0</span>.6%
+<span class="o">[</span>libx264 @ 0x367f940<span class="o">]</span> i16 v,h,dc,p: <span class="m">41</span>% <span class="m">26</span>% <span class="m">26</span>%  <span class="m">8</span>%
+<span class="o">[</span>libx264 @ 0x367f940<span class="o">]</span> i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: <span class="m">10</span>% <span class="m">15</span>% <span class="m">47</span>%  <span class="m">4</span>%  <span class="m">5</span>%  <span class="m">4</span>%  <span class="m">5</span>%  <span class="m">4</span>%  <span class="m">5</span>%
+<span class="o">[</span>libx264 @ 0x367f940<span class="o">]</span> i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: <span class="m">15</span>% <span class="m">20</span>% <span class="m">25</span>%  <span class="m">8</span>%  <span class="m">8</span>%  <span class="m">6</span>%  <span class="m">7</span>%  <span class="m">5</span>%  <span class="m">7</span>%
+<span class="o">[</span>libx264 @ 0x367f940<span class="o">]</span> i8c dc,h,v,p: <span class="m">59</span>% <span class="m">19</span>% <span class="m">17</span>%  <span class="m">5</span>%
+<span class="o">[</span>libx264 @ 0x367f940<span class="o">]</span> Weighted P-Frames: Y:0.2% UV:0.1%
+<span class="o">[</span>libx264 @ 0x367f940<span class="o">]</span> kb/s:1495.79</code></pre></div>
 <dl>
 <dt>批量处理目录下的视频：</dt>
 <dd><p>for i in $(ls *.MOV); do ffmpeg -i $i -c:v libx264 -crf 28 -preset:v veryfast -c:a libfdk_aac -vbr 4 $i.mp4; done</p></dd>

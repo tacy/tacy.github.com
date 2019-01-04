@@ -375,12 +375,9 @@ profiler工具都是有问题的[fn:2][fn:3]，简单来说，profiler：增加�
 <h2 id="生成火焰图">生成火焰图</h2>
 
 <p>大神Brendan Gregg[fn:7]已经帮你做好了，直接check大神的项目：</p>
-
-<pre><code class="language-shell">git clone http://github.com/brendangregg/FlameGraph
-cd FlameGraph
-./stackcollapse-ljp.awk &lt; ../traces.txt | ./flamegraph.pl &gt; ../traces.svg
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">git clone http://github.com/brendangregg/FlameGraph
+<span class="nb">cd</span> FlameGraph
+./stackcollapse-ljp.awk &lt; ../traces.txt <span class="p">|</span> ./flamegraph.pl &gt; ../traces.svg</code></pre></div>
 <p>效果图截屏参考：
 [[img:flamegraph.png][火焰图]]</p>
 

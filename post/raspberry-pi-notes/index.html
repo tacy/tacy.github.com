@@ -370,12 +370,9 @@ MicroUSB口负责电源接入。可以看到，如果完整运行Raspberry Pi还
 
 <p>通常都是sdb，不清楚你就对比一下插入前后的输出，如果你的SD卡已经分区，并且自动
 mount了，记得unmount它，接下来我们写入下载的系统镜像文件：</p>
-
-<pre><code class="language-shell">$unzip 2012-12-16-wheezy-raspbian.zip
-$sudo dd bs=1M if=2012-12-16-wheezy-raspbian of=/dev/sdb
-#+end_example
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">$unzip</span> <span class="m">2012</span>-12-16-wheezy-raspbian.zip
+<span class="nv">$sudo</span> dd <span class="nv">bs</span><span class="o">=</span>1M <span class="k">if</span><span class="o">=</span><span class="m">2012</span>-12-16-wheezy-raspbian <span class="nv">of</span><span class="o">=</span>/dev/sdb
+<span class="c1">#+end_example</span></code></pre></div>
 <p>等上几分钟或者十几分钟，视SD卡速度而定，完成之后弹出SD卡，插入Raspberry Pi卡槽中
 ，通过MicroUSB插入电源，注意电源一般的手机充电器都可以，前提是输出需要大于700毫
 安，我试过IPad充电器也可以（2100mA），Rasberry Pi不带开关，电源插入自动开机，关
@@ -394,11 +391,8 @@ startx启动进入xwindows，这时候你应该就可以正常上网了,lan通�
 
 <p>缺省我用的是en_us.utf8环境，当然我也不打算修改，我需要的只是显示中文和输入中文
 ，只需安装字体和输入法。</p>
-
-<pre><code class="language-shell">$sudo apt-get install ttf-wqy-zenhei
-$sudo apt-get install scim-pinyin
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">$sudo</span> apt-get install ttf-wqy-zenhei
+<span class="nv">$sudo</span> apt-get install scim-pinyin</code></pre></div>
 <h2 id="自动登入xwindows-fn-2">自动登入xwindows[fn:2]</h2>
 
 <h3 id="自动登入">自动登入</h3>
@@ -412,12 +406,9 @@ $sudo apt-get install scim-pinyin
 <h3 id="自动启动xwindows">自动启动xwindows</h3>
 
 <p>修改~/.bash_profile，添加如下行：</p>
-
-<pre><code class="language-shell">if [ -z &quot;$DISPLAY&quot; ] &amp;&amp; [ $(tty) = /dev/tty1 ]; then
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="k">if</span> <span class="o">[</span> -z <span class="s2">&#34;</span><span class="nv">$DISPLAY</span><span class="s2">&#34;</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">[</span> <span class="k">$(</span>tty<span class="k">)</span> <span class="o">=</span> /dev/tty1 <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
   startx
-fi
-</code></pre>
-
+<span class="k">fi</span></code></pre></div>
 <h2 id="lxde键盘快捷键">lxde键盘快捷键</h2>
 
 <p>直接查看&rdquo;.config/openbox/lxde-rc.xml&rdquo;，查看keyboard部分即可，如需添加自己的映射
@@ -492,16 +483,13 @@ Raspberry Pi的桌面（我这里是电视），实现方式：
 <h2 id="超频">超频</h2>
 
 <p>Raspberry Pi运行XBMC负载很重，很容易就跑到100%，可以尝试超频，不过这个要小心，毕竟还是危险的，当然Raspberry  Pi 还是有保护措施，设置overclock时当温度超过85度时，会自动disable[fn:3]，从网上情况看，超频到900应该问题不大，下面是我的设置：</p>
-
-<pre><code class="language-shell">arm_freq=900
-core_freq=450
-sdram_freq=450
-over_voltage=2
-gpu_mem=128
-arm_freq_min=700
-initial_turbo=30
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">arm_freq</span><span class="o">=</span><span class="m">900</span>
+<span class="nv">core_freq</span><span class="o">=</span><span class="m">450</span>
+<span class="nv">sdram_freq</span><span class="o">=</span><span class="m">450</span>
+<span class="nv">over_voltage</span><span class="o">=</span><span class="m">2</span>
+<span class="nv">gpu_mem</span><span class="o">=</span><span class="m">128</span>
+<span class="nv">arm_freq_min</span><span class="o">=</span><span class="m">700</span>
+<span class="nv">initial_turbo</span><span class="o">=</span><span class="m">30</span></code></pre></div>
 <p>设置arm_freq_min主要是因为新版本的kernel会自动调整主频，看起来好像不是很靠谱，我的长期运行在500左右，可以通过/proc/cpuinfo查看。</p>
 
 <h1 id="遇到的问题">遇到的问题</h1>

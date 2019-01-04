@@ -368,141 +368,138 @@ kvm-amd加载），修改/etc/modules，在里面添加如下行，使其自动�
 <p>虚拟网络创建通过bridge实现，相比xen的虚拟网络实现，kvm要简单的多，基本就是创建一
 个bridge，但是不用绑定到物理网卡上，配置nat策略，同时启用dnsmasq负责guest dhcp即
 可，实现方式可以直接修改/etc/qemu-ifup脚本内容如下：</p>
-
-<pre><code class="language-shell">#!/bin/sh
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/bin/sh
+</span><span class="cp"></span>#
+<span class="c1"># Copyright IBM, Corp. 2010</span>
 #
-# Copyright IBM, Corp. 2010
+<span class="c1"># Authors:</span>
+<span class="c1">#  Anthony Liguori &lt;aliguori@us.ibm.com&gt;</span>
 #
-# Authors:
-#  Anthony Liguori &lt;aliguori@us.ibm.com&gt;
-#
-# This work is licensed under the terms of the GNU GPL, version 2.  See
-# the COPYING file in the top-level directory.
+<span class="c1"># This work is licensed under the terms of the GNU GPL, version 2.  See</span>
+<span class="c1"># the COPYING file in the top-level directory.</span>
 
-# Set to the name of your bridge
-BRIDGE=virbr0
+<span class="c1"># Set to the name of your bridge</span>
+<span class="nv">BRIDGE</span><span class="o">=</span>virbr0
 
-# Network information
-NETWORK=192.168.122.0
-NETMASK=255.255.255.0
-GATEWAY=192.168.122.1
-DHCPRANGE=192.168.122.2,192.168.122.254
+<span class="c1"># Network information</span>
+<span class="nv">NETWORK</span><span class="o">=</span><span class="m">192</span>.168.122.0
+<span class="nv">NETMASK</span><span class="o">=</span><span class="m">255</span>.255.255.0
+<span class="nv">GATEWAY</span><span class="o">=</span><span class="m">192</span>.168.122.1
+<span class="nv">DHCPRANGE</span><span class="o">=</span><span class="m">192</span>.168.122.2,192.168.122.254
 
-# Optionally parameters to enable PXE support
-TFTPROOT=
-BOOTP=
+<span class="c1"># Optionally parameters to enable PXE support</span>
+<span class="nv">TFTPROOT</span><span class="o">=</span>
+<span class="nv">BOOTP</span><span class="o">=</span>
 
-do_brctl() {
-    brctl &quot;$@&quot;
-}
+do_brctl<span class="o">()</span> <span class="o">{</span>
+    brctl <span class="s2">&#34;</span><span class="nv">$@</span><span class="s2">&#34;</span>
+<span class="o">}</span>
 
-do_ifconfig() {
-    ifconfig &quot;$@&quot;
-}
+do_ifconfig<span class="o">()</span> <span class="o">{</span>
+    ifconfig <span class="s2">&#34;</span><span class="nv">$@</span><span class="s2">&#34;</span>
+<span class="o">}</span>
 
-do_dd() {
-    dd &quot;$@&quot;
-}
+do_dd<span class="o">()</span> <span class="o">{</span>
+    dd <span class="s2">&#34;</span><span class="nv">$@</span><span class="s2">&#34;</span>
+<span class="o">}</span>
 
-do_iptables_restore() {
-    iptables-restore &quot;$@&quot;
-}
+do_iptables_restore<span class="o">()</span> <span class="o">{</span>
+    iptables-restore <span class="s2">&#34;</span><span class="nv">$@</span><span class="s2">&#34;</span>
+<span class="o">}</span>
 
-do_dnsmasq() {
-    dnsmasq &quot;$@&quot;
-}
+do_dnsmasq<span class="o">()</span> <span class="o">{</span>
+    dnsmasq <span class="s2">&#34;</span><span class="nv">$@</span><span class="s2">&#34;</span>
+<span class="o">}</span>
 
-check_bridge() {
-    if do_brctl show | grep &quot;^$1&quot; &gt; /dev/null 2&gt; /dev/null; then
-        return 1
-    else
-        return 0
-    fi
-}
+check_bridge<span class="o">()</span> <span class="o">{</span>
+    <span class="k">if</span> do_brctl show <span class="p">|</span> grep <span class="s2">&#34;^</span><span class="nv">$1</span><span class="s2">&#34;</span> &gt; /dev/null <span class="m">2</span>&gt; /dev/null<span class="p">;</span> <span class="k">then</span>
+        <span class="k">return</span> <span class="m">1</span>
+    <span class="k">else</span>
+        <span class="k">return</span> <span class="m">0</span>
+    <span class="k">fi</span>
+<span class="o">}</span>
 
-create_bridge() {
-    do_brctl addbr &quot;$1&quot;
-    do_brctl stp &quot;$1&quot; off
-    do_brctl setfd &quot;$1&quot; 0
-    do_ifconfig &quot;$1&quot; &quot;$GATEWAY&quot; netmask &quot;$NETMASK&quot; up
-}
+create_bridge<span class="o">()</span> <span class="o">{</span>
+    do_brctl addbr <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span>
+    do_brctl stp <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span> off
+    do_brctl setfd <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span> <span class="m">0</span>
+    do_ifconfig <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span> <span class="s2">&#34;</span><span class="nv">$GATEWAY</span><span class="s2">&#34;</span> netmask <span class="s2">&#34;</span><span class="nv">$NETMASK</span><span class="s2">&#34;</span> up
+<span class="o">}</span>
 
-enable_ip_forward() {
-    echo 1 | do_dd of=/proc/sys/net/ipv4/ip_forward &gt; /dev/null
-}
+enable_ip_forward<span class="o">()</span> <span class="o">{</span>
+    <span class="nb">echo</span> <span class="m">1</span> <span class="p">|</span> do_dd <span class="nv">of</span><span class="o">=</span>/proc/sys/net/ipv4/ip_forward &gt; /dev/null
+<span class="o">}</span>
 
-add_filter_rules() {
-do_iptables_restore &lt;&lt;EOF
-# Generated by iptables-save v1.3.6 on Fri Aug 24 15:20:25 2007
-*nat
-:PREROUTING ACCEPT [61:9671]
-:POSTROUTING ACCEPT [121:7499]
-:OUTPUT ACCEPT [132:8691]
--A POSTROUTING -s $NETWORK/$NETMASK -j MASQUERADE
-COMMIT
-# Completed on Fri Aug 24 15:20:25 2007
-# Generated by iptables-save v1.3.6 on Fri Aug 24 15:20:25 2007
-*filter
-:INPUT ACCEPT [1453:976046]
-:FORWARD ACCEPT [0:0]
-:OUTPUT ACCEPT [1605:194911]
--A INPUT -i $BRIDGE -p tcp -m tcp --dport 67 -j ACCEPT
--A INPUT -i $BRIDGE -p udp -m udp --dport 67 -j ACCEPT
--A INPUT -i $BRIDGE -p tcp -m tcp --dport 53 -j ACCEPT
--A INPUT -i $BRIDGE -p udp -m udp --dport 53 -j ACCEPT
--A FORWARD -i $1 -o $1 -j ACCEPT
--A FORWARD -s $NETWORK/$NETMASK -i $BRIDGE -j ACCEPT
--A FORWARD -d $NETWORK/$NETMASK -o $BRIDGE -m state --state RELATED,ESTABLISHED
-   -j ACCEPT
--A FORWARD -o $BRIDGE -j REJECT --reject-with icmp-port-unreachable
--A FORWARD -i $BRIDGE -j REJECT --reject-with icmp-port-unreachable
-COMMIT
-# Completed on Fri Aug 24 15:20:25 2007
-EOF
-}
+add_filter_rules<span class="o">()</span> <span class="o">{</span>
+do_iptables_restore <span class="s">&lt;&lt;EOF
+</span><span class="s"># Generated by iptables-save v1.3.6 on Fri Aug 24 15:20:25 2007
+</span><span class="s">*nat
+</span><span class="s">:PREROUTING ACCEPT [61:9671]
+</span><span class="s">:POSTROUTING ACCEPT [121:7499]
+</span><span class="s">:OUTPUT ACCEPT [132:8691]
+</span><span class="s">-A POSTROUTING -s $NETWORK/$NETMASK -j MASQUERADE
+</span><span class="s">COMMIT
+</span><span class="s"># Completed on Fri Aug 24 15:20:25 2007
+</span><span class="s"># Generated by iptables-save v1.3.6 on Fri Aug 24 15:20:25 2007
+</span><span class="s">*filter
+</span><span class="s">:INPUT ACCEPT [1453:976046]
+</span><span class="s">:FORWARD ACCEPT [0:0]
+</span><span class="s">:OUTPUT ACCEPT [1605:194911]
+</span><span class="s">-A INPUT -i $BRIDGE -p tcp -m tcp --dport 67 -j ACCEPT
+</span><span class="s">-A INPUT -i $BRIDGE -p udp -m udp --dport 67 -j ACCEPT
+</span><span class="s">-A INPUT -i $BRIDGE -p tcp -m tcp --dport 53 -j ACCEPT
+</span><span class="s">-A INPUT -i $BRIDGE -p udp -m udp --dport 53 -j ACCEPT
+</span><span class="s">-A FORWARD -i $1 -o $1 -j ACCEPT
+</span><span class="s">-A FORWARD -s $NETWORK/$NETMASK -i $BRIDGE -j ACCEPT
+</span><span class="s">-A FORWARD -d $NETWORK/$NETMASK -o $BRIDGE -m state --state RELATED,ESTABLISHED
+</span><span class="s">   -j ACCEPT
+</span><span class="s">-A FORWARD -o $BRIDGE -j REJECT --reject-with icmp-port-unreachable
+</span><span class="s">-A FORWARD -i $BRIDGE -j REJECT --reject-with icmp-port-unreachable
+</span><span class="s">COMMIT
+</span><span class="s"># Completed on Fri Aug 24 15:20:25 2007
+</span><span class="s">EOF</span>
+<span class="o">}</span>
 
-start_dnsmasq() {
-    do_dnsmasq \
-	--strict-order \
-	--except-interface=lo \
-	--interface=$BRIDGE \
-	--listen-address=$GATEWAY \
-	--bind-interfaces \
-	--dhcp-range=$DHCPRANGE \
-	--conf-file=&quot;&quot; \
-	--pid-file=/var/run/qemu-dnsmasq-$BRIDGE.pid \
-	--dhcp-leasefile=/var/run/qemu-dnsmasq-$BRIDGE.leases \
-	--dhcp-no-override \
-	${TFTPROOT:+&quot;--enable-tftp&quot;} \
-	${TFTPROOT:+&quot;--tftp-root=$TFTPROOT&quot;} \
-	${BOOTP:+&quot;--dhcp-boot=$BOOTP&quot;}
-}
+start_dnsmasq<span class="o">()</span> <span class="o">{</span>
+    do_dnsmasq <span class="se">\
+</span><span class="se"></span>	--strict-order <span class="se">\
+</span><span class="se"></span>	--except-interface<span class="o">=</span>lo <span class="se">\
+</span><span class="se"></span>	--interface<span class="o">=</span><span class="nv">$BRIDGE</span> <span class="se">\
+</span><span class="se"></span>	--listen-address<span class="o">=</span><span class="nv">$GATEWAY</span> <span class="se">\
+</span><span class="se"></span>	--bind-interfaces <span class="se">\
+</span><span class="se"></span>	--dhcp-range<span class="o">=</span><span class="nv">$DHCPRANGE</span> <span class="se">\
+</span><span class="se"></span>	--conf-file<span class="o">=</span><span class="s2">&#34;&#34;</span> <span class="se">\
+</span><span class="se"></span>	--pid-file<span class="o">=</span>/var/run/qemu-dnsmasq-<span class="nv">$BRIDGE</span>.pid <span class="se">\
+</span><span class="se"></span>	--dhcp-leasefile<span class="o">=</span>/var/run/qemu-dnsmasq-<span class="nv">$BRIDGE</span>.leases <span class="se">\
+</span><span class="se"></span>	--dhcp-no-override <span class="se">\
+</span><span class="se"></span>	<span class="si">${</span><span class="nv">TFTPROOT</span><span class="p">:+</span><span class="s2">&#34;--enable-tftp&#34;</span><span class="si">}</span> <span class="se">\
+</span><span class="se"></span>	<span class="si">${</span><span class="nv">TFTPROOT</span><span class="p">:+</span><span class="s2">&#34;--tftp-root=</span><span class="nv">$TFTPROOT</span><span class="s2">&#34;</span><span class="si">}</span> <span class="se">\
+</span><span class="se"></span>	<span class="si">${</span><span class="nv">BOOTP</span><span class="p">:+</span><span class="s2">&#34;--dhcp-boot=</span><span class="nv">$BOOTP</span><span class="s2">&#34;</span><span class="si">}</span>
+<span class="o">}</span>
 
-setup_bridge_nat() {
-    if check_bridge &quot;$1&quot; ; then
-	create_bridge &quot;$1&quot;
+setup_bridge_nat<span class="o">()</span> <span class="o">{</span>
+    <span class="k">if</span> check_bridge <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span> <span class="p">;</span> <span class="k">then</span>
+	create_bridge <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span>
 	enable_ip_forward
-	add_filter_rules &quot;$1&quot;
-	start_dnsmasq &quot;$1&quot;
-    fi
-}
+	add_filter_rules <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span>
+	start_dnsmasq <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span>
+    <span class="k">fi</span>
+<span class="o">}</span>
 
-setup_bridge_vlan() {
-    if check_bridge &quot;$1&quot; ; then
-	create_bridge &quot;$1&quot;
-	start_dnsmasq &quot;$1&quot;
-    fi
-}
+setup_bridge_vlan<span class="o">()</span> <span class="o">{</span>
+    <span class="k">if</span> check_bridge <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span> <span class="p">;</span> <span class="k">then</span>
+	create_bridge <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span>
+	start_dnsmasq <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span>
+    <span class="k">fi</span>
+<span class="o">}</span>
 
-setup_bridge_nat &quot;$BRIDGE&quot;
+setup_bridge_nat <span class="s2">&#34;</span><span class="nv">$BRIDGE</span><span class="s2">&#34;</span>
 
-if test &quot;$1&quot; ; then
-    do_ifconfig &quot;$1&quot; 0.0.0.0 up
-    do_brctl addif &quot;$BRIDGE&quot; &quot;$1&quot;
-fi
-cmdcmd
-</code></pre>
-
+<span class="k">if</span> <span class="nb">test</span> <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span> <span class="p">;</span> <span class="k">then</span>
+    do_ifconfig <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span> <span class="m">0</span>.0.0.0 up
+    do_brctl addif <span class="s2">&#34;</span><span class="nv">$BRIDGE</span><span class="s2">&#34;</span> <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span>
+<span class="k">fi</span>
+cmdcmd</code></pre></div>
 <p>这样当你在启动一个kvm guest的时候，就会自动创建一个nat模式的网络，bridge名字是
 virbr0，guest通过dhcp获得一个192.168.122.0/24网段的ip地址，可以联通互联网。</p>
 
@@ -642,20 +639,17 @@ cpu/ram/storage/network/cdrom/soundcard/display，我们一一描述：</p>
 <h2 id="启动虚拟机">启动虚拟机</h2>
 
 <p>下面是我的启动命令：</p>
-
-<pre><code class="language-shell">sudo kvm -m 2048 -smp 2 -cpu host -enable-kvm -boot c \
-    -drive file=/home/tacy/software/CentOS-6.3-x86_64.iso,media=cdrom -boot d \
-    -drive file=centos.img,if=virtio,cache=none,aio=native \
-    -net nic,vlan=0,model=virtio,macaddr=DE:AD:BE:EF:FC:70 \
-    -net tap,vlan=0,vhost=on \
-    -soundhw es1370 \
-    -rtc base=localtime,clock=vm \
-    -usbdevice host:19d2:0117 -usbdevice tablet \
-    -monitor unix:/home/tacy/vm/monitor/centos.monitor,server,nowait \
-    -vga std -nographic -vnc :0 \
-    &gt;/dev/null 2&gt;&amp;1 &amp;
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">sudo kvm -m <span class="m">2048</span> -smp <span class="m">2</span> -cpu host -enable-kvm -boot c <span class="se">\
+</span><span class="se"></span>    -drive <span class="nv">file</span><span class="o">=</span>/home/tacy/software/CentOS-6.3-x86_64.iso,media<span class="o">=</span>cdrom -boot d <span class="se">\
+</span><span class="se"></span>    -drive <span class="nv">file</span><span class="o">=</span>centos.img,if<span class="o">=</span>virtio,cache<span class="o">=</span>none,aio<span class="o">=</span>native <span class="se">\
+</span><span class="se"></span>    -net nic,vlan<span class="o">=</span><span class="m">0</span>,model<span class="o">=</span>virtio,macaddr<span class="o">=</span>DE:AD:BE:EF:FC:70 <span class="se">\
+</span><span class="se"></span>    -net tap,vlan<span class="o">=</span><span class="m">0</span>,vhost<span class="o">=</span>on <span class="se">\
+</span><span class="se"></span>    -soundhw es1370 <span class="se">\
+</span><span class="se"></span>    -rtc <span class="nv">base</span><span class="o">=</span>localtime,clock<span class="o">=</span>vm <span class="se">\
+</span><span class="se"></span>    -usbdevice host:19d2:0117 -usbdevice tablet <span class="se">\
+</span><span class="se"></span>    -monitor unix:/home/tacy/vm/monitor/centos.monitor,server,nowait <span class="se">\
+</span><span class="se"></span>    -vga std -nographic -vnc :0 <span class="se">\
+</span><span class="se"></span>    &gt;/dev/null <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">&amp;</span></code></pre></div>
 <p>上面我指定了光驱,和从光驱启动，这样你通过vnc就可以连接上虚拟机，进行系统安装了。</p>
 
 <h1 id="虚拟机串口">虚拟机串口</h1>
@@ -688,13 +682,10 @@ console上的一些异常，比如导致启动失败的异常，这时候，你�
 <p>如果把系统安装在virtio磁盘上，安装的时候必须指定驱动，否则找不到磁盘，驱动下载地
 址可以参考[[<a href="http://www.linux-kvm.org/page/WindowsGuestDrivers][Windows">http://www.linux-kvm.org/page/WindowsGuestDrivers][Windows</a> guest drivers]]，另外注意，在安装的时候加载virtio驱动，需要把驱
 动光盘防止在第一个光盘驱动器，否则会无法启动，例如：</p>
-
-<pre><code class="language-shell">sudo kvm -m 2048 -smp 2 -cpu host -enable-kvm -boot d \
-    -drive file=/home/tacy/vm/software/virtio-win-0.1-30.iso,media=cdrom \
-    -drive file=/home/tacy/vm/software/win7/win7_ultimate_sp1.iso,media=cdrom \
-    -drive file=win7.template.img,if=virtio,cache=none,aio=native \
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">sudo kvm -m <span class="m">2048</span> -smp <span class="m">2</span> -cpu host -enable-kvm -boot d <span class="se">\
+</span><span class="se"></span>    -drive <span class="nv">file</span><span class="o">=</span>/home/tacy/vm/software/virtio-win-0.1-30.iso,media<span class="o">=</span>cdrom <span class="se">\
+</span><span class="se"></span>    -drive <span class="nv">file</span><span class="o">=</span>/home/tacy/vm/software/win7/win7_ultimate_sp1.iso,media<span class="o">=</span>cdrom <span class="se">\
+</span><span class="se"></span>    -drive <span class="nv">file</span><span class="o">=</span>win7.template.img,if<span class="o">=</span>virtio,cache<span class="o">=</span>none,aio<span class="o">=</span>native <span class="err">\</span></code></pre></div>
 <p>采用virtio磁盘安装，我测试了一下，在我机器上不超过15分钟就完成了。</p>
 
 <h2 id="audio">audio</h2>
@@ -723,35 +714,23 @@ console上的一些异常，比如导致启动失败的异常，这时候，你�
 
 <p>就为这问题，害我重复编译了好几遍qemu，最后看到这两个帖子太恍然大悟[fn:4][fn:5]，
 查了一下我机器上的usb口：</p>
-
-<pre><code class="language-shell">tacy@tacy:~$ lspci|grep USB
-00:1a.0 USB controller: Intel Corporation 6 Series/C200 Series Chipset Family USB Enhanced Host Controller #2 (rev 05)
-00:1d.0 USB controller: Intel Corporation 6 Series/C200 Series Chipset Family USB Enhanced Host Controller #1 (rev 05)
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">tacy@tacy:~$ lspci<span class="p">|</span>grep USB
+<span class="m">00</span>:1a.0 USB controller: Intel Corporation <span class="m">6</span> Series/C200 Series Chipset Family USB Enhanced Host Controller <span class="c1">#2 (rev 05)</span>
+<span class="m">00</span>:1d.0 USB controller: Intel Corporation <span class="m">6</span> Series/C200 Series Chipset Family USB Enhanced Host Controller <span class="c1">#1 (rev 05)</span></code></pre></div>
 <p>没错，我的是ehci，不是uhci，而qemu用-usb方式模拟出来的是uhci，搞半天，在uhci上接
 了2.0的设备，不能正常驱动，知道原因，解决起来就简单了：</p>
-
-<pre><code class="language-shell">-device usb-ehci,id=ehci \
--drive if=none,id=usbstick,file=/dev/sdX \
--device usb-storage,bus=ehci.0,drive=usbstick \
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">-device usb-ehci,id<span class="o">=</span>ehci <span class="se">\
+</span><span class="se"></span>-drive <span class="k">if</span><span class="o">=</span>none,id<span class="o">=</span>usbstick,file<span class="o">=</span>/dev/sdX <span class="se">\
+</span><span class="se"></span>-device usb-storage,bus<span class="o">=</span>ehci.0,drive<span class="o">=</span>usbstick <span class="err">\</span></code></pre></div>
 <p>其中的sdX是你的usb驱动名，这样你就可以正常在windows上看到usb驱动器了，后面两行可
 以通过monitor动态添加，但是第一行必须带上：</p>
-
-<pre><code class="language-shell">drive_add 0 id=usbdrive,if=none,file=/dev/sdX
-device_add usb-storage,id=usbdrive,bus=ehci.0,drive=usbdrive
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">drive_add <span class="m">0</span> <span class="nv">id</span><span class="o">=</span>usbdrive,if<span class="o">=</span>none,file<span class="o">=</span>/dev/sdX
+device_add usb-storage,id<span class="o">=</span>usbdrive,bus<span class="o">=</span>ehci.0,drive<span class="o">=</span>usbdrive</code></pre></div>
 <h2 id="shutdown-about-winxp-and-win2003">shutdown（about winxp and win2003)</h2>
 
 <p>gpedit.msc  (允许无用户登入关机）</p>
-
-<pre><code class="language-shell">Computer Configuration\Windows Settings\Security Settings\Local Policies\
-Security Options\Shutdown: Allow system to be shut down without having to log on
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">Computer Configuration<span class="se">\W</span>indows Settings<span class="se">\S</span>ecurity Settings<span class="se">\L</span>ocal Policies<span class="se">\
+</span><span class="se"></span>Security Options<span class="se">\S</span>hutdown: Allow system to be shut down without having to log on</code></pre></div>
 <dl>
 <dt>regedit  （有用户登入时，提示超时关机）</dt>
 <dd>[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows]  &ldquo;ShutdownWarningDialogTimeout&rdquo;=dword:00000001</dd>
@@ -773,8 +752,7 @@ Security Options\Shutdown: Allow system to be shut down without having to log on
 <h2 id="准备软件包">准备软件包</h2>
 
 <p>下载相关依赖包和代码[fn:9]</p>
-
-<pre><code class="language-shell">sudo apt-get install libtool libnss3-dev libxrandr-dev libxfixes-dev
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">sudo apt-get install libtool libnss3-dev libxrandr-dev libxfixes-dev
   libaio-dev libsasl2-dev libjpeg8-dev libpixman-1-dev libcap-dev
   libattr1-dev libusb-1.0.0-dev texinfo
 wget http://downloads.us.xiph.org/releases/celt/celt-0.5.1.3.tar.gz
@@ -782,9 +760,7 @@ wget http://spice-space.org/download/releases/spice-protocol-0.12.4.tar.bz2
 wget http://spice-space.org/download/releases/spice-0.12.2.tar.bz2
 wget http://spice-space.org/download/libcacard/libcacard-0.1.2.tar.bz2
 wget http://spice-space.org/download/usbredir/usbredir-0.6.tar.bz2
-wget http://wiki.qemu-project.org/download/qemu-1.3.1.tar.bz2
-</code></pre>
-
+wget http://wiki.qemu-project.org/download/qemu-1.3.1.tar.bz2</code></pre></div>
 <p>这里的celt版本是指定版本，缺省ubuntu 12.04上的版本不行，必须安装这个版本，注意，
 我这里由于没有使用virt-manager,使用系统里面相关的spice包都被我删除了，一般你的情
 况不一样，应该不用从头编译[fn:10]，另外这里没用spice代码库里的qemu，而是直接用的
@@ -857,25 +833,22 @@ sudo make install
 <h2 id="启动虚拟机-1">启动虚拟机</h2>
 
 <p>启动windows虚拟机</p>
-
-<pre><code class="language-shell">sudo LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH} qemu-system-x86_64 \
-    -m 2048 -smp 2 -cpu host -enable-kvm -boot d \
-    -drive file=win7.template.img,if=virtio,cache=none,aio=native \
-    -net nic,vlan=0,model=virtio,macaddr=DE:AD:BE:EF:FC:74 \
-    -net tap,vlan=0,vhost=on \
-    -soundhw ac97 \
-    -rtc base=localtime,clock=vm \
-    -device virtio-serial-pci \
-    -device usb-ehci,id=ehci \
-    -drive if=none,id=usbstick,file=/dev/sdc \
-    -device usb-storage,bus=ehci.0,drive=usbstick \
-    -device virtserialport,chardev=spicechannel0,name=com.redhat.spice.0 \
-    -chardev spicevmc,id=spicechannel0,name=vdagent \
-    -monitor unix:/home/tacy/vm/monitor/win7.monitor,server,nowait \
-    -vga qxl -spice port=5900,addr=127.0.0.1,disable-ticketing \
-    &gt;/dev/null 2&gt;&amp;1 &amp;
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">sudo <span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span>/usr/local/lib:<span class="si">${</span><span class="nv">LD_LIBRARY_PATH</span><span class="si">}</span> qemu-system-x86_64 <span class="se">\
+</span><span class="se"></span>    -m <span class="m">2048</span> -smp <span class="m">2</span> -cpu host -enable-kvm -boot d <span class="se">\
+</span><span class="se"></span>    -drive <span class="nv">file</span><span class="o">=</span>win7.template.img,if<span class="o">=</span>virtio,cache<span class="o">=</span>none,aio<span class="o">=</span>native <span class="se">\
+</span><span class="se"></span>    -net nic,vlan<span class="o">=</span><span class="m">0</span>,model<span class="o">=</span>virtio,macaddr<span class="o">=</span>DE:AD:BE:EF:FC:74 <span class="se">\
+</span><span class="se"></span>    -net tap,vlan<span class="o">=</span><span class="m">0</span>,vhost<span class="o">=</span>on <span class="se">\
+</span><span class="se"></span>    -soundhw ac97 <span class="se">\
+</span><span class="se"></span>    -rtc <span class="nv">base</span><span class="o">=</span>localtime,clock<span class="o">=</span>vm <span class="se">\
+</span><span class="se"></span>    -device virtio-serial-pci <span class="se">\
+</span><span class="se"></span>    -device usb-ehci,id<span class="o">=</span>ehci <span class="se">\
+</span><span class="se"></span>    -drive <span class="k">if</span><span class="o">=</span>none,id<span class="o">=</span>usbstick,file<span class="o">=</span>/dev/sdc <span class="se">\
+</span><span class="se"></span>    -device usb-storage,bus<span class="o">=</span>ehci.0,drive<span class="o">=</span>usbstick <span class="se">\
+</span><span class="se"></span>    -device virtserialport,chardev<span class="o">=</span>spicechannel0,name<span class="o">=</span>com.redhat.spice.0 <span class="se">\
+</span><span class="se"></span>    -chardev spicevmc,id<span class="o">=</span>spicechannel0,name<span class="o">=</span>vdagent <span class="se">\
+</span><span class="se"></span>    -monitor unix:/home/tacy/vm/monitor/win7.monitor,server,nowait <span class="se">\
+</span><span class="se"></span>    -vga qxl -spice <span class="nv">port</span><span class="o">=</span><span class="m">5900</span>,addr<span class="o">=</span><span class="m">127</span>.0.0.1,disable-ticketing <span class="se">\
+</span><span class="se"></span>    &gt;/dev/null <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">&amp;</span></code></pre></div>
 <h2 id="客户端连接">客户端连接</h2>
 
 <dl>
@@ -941,11 +914,8 @@ src/qemu1.3.1/docs目录下，拷贝到/usr/local/etc/qemu/目录下</p>
 <p>base image简单可以理解为模板，举个例子，你在部署公司的虚拟化环境，公司的所有的系
 统都跑在centos上，只是上面配置的应用各有不同，有c开发的，有java开发的等等，简单
 来说，你会先安装一个base image</p>
-
-<pre><code class="language-shell">$kvm-img create -f qcow2 centos.qcow2 10g
-$kvm -drive file=centos.qcow2 -m 1024 -boot d -drive file=centos.iso,media=cdrom
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">$kvm</span>-img create -f qcow2 centos.qcow2 10g
+<span class="nv">$kvm</span> -drive <span class="nv">file</span><span class="o">=</span>centos.qcow2 -m <span class="m">1024</span> -boot d -drive <span class="nv">file</span><span class="o">=</span>centos.iso,media<span class="o">=</span>cdrom</code></pre></div>
 <dl>
 <dt>安装完操作系统和相应补丁之后，你可以从你的base image创建一个新的image:</dt>
 <dd>$kvm-img create -b centos.qcow2 -f qcow2 centos-clone.qcow2</dd>

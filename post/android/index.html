@@ -353,11 +353,8 @@ adb安装的应用就没有了。</p>
 <p>你可以通过mksdcard创建sd镜像文件。</p>
 
 <p>通过adb安装app和拷贝文件：</p>
-
-<pre><code class="language-shell">adb push localfile /sdcard/
-adb install test.apk
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">adb push localfile /sdcard/
+adb install test.apk</code></pre></div>
 <dl>
 <dt>启动sdk manager：</dt>
 <dd><p>android sdk</p></dd>
@@ -429,37 +426,25 @@ add access point by clicking &ldquo;+&rdquo; button and then type favorite name 
 <p>首先<code>lsusb</code>获取到id, 例如<code>us 001 Device 004: ID 17ef:776d Lenovo</code></p>
 
 <p>添加udev rules:</p>
-
-<pre><code>cat /etc/udev/rules.d/51-android.rules
+<div class="highlight"><pre class="chroma">cat /etc/udev/rules.d/51-android.rules
 DB your devices
-SUBSYSTEM==&quot;usb&quot;, ATTR{idVendor}==&quot;17ef&quot;, ATTR{Product}==&quot;776d&quot;, MODE=&quot;0666&quot;
-</code></pre>
-
+SUBSYSTEM==&#34;usb&#34;, ATTR{idVendor}==&#34;17ef&#34;, ATTR{Product}==&#34;776d&#34;, MODE=&#34;0666&#34;</pre></div>
 <p>然后执行<code>sudo adb kill-server &amp;&amp; sudo adb start-server</code></p>
 
 <p>接下来执行<code>adb devices</code>, 应该看到下面这样的行输出:</p>
-
-<pre><code>List of devices attached
-813d4882        device
-</code></pre>
-
+<div class="highlight"><pre class="chroma">List of devices attached
+813d4882        device</pre></div>
 <h3 id="获取手机上的应用">获取手机上的应用</h3>
-
-<pre><code class="language-abap">adb shell pm list packages -f
+<div class="highlight"><pre class="chroma"><code class="language-abap" data-lang="abap">adb shell pm list packages -f
 adb pull -p PATH/base.apk OUTPUT.apk
 
 安装到指定设备
-adb -s &quot;deviceIDfromlist&quot; install path+apkName
-</code></pre>
-
+adb -s &#34;deviceIDfromlist&#34; install path+apkName</code></pre></div>
 <h3 id="apk">apk</h3>
 
 <p>查看apk适配的架构</p>
-
-<pre><code class="language-abap">/apk/# build-tools/version/aapt dump badging ymatou-shop.apk
-native-code: 'arm64-v8a' 'armeabi' 'armeabi-v7a' 'x86' 'x86_64'
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-abap" data-lang="abap">/apk/# build-tools/version/aapt dump badging ymatou-shop.apk
+native-code: &#39;arm64-v8a&#39; &#39;armeabi&#39; &#39;armeabi-v7a&#39; &#39;x86&#39; &#39;x86_64&#39;</code></pre></div>
 <h2 id="字体显示方框">字体显示方框</h2>
 
 <p>setting -&gt; Appearance -&gt; Override default fonts by (not recommended)</p>

@@ -382,17 +382,11 @@ cas负责销毁创建的session。从故障看，问题就是出现在销毁sess
 
 <p>通过tcpdump来抓包：
 sso服务器端：</p>
-
-<pre><code class="language-shell">[root@localhost ~]# tcpdump -p -nn -s 0 tcp port 8088 and host 172.16.102.205  -w sso.dump
-tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 65535 bytes
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@localhost ~<span class="o">]</span><span class="c1"># tcpdump -p -nn -s 0 tcp port 8088 and host 172.16.102.205  -w sso.dump</span>
+tcpdump: listening on eth0, link-type EN10MB <span class="o">(</span>Ethernet<span class="o">)</span>, capture size <span class="m">65535</span> bytes</code></pre></div>
 <p>应用端：</p>
-
-<pre><code class="language-shell">[root@trust-test-app ~]# tcpdump -p -nn -s 0 host 172.17.102.106 and not tcp port 8001 -w sso-logout.dump
-tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 65535 bytes
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@trust-test-app ~<span class="o">]</span><span class="c1"># tcpdump -p -nn -s 0 host 172.17.102.106 and not tcp port 8001 -w sso-logout.dump</span>
+tcpdump: listening on eth0, link-type EN10MB <span class="o">(</span>Ethernet<span class="o">)</span>, capture size <span class="m">65535</span> bytes</code></pre></div>
 <p>用wireshark分析包，可以看到CAS发出去的销毁session请求被reset，查看了一下环境，问
 题出现在apache上，询问了一下，apache是自己编译的，而且配置文件也是乱七八糟，没想
 明白为啥被reset而不是connection reject之类的，修改apache配置问题解决。</p>

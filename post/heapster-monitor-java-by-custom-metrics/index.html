@@ -332,17 +332,14 @@ if (!doNotTrack) {
 <h2 id="cadvisor-application-metrics-1">Cadvisor application metrics<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></h2>
 
 <p>Cadvisor在收集Container监控信息的时候, 会检测是否存在以<code>io.cadvisor.metric</code>开头的Label(值指向一个配置文件), 如果存在, Cadvisor会认为这个Container有应用监控指标需要收集, 他就会去读取Label指向的配置文件, 配置文件的格式:</p>
-
-<pre><code>{
-  &quot;endpoint&quot; : &quot;http://localhost:1234/metrics&quot;,
-  &quot;metrics_config&quot; : [
-    &quot;jvm_memory_pool_bytes_used&quot;,
-    &quot;jvm_threads_current&quot;,
-    &quot;tomcat_threadpool_currentthreadsbusy&quot;
+<div class="highlight"><pre class="chroma">{
+  &#34;endpoint&#34; : &#34;http://localhost:1234/metrics&#34;,
+  &#34;metrics_config&#34; : [
+    &#34;jvm_memory_pool_bytes_used&#34;,
+    &#34;jvm_threads_current&#34;,
+    &#34;tomcat_threadpool_currentthreadsbusy&#34;
   ]
-}
-</code></pre>
-
+}</pre></div>
 <p>上面是一个Promethus格式的endpoint, 输出信息是结构化的, Cadvisor会请求配置文件中的endpoint, 获取对应的监控项; 当然, 如果你希望收集endpoint提供的所有监控项, 省略metrics_config.</p>
 
 <p>另外, Cadvisor还支持非结构化的信息, 具体就不展开了.</p>
@@ -366,25 +363,18 @@ if (!doNotTrack) {
 <p>下面我们用docker.io/tomcat做baseimage, 制作支持custom metrics的image.</p>
 
 <p>我们需要增加修改catalina.sh增加jmx支持, 同时把配置文件注入:</p>
-
-<pre><code>echo &quot;{\&quot;endpoint\&quot;:\&quot;http://$POD_IP:1234/metrics\&quot;}&quot; &gt;/etc/custom-metrics/definition.json
-JAVA_OPTS=&quot;$JAVA_OPTS -javaagent:$CATALINA_HOME/lib/jmx_prometheus_javaagent-0.9.jar=1234:$CATALINA_HOME/lib/config.yaml&quot;
-</code></pre>
-
+<div class="highlight"><pre class="chroma">echo &#34;{\&#34;endpoint\&#34;:\&#34;http://$POD_IP:1234/metrics\&#34;}&#34; &gt;/etc/custom-metrics/definition.json
+JAVA_OPTS=&#34;$JAVA_OPTS -javaagent:$CATALINA_HOME/lib/jmx_prometheus_javaagent-0.9.jar=1234:$CATALINA_HOME/lib/config.yaml&#34;</pre></div>
 <p>增加<a href="https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.9/jmx_prometheus_javaagent-0.9.jar">jmx-exporter jar</a>和配置文件<a href="https://github.com/prometheus/jmx_exporter/blob/master/example_configs/tomcat.yml">config.yaml</a>到image.</p>
 
 <p>Dockerfile内容:</p>
-
-<pre><code>[root@primeton-tacy-k8s-master custom_metrics]# cat Dockerfile
+<div class="highlight"><pre class="chroma">[root@primeton-tacy-k8s-master custom_metrics]# cat Dockerfile
 FROM tomcat:8.0.44-jre8-alpine
 ADD  jmx_prometheus_javaagent-0.9.jar /usr/local/tomcat/lib/
 ADD  config.yaml /usr/local/tomcat/lib/
-ADD  catalina.sh /usr/local/tomcat/bin/
-</code></pre>
-
+ADD  catalina.sh /usr/local/tomcat/bin/</pre></div>
 <p>我制作好的imagey已经push在docker.io上, 可以直接用来测试, 测试方法:</p>
-
-<pre><code>[root@primeton-tacy-k8s-master 1.5]# cat tomcat-metrics.yaml
+<div class="highlight"><pre class="chroma">[root@primeton-tacy-k8s-master 1.5]# cat tomcat-metrics.yaml
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -438,36 +428,33 @@ tomcat-metrics-133681138-kphcm   1/1       Running   0          1d        192.16
 
 [root@primeton-tacy-k8s-master 1.5]# curl http://localhost:8080/api/v1/proxy/nodes/primeton-tacy-k8s-node2/stats/summary
 ...
-      &quot;userDefinedMetrics&quot;: [
+      &#34;userDefinedMetrics&#34;: [
        {
-        &quot;name&quot;: &quot;jvm_threads_deadlocked_monitor&quot;,
-        &quot;type&quot;: &quot;gauge&quot;,
-        &quot;units&quot;: &quot;&quot;,
-        &quot;time&quot;: &quot;2017-06-09T13:38:10Z&quot;,
-        &quot;value&quot;: 0
+        &#34;name&#34;: &#34;jvm_threads_deadlocked_monitor&#34;,
+        &#34;type&#34;: &#34;gauge&#34;,
+        &#34;units&#34;: &#34;&#34;,
+        &#34;time&#34;: &#34;2017-06-09T13:38:10Z&#34;,
+        &#34;value&#34;: 0
        },
        {
-        &quot;name&quot;: &quot;tomcat_bytesreceived_total&quot;,
-        &quot;type&quot;: &quot;cumulative&quot;,
-        &quot;units&quot;: &quot;&quot;,
-        &quot;time&quot;: &quot;2017-06-09T13:38:10Z&quot;,
-        &quot;value&quot;: 0
+        &#34;name&#34;: &#34;tomcat_bytesreceived_total&#34;,
+        &#34;type&#34;: &#34;cumulative&#34;,
+        &#34;units&#34;: &#34;&#34;,
+        &#34;time&#34;: &#34;2017-06-09T13:38:10Z&#34;,
+        &#34;value&#34;: 0
        },
        {
-        &quot;name&quot;: &quot;jmx_config_reload_success_total&quot;,
-        &quot;type&quot;: &quot;cumulative&quot;,
-        &quot;units&quot;: &quot;&quot;,
-        &quot;time&quot;: &quot;2017-06-09T13:38:10Z&quot;,
-        &quot;value&quot;: 0
+        &#34;name&#34;: &#34;jmx_config_reload_success_total&#34;,
+        &#34;type&#34;: &#34;cumulative&#34;,
+        &#34;units&#34;: &#34;&#34;,
+        &#34;time&#34;: &#34;2017-06-09T13:38:10Z&#34;,
+        &#34;value&#34;: 0
        },
-...
-</code></pre>
-
+...</pre></div>
 <p>看到userDefinedMetrics就可以了.</p>
 
 <p>最后, 你需要部署heapster组件, 直接用log sink验证, 能看到有<code>custom/jmx_config_reload_failure_total = 0.000000</code>类似的指标.</p>
-
-<pre><code>[root@primeton-tacy-k8s-master heapster]# cat heapster.yaml
+<div class="highlight"><pre class="chroma">[root@primeton-tacy-k8s-master heapster]# cat heapster.yaml
 apiVersion: v1
 kind: ReplicationController
 metadata:
@@ -492,9 +479,7 @@ spec:
         - /heapster
         - --source=kubernetes.summary_api:https://kubernetes.default
         - --sink=log
-        - -logtostderr=1
-</code></pre>
-<div class="footnotes">
+        - -logtostderr=1</pre></div><div class="footnotes">
 
 <hr />
 

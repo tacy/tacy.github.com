@@ -328,34 +328,25 @@ if (!doNotTrack) {
 <h1 id="display">Display</h1>
 
 <h2 id="too-long-line-highlight">too long line highlight</h2>
-
-<pre><code class="language-shell">   (setq whitespace-style '(lines))
-   (setq whitespace-line-column 78)
-   (global-whitespace-mode 1)
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">   <span class="o">(</span>setq whitespace-style <span class="err">&#39;</span><span class="o">(</span>lines<span class="o">))</span>
+   <span class="o">(</span>setq whitespace-line-column <span class="m">78</span><span class="o">)</span>
+   <span class="o">(</span>global-whitespace-mode <span class="m">1</span><span class="o">)</span></code></pre></div>
 <h1 id="macro">Macro</h1>
-
-<pre><code class="language-shell">| key sequence | comment                       |
-|--------------+-------------------------------|
-| F3           | start record macro            |
-| F4           | end record macro              |
-| C-x (        | start record macro            |
-| C-x )        | end record macro              |
-| C-x e        | execute last macro            |
-| C-u 10 C-x e | execute last macro repeat 100 |
-|              |                               |
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="p">|</span> key sequence <span class="p">|</span> comment                       <span class="p">|</span>
+<span class="p">|</span>--------------+-------------------------------<span class="p">|</span>
+<span class="p">|</span> F3           <span class="p">|</span> start record macro            <span class="p">|</span>
+<span class="p">|</span> F4           <span class="p">|</span> end record macro              <span class="p">|</span>
+<span class="p">|</span> C-x <span class="o">(</span>        <span class="p">|</span> start record macro            <span class="p">|</span>
+<span class="p">|</span> C-x <span class="o">)</span>        <span class="p">|</span> end record macro              <span class="p">|</span>
+<span class="p">|</span> C-x e        <span class="p">|</span> execute last macro            <span class="p">|</span>
+<span class="p">|</span> C-u <span class="m">10</span> C-x e <span class="p">|</span> execute last macro repeat <span class="m">100</span> <span class="p">|</span>
+<span class="p">|</span>              <span class="p">|</span>                               <span class="p">|</span></code></pre></div>
 <h1 id="navigate">Navigate</h1>
-
-<pre><code class="language-shell">| key sequence | comment               |
-|--------------+-----------------------|
-| C-x r m      | add file to bookmarks |
-| C-x r l      | open bookmarks        |
-|              |                       |
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="p">|</span> key sequence <span class="p">|</span> comment               <span class="p">|</span>
+<span class="p">|</span>--------------+-----------------------<span class="p">|</span>
+<span class="p">|</span> C-x r m      <span class="p">|</span> add file to bookmarks <span class="p">|</span>
+<span class="p">|</span> C-x r l      <span class="p">|</span> open bookmarks        <span class="p">|</span>
+<span class="p">|</span>              <span class="p">|</span>                       <span class="p">|</span></code></pre></div>
 <h1 id="copy-paste">Copy &amp; Paste</h1>
 
 <p>| key sequence  | comment           |
@@ -373,21 +364,15 @@ if (!doNotTrack) {
 <h1 id="replace">Replace</h1>
 
 <p>替换字符串有很灵活的方式，比如我需要替换如下字符串组用序列数字：</p>
-
-<pre><code class="language-shell">str01
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">str01
 str01
 str01
-str01
-</code></pre>
-
+str01</code></pre></div>
 <p>替换成</p>
-
-<pre><code class="language-shell">str1
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">str1
 str2
 str3
-str4
-</code></pre>
-
+str4</code></pre></div>
 <dl>
 <dt>执行如下键序列：</dt>
 <dd>:M-x replace-regexp</dd>
@@ -415,20 +400,18 @@ str4
 
 <ol>
 <li><p>在你的Home目录下创建文件: <code>~/.config/systemd/user/emacs.service</code>, 注意这里的Environment, 如果不设置的话, 中文输入法不能激活(这几个环境变量一般我们是写在xprofile里面, 系统登入之后才生效, 之前启动的程序无法看到)</p>
-
-<pre><code>[Unit]
+<div class="highlight"><pre class="chroma">[Unit]
 Description=Emacs: the extensible, self-documenting text editor
 
 [Service]
 Type=forking
 Environment=GTK_IM_MODULE=ibus XMODIFIERS=@im=ibus QT_IM_MODULE=ibus
 ExecStart=/usr/bin/emacs --daemon
-ExecStop=/usr/bin/emacsclient --eval &quot;(kill-emacs)&quot;
+ExecStop=/usr/bin/emacsclient --eval &#34;(kill-emacs)&#34;
 Restart=always
 
 [Install]
-WantedBy=default.target
-</code></pre></li>
+WantedBy=default.target</pre></div></li>
 
 <li><p>Enable该服务: <code>systemctl --user enable emacs</code></p></li>
 
@@ -462,11 +445,8 @@ WantedBy=default.target
 <h2 id="edit">Edit</h2>
 
 <h3 id="abbrev">abbrev</h3>
-
-<pre><code>;; turn on abbrev mode globally
-(setq-default abbrev-mode t)
-</code></pre>
-
+<div class="highlight"><pre class="chroma">;; turn on abbrev mode globally
+(setq-default abbrev-mode t)</pre></div>
 <p>abbrev允许你自定义字符串缩写, 例如: 我的Kubernetes项目GOPATH非常长, 输入很痛苦, 我希望减少输入, 通过<code>C-x a g</code>定义global abbrev, 这样下次就能通过<code>M-/</code>自动扩展:</p>
 
 <p>Define Abbrev</p>
@@ -483,14 +463,11 @@ Now, when you type “bg” followed by a space or return, it&rsquo;ll expand to
 Select the text.
 Call universal-argument 【Ctrl+u】, type “0”.
 Call add-global-abbrev 【Ctrl+x a g】, in the prompt, type “faq”.</p>
-
-<pre><code>/home/tacy/workspace/go/kubernetes/src/k8s.io/kubernetes/Godeps/_workspace/:/home/tacy/workspace/go/kubernetes/src/
+<div class="highlight"><pre class="chroma">/home/tacy/workspace/go/kubernetes/src/k8s.io/kubernetes/Godeps/_workspace/:/home/tacy/workspace/go/kubernetes/src/
 C-x a g
 kroot
 
-M-x setenv RET GOPATH RET kroot M-/
-</code></pre>
-
+M-x setenv RET GOPATH RET kroot M-/</pre></div>
 <p>列出已经定义的abbrev: M-x list-abbrev RET</p>
 
 <p>其他相关参考:<a href="Abbrev Mode">https://www.emacswiki.org/emacs/AbbrevMode</a></p>
@@ -506,8 +483,7 @@ M-x setenv RET GOPATH RET kroot M-/
 <h3 id="region">Region</h3>
 
 <p>激活Region通过: <code>C-SPC</code></p>
-
-<pre><code>Kill it with C-w (see Killing).
+<div class="highlight"><pre class="chroma">Kill it with C-w (see Killing).
 Copy it to the kill ring with M-w (see Yanking).
 Convert case with C-x C-l or C-x C-u (see Case).
 Undo changes within it using C-u C-/ (see Undo).
@@ -517,14 +493,11 @@ Fill it as text with M-x fill-region (see Filling).
 Check the spelling of words within it with M-$ (see Spelling).
 Evaluate it as Lisp code with M-x eval-region (see Lisp Eval).
 Save it in a register with C-x r s (see Registers).
-Save it in a buffer or a file (see Accumulating Text).
-</code></pre>
-
+Save it in a buffer or a file (see Accumulating Text).</pre></div>
 <h3 id="rectangles">Rectangles</h3>
 
 <p>激活Retangles通过: <code>C-x SPC</code></p>
-
-<pre><code>C-x r o
+<div class="highlight"><pre class="chroma">C-x r o
 Insert blank space to fill the space of the region-rectangle (open-rectangle). This pushes the previous contents of the region-rectangle to the right.
 C-x r N
 Insert line numbers along the left edge of the region-rectangle (rectangle-number-lines). This pushes the previous contents of the region-rectangle to the right.
@@ -543,9 +516,7 @@ Insert a text rectangle: string-insert-rectangle (unbound)
 Insert a text to replace rectangle region: string-rectangle ‘C-x r t’
 Delete the selected rectangle: delete-rectangle ‘C-x r d’
 Insert a whitespace rectangle into the region: open-rectangle ‘C-x r o’
-Number lines in rectangle: number-to-register ‘C-x r N’. This command also inserts a column of spaces after numbers.
-</code></pre>
-
+Number lines in rectangle: number-to-register ‘C-x r N’. This command also inserts a column of spaces after numbers.</pre></div>
 <h3 id="simpleclip">Simpleclip</h3>
 
 <p>插件提供Copy/Paste功能，具体参考<a href="http://www.emacswiki.org/emacs/CopyAndPaste#toc4">CopyAndPaste</a>
@@ -556,10 +527,7 @@ Number lines in rectangle: number-to-register ‘C-x r N’. This command also i
 <h2 id="navigation">Navigation</h2>
 
 <h3 id="dired">Dired</h3>
-
-<pre><code>^            dired-up-directory
-</code></pre>
-
+<div class="highlight"><pre class="chroma">^            dired-up-directory</pre></div>
 <h3 id="helm">Helm</h3>
 
 <p><a href="helm intro">http://tuhdo.github.io/helm-intro.html</a>
@@ -582,20 +550,14 @@ Number lines in rectangle: number-to-register ‘C-x r N’. This command also i
 <p>先保存grep result, by <code>C-x C-s</code>, 然后通过wgrep插件的<code>C-c C-p</code>进入编辑模式, <code>C-c C-e</code>应用修改, 注意buffer并没有保存到磁盘.</p>
 
 <h3 id="registor">Registor</h3>
-
-<pre><code>C-x r SPC r
+<div class="highlight"><pre class="chroma">C-x r SPC r
 Record the position of point and the current buffer in register r (point-to-register).
 C-x r j r
-Jump to the position and buffer saved in register r (jump-to-register).
-</code></pre>
-
+Jump to the position and buffer saved in register r (jump-to-register).</pre></div>
 <h3 id="bookmark">Bookmark</h3>
-
-<pre><code>C-x r l    bookmark menu list
+<div class="highlight"><pre class="chroma">C-x r l    bookmark menu list
 C-x r m    bookmark mark
-C-x r b    bookmark jump
-</code></pre>
-
+C-x r b    bookmark jump</pre></div>
 <h3 id="neotree">Neotree</h3>
 
 <p>插件提供树状目录浏览文件。</p>
@@ -637,50 +599,35 @@ C-x r b    bookmark jump
 <p>gocode的配置文件存放在: <code>~/.config/gocode/config.json</code>, 可以通过<code>gocode set</code>查看所有配置项.</p>
 
 <p>gocode支持当代码修改后, 自动编译, 获取最新的代码提示, 这个功能处于实验阶段:</p>
-
-<pre><code>gocode set autobuild true
-</code></pre>
-
+<div class="highlight"><pre class="chroma">gocode set autobuild true</pre></div>
 <p>配置插件company-mode + company-go:</p>
-
-<pre><code>;; autocompletion with company-mode
-(add-hook 'go-mode-hook 'company-mode)
-(add-hook 'go-mode-hook (lambda ()
-                          (set (make-local-variable 'company-backends)
-                               '(company-go))
-                          (company-mode)))
-</code></pre>
-
+<div class="highlight"><pre class="chroma">;; autocompletion with company-mode
+(add-hook &#39;go-mode-hook &#39;company-mode)
+(add-hook &#39;go-mode-hook (lambda ()
+                          (set (make-local-variable &#39;company-backends)
+                               &#39;(company-go))
+                          (company-mode)))</pre></div>
 <h4 id="syntax-style-check">syntax &amp; style check</h4>
 
 <p>flycheck缺省支持go, 提供下面几个checker:</p>
-
-<pre><code>go-gofmt (syntax check with gofmt)
+<div class="highlight"><pre class="chroma">go-gofmt (syntax check with gofmt)
 go-golint (coding style with Golint)
 go-vet (check for suspicious code with go tool vet)
 go-build or go-test (syntax and type check with Go, for source and tests respectively)
-go-errcheck (check for unhandled error returns with errcheck)
-</code></pre>
-
+go-errcheck (check for unhandled error returns with errcheck)</pre></div>
 <p>lint, errcheck需要安装:</p>
-
-<pre><code>go get -u github.com/kisielk/errcheck
-go get -u github.com/golang/lint/golint
-</code></pre>
-
+<div class="highlight"><pre class="chroma">go get -u github.com/kisielk/errcheck
+go get -u github.com/golang/lint/golint</pre></div>
 <p>然后激活flycheck即可: <code>(add-hook 'go-mode-hook 'flycheck-mode)</code></p>
 
 <p>但是需要注意, go-build和go-test这两个checker对于大项目不适用, 一个<code>go-build</code>就直接歇菜了, 何况实时检测.</p>
 
 <p>简单的解决方法就是禁用go-build和go-test, 另外我也建议禁用errcheck(或者直接不安装errcheck这个包):</p>
-
-<pre><code>;; (add-hook 'go-mode-hook 'flycheck-mode)
-(add-hook 'go-mode-hook (lambda ()
+<div class="highlight"><pre class="chroma">;; (add-hook &#39;go-mode-hook &#39;flycheck-mode)
+(add-hook &#39;go-mode-hook (lambda ()
                           (setq flycheck-disabled-checkers
-                               '(go-build go-test go-errcheck))
-                          (flycheck-mode)))
-</code></pre>
-
+                               &#39;(go-build go-test go-errcheck))
+                          (flycheck-mode)))</pre></div>
 <h4 id="oracle">oracle</h4>
 
 <ul>
@@ -688,8 +635,7 @@ go get -u github.com/golang/lint/golint
 </ul>
 
 <p>此oracle非彼oracle, 这是go的一个语法分析工具, 强大到没朋友, 下面是它提供的功能:</p>
-
-<pre><code>C-c C-o &lt;       go-oracle-callers
+<div class="highlight"><pre class="chroma">C-c C-o &lt;       go-oracle-callers
 C-c C-o &gt;       go-oracle-callees
 C-c C-o c       go-oracle-peers
 C-c C-o d       go-oracle-definition
@@ -699,35 +645,24 @@ C-c C-o i       go-oracle-implements
 C-c C-o p       go-oracle-pointsto
 C-c C-o r       go-oracle-referrers
 C-c C-o s       go-oracle-callstack
-C-c C-o t       go-oracle-describe
-</code></pre>
-
+C-c C-o t       go-oracle-describe</pre></div>
 <p>用它来阅读代码非常方便, 简直就是go版的cscope, 配置也很简单, 首先安装oracle: <code>go get -u golang.org/x/tools/cmd/oracle</code>, 然后配置emacs:</p>
-
-<pre><code>(Load-file &quot;/Users/tacy/workspace/go/go-tools/src/golang.org/x/tools/cmd/oracle/oracle.el&quot;)
-(setq exec-path (cons &quot;/Users/tacy/workspace/go/go-tools/bin&quot; exec-path))
-(add-to-list 'exec-path &quot;/Users/tacy/workspace/go/kubernetes/bin&quot;)
-</code></pre>
-
+<div class="highlight"><pre class="chroma">(Load-file &#34;/Users/tacy/workspace/go/go-tools/src/golang.org/x/tools/cmd/oracle/oracle.el&#34;)
+(setq exec-path (cons &#34;/Users/tacy/workspace/go/go-tools/bin&#34; exec-path))
+(add-to-list &#39;exec-path &#34;/Users/tacy/workspace/go/kubernetes/bin&#34;)</pre></div>
 <h4 id="guru">guru</h4>
-
-<pre><code>       (load-file &quot;/home/tacy/workspace/go/go-tools/src/golang.org/x/tools/cmd/guru/go-guru.el&quot;)
-       (setq exec-path (cons &quot;/home/tacy/workspace/go/go-tools/bin&quot; exec-path))
-       (setenv &quot;PATH&quot; (concat &quot;/home/tacy/workspace/go/go-tools/bin:&quot; (getenv &quot;PATH&quot;)))
-</code></pre>
-
+<div class="highlight"><pre class="chroma">       (load-file &#34;/home/tacy/workspace/go/go-tools/src/golang.org/x/tools/cmd/guru/go-guru.el&#34;)
+       (setq exec-path (cons &#34;/home/tacy/workspace/go/go-tools/bin&#34; exec-path))
+       (setenv &#34;PATH&#34; (concat &#34;/home/tacy/workspace/go/go-tools/bin:&#34; (getenv &#34;PATH&#34;)))</pre></div>
 <p>M-x go-guru-set-scope k8s.io/heapster/metrics/heapster</p>
 
 <h3 id="usage">Usage</h3>
 
 <h4 id="navigation-1">Navigation</h4>
-
-<pre><code>M-. (godef-jump)
+<div class="highlight"><pre class="chroma">M-. (godef-jump)
 M-* (pop-tag-map)
 C-c C-d (godef-describe)
-M-x compile
-</code></pre>
-
+M-x compile</pre></div>
 <h4 id="godep">godep</h4>
 
 <p>使用godep的项目在操作的时候需要在前面加godep, 例如<code>go build</code> -&gt; <code>godep go build</code>, 你也可以修改GOPATH: <code>M-x setenv RET GOPATH RET</code><code>godep path</code><code>:$GOPATH</code>, 这样就不用在go前面加godep了.</p>
@@ -735,20 +670,14 @@ M-x compile
 <h4 id="govendor">govendor</h4>
 
 <p>添加依赖包, 如果包里面有多个文件(注意后面的三个点):</p>
+<div class="highlight"><pre class="chroma">govendor add golang.org/x/crypto/acme/autocert/...
 
-<pre><code>govendor add golang.org/x/crypto/acme/autocert/...
-
-go get -v -u golang.org/x/sys/...
-</code></pre>
-
+go get -v -u golang.org/x/sys/...</pre></div>
 <h4 id="oracle-1">oracle</h4>
 
 <p>强大的Go代码分析工具，首先设置分析范围：<code>M-x go-oracle-set-scope</code>, 例如<code>k8s.io/kubernetes/cmd/kubelet</code>(特别注意, 分析范围最好指向含main方法的类. 否则很多功能没法使用, 例如: go-oracle-callstack, go-oracle-callers, go-oracle-callees等), 然后参考帮助操作。</p>
-
-<pre><code>&lt;f5&gt;            go-oracle-describe
-&lt;f6&gt;            go-oracle-referrers
-</code></pre>
-
+<div class="highlight"><pre class="chroma">&lt;f5&gt;            go-oracle-describe
+&lt;f6&gt;            go-oracle-referrers</pre></div>
 <p>需要注意godep带来的问题.</p>
 
 <p>下面举个例子， 我希望分析kubelet这个包的代码, 首先我要做的是指定GOPATH:</p>
@@ -764,11 +693,8 @@ go get -v -u golang.org/x/sys/...
 <p>需要特别注意的是, 如果需要分析别的包, 务必要设置scope.</p>
 
 <h4 id="playground">Playground</h4>
-
-<pre><code>`go-play-buffer` and `go-play-region` send code to the Playground
-`go-download-play` to download a Playground entry into a new buffer
-</code></pre>
-
+<div class="highlight"><pre class="chroma">`go-play-buffer` and `go-play-region` send code to the Playground
+`go-download-play` to download a Playground entry into a new buffer</pre></div>
 <h2 id="python">Python</h2>
 
 <p>emacs默认自带python-mode. 但是功能有限, 可以采用elpy实现扩展, 实现一些ide功能, 主要包括代码提示(autocomplete / company+jedi), 语法检查(flymake / flycheck), 代码规范(autopep8 / yapf)</p>
@@ -786,75 +712,51 @@ go get -v -u golang.org/x/sys/...
 <h4 id="flake8">flake8</h4>
 
 <p>elpy缺省语法检查用的是flymake, 你需要安装flycheck插件, 并用下面配置替换flymake:</p>
-
-<pre><code>;; use flycheck not flymake
-(when (require 'flycheck nil t)
+<div class="highlight"><pre class="chroma">;; use flycheck not flymake
+(when (require &#39;flycheck nil t)
   (setq elpy-modules
-        (delq 'elpy-module-flymake elpy-modules))
-  (add-hook 'elpy-mode-hook 'flycheck-mode))
-</code></pre>
-
+        (delq &#39;elpy-module-flymake elpy-modules))
+  (add-hook &#39;elpy-mode-hook &#39;flycheck-mode))</pre></div>
 <p>flake8行为可以通过配置文件自定义:</p>
-
-<pre><code>$cat ~/.config/flake8
+<div class="highlight"><pre class="chroma">$cat ~/.config/flake8
 [flake8]
 ignore = E221,E501,E203,E202,E272,E251,E211,E222,E701
 max-line-length = 160
-exclude = tests/*
-</code></pre>
-
+exclude = tests/*</pre></div>
 <h4 id="company-jedi">company + jedi</h4>
 
 <p>安装company插件和company-jedi插件, 通过下面配置激活:</p>
-
-<pre><code>;; autocompletion with company-mode
-(add-hook 'python-mode-hook 'company-mode)
-(add-hook 'python-mode-hook (lambda ()
-                              (set (make-local-variable 'company-backends)
-                                   '(company-jedi company-yasnippet))
-                          (company-mode)))
-</code></pre>
-
+<div class="highlight"><pre class="chroma">;; autocompletion with company-mode
+(add-hook &#39;python-mode-hook &#39;company-mode)
+(add-hook &#39;python-mode-hook (lambda ()
+                              (set (make-local-variable &#39;company-backends)
+                                   &#39;(company-jedi company-yasnippet))
+                          (company-mode)))</pre></div>
 <p>这里的company backend只用了company-jedi和company-yasnippet, 其他可根据自己喜好添加, 具体可以参考<a href="http://company-mode.github.io/">company-mode</a>.</p>
 
 <h3 id="usage-1">Usage</h3>
 
 <h4 id="virtualenv">Virtualenv</h4>
-
-<pre><code>M-x pyven-activate
-M-x pyven-deactivate
-</code></pre>
-
+<div class="highlight"><pre class="chroma">M-x pyven-activate
+M-x pyven-deactivate</pre></div>
 <h4 id="navigation-2">Navigation</h4>
-
-<pre><code>M-.             (elpy-goto-definition)
+<div class="highlight"><pre class="chroma">M-.             (elpy-goto-definition)
 M-*             (pop-tag-mark)
 C-c C-d         (elpy-doc)
-C-c C-j         imenu
-</code></pre>
-
+C-c C-j         imenu</pre></div>
 <h4 id="project">Project</h4>
-
-<pre><code>M-x elpy-set-project-root
+<div class="highlight"><pre class="chroma">M-x elpy-set-project-root
 C-c C-f (elpy-find-file)
-C-c C-s (elpy-rgrep-symbol)
-</code></pre>
-
+C-c C-s (elpy-rgrep-symbol)</pre></div>
 <h4 id="edit-1">Edit</h4>
-
-<pre><code>C-c &lt;           python-indent-shift-left
+<div class="highlight"><pre class="chroma">C-c &lt;           python-indent-shift-left
 C-c &gt;           python-indent-shift-right
-M-;             comment region
-</code></pre>
-
+M-;             comment region</pre></div>
 <h4 id="refactoring">Refactoring</h4>
-
-<pre><code>C-c C-e (elpy-multiedit-python-symbol-at-point)
+<div class="highlight"><pre class="chroma">C-c C-e (elpy-multiedit-python-symbol-at-point)
 C-c C-r f (elpy-format-code)
 C-c C-r i (elpy-importmagic-fixup)
-C-c C-r r (elpy-refactor)
-</code></pre>
-
+C-c C-r r (elpy-refactor)</pre></div>
 <h2 id="markdown">Markdown</h2>
 
 <h3 id="edit-2">Edit</h3>
@@ -887,27 +789,24 @@ Promote subtree: <code>C-M-LEFT</code></p>
 <p>需要的emacs lisp: js2-mode, web-beautify</p>
 
 <h3 id="配置">配置</h3>
+<div class="highlight"><pre class="chroma"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span class="p">(</span><span class="nv">add-to-list</span> <span class="ss">&#39;auto-mode-alist</span> <span class="o">&#39;</span><span class="p">(</span><span class="s">&#34;\\.js$&#34;</span> <span class="o">.</span> <span class="nv">js2-mode</span><span class="p">))</span>
 
-<pre><code class="language-emacs-lisp">(add-to-list 'auto-mode-alist '(&quot;\\.js$&quot; . js2-mode))
+<span class="c1">;; js2-mode</span>
 
-;; js2-mode
+<span class="c1">;; Change some defaults: customize them to override</span>
+<span class="p">(</span><span class="nb">setq-default</span> <span class="nv">js2-basic-offset</span> <span class="mi">2</span>
+	          <span class="nv">js2-highlight-level</span> <span class="mi">3</span>
+              <span class="nv">js2-bounce-indent-p</span> <span class="no">nil</span><span class="p">)</span>
 
-;; Change some defaults: customize them to override
-(setq-default js2-basic-offset 2
-	          js2-highlight-level 3
-              js2-bounce-indent-p nil)
+<span class="p">(</span><span class="nv">add-hook</span> <span class="ss">&#39;js2-mode-hook</span> <span class="p">(</span><span class="nb">lambda</span> <span class="p">()</span>
+			   <span class="p">(</span><span class="nb">setq-default</span> <span class="nv">js2-mode-show-parse-errors</span> <span class="no">nil</span>
+					 <span class="nv">js2-mode-show-strict-warnings</span> <span class="no">nil</span><span class="p">)</span>
+			   <span class="p">(</span><span class="nv">flycheck-mode</span><span class="p">)</span>
+			   <span class="p">(</span><span class="nv">js2-imenu-extras-setup</span><span class="p">)</span>
+			   <span class="p">))</span>
 
-(add-hook 'js2-mode-hook (lambda ()
-			   (setq-default js2-mode-show-parse-errors nil
-					 js2-mode-show-strict-warnings nil)
-			   (flycheck-mode)
-			   (js2-imenu-extras-setup)
-			   ))
-
-;; js-mode
-(setq-default js-indent-level 2)      ;;缩进
-</code></pre>
-
+<span class="c1">;; js-mode</span>
+<span class="p">(</span><span class="nb">setq-default</span> <span class="nv">js-indent-level</span> <span class="mi">2</span><span class="p">)</span>      <span class="c1">;;缩进</span></code></pre></div>
 <h2 id="vim">VIM</h2>
 
 <p>从桌面拷贝内容到VI，会出现indent错误（缩进错误），需要设置<code>:set noai</code></p>

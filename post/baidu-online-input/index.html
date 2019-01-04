@@ -324,107 +324,104 @@ if (!doNotTrack) {
     
     <div class="post-content">
       <p>代码里面有一些xbmc的语句，可以忽略，脚本只是提供了一个基本逻辑，供参考。</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">totalpage</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nowpage</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">words</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">py</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bg</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ed</span> <span class="o">=</span> <span class="mi">20</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wordpgs</span> <span class="o">=</span> <span class="p">[]</span>   <span class="c1">#word page metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inputString</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;default&#34;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&#34;&#34;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">heading</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;heading&#34;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&#34;&#34;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fetchCookie</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">httplib</span><span class="o">.</span><span class="n">HTTPConnection</span><span class="p">(</span><span class="s1">&#39;olime.baidu.com&#39;</span><span class="p">)</span>
+        <span class="n">xbmcgui</span><span class="o">.</span><span class="n">WindowXMLDialog</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-<pre><code class="language-python">    def __init__( self, *args, **kwargs ):
-        self.totalpage = 0
-        self.nowpage = 0
-        self.words = ''
-        self.py = ''
-        self.bg = 0
-        self.ed = 20
-        self.wordpgs = []   #word page metadata
-        self.inputString = kwargs.get(&quot;default&quot;) or &quot;&quot;
-        self.heading = kwargs.get(&quot;heading&quot;) or &quot;&quot;
-        self.fetchCookie()
-        self.conn = httplib.HTTPConnection('olime.baidu.com')
-        xbmcgui.WindowXMLDialog.__init__(self)
+    <span class="k">def</span> <span class="nf">fetchCookie</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">req</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="s1">&#39;http://ime.baidu.com/online.html&#39;</span><span class="p">)</span>
+        <span class="n">req</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">,</span> <span class="n">UserAgent</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">cdata</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">info</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Set-Cookie&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cookie</span> <span class="o">=</span> <span class="n">cdata</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;BAIDUID&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">cookie</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span> <span class="c1"># just in case</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cookie</span><span class="o">=</span><span class="s1">&#39;BAIDUID=5FF5CF0348C2CD89C15799855BBCB09A:FG=1&#39;</span>
 
-    def fetchCookie(self):
-        req = urllib2.Request('http://ime.baidu.com/online.html')
-        req.add_header('User-Agent', UserAgent)
-        response = urllib2.urlopen(req)
-        response.close()
-        cdata = response.info().get('Set-Cookie')
-        self.cookie = cdata.split(';')[0]
-        if re.search('BAIDUID',self.cookie) is None: # just in case
-            self.cookie='BAIDUID=5FF5CF0348C2CD89C15799855BBCB09A:FG=1'
+    <span class="k">def</span> <span class="nf">changepages</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">getControl</span><span class="p">(</span><span class="n">CTRL_ID_HZLIST</span><span class="p">)</span><span class="o">.</span><span class="n">setLabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">hzlist</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">wordpgs</span><span class="p">:</span> <span class="k">return</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nowpage</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">totalpage</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bg</span> <span class="o">+=</span> <span class="mi">20</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ed</span> <span class="o">+=</span> <span class="mi">20</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">getChineseWord</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">py</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ed</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">curwpg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wordpgs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">nowpage</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">words</span><span class="p">[</span><span class="n">curwpg</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">curwpg</span><span class="p">[</span><span class="mi">1</span><span class="p">]]):</span>
+            <span class="n">hzlist</span> <span class="o">=</span> <span class="n">hzlist</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">w</span> <span class="o">+</span><span class="s1">&#39; &#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nowpage</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">hzlist</span> <span class="o">=</span> <span class="s1">&#39;&lt;&#39;</span> <span class="o">+</span> <span class="n">hzlist</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nowpage</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">totalpage</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">hzlist</span> <span class="o">=</span> <span class="n">hzlist</span> <span class="o">+</span> <span class="s1">&#39;&gt;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">getControl</span><span class="p">(</span><span class="n">CTRL_ID_HZLIST</span><span class="p">)</span><span class="o">.</span><span class="n">setLabel</span><span class="p">(</span><span class="n">hzlist</span><span class="p">)</span>
 
-    def changepages (self):
-        self.getControl(CTRL_ID_HZLIST).setLabel('')
-        hzlist = ''
-        if not self.wordpgs: return
-        if self.nowpage &gt;= self.totalpage-1:
-            self.bg += 20
-            self.ed += 20
-            self.getChineseWord(self.py, self.bg, self.ed)
-            return
-        curwpg = self.wordpgs[self.nowpage]
-        for i, w in enumerate(self.words[curwpg[0]:curwpg[1]]):
-            hzlist = hzlist + str(i) + '.' + w +' '
-        if self.nowpage &gt; 0:
-            hzlist = '&lt;' + hzlist
-        if self.nowpage &lt; self.totalpage-1:
-            hzlist = hzlist + '&gt;'
-        self.getControl(CTRL_ID_HZLIST).setLabel(hzlist)
+    <span class="k">def</span> <span class="nf">getChineseWord</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">bg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ed</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">getControl</span><span class="p">(</span><span class="n">CTRL_ID_HZLIST</span><span class="p">)</span><span class="o">.</span><span class="n">setLabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">py</span><span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">:</span> <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">bg</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nowpage</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">totalpage</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wordpgs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">words</span><span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">py</span> <span class="o">=</span> <span class="n">py</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bg</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ed</span> <span class="o">=</span> <span class="mi">20</span>
+        <span class="n">wres</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getwords</span><span class="p">(</span><span class="n">py</span><span class="p">,</span> <span class="n">bg</span><span class="p">,</span> <span class="n">ed</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">wres</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">words</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">wres</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wordpgs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">inum</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">words</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">words</span><span class="p">[</span><span class="n">inum</span><span class="p">:</span><span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span>
+                        <span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="o">-</span><span class="n">inum</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span> <span class="o">&gt;</span><span class="mi">30</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">wordpgs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">inum</span><span class="p">,</span> <span class="n">s</span><span class="p">))</span>
+                    <span class="n">inum</span> <span class="o">=</span> <span class="n">s</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">words</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">inum</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">wordpgs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">inum</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">words</span><span class="p">)))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">totalpage</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wordpgs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nowpage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">totalpage</span> <span class="o">-</span> <span class="mi">1</span>
 
-    def getChineseWord (self, py, bg=0, ed=20):
-        self.getControl(CTRL_ID_HZLIST).setLabel('')
-        if py=='': return
-        if not bg:
-            self.nowpage = 0
-            self.totalpage = 0
-            self.wordpgs = []
-            self.words= []
-            self.py = py
-            self.bg = 0
-            self.ed = 20
-        wres = self.getwords(py, bg, ed)
-        if wres:
-            self.words.extend(wres)
-            self.wordpgs = []
-            inum = 0
-            for s, w in enumerate(self.words):
-                if len(''.join(self.words[inum:s+1]).decode('utf-8')) + (
-                        s+1-inum)*2 &gt;30:
-                    self.wordpgs.append((inum, s))
-                    inum = s
-            if len(self.words) &gt; inum:
-                self.wordpgs.append((inum, len(self.words)))
-            self.totalpage = len(self.wordpgs)
-        else:
-            self.nowpage = self.totalpage - 1
+        <span class="n">hzlist</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">curwpg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wordpgs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">nowpage</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">words</span><span class="p">[</span><span class="n">curwpg</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">curwpg</span><span class="p">[</span><span class="mi">1</span><span class="p">]]):</span>
+            <span class="n">hzlist</span> <span class="o">=</span> <span class="n">hzlist</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">w</span> <span class="o">+</span><span class="s1">&#39; &#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nowpage</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">hzlist</span> <span class="o">=</span> <span class="s1">&#39;&lt;&#39;</span> <span class="o">+</span> <span class="n">hzlist</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nowpage</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">totalpage</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">hzlist</span> <span class="o">=</span> <span class="n">hzlist</span> <span class="o">+</span> <span class="s1">&#39;&gt;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">getControl</span><span class="p">(</span><span class="n">CTRL_ID_HZLIST</span><span class="p">)</span><span class="o">.</span><span class="n">setLabel</span><span class="p">(</span><span class="n">hzlist</span><span class="p">)</span>
 
-        hzlist = ''
-        curwpg = self.wordpgs[self.nowpage]
-        for i, w in enumerate(self.words[curwpg[0]:curwpg[1]]):
-            hzlist = hzlist + str(i) + '.' + w +' '
-        if self.nowpage &gt; 0:
-            hzlist = '&lt;' + hzlist
-        if self.nowpage &lt; self.totalpage-1:
-            hzlist = hzlist + '&gt;'
-        self.getControl(CTRL_ID_HZLIST).setLabel(hzlist)
-
-    def getwords(self, py, bg, ed):
-        t = time.time()
-        urlsuf = '/py?input={0}&amp;inputtype=py&amp;bg={1}&amp;ed={2}&amp;{3}'.format(
-            py, bg, ed,
-            'result=hanzi&amp;resultcoding=unicode&amp;ch_en=0&amp;clientinfo=web')
-        try:
-            self.conn.request('GET', urlsuf, headers={'Cookies':self.cookie,})
-        except Exception as e:
-            self.conn = httplib.HTTPConnection('olime.baidu.com')
-            self.conn.request('GET', urlsuf, headers={'Cookies':self.cookie,})
-        httpdata = self.conn.getresponse().read()
-        words = []
-        try:
-            jsondata = simplejson.loads(httpdata)
-        except ValueError:
-            return None
-        for word in jsondata[0]:
-            words.append(word[0].encode('utf-8'))
-        return words
-</code></pre>
-
+    <span class="k">def</span> <span class="nf">getwords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">bg</span><span class="p">,</span> <span class="n">ed</span><span class="p">):</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">urlsuf</span> <span class="o">=</span> <span class="s1">&#39;/py?input={0}&amp;inputtype=py&amp;bg={1}&amp;ed={2}&amp;{3}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">py</span><span class="p">,</span> <span class="n">bg</span><span class="p">,</span> <span class="n">ed</span><span class="p">,</span>
+            <span class="s1">&#39;result=hanzi&amp;resultcoding=unicode&amp;ch_en=0&amp;clientinfo=web&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="n">urlsuf</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Cookies&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">cookie</span><span class="p">,})</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">httplib</span><span class="o">.</span><span class="n">HTTPConnection</span><span class="p">(</span><span class="s1">&#39;olime.baidu.com&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="n">urlsuf</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Cookies&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">cookie</span><span class="p">,})</span>
+        <span class="n">httpdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">getresponse</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">jsondata</span> <span class="o">=</span> <span class="n">simplejson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">httpdata</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">jsondata</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">words</span></code></pre></div>
     </div>
 
     

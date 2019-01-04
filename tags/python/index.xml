@@ -26,7 +26,7 @@
       <pubDate>Sat, 18 Jan 2014 00:00:00 +0000</pubDate>
       
       <guid>http://tacy.github.io/post/baidu-online-input/</guid>
-      <description>代码里面有一些xbmc的语句，可以忽略，脚本只是提供了一个基本逻辑，供参考。 def __init__( self, *args, **kwargs ): self.totalpage = 0 self.nowpage = 0 self.words = &#39;&#39; self.py = &#39;&#39; self.bg = 0 self.ed = 20 self.wordpgs = [] #word page metadata self.inputString =</description>
+      <description>代码里面有一些xbmc的语句，可以忽略，脚本只是提供了一个基本逻辑，供参考。 def __init__( self, *args, **kwargs ): self.totalpage = 0 self.nowpage = 0 self.words = &amp;#39;&amp;#39; self.py = &amp;#39;&amp;#39; self.bg = 0 self.ed = 20 self.wordpgs = [] #word page metadata self.inputString =</description>
     </item>
     
     <item>

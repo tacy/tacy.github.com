@@ -371,12 +371,9 @@ How does YARN compare to Mesos?]]，另外就是mesos支持docker实现隔离。
 想，应该可以通过callback方式来走，会比较理想。</p>
 
 <p>另外一点就是[fn:2]：</p>
-
-<pre><code class="language-shell">Also since we explicitly attempt to pull the image on launch,if the docker image
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">Also since we explicitly attempt to pull the image on launch,if the docker image
 is only installed locally but not avaialble on the remote repository the launch
-will fail as well.
-</code></pre>
-
+will fail as well.</code></pre></div>
 <p>文档里面提到，如果是本地的image是不行的，必须提交到远程仓库，否则mesos会pull失败</p>
 
 <h1 id="footnotes">Footnotes</h1>

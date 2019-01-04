@@ -340,29 +340,20 @@ if (!doNotTrack) {
 <p>然后按照下面的步骤操作:</p>
 
 <h1 id="安装软件包">安装软件包</h1>
-
-<pre><code class="language-shell">apt-get update
-apt-get install openswan xl2tpd ppp lsof
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">apt-get update
+apt-get install openswan xl2tpd ppp lsof</code></pre></div>
 <h1 id="配置网络环境">配置网络环境</h1>
 
 <p>配置IP转发禁用ICP重定向</p>
-
-<pre><code class="language-shell">echo &quot;net.ipv4.ip_forward = 1&quot; |  tee -a /etc/sysctl.conf
-echo &quot;net.ipv4.conf.all.accept_redirects = 0&quot; |  tee -a /etc/sysctl.conf
-echo &quot;net.ipv4.conf.all.send_redirects = 0&quot; |  tee -a /etc/sysctl.conf
-echo &quot;net.ipv4.conf.default.rp_filter = 0&quot; |  tee -a /etc/sysctl.conf
-echo &quot;net.ipv4.conf.default.accept_source_route = 0&quot; |  tee -a /etc/sysctl.conf
-echo &quot;net.ipv4.conf.default.send_redirects = 0&quot; |  tee -a /etc/sysctl.conf
-echo &quot;net.ipv4.icmp_ignore_bogus_error_responses = 1&quot; |  tee -a /etc/sysctl.conf
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">echo</span> <span class="s2">&#34;net.ipv4.ip_forward = 1&#34;</span> <span class="p">|</span>  tee -a /etc/sysctl.conf
+<span class="nb">echo</span> <span class="s2">&#34;net.ipv4.conf.all.accept_redirects = 0&#34;</span> <span class="p">|</span>  tee -a /etc/sysctl.conf
+<span class="nb">echo</span> <span class="s2">&#34;net.ipv4.conf.all.send_redirects = 0&#34;</span> <span class="p">|</span>  tee -a /etc/sysctl.conf
+<span class="nb">echo</span> <span class="s2">&#34;net.ipv4.conf.default.rp_filter = 0&#34;</span> <span class="p">|</span>  tee -a /etc/sysctl.conf
+<span class="nb">echo</span> <span class="s2">&#34;net.ipv4.conf.default.accept_source_route = 0&#34;</span> <span class="p">|</span>  tee -a /etc/sysctl.conf
+<span class="nb">echo</span> <span class="s2">&#34;net.ipv4.conf.default.send_redirects = 0&#34;</span> <span class="p">|</span>  tee -a /etc/sysctl.conf
+<span class="nb">echo</span> <span class="s2">&#34;net.ipv4.icmp_ignore_bogus_error_responses = 1&#34;</span> <span class="p">|</span>  tee -a /etc/sysctl.conf</code></pre></div>
 <p>其他网卡也来一遍:</p>
-
-<pre><code class="language-shell">for vpn in /proc/sys/net/ipv4/conf/*; do echo 0 &gt; $vpn/accept_redirects; echo 0 &gt; $vpn/send_redirects; done
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="k">for</span> vpn in /proc/sys/net/ipv4/conf/*<span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="m">0</span> &gt; <span class="nv">$vpn</span>/accept_redirects<span class="p">;</span> <span class="nb">echo</span> <span class="m">0</span> &gt; <span class="nv">$vpn</span>/send_redirects<span class="p">;</span> <span class="k">done</span></code></pre></div>
 <dl>
 <dt>最好让上面配置生效:</dt>
 <dd>sysctl -p</dd>
@@ -371,75 +362,68 @@ echo &quot;net.ipv4.icmp_ignore_bogus_error_responses = 1&quot; |  tee -a /etc/s
 </dl>
 
 <p>上面两条会在重启之后丢失, 为了让他们重启能生效, 放到rc.local里面(注意下面内容添加到 exit 0 这行前面):</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="k">for</span> vpn in /proc/sys/net/ipv4/conf/*<span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="m">0</span> &gt; <span class="nv">$vpn</span>/accept_redirects<span class="p">;</span> <span class="nb">echo</span> <span class="m">0</span> &gt; <span class="nv">$vpn</span>/send_redirects<span class="p">;</span> <span class="k">done</span>
 
-<pre><code class="language-shell">for vpn in /proc/sys/net/ipv4/conf/*; do echo 0 &gt; $vpn/accept_redirects; echo 0 &gt; $vpn/send_redirects; done
-
-iptables -t nat -A POSTROUTING -j SNAT --to-source YOUR_PUBLIC_IP -o eth0
-
-</code></pre>
-
+iptables -t nat -A POSTROUTING -j SNAT --to-source YOUR_PUBLIC_IP -o eth0</code></pre></div>
 <h1 id="配置openswan-ipsec">配置Openswan(IPSEC)</h1>
 
 <p>修改/etc/ipsec.conf文件, 用下面内容替换:</p>
-
-<pre><code class="language-shell">version 2 # conforms to second version of ipsec.conf specification
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">version <span class="m">2</span> <span class="c1"># conforms to second version of ipsec.conf specification</span>
 
 config setup
-    dumpdir=/var/run/pluto/
-    #in what directory should things started by setup (notably the Pluto daemon) be allowed to dump core?
+    <span class="nv">dumpdir</span><span class="o">=</span>/var/run/pluto/
+    <span class="c1">#in what directory should things started by setup (notably the Pluto daemon) be allowed to dump core?</span>
 
-    nat_traversal=yes
-    #whether to accept/offer to support NAT (NAPT, also known as &quot;IP Masqurade&quot;) workaround for IPsec
+    <span class="nv">nat_traversal</span><span class="o">=</span>yes
+    <span class="c1">#whether to accept/offer to support NAT (NAPT, also known as &#34;IP Masqurade&#34;) workaround for IPsec</span>
 
-    virtual_private=%v4:10.0.0.0/8,%v4:192.168.0.0/16,%v4:172.16.0.0/12,%v6:fd00::/8,%v6:fe80::/10
-    #contains the networks that are allowed as subnet= for the remote client. In other words, the address ranges that may live behind a NAT router through which a client connects.
+    <span class="nv">virtual_private</span><span class="o">=</span>%v4:10.0.0.0/8,%v4:192.168.0.0/16,%v4:172.16.0.0/12,%v6:fd00::/8,%v6:fe80::/10
+    <span class="c1">#contains the networks that are allowed as subnet= for the remote client. In other words, the address ranges that may live behind a NAT router through which a client connects.</span>
 
-    protostack=netkey
-    #decide which protocol stack is going to be used.
+    <span class="nv">protostack</span><span class="o">=</span>netkey
+    <span class="c1">#decide which protocol stack is going to be used.</span>
 
-    force_keepalive=yes
-    keep_alive=60
-    # Send a keep-alive packet every 60 seconds.
+    <span class="nv">force_keepalive</span><span class="o">=</span>yes
+    <span class="nv">keep_alive</span><span class="o">=</span><span class="m">60</span>
+    <span class="c1"># Send a keep-alive packet every 60 seconds.</span>
 
 conn L2TP-PSK-noNAT
-    authby=secret
-    #shared secret. Use rsasig for certificates.
+    <span class="nv">authby</span><span class="o">=</span>secret
+    <span class="c1">#shared secret. Use rsasig for certificates.</span>
 
-    pfs=no
-    #Disable pfs
+    <span class="nv">pfs</span><span class="o">=</span>no
+    <span class="c1">#Disable pfs</span>
 
-    auto=add
-    #the ipsec tunnel should be started and routes created when the ipsec daemon itself starts.
+    <span class="nv">auto</span><span class="o">=</span>add
+    <span class="c1">#the ipsec tunnel should be started and routes created when the ipsec daemon itself starts.</span>
 
-    keyingtries=3
-    #Only negotiate a conn. 3 times.
+    <span class="nv">keyingtries</span><span class="o">=</span><span class="m">3</span>
+    <span class="c1">#Only negotiate a conn. 3 times.</span>
 
-    ikelifetime=8h
-    keylife=1h
+    <span class="nv">ikelifetime</span><span class="o">=</span>8h
+    <span class="nv">keylife</span><span class="o">=</span>1h
 
-    ike=aes256-sha1,aes128-sha1,3des-sha1
-    phase2alg=aes256-sha1,aes128-sha1,3des-sha1
-    # https://lists.openswan.org/pipermail/users/2014-April/022947.html
-    # specifies the phase 1 encryption scheme, the hashing algorithm, and the diffie-hellman group. The modp1024 is for Diffie-Hellman 2. Why 'modp' instead of dh? DH2 is a 1028 bit encryption algorithm that modulo's a prime number, e.g. modp1028. See RFC 5114 for details or the wiki page on diffie hellmann, if interested.
+    <span class="nv">ike</span><span class="o">=</span>aes256-sha1,aes128-sha1,3des-sha1
+    <span class="nv">phase2alg</span><span class="o">=</span>aes256-sha1,aes128-sha1,3des-sha1
+    <span class="c1"># https://lists.openswan.org/pipermail/users/2014-April/022947.html</span>
+    <span class="c1"># specifies the phase 1 encryption scheme, the hashing algorithm, and the diffie-hellman group. The modp1024 is for Diffie-Hellman 2. Why &#39;modp&#39; instead of dh? DH2 is a 1028 bit encryption algorithm that modulo&#39;s a prime number, e.g. modp1028. See RFC 5114 for details or the wiki page on diffie hellmann, if interested.</span>
 
-    type=transport
-    #because we use l2tp as tunnel protocol
+    <span class="nv">type</span><span class="o">=</span>transport
+    <span class="c1">#because we use l2tp as tunnel protocol</span>
 
-    left=YOUR_PUBLIC_IP
-    #fill in server IP above
+    <span class="nv">left</span><span class="o">=</span>YOUR_PUBLIC_IP
+    <span class="c1">#fill in server IP above</span>
 
-    leftprotoport=17/1701
-    right=%any
-    rightprotoport=17/%any
+    <span class="nv">leftprotoport</span><span class="o">=</span><span class="m">17</span>/1701
+    <span class="nv">right</span><span class="o">=</span>%any
+    <span class="nv">rightprotoport</span><span class="o">=</span><span class="m">17</span>/%any
 
-    dpddelay=10
-    # Dead Peer Dectection (RFC 3706) keepalives delay
-    dpdtimeout=20
-    #  length of time (in seconds) we will idle without hearing either an R_U_THERE poll from our peer, or an R_U_THERE_ACK reply.
-    dpdaction=clear
-    # When a DPD enabled peer is declared dead, what action should be taken. clear means the eroute and SA with both be cleared.
-</code></pre>
-
+    <span class="nv">dpddelay</span><span class="o">=</span><span class="m">10</span>
+    <span class="c1"># Dead Peer Dectection (RFC 3706) keepalives delay</span>
+    <span class="nv">dpdtimeout</span><span class="o">=</span><span class="m">20</span>
+    <span class="c1">#  length of time (in seconds) we will idle without hearing either an R_U_THERE poll from our peer, or an R_U_THERE_ACK reply.</span>
+    <span class="nv">dpdaction</span><span class="o">=</span>clear
+    <span class="c1"># When a DPD enabled peer is declared dead, what action should be taken. clear means the eroute and SA with both be cleared.</span></code></pre></div>
 <p>注意把YOUR_PUBLIC_IP替换成你的服务器ip地址.</p>
 
 <p>设置你的shared secret:</p>
@@ -454,92 +438,77 @@ conn L2TP-PSK-noNAT
 </dl>
 
 <p>你应该看到下面输出:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">Checking <span class="k">if</span> IPsec got installed and started correctly:
 
-<pre><code class="language-shell">Checking if IPsec got installed and started correctly:
-
-Version check and ipsec on-path                   	[OK]
-Openswan U2.6.42/K3.16.7-x86_64-linode49 (netkey)
-See `ipsec --copyright' for copyright information.
-Checking for IPsec support in kernel              	[OK]
- NETKEY: Testing XFRM related proc values
-         ICMP default/send_redirects              	[OK]
-         ICMP default/accept_redirects            	[OK]
-         XFRM larval drop                         	[OK]
-Hardware random device check                      	[N/A]
-Two or more interfaces found, checking IP forwarding	[OK]
-Checking rp_filter                                	[ENABLED]
- /proc/sys/net/ipv4/conf/all/rp_filter            	[ENABLED]
-Checking that pluto is running                    	[OK]
- Pluto listening for IKE on udp 500               	[OK]
- Pluto listening for IKE on tcp 500               	[NOT IMPLEMENTED]
- Pluto listening for IKE/NAT-T on udp 4500        	[OK]
- Pluto listening for IKE/NAT-T on tcp 4500        	[NOT IMPLEMENTED]
- Pluto listening for IKE on tcp 10000 (cisco)     	[NOT IMPLEMENTED]
-Checking NAT and MASQUERADEing                    	[TEST INCOMPLETE]
-Checking 'ip' command                             	[OK]
-Checking 'iptables' command                       	[OK]
-</code></pre>
-
+Version check and ipsec on-path                   	<span class="o">[</span>OK<span class="o">]</span>
+Openswan U2.6.42/K3.16.7-x86_64-linode49 <span class="o">(</span>netkey<span class="o">)</span>
+See <span class="sb">`</span>ipsec --copyright<span class="s1">&#39; for copyright information.
+</span><span class="s1">Checking for IPsec support in kernel              	[OK]
+</span><span class="s1"> NETKEY: Testing XFRM related proc values
+</span><span class="s1">         ICMP default/send_redirects              	[OK]
+</span><span class="s1">         ICMP default/accept_redirects            	[OK]
+</span><span class="s1">         XFRM larval drop                         	[OK]
+</span><span class="s1">Hardware random device check                      	[N/A]
+</span><span class="s1">Two or more interfaces found, checking IP forwarding	[OK]
+</span><span class="s1">Checking rp_filter                                	[ENABLED]
+</span><span class="s1"> /proc/sys/net/ipv4/conf/all/rp_filter            	[ENABLED]
+</span><span class="s1">Checking that pluto is running                    	[OK]
+</span><span class="s1"> Pluto listening for IKE on udp 500               	[OK]
+</span><span class="s1"> Pluto listening for IKE on tcp 500               	[NOT IMPLEMENTED]
+</span><span class="s1"> Pluto listening for IKE/NAT-T on udp 4500        	[OK]
+</span><span class="s1"> Pluto listening for IKE/NAT-T on tcp 4500        	[NOT IMPLEMENTED]
+</span><span class="s1"> Pluto listening for IKE on tcp 10000 (cisco)     	[NOT IMPLEMENTED]
+</span><span class="s1">Checking NAT and MASQUERADEing                    	[TEST INCOMPLETE]
+</span><span class="s1">Checking &#39;</span>ip<span class="s1">&#39; command                             	[OK]
+</span><span class="s1">Checking &#39;</span>iptables<span class="err">&#39;</span> <span class="nb">command</span>                       	<span class="o">[</span>OK<span class="o">]</span></code></pre></div>
 <h1 id="配置xl2tpd">配置xl2tpd</h1>
 
 <p>编辑xl2tpd配置文件/etc/xl2tpd/xl2tpd.conf, 用下面内容替换:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>global<span class="o">]</span>
+ipsec <span class="nv">saref</span> <span class="o">=</span> yes
+saref <span class="nv">refinfo</span> <span class="o">=</span> <span class="m">30</span>
 
-<pre><code class="language-shell">[global]
-ipsec saref = yes
-saref refinfo = 30
+<span class="p">;</span>debug <span class="nv">avp</span> <span class="o">=</span> yes
+<span class="p">;</span>debug <span class="nv">network</span> <span class="o">=</span> yes
+<span class="p">;</span>debug <span class="nv">state</span> <span class="o">=</span> yes
+<span class="p">;</span>debug <span class="nv">tunnel</span> <span class="o">=</span> yes
 
-;debug avp = yes
-;debug network = yes
-;debug state = yes
-;debug tunnel = yes
-
-[lns default]
-ip range = 172.16.1.30-172.16.1.100
-local ip = 172.16.1.1
-refuse pap = yes
-require authentication = yes
-;ppp debug = yes
-pppoptfile = /etc/ppp/options.xl2tpd
-length bit = yes
-</code></pre>
-
+<span class="o">[</span>lns default<span class="o">]</span>
+ip <span class="nv">range</span> <span class="o">=</span> <span class="m">172</span>.16.1.30-172.16.1.100
+<span class="nb">local</span> <span class="nv">ip</span> <span class="o">=</span> <span class="m">172</span>.16.1.1
+refuse <span class="nv">pap</span> <span class="o">=</span> yes
+require <span class="nv">authentication</span> <span class="o">=</span> yes
+<span class="p">;</span>ppp <span class="nv">debug</span> <span class="o">=</span> yes
+<span class="nv">pppoptfile</span> <span class="o">=</span> /etc/ppp/options.xl2tpd
+length <span class="nv">bit</span> <span class="o">=</span> yes</code></pre></div>
 <h1 id="配置ppp">配置PPP</h1>
 
 <p>编辑ppp配置文件/etc/ppp/options.xl2tpd, 用下面内容替换, 如果该配置文件不存在, 手动创建它</p>
-
-<pre><code class="language-shell">require-mschap-v2
-ms-dns 8.8.8.8
-ms-dns 8.8.4.4
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">require-mschap-v2
+ms-dns <span class="m">8</span>.8.8.8
+ms-dns <span class="m">8</span>.8.4.4
 auth
-mtu 1200
-mru 1000
+mtu <span class="m">1200</span>
+mru <span class="m">1000</span>
 crtscts
 hide-password
 modem
 name l2tpd
 proxyarp
-lcp-echo-interval 30
-lcp-echo-failure 4
-</code></pre>
-
+lcp-echo-interval <span class="m">30</span>
+lcp-echo-failure <span class="m">4</span></code></pre></div>
 <p>注意其中的mtu和mru别随便改动, 我调到1400网络性能急剧下降, 分析了一下, 很多包重发现象, 当然如果你熟悉sniffer, 可以自己调整一下, 估计1300什么的应该是可以的.</p>
 
 <p>添加用户, 在/etc/ppp/chap-secrets文件中填加用户:</p>
-
-<pre><code class="language-shell"># Secrets for authentication using CHAP
-# client       server  secret                  IP addresses
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># Secrets for authentication using CHAP</span>
+<span class="c1"># client       server  secret                  IP addresses</span>
 alice          l2tpd   0F92E5FC2414101EA            *
-bob            l2tpd   DF98F09F74C06A2F             *
-</code></pre>
-
+bob            l2tpd   DF98F09F74C06A2F             *</code></pre></div>
 <p>上面就是你未来客户端拨号用的账户信息</p>
 
 <p>现在重启ipsec和xl2tpd服务:</p>
-
-<pre><code class="language-shell">service ipsec restart
-/etc/init.d/xl2tpd restart
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">service ipsec restart
+/etc/init.d/xl2tpd restart</code></pre></div>
 <p>配置完成了</p>
 
 <h1 id="客户端配置">客户端配置</h1>

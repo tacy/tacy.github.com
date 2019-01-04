@@ -372,26 +372,23 @@ from polls.models import Question, Choice
 <li>可以设置django的默认隔离级别为RepeatRead</li>
 <li>可以设置django的每一个view都自动开启事物控制</li>
 </ol>
-
-<pre><code class="language-python">DATABASES = {
-    'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'yma',
-        'USER': 'root',
-        'PASSWORD': '12345678',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-        'ATOMIC_REQUESTS': True,
-        'OPTIONS': {
-            'init_command':
-            'SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED'
-        }
-    }
-}
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="c1"># &#39;ENGINE&#39;: &#39;django.db.backends.sqlite3&#39;,</span>
+        <span class="c1"># &#39;NAME&#39;: os.path.join(BASE_DIR, &#39;db.sqlite3&#39;),</span>
+        <span class="s1">&#39;ENGINE&#39;</span><span class="p">:</span> <span class="s1">&#39;django.db.backends.mysql&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;NAME&#39;</span><span class="p">:</span> <span class="s1">&#39;yma&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;USER&#39;</span><span class="p">:</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;PASSWORD&#39;</span><span class="p">:</span> <span class="s1">&#39;12345678&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;HOST&#39;</span><span class="p">:</span> <span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;PORT&#39;</span><span class="p">:</span> <span class="s1">&#39;3306&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ATOMIC_REQUESTS&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+        <span class="s1">&#39;OPTIONS&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;init_command&#39;</span><span class="p">:</span>
+            <span class="s1">&#39;SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
 <h1 id="meta-fields-contains-a-field-that-isn-t-defined-on-this-filterset">Meta.fields contains a field that isn&rsquo;t defined on this FilterSet: ****</h1>
 
 <ol>
@@ -406,20 +403,18 @@ from polls.models import Question, Choice
 <p>参考<a href="https://docs.djangoproject.com/en/1.11/ref/csrf/"> django cross site request forgery protetion</a></p>
 
 <p>axios的请求例子,参考链接<a href="https://cbuelter.wordpress.com/2017/04/10/django-csrf-with-axios/">1</a>, <a href="https://stackoverflow.com/questions/39254562/csrf-with-django-reactredux-using-axios">2</a>:</p>
-
-<pre><code class="language-javascript">// axios.defaults.xsrfCookieName = 'csrftoken'
-// axios.defaults.xsrfHeaderName = 'X-CSRFToken'
-
-// 创建axios实例
-const service = axios.create({
-  xsrfCookieName: 'csrftoken',
-  xsrfHeaderName: 'X-CSRFToken',
-  baseURL: process.env.BASE_API, // api的base_url
-  // baseURL: &quot;http://127.0.0.1:8000/stock&quot;,
-  timeout: 30000                  // 请求超时时间
-});
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">// axios.defaults.xsrfCookieName = &#39;csrftoken&#39;
+</span><span class="c1">// axios.defaults.xsrfHeaderName = &#39;X-CSRFToken&#39;
+</span><span class="c1"></span>
+<span class="c1">// 创建axios实例
+</span><span class="c1"></span><span class="k">const</span> <span class="nx">service</span> <span class="o">=</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+  <span class="nx">xsrfCookieName</span><span class="o">:</span> <span class="s1">&#39;csrftoken&#39;</span><span class="p">,</span>
+  <span class="nx">xsrfHeaderName</span><span class="o">:</span> <span class="s1">&#39;X-CSRFToken&#39;</span><span class="p">,</span>
+  <span class="nx">baseURL</span><span class="o">:</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">BASE_API</span><span class="p">,</span> <span class="c1">// api的base_url
+</span><span class="c1"></span>  <span class="c1">// baseURL: &#34;http://127.0.0.1:8000/stock&#34;,
+</span><span class="c1"></span>  <span class="nx">timeout</span><span class="o">:</span> <span class="mi">30000</span>                  <span class="c1">// 请求超时时间
+</span><span class="c1"></span><span class="p">});</span>
+</code></pre></div>
 <h1 id="static-file">static file</h1>
 
 <p>当django运行在product模式时(setting里面DEBUG设置为False), django不会负责处理static文件, 需要nginx去找, 但是django提供了一个收集static文件的指令, 你可以通过该指令项目所有的static文件到一个指定的目录: <code>python manage.py collectstatic</code>, 目标目录定义在setting的STATIC_ROOT, 结合STATIC_URL, nginx就可以很方便的找到static文件.</p>
@@ -436,14 +431,13 @@ const service = axios.create({
 <li>配置virtualenv,django,新建项目,安装uWsgi</li>
 <li>写uwsgi.ini</li>
 </ol>
-
-<pre><code># mysite_uwsgi.ini file
+<div class="highlight"><pre class="chroma"># mysite_uwsgi.ini file
 [uwsgi]
 
 # Django-related settings
 # the base directory (full path)
 chdir           = /home/tacy_lee/lelewu
-# Django's wsgi file
+# Django&#39;s wsgi file
 module          = lelewu.wsgi
 # the virtualenv (full path)
 home            = /home/tacy_lee/lelewu/venv
@@ -458,72 +452,67 @@ socket          = /home/tacy_lee/lelewu/uwsgi.sock
 # ... with appropriate permissions - may be needed
 chmod-socket    = 666
 # clear environment on exit
-vacuum          = true
-</code></pre>
-
+vacuum          = true</pre></div>
 <ol>
 <li><p>启动uwsgi
 <code>uwsgi --init uwsgi.ini</code></p></li>
 
 <li><p>配置nginx</p></li>
 </ol>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="n">user</span> <span class="n">nginx</span><span class="p">;</span>
+<span class="n">worker_processes</span> <span class="n">auto</span><span class="p">;</span>
+<span class="n">error_log</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">error</span><span class="o">.</span><span class="n">log</span><span class="p">;</span>
+<span class="n">pid</span> <span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">nginx</span><span class="o">.</span><span class="n">pid</span><span class="p">;</span>
 
-<pre><code class="language-python">user nginx;
-worker_processes auto;
-error_log /var/log/nginx/error.log;
-pid /run/nginx.pid;
+<span class="c1"># Load dynamic modules. See /usr/share/nginx/README.dynamic.</span>
+<span class="n">include</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">modules</span><span class="o">/*.</span><span class="n">conf</span><span class="p">;</span>
 
-# Load dynamic modules. See /usr/share/nginx/README.dynamic.
-include /usr/share/nginx/modules/*.conf;
+<span class="n">events</span> <span class="p">{</span>
+    <span class="n">worker_connections</span> <span class="mi">1024</span><span class="p">;</span>
+<span class="p">}</span>
 
-events {
-    worker_connections 1024;
-}
+<span class="n">http</span> <span class="p">{</span>
+    <span class="n">log_format</span>  <span class="n">main</span>  <span class="s1">&#39;$remote_addr - $remote_user [$time_local] &#34;$request&#34; &#39;</span>
+                      <span class="s1">&#39;$status $body_bytes_sent &#34;$http_referer&#34; &#39;</span>
+                      <span class="s1">&#39;&#34;$http_user_agent&#34; &#34;$http_x_forwarded_for&#34;&#39;</span><span class="p">;</span>
 
-http {
-    log_format  main  '$remote_addr - $remote_user [$time_local] &quot;$request&quot; '
-                      '$status $body_bytes_sent &quot;$http_referer&quot; '
-                      '&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;';
+    <span class="n">access_log</span>  <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">access</span><span class="o">.</span><span class="n">log</span>  <span class="n">main</span><span class="p">;</span>
 
-    access_log  /var/log/nginx/access.log  main;
+    <span class="n">sendfile</span>            <span class="n">on</span><span class="p">;</span>
+    <span class="n">tcp_nopush</span>          <span class="n">on</span><span class="p">;</span>
+    <span class="n">tcp_nodelay</span>         <span class="n">on</span><span class="p">;</span>
+    <span class="n">keepalive_timeout</span>   <span class="mi">65</span><span class="p">;</span>
+    <span class="n">types_hash_max_size</span> <span class="mi">2048</span><span class="p">;</span>
 
-    sendfile            on;
-    tcp_nopush          on;
-    tcp_nodelay         on;
-    keepalive_timeout   65;
-    types_hash_max_size 2048;
+    <span class="n">include</span>             <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">mime</span><span class="o">.</span><span class="n">types</span><span class="p">;</span>
+    <span class="n">default_type</span>        <span class="n">application</span><span class="o">/</span><span class="n">octet</span><span class="o">-</span><span class="n">stream</span><span class="p">;</span>
 
-    include             /etc/nginx/mime.types;
-    default_type        application/octet-stream;
+    <span class="n">include</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="o">/*.</span><span class="n">conf</span><span class="p">;</span>
 
-    include /etc/nginx/conf.d/*.conf;
+    <span class="n">upstream</span> <span class="n">django</span> <span class="p">{</span>
+      <span class="c1"># connect to this socket</span>
+      <span class="n">server</span> <span class="n">unix</span><span class="p">:</span><span class="o">///</span><span class="n">home</span><span class="o">/</span><span class="n">tacy_lee</span><span class="o">/</span><span class="n">lelewu</span><span class="o">/</span><span class="n">uwsgi</span><span class="o">.</span><span class="n">sock</span><span class="p">;</span>
+    <span class="p">}</span>
 
-    upstream django {
-      # connect to this socket
-      server unix:///home/tacy_lee/lelewu/uwsgi.sock;
-    }
+    <span class="n">server</span> <span class="p">{</span>
+        <span class="n">listen</span>       <span class="mi">8000</span><span class="p">;</span>
+        <span class="n">server_name</span>  <span class="mf">104.155</span><span class="o">.</span><span class="mf">216.44</span><span class="p">;</span>
+        <span class="n">root</span>         <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">tacy_lee</span><span class="o">/</span><span class="n">lelewu</span><span class="p">;</span>
 
-    server {
-        listen       8000;
-        server_name  104.155.216.44;
-        root         /home/tacy_lee/lelewu;
+        <span class="c1"># Load configuration files for the default server block.</span>
+        <span class="n">include</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">default</span><span class="o">.</span><span class="n">d</span><span class="o">/*.</span><span class="n">conf</span><span class="p">;</span>
 
-        # Load configuration files for the default server block.
-        include /etc/nginx/default.d/*.conf;
+        <span class="n">location</span> <span class="o">/</span> <span class="p">{</span>
+          <span class="n">uwsgi_pass</span>  <span class="n">django</span><span class="p">;</span>
+          <span class="n">include</span>     <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">uwsgi_params</span><span class="p">;</span>
+        <span class="p">}</span>
 
-        location / {
-          uwsgi_pass  django;
-          include     /etc/nginx/uwsgi_params;
-        }
+        <span class="n">location</span> <span class="o">/</span><span class="n">static</span> <span class="p">{</span>
+          <span class="n">alias</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">tacy_lee</span><span class="o">/</span><span class="n">lelewu</span><span class="o">/</span><span class="n">static</span><span class="p">;</span>
+        <span class="p">}</span>
 
-        location /static {
-          alias /home/tacy_lee/lelewu/static;
-        }
-
-    }
-}
-</code></pre>
-
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
 <ol>
 <li>启动nginx</li>
 </ol>

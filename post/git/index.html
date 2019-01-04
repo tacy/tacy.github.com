@@ -328,18 +328,12 @@ if (!doNotTrack) {
 <h1 id="squash">squash</h1>
 
 <p>在你的work branch完成某个feature之后，你需要merge到master：</p>
-
-<pre><code class="language-sh">git checkout master
-git merge workbranch
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">git checkout master
+git merge workbranch</code></pre></div>
 <p>这种做法的问题在于，一般你完成某个feature的时候，会做多次commit，而这些commit如果没有实际意义，那么也就没有在master出现的必要，这样的话你就需要用到squash了，squash的意思是，把work branch上的多个commit合并成一个commit，merge到主干上。</p>
-
-<pre><code class="language-sh">git checkout master
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">git checkout master
 git merge --squash workbranch
-git commit -m &quot;message here&quot;
-</code></pre>
-
+git commit -m <span class="s2">&#34;message here&#34;</span></code></pre></div>
 <h2 id="squash-branch">squash branch</h2>
 
 <p>git reset &ndash;soft HEAD~3 &amp;&amp;
@@ -358,17 +352,14 @@ git cherry-pick <commit hash></p>
 <p>work branch需要和master同步, 可以用到rebase, rebase是git的核心概念<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></p>
 
 <p>两个用户同时工作在同一个分支, 如果a用户提交了代码到远端仓库, b用户本地代码库没有和远端仓库同步, 那么b用户需要提交本地代码到远端仓库可以用rebase实现, 当然也能用merge方式:</p>
-
-<pre><code># As before - update your local repo with the latest code:
+<div class="highlight"><pre class="chroma"># As before - update your local repo with the latest code:
 git fetch --all --prune
 
 # Merge the changes with the rebase flag
 git pull --rebase origin branch1
 
 # push to remote repo
-git push origin branch1
-</code></pre>
-
+git push origin branch1</pre></div>
 <h1 id="branch">branch</h1>
 
 <h2 id="常用">常用</h2>
@@ -429,8 +420,7 @@ https: <a href="https://github.com/USERNAME/OTHERREPOSITORY.git">https://github.
 <p><code>git remote -V</code> 可以查看remote response的URL, <code>git remote set-url origin yoururl</code>可以修改URL, 在ssh和https之间切换</p>
 
 <h2 id="sync-fork">sync fork</h2>
-
-<pre><code>#git remote -v
+<div class="highlight"><pre class="chroma">#git remote -v
 origin  https://github.com/YOUR_USERNAME/YOUR_FORK.git (fetch)
 origin  https://github.com/YOUR_USERNAME/YOUR_FORK.git (push)
 #git remote add upstream https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git
@@ -442,9 +432,7 @@ upstream  https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git (push)
 
 #git fetch upstream
 #git checkout master
-#git merge upstream/master
-</code></pre>
-
+#git merge upstream/master</pre></div>
 <h1 id="ignore">ignore</h1>
 
 <p>编辑<code>.gitignore</code>文件, 添加你要忽略的文件, 如果想忽略的文件已经提交进入代码库, 需要收到删除: <code>git rm --cache FILENAME</code>, 否则git不会忽略该文件.</p>
@@ -452,51 +440,36 @@ upstream  https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git (push)
 <h2 id="保留目录-不提交文件">保留目录, 不提交文件</h2>
 
 <p>有时候, 希望保留目录, 但是不希望保留目录里面的内容, 简单做法是在希望保留的目录底下建立一个<code>.gitignore</code>文件, 内容如下:</p>
-
-<pre><code> *
- !.gitignore
-</code></pre>
-
+<div class="highlight"><pre class="chroma"> *
+ !.gitignore</pre></div>
 <h1 id="git-tips">git tips</h1>
 
 <h2 id="时光机">时光机</h2>
 
 <p>Oh shit, I did something terribly wrong, please tell me git has a magic time machine!?!</p>
-
-<pre><code class="language-shell">git reflog
-# you will see a list of every thing you've done in git, across all branches!
-# each one has an index HEAD@{index}
-# find the one before you broke everything
-git reset HEAD@{index}
-# magic time machine
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">git reflog
+<span class="c1"># you will see a list of every thing you&#39;ve done in git, across all branches!</span>
+<span class="c1"># each one has an index HEAD@{index}</span>
+<span class="c1"># find the one before you broke everything</span>
+git reset HEAD@<span class="o">{</span>index<span class="o">}</span>
+<span class="c1"># magic time machine</span></code></pre></div>
 <h2 id="提交之后-发现一些小的修改需要一并提交">提交之后, 发现一些小的修改需要一并提交</h2>
 
 <p>Oh shit, I committed and immediately realized I need to make one small change!</p>
-
-<pre><code class="language-shell"># make your change
-git add . # or add individual files
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># make your change</span>
+git add . <span class="c1"># or add individual files</span>
 git commit --amend
-# follow prompts to change or keep the commit message
-# now your last commit contains that change!
-</code></pre>
-
+<span class="c1"># follow prompts to change or keep the commit message</span>
+<span class="c1"># now your last commit contains that change!</span></code></pre></div>
 <h2 id="修改最后的提交注释">修改最后的提交注释</h2>
 
 <p>Oh shit, I need to change the message on my last commit!</p>
-
-<pre><code class="language-shell">git commit --amend
-# follow prompts to change the commit message
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">git commit --amend
+<span class="c1"># follow prompts to change the commit message</span></code></pre></div>
 <h2 id="已经add的文件diff不显示">已经add的文件diff不显示</h2>
 
 <p>Oh shit, I tried to run a diff but nothing happened?!</p>
-
-<pre><code class="language-shell">git diff --staged
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">git diff --staged</code></pre></div>
 <p>Git won&rsquo;t do a diff of files that have been add-ed to your staging area without this flag. File under ¯_(ツ)_/¯ (yes, this is a feature, not a bug, but it&rsquo;s baffling and non-obvious the first time it happens to you!)</p>
 
 <h1 id="乐乐屋同步">乐乐屋同步</h1>

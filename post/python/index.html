@@ -68,7 +68,7 @@
 
 <meta itemprop="datePublished" content="2013-07-23T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2019-01-04T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="9233">
+<meta itemprop="wordCount" content="9249">
 
 
 
@@ -328,12 +328,9 @@ if (!doNotTrack) {
 <h1 id="enviroment">enviroment</h1>
 
 <h2 id="virtualenv">virtualenv</h2>
-
-<pre><code class="language-shell">virtualenv myenv
-source .myenv/bin/activate
-deactivate
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">virtualenv myenv
+<span class="nb">source</span> .myenv/bin/activate
+deactivate</code></pre></div>
 <h1 id="core-type">Core type</h1>
 
 <ul>
@@ -485,24 +482,18 @@ object serialization &amp; C structs represented as Python strings</li>
    # -<em>- coding: utf-8 -</em>-
    name = &lsquo;斯坦福&rsquo;
    #+END_SRC</p>
-
-<pre><code class="language-shell">   &gt;name.encode('gbk')
-   UnicodeDecodeError: 'ascii' codec can't decode byte 0xe6 in position 0:
-   ordinal not in range(128)
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">   &gt;name.encode<span class="o">(</span><span class="s1">&#39;gbk&#39;</span><span class="o">)</span>
+   UnicodeDecodeError: <span class="s1">&#39;ascii&#39;</span> codec can<span class="err">&#39;</span>t decode byte 0xe6 in position <span class="m">0</span>:
+   ordinal not in range<span class="o">(</span><span class="m">128</span><span class="o">)</span></code></pre></div>
 <p>Python会抛UnicodeDecodeError异常. 导致该结果的原因是, Python隐式转码的过程用
    的缺省编码是ASCII, 但是&rsquo;斯坦福&rsquo;这个字符串无法用ASCII编码格式进行编码(ascii只
    能处理0-127的字符).</p>
 
 <p>要解决上面的问题, 我们需要显式的对name进行转码, 先手动把name解码成unicode字符
    串, 然后再用gbk去做编码, 这样Python才能正常工作:</p>
-
-<pre><code class="language-shell">   &gt;uname = unicode(name, 'utf-8')    #或者也可以uname = name.decode('utf-8')
-   &gt;uname.encode('gb18030')
-   '\xcb\xb9\xcc\xb9\xb8\xa3'
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">   &gt;uname <span class="o">=</span> unicode<span class="o">(</span>name, <span class="s1">&#39;utf-8&#39;</span><span class="o">)</span>    <span class="c1">#或者也可以uname = name.decode(&#39;utf-8&#39;)</span>
+   &gt;uname.encode<span class="o">(</span><span class="s1">&#39;gb18030&#39;</span><span class="o">)</span>
+   <span class="s1">&#39;\xcb\xb9\xcc\xb9\xb8\xa3&#39;</span></code></pre></div>
 <p>另外需要注意的是, 我们怎么才能知道Python缺省使用的字符串编码呢? 例如上面赋值
    语句:
    #+BEGIN_SRC python
@@ -513,40 +504,28 @@ object serialization &amp; C structs represented as Python strings</li>
    定源代码编码[fn:2]， 例如你指定coding为”# -<em>- coding: utf-8 -</em>-“，那么
    Python就知道用utf-8对name进行编码, 你在对name做unicode()的时候就不能用gbk
    去做，会出错：</p>
-
-<pre><code class="language-shell">   &gt;unicode(name, 'gb18030')
-   UnicodeDecodeError: 'gb18030' codec can't decode byte 0x8f in position 8:
-   incomplete multibyte sequence
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">   &gt;unicode<span class="o">(</span>name, <span class="s1">&#39;gb18030&#39;</span><span class="o">)</span>
+   UnicodeDecodeError: <span class="s1">&#39;gb18030&#39;</span> codec can<span class="err">&#39;</span>t decode byte 0x8f in position <span class="m">8</span>:
+   incomplete multibyte sequence</code></pre></div>
 <p>如果你没有申明编码格式, 那么Python就会用系统的缺省编码, 比如在中文windows系统中, 可能就是cp936.</p>
 
 <p>转换一个str成为url也必须小心，如果你代码的编码是utf8，而目标网站编码是gbk，
    你在转换的时候需要先转换str编码为gbk，然后做quote:</p>
-
-<pre><code class="language-shell">   &gt;uname = name.decode('utf-8')
-   &gt;urllib2.quote(uname.encode('gb18030'))
-   '%CB%B9%CC%B9%B8%A3'
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">   &gt;uname <span class="o">=</span> name.decode<span class="o">(</span><span class="s1">&#39;utf-8&#39;</span><span class="o">)</span>
+   &gt;urllib2.quote<span class="o">(</span>uname.encode<span class="o">(</span><span class="s1">&#39;gb18030&#39;</span><span class="o">))</span>
+   <span class="s1">&#39;%CB%B9%CC%B9%B8%A3&#39;</span></code></pre></div>
 <p>搞明白了上面这些东西, 基本你就能解决UnicodeDecodeError问题了.</p>
 
 <h2 id="关于print和重定向">关于print和重定向</h2>
 
 <p>这里需要注意，如果你的代码明确了编码，例如:“# -<em>- coding: utf-8 -</em>-”，那么你在中文的windows平台上执行print时需要小心，由于缺省用的是utf-8编码, 字符串在输出的时候需要注意, 需要先解码成unicode, 然后让Python自己去编码成console stdout制定的编码格式. 如果你不显示解码成unicode, 就会发生隐式转换, 导致UnicodeDecodeError异常.</p>
-
-<pre><code class="language-shell">a = '测试'
-print a.decode('utf-8')
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">a</span> <span class="o">=</span> <span class="s1">&#39;测试&#39;</span>
+print a.decode<span class="o">(</span><span class="s1">&#39;utf-8&#39;</span><span class="o">)</span></code></pre></div>
 <p>但是如果你把上面的代码输出重定向到一个文件，无法执行成功，会出现编码错误。出现这个问题的原因是由于重定向之后，python无法知道stdout的encoding，只能使用ASCII来进行转码输出[fn:10]，可以用下面方法解决：</p>
-
-<pre><code class="language-shell">import sys, codecs, locale
-sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
-a = '测试'
-print a.decode('utf-8')
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">import sys, codecs, locale
+sys.stdout <span class="o">=</span> codecs.getwriter<span class="o">(</span>locale.getpreferredencoding<span class="o">())(</span>sys.stdout<span class="o">)</span>
+<span class="nv">a</span> <span class="o">=</span> <span class="s1">&#39;测试&#39;</span>
+print a.decode<span class="o">(</span><span class="s1">&#39;utf-8&#39;</span><span class="o">)</span></code></pre></div>
 <h2 id="p2k-p3k">p2k &amp; p3k</h2>
 
 <p>上面我们说的都是p2k, 可以看到p2k对于字符串编码的处理非常麻烦, 这点在p3k之后有了很大的改进.</p>
@@ -590,19 +569,16 @@ print a.decode('utf-8')
    #+BEGIN_SRC python
      #这里匹配xx，xy，yx，yy，但是如果你只想匹配xy和yx的时候怎么办呢
      re = re.search(r&rsquo;(x|y)(x|y)&lsquo;, &lsquo;xy&rsquo;)</p>
-
-<pre><code> #匹配xy或者yx，不匹配xx，yy，解释一下，第一个大括号里面是表示当找到x的时
+<div class="highlight"><pre class="chroma"> #匹配xy或者yx，不匹配xx，yy，解释一下，第一个大括号里面是表示当找到x的时
  #候，存入group（1）里面，如果是y则不存入group（1），后面一个括号里面表示如
  #果group（1）存在，则继续匹配y，否则匹配x
- rs = re.search(r'(?:(x)|y)(?(1)y|x)', 'xy')
+ rs = re.search(r&#39;(?:(x)|y)(?(1)y|x)&#39;, &#39;xy&#39;)
 
  #OR关系匹配
  #假如你要匹配的内容前面的限定符有变化，比如下面例子，
- s = '''&lt;div class=&quot;data&quot;&gt;12-11&lt;a href=&quot;http://www.google.com&quot;&gt;&lt;/a&gt;&lt;/div&gt;
-        &lt;div class =&quot;phase&quot;&gt;1102&lt;a href=&quot;http://www.yahoo.com&quot;&gt;&lt;/a&gt;&lt;/div&gt;'''
- rs = re.findall(r'class=&quot;(?:(?:data)|(?:phase))&quot;&gt;([\d-]+)&lt;a.*?&quot;(.*?)&quot;&gt;', s)
-</code></pre>
-
+ s = &#39;&#39;&#39;&lt;div class=&#34;data&#34;&gt;12-11&lt;a href=&#34;http://www.google.com&#34;&gt;&lt;/a&gt;&lt;/div&gt;
+        &lt;div class =&#34;phase&#34;&gt;1102&lt;a href=&#34;http://www.yahoo.com&#34;&gt;&lt;/a&gt;&lt;/div&gt;&#39;&#39;&#39;
+ rs = re.findall(r&#39;class=&#34;(?:(?:data)|(?:phase))&#34;&gt;([\d-]+)&lt;a.*?&#34;(.*?)&#34;&gt;&#39;, s)</pre></div>
 <p>#+END_SRC</p>
 
 <h2 id="findall-group-return-tuple">findall group  - return tuple</h2>
@@ -668,11 +644,8 @@ def foo(x):
 <p>class MyClass(object):
     def m1(x):
         print &lsquo;call m1&rsquo;, x</p>
-
-<pre><code>def m2(self, y):
-    print 'call m2', y
-</code></pre>
-
+<div class="highlight"><pre class="chroma">def m2(self, y):
+    print &#39;call m2&#39;, y</pre></div>
 <p>In [259]: foo
 Out[259]: <function __main__.foo></p>
 
@@ -953,37 +926,33 @@ old class中任何attribute fetch操作都会触发&rdquo;<strong>getattr</stron
     x.spam
     x.other
     len(x)</p>
-
-<pre><code>try: x[0]
-except: print('fail []')
+<div class="highlight"><pre class="chroma">try: x[0]
+except: print(&#39;fail []&#39;)
 
 try: x + 99
-except: print('fail +')
+except: print(&#39;fail +&#39;)
 
 try: x()
-except: print ('fail ()')
+except: print (&#39;fail ()&#39;)
 
 x.b()
 x.__call__()
 print(x.__str__())
-print(x)
-</code></pre>
-
+print(x)</pre></div>
 <p>#+END_SRC</p>
-
-<pre><code class="language-shell">In [168]:
-GetAttr===========================================
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">In <span class="o">[</span><span class="m">168</span><span class="o">]</span>:
+<span class="nv">GetAttr</span><span class="o">===========================================</span>
 getattr:other
 __len__:42
-fail []
+fail <span class="o">[]</span>
 fail +
-fail ()
+fail <span class="o">()</span>
 getattr:b
 getattr:__call__
 &lt;__main__.GetAttr object at 0x7fe770053550&gt;
 &lt;__main__.GetAttr object at 0x7fe770053550&gt;
 
-GetAttrOld========================================
+<span class="nv">GetAttrOld</span><span class="o">========================================</span>
 getattr:other
 __len__:42
 getattr:__getitem__
@@ -993,25 +962,23 @@ getattr:__call__
 getattr:b
 getattr:__call__
 getattr:__str__
-[Getattr str]
+<span class="o">[</span>Getattr str<span class="o">]</span>
 getattr:__str__
-[Getattr str]
+<span class="o">[</span>Getattr str<span class="o">]</span>
 
-GetAttribute======================================
+<span class="nv">GetAttribute</span><span class="o">======================================</span>
 getattribute:eggs
 getattribute:spam
 getattribute:other
 __len__:42
-fail []
+fail <span class="o">[]</span>
 fail +
-fail ()
+fail <span class="o">()</span>
 getattribute:b
 getattribute:__call__
 getattribute:__str__
-[GetAttribute str]
-&lt;__main__.GetAttribute object at 0x7fe770053550&gt;
-</code></pre>
-
+<span class="o">[</span>GetAttribute str<span class="o">]</span>
+&lt;__main__.GetAttribute object at 0x7fe770053550&gt;</code></pre></div>
 <p>关键要注意一点，比如&rdquo;x.b()&ldquo;这行代码，在python中是先运行&rdquo;x.b&rdquo;这个表达式，注意是
 表达式，然后才是执行调用，它会触发<strong>getattr</strong>和<strong>getattribute</strong>方法。</p>
 
@@ -1045,23 +1012,20 @@ getattribute:__str__
    （coroutines / green threads），轻量级别的伪线程，采用栈方式实现协程切换，不
    会带来ContextSwitch，缺点是需要自己管理协程调用栈，stackless能实现10，0000级
    别的连接.</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">   from greenlet import greenlet
+   def test1<span class="o">()</span>:
+       print <span class="m">12</span>
+       gr2.switch<span class="o">()</span>
+       print <span class="m">34</span>
 
-<pre><code class="language-shell">   from greenlet import greenlet
-   def test1():
-       print 12
-       gr2.switch()
-       print 34
+   def test2<span class="o">()</span>:
+       print <span class="m">56</span>
+       gr1.switch<span class="o">()</span>
+       print <span class="m">78</span>   <span class="c1">#not to be printed</span>
 
-   def test2():
-       print 56
-       gr1.switch()
-       print 78   #not to be printed
-
-   gr1 = greenlet(test1)
-   gr2 = greenlet(test2)
-   gr1.switch()
-</code></pre>
-
+   <span class="nv">gr1</span> <span class="o">=</span> greenlet<span class="o">(</span>test1<span class="o">)</span>
+   <span class="nv">gr2</span> <span class="o">=</span> greenlet<span class="o">(</span>test2<span class="o">)</span>
+   gr1.switch<span class="o">()</span></code></pre></div>
 <h2 id="pypy">PyPy</h2>
 
 <p>实现了一个JIT，运行时转换python代码到机器码，主要关注在运行效率的提升，和原生
@@ -1090,24 +1054,21 @@ getattribute:__str__
 <h1 id="tor">tor</h1>
 
 <p>需要安装stem, 测试代码:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">stem</span> <span class="kn">import</span> <span class="n">Signal</span>
+<span class="kn">from</span> <span class="nn">stem.control</span> <span class="kn">import</span> <span class="n">Controller</span>
+<span class="kn">import</span> <span class="nn">requests</span>
 
-<pre><code class="language-python">from stem import Signal
-from stem.control import Controller
-import requests
-
-# signal TOR for a new connection
-def renew_connection():
-    with Controller.from_port(port = 9051) as controller:
-        controller.authenticate(password=&quot;lichunlongasd12288&quot;)
-        controller.signal(Signal.NEWNYM)
-renew_connection()
-proxies = {
-  'http': 'socks5://localhost:9050',
-  'https': 'sockets5://localhost:9050',
-}
-print requests.session().get(&quot;http://httpbin.org/ip&quot;,proxies=proxies).content
-</code></pre>
-
+<span class="c1"># signal TOR for a new connection</span>
+<span class="k">def</span> <span class="nf">renew_connection</span><span class="p">():</span>
+    <span class="k">with</span> <span class="n">Controller</span><span class="o">.</span><span class="n">from_port</span><span class="p">(</span><span class="n">port</span> <span class="o">=</span> <span class="mi">9051</span><span class="p">)</span> <span class="k">as</span> <span class="n">controller</span><span class="p">:</span>
+        <span class="n">controller</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="n">password</span><span class="o">=</span><span class="s2">&#34;lichunlongasd12288&#34;</span><span class="p">)</span>
+        <span class="n">controller</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">Signal</span><span class="o">.</span><span class="n">NEWNYM</span><span class="p">)</span>
+<span class="n">renew_connection</span><span class="p">()</span>
+<span class="n">proxies</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">&#39;http&#39;</span><span class="p">:</span> <span class="s1">&#39;socks5://localhost:9050&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;https&#39;</span><span class="p">:</span> <span class="s1">&#39;sockets5://localhost:9050&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="k">print</span> <span class="n">requests</span><span class="o">.</span><span class="n">session</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;http://httpbin.org/ip&#34;</span><span class="p">,</span><span class="n">proxies</span><span class="o">=</span><span class="n">proxies</span><span class="p">)</span><span class="o">.</span><span class="n">content</span></code></pre></div>
 <h1 id="mysql">mysql</h1>
 
 <p>插入空到字段用<code>None</code>, 或者<code>''</code>, 不是<code>&quot;null&quot;</code></p>

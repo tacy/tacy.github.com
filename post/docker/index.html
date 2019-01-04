@@ -338,14 +338,11 @@ if (!doNotTrack) {
 占地方，另外就是耗资源，开销挺大，多开几个就受不了。</p>
 
 <p>现在我们来看看Docker怎么玩，首先我们在docker仓库查找一下，看看是否有活雷锋：</p>
-
-<pre><code class="language-shell">tacy@tacy:~$ sudo docker search oracle
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">tacy@tacy:~$ sudo docker search oracle
 NAME                              DESCRIPTION                                     STARS     OFFICIAL   TRUSTED
-wnameless/oracle-xe-11g           SYS &amp; SYSTEM password: oracle https://inde...   5                    [OK]
-alexeiled/docker-oracle-xe-11g    This is a spin off from wnameless/docker-o...   2                    [OK]
-haroon/docker-oracle-jdk7         Trusted Oracle JDK7 on Ubuntu:12.10             1                    [OK]
-</code></pre>
-
+wnameless/oracle-xe-11g           SYS <span class="p">&amp;</span> SYSTEM password: oracle https://inde...   <span class="m">5</span>                    <span class="o">[</span>OK<span class="o">]</span>
+alexeiled/docker-oracle-xe-11g    This is a spin off from wnameless/docker-o...   <span class="m">2</span>                    <span class="o">[</span>OK<span class="o">]</span>
+haroon/docker-oracle-jdk7         Trusted Oracle JDK7 on Ubuntu:12.10             <span class="m">1</span>                    <span class="o">[</span>OK<span class="o">]</span></code></pre></div>
 <dl>
 <dt>很幸运，不用你自己费劲弄了，直接pull下来吧：</dt>
 <dd>sudo docker pull wnameless/oracle-xe-11g
@@ -359,14 +356,11 @@ ubuntu                    13.10               9f676bd305a4        8 weeks ago   
 </dl>
 
 <p>接下来按照该Image的[[<a href="https://index.docker.io/u/wnameless/oracle-xe-11g/][文档]]操作，直接启动一个Container（我这里添加了-name参数）：">https://index.docker.io/u/wnameless/oracle-xe-11g/][文档]]操作，直接启动一个Container（我这里添加了-name参数）：</a></p>
-
-<pre><code class="language-shell">tacy@tacy:~$ sudo docker run -name oraclexe -d -p 49160:22 -p 49161:1521 wnameless/oracle-xe-11g
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">tacy@tacy:~$ sudo docker run -name oraclexe -d -p <span class="m">49160</span>:22 -p <span class="m">49161</span>:1521 wnameless/oracle-xe-11g
 d14110dc542540c4b83a44d8ca7b9d393a9aa4be7a60cd1ca757463bc12df2a9
-tacy@tacy:~$ ps -ef|grep docker
-root      1599  1588  0 09:58 ?        00:02:43 /usr/bin/docker -d
-root     14977  1599  0 16:10 ?        00:00:00 lxc-start -n d14110dc542540c4b83a44d8ca7b9d393a9aa4be7a60cd1ca757463bc12df2a9 -f /var/lib/docker/containers/d14110dc542540c4b83a44d8ca7b9d393a9aa4be7a60cd1ca757463bc12df2a9/config.lxc -- /.dockerinit -g 172.17.42.1 -i 172.17.0.2/16 -mtu 1500 -- /bin/sh -c sed -i -E &quot;s/HOST = [^)]+/HOST = $HOSTNAME/g&quot; /u01/app/oracle/product/11.2.0/xe/network/admin/listener.ora; service oracle-xe start; /usr/sbin/sshd -D
-</code></pre>
-
+tacy@tacy:~$ ps -ef<span class="p">|</span>grep docker
+root      <span class="m">1599</span>  <span class="m">1588</span>  <span class="m">0</span> <span class="m">09</span>:58 ?        <span class="m">00</span>:02:43 /usr/bin/docker -d
+root     <span class="m">14977</span>  <span class="m">1599</span>  <span class="m">0</span> <span class="m">16</span>:10 ?        <span class="m">00</span>:00:00 lxc-start -n d14110dc542540c4b83a44d8ca7b9d393a9aa4be7a60cd1ca757463bc12df2a9 -f /var/lib/docker/containers/d14110dc542540c4b83a44d8ca7b9d393a9aa4be7a60cd1ca757463bc12df2a9/config.lxc -- /.dockerinit -g <span class="m">172</span>.17.42.1 -i <span class="m">172</span>.17.0.2/16 -mtu <span class="m">1500</span> -- /bin/sh -c sed -i -E <span class="s2">&#34;s/HOST = [^)]+/HOST = </span><span class="nv">$HOSTNAME</span><span class="s2">/g&#34;</span> /u01/app/oracle/product/11.2.0/xe/network/admin/listener.ora<span class="p">;</span> service oracle-xe start<span class="p">;</span> /usr/sbin/sshd -D</code></pre></div>
 <dl>
 <dt>秒级启动，数据库连接信息：</dt>
 <dd>hostname: localhost port: 49161 sid: xe username: system password: oracle
@@ -380,12 +374,10 @@ Welcome to Ubuntu 12.04 LTS (GNU/Linux 3.11.0-15-generic x86_64)</dd>
 <h1 id="documentation-https-help-ubuntu-com">Documentation:  <a href="https://help.ubuntu.com/">https://help.ubuntu.com/</a></h1>
 
 <p>root@d14110dc5425:~#</p>
-
-<pre><code>
-连接数据库:
+<div class="highlight"><pre class="chroma">连接数据库:
 ``` shell
 root@d14110dc5425:~# su - oracle
-oracle@d14110dc5425:~$ sqlplus '/as sysdba'
+oracle@d14110dc5425:~$ sqlplus &#39;/as sysdba&#39;
 
 SQL*Plus: Release 11.2.0.2.0 Production on Fri Apr 4 08:19:36 2014
 
@@ -395,9 +387,7 @@ Copyright (c) 1982, 2011, Oracle.  All rights reserved.
 Connected to:
 Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
 
-SQL&gt;
-</code></pre>
-
+SQL&gt;</pre></div>
 <dl>
 <dt>停止container：</dt>
 <dd>tacy@tacy:~$ sudo docker stop oraclexe
@@ -442,12 +432,9 @@ tacy@tacy:~$
 </dl>
 
 <p>接下来创建并运行一个Container[fn:7]：</p>
-
-<pre><code class="language-shell">tacy@tacy:~$ sudo docker run -i -name db2exc -t ubuntu /bin/bash
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">tacy@tacy:~$ sudo docker run -i -name db2exc -t ubuntu /bin/bash
 root@4e476fda5fb5:/# uname -a
-Linux 4e476fda5fb5 3.11.0-15-generic #23~precise1-Ubuntu SMP Tue Dec 10 16:39:48 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux
-</code></pre>
-
+Linux 4e476fda5fb5 <span class="m">3</span>.11.0-15-generic <span class="c1">#23~precise1-Ubuntu SMP Tue Dec 10 16:39:48 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux</span></code></pre></div>
 <p>Kernel版本和宿主机一致。</p>
 
 <dl>
@@ -480,9 +467,7 @@ db2exc - DB2 Express-C 9.7 Fix Pack 5 for Linux
 
 <p>db2exc
 db2exc - DB2 Express-C 9.7 Fix Pack 5 for Linux</p>
-
-<pre><code>
-安装一下：
+<div class="highlight"><pre class="chroma">安装一下：
 : apt-get install db2exc
 
 完成之后，切换到db2inst1用户就可以创建数据库了（缺省没有建库），到这里貌似问题
@@ -493,62 +478,45 @@ db2exc - DB2 Express-C 9.7 Fix Pack 5 for Linux</p>
 ``` shell
 root@4e476fda5fb5:/usr/sbin# service ssh start
 root@4e476fda5fb5:/usr/sbin# ps -ef|grep ssh
-root@4e476fda5fb5:/usr/sbin#
-</code></pre>
-
+root@4e476fda5fb5:/usr/sbin#</pre></div>
 <p>没反应，其实很正常，Container并没有启动upstart服务，为了保证Container的轻量级，
 当你创建一个Container的时候，它只会启动你命令行指定的命令（一般在dockerfile），
 我们的Container启动的是/bin/bash，所以如果你要启动ssh，可以通过下面方式启动：</p>
-
-<pre><code class="language-shell">root@4e476fda5fb5:/usr/sbin# /usr/sbin/sshd -D
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">root@4e476fda5fb5:/usr/sbin# /usr/sbin/sshd -D
 Missing privilege separation directory: /var/run/sshd
 root@4e476fda5fb5:/usr/sbin# mkdir /var/run/sshd
-root@4e476fda5fb5:/usr/sbin# /usr/sbin/sshd -D &amp;
-[1] 14
-root@4e476fda5fb5:/usr/sbin# ps -ef|grep sshd
-root        14     1  0 06:36 ?        00:00:00 /usr/sbin/sshd -D
-root        16     1  0 06:36 ?        00:00:00 grep sshd
-</code></pre>
-
+root@4e476fda5fb5:/usr/sbin# /usr/sbin/sshd -D <span class="p">&amp;</span>
+<span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="m">14</span>
+root@4e476fda5fb5:/usr/sbin# ps -ef<span class="p">|</span>grep sshd
+root        <span class="m">14</span>     <span class="m">1</span>  <span class="m">0</span> <span class="m">06</span>:36 ?        <span class="m">00</span>:00:00 /usr/sbin/sshd -D
+root        <span class="m">16</span>     <span class="m">1</span>  <span class="m">0</span> <span class="m">06</span>:36 ?        <span class="m">00</span>:00:00 grep sshd</code></pre></div>
 <p>能正常启动了，如果你想从外部连接进去，尝试一下：</p>
-
-<pre><code class="language-shell">tacy@tacy:/var/cache/apt/archives$ ssh root@172.17.0.26
-ssh: connect to host 172.17.0.26 port 22: Connection refused
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">tacy@tacy:/var/cache/apt/archives$ ssh root@172.17.0.26
+ssh: connect to host <span class="m">172</span>.17.0.26 port <span class="m">22</span>: Connection refused</code></pre></div>
 <p>无法连接，你需要先把端口映射到Host上，另外你也不知道root密码，我们先设置一下密
 码，接下来你希望能修改启动参数，但是很不幸，Container启动之后，无法变更命令，你
 需要新建一个Container。[fn:3]</p>
 
 <p>由于你需要基于当前Container的配置新建一个，但是Container只能从Image创建，因此你
 需要把当前的工作提交一下，生成一个新的Image，提交Image：</p>
-
-<pre><code class="language-shell">tacy@tacy:/etc/init.d$ sudo docker commit db2exc tacylee/db2exc
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">tacy@tacy:/etc/init.d$ sudo docker commit db2exc tacylee/db2exc
 250b78860e291ebd71948bbb596f7dfc1a7d61563184a433bb44a8f2363079cb
 tacy@tacy:/etc/init.d$ sudo docker images
 REPOSITORY                TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
-tacylee/db2exc            latest              250b78860e29        24 seconds ago      1.349 GB
-wnameless/oracle-xe-11g   latest              f8d224b82290        5 days ago          2.389 GB
-</code></pre>
-
+tacylee/db2exc            latest              250b78860e29        <span class="m">24</span> seconds ago      <span class="m">1</span>.349 GB
+wnameless/oracle-xe-11g   latest              f8d224b82290        <span class="m">5</span> days ago          <span class="m">2</span>.389 GB</code></pre></div>
 <p>基于我们提交的Image运行一个Container：</p>
-
-<pre><code class="language-shell">tacy@tacy:/etc/init.d$ sudo docker run -d -p 49170:22 -p 49171:50000 -name tt tacylee/db2exc /bin/bash -c '/etc/init.d/db2exc start &amp;&amp; /usr/sbin/sshd -D'
-c71ac7f85e167850552809ec12a12e50e064d30dddfeb4d71302d16d0ac34502
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">tacy@tacy:/etc/init.d$ sudo docker run -d -p <span class="m">49170</span>:22 -p <span class="m">49171</span>:50000 -name tt tacylee/db2exc /bin/bash -c <span class="s1">&#39;/etc/init.d/db2exc start &amp;&amp; /usr/sbin/sshd -D&#39;</span>
+c71ac7f85e167850552809ec12a12e50e064d30dddfeb4d71302d16d0ac34502</code></pre></div>
 <p>这个命令行有几个地方要注意，首先我们通过‘-d’参数让我们的Container运行在detached
 模式（也就是后台模式），其次我们通过‘-p’参数把Container端口22和50000映射到Host，
 另外就是CMD，这地方比较晕，弄了好久才明白[fn:4][fn:5]。关键点是，每个Container必须
 有一个前台服务在运行，如果这个前台服务停止了，Container就停止了[fn:6]，例如：</p>
-
-<pre><code class="language-shell">tacy@tacy:~$ sudo docker run -d ubuntu echo 'helloworld'
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">tacy@tacy:~$ sudo docker run -d ubuntu <span class="nb">echo</span> <span class="s1">&#39;helloworld&#39;</span>
 3088fce883ece6e04282ea965af84ddd4165b67873811e949b543f8930aebe82
 tacy@tacy:~$ sudo docker ps -a
 CONTAINER ID        IMAGE                            COMMAND                CREATED             STATUS              PORTS                                                      NAMES
-3088fce883ec        ubuntu:12.04                     echo helloworld        20 seconds ago      Exit 0
-</code></pre>
-
+3088fce883ec        ubuntu:12.04                     <span class="nb">echo</span> helloworld        <span class="m">20</span> seconds ago      Exit <span class="m">0</span></code></pre></div>
 <p>可以看到，这个Container已经停止了，因为他没有前台进程在跑了，所以如果你需要你的
 Container提供服务，你需要一个前台进程，很多时候我们用sshd来实现。接下来是要让我
 们的Container启动DB2，使用命令组合实现即可。注意不能让sshd放在前面执行，因为他不
@@ -556,25 +524,22 @@ Container提供服务，你需要一个前台进程，很多时候我们用sshd�
 
 <p>到这里，我们貌似已经已经有了一个跑DB2的Container了。但是，这个世界总是没那么美好
 ，我们先看看Container的启动日志：</p>
-
-<pre><code class="language-shell">tacy@tacy:~$ sudo docker logs tt
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-error: permission denied on key 'kernel.msgmni'
-error: permission denied on key 'kernel.msgmnb'
-error: permission denied on key 'kernel.msgmax'
-error: permission denied on key 'fs.file-max'
-# Starting DAS:			failed.
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">tacy@tacy:~$ sudo docker logs tt
+tput: No value <span class="k">for</span> <span class="nv">$TERM</span> and no -T specified
+tput: No value <span class="k">for</span> <span class="nv">$TERM</span> and no -T specified
+tput: No value <span class="k">for</span> <span class="nv">$TERM</span> and no -T specified
+tput: No value <span class="k">for</span> <span class="nv">$TERM</span> and no -T specified
+tput: No value <span class="k">for</span> <span class="nv">$TERM</span> and no -T specified
+tput: No value <span class="k">for</span> <span class="nv">$TERM</span> and no -T specified
+error: permission denied on key <span class="s1">&#39;kernel.msgmni&#39;</span>
+error: permission denied on key <span class="s1">&#39;kernel.msgmnb&#39;</span>
+error: permission denied on key <span class="s1">&#39;kernel.msgmax&#39;</span>
+error: permission denied on key <span class="s1">&#39;fs.file-max&#39;</span>
+<span class="c1"># Starting DAS:			failed.</span>
 
 Message: SQL4401C  The DB2 Administration Server encountered an error during startup.
 
-# Instance db2inst1 ( db2c_db2inst1 ):	done.
-</code></pre>
-
+<span class="c1"># Instance db2inst1 ( db2c_db2inst1 ):	done.</span></code></pre></div>
 <p>进去看看/etc/init.d/db2exc脚本，发现它会去修改kernel参数，而Docker为了保证安全
 ，这些权限是被关闭的。简单做法是在Container里面配置好，然后别让脚本执行Kernel
 参数的设置操作，另外如果你不想去配置，可以让你的Container运行在特权模式，只需在
@@ -582,37 +547,31 @@ Message: SQL4401C  The DB2 Administration Server encountered an error during sta
 
 <p>Kernel参数问题解决了之后，你通过SSH连接到Container，切换到db2inst1用户，尝试建
 立数据库，很不幸，你会碰到下面错误：</p>
-
-<pre><code class="language-shell">db2inst1@c71ac7f85e16:~$ db2 create db dd
-SQL1042C  An unexpected system error occurred.  SQLSTATE=58004
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">db2inst1@c71ac7f85e16:~$ db2 create db dd
+SQL1042C  An unexpected system error occurred.  <span class="nv">SQLSTATE</span><span class="o">=</span><span class="m">58004</span></code></pre></div>
 <p>查看DB2日志文件，你会发现如下错误信息：</p>
-
-<pre><code class="language-shell">2014-04-11-11.44.10.392525+000 E100588E1093        LEVEL: Error (OS)
-PID     : 369                  TID  : 140502687016704PROC : db2sysc
-INSTANCE: db2inst1             NODE : 000          DB   : DD
-EDUID   : 79                   EDUNAME: db2loggr (DD)
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="m">2014</span>-04-11-11.44.10.392525+000 E100588E1093        LEVEL: Error <span class="o">(</span>OS<span class="o">)</span>
+PID     : <span class="m">369</span>                  TID  : 140502687016704PROC : db2sysc
+INSTANCE: db2inst1             NODE : <span class="m">000</span>          DB   : DD
+EDUID   : <span class="m">79</span>                   EDUNAME: db2loggr <span class="o">(</span>DD<span class="o">)</span>
 FUNCTION: DB2 UDB, oper system services, sqloopenp, probe:80
-MESSAGE : ZRC=0x870F0002=-2029060094=SQLO_BPSE &quot;Debug logic error detected&quot;
+MESSAGE : <span class="nv">ZRC</span><span class="o">=</span><span class="nv">0x870F0002</span><span class="o">=</span>-2029060094<span class="o">=</span>SQLO_BPSE <span class="s2">&#34;Debug logic error detected&#34;</span>
           DIA8501C A buffer pool logic error has occurred.
-CALLED  : OS, -, open                             OSERR: EINVAL (22)
-DATA #1 : Codepath, 8 bytes
-4:11:15:20:22:37
-DATA #2 : File name, 63 bytes
+CALLED  : OS, -, open                             OSERR: EINVAL <span class="o">(</span><span class="m">22</span><span class="o">)</span>
+DATA <span class="c1">#1 : Codepath, 8 bytes</span>
+<span class="m">4</span>:11:15:20:22:37
+DATA <span class="c1">#2 : File name, 63 bytes</span>
 /home/db2inst1/db2inst1/NODE0000/SQL00001/SQLOGDIR/S0000000.LOG
-DATA #3 : SQO Open File Options, PD_TYPE_SQO_FILE_OPEN_OPTIONS, 4 bytes
+DATA <span class="c1">#3 : SQO Open File Options, PD_TYPE_SQO_FILE_OPEN_OPTIONS, 4 bytes</span>
 SQLO_REVISE, SQLO_READWRITE, SQLO_SHAREREAD, SQLO_WRITETHRU, SQLO_SECTOR_ALIGNED, SQLO_NO_THREAD_LEVEL_FILE_LOCK
-DATA #4 : Hex integer, 4 bytes
+DATA <span class="c1">#4 : Hex integer, 4 bytes</span>
 0x00000180
-DATA #5 : signed integer, 4 bytes
-0
-DATA #6 : signed integer, 4 bytes
-16384
-DATA #7 : String, 105 bytes
-Search for ossError*Analysis probe point after this log entry for further
-</code></pre>
-
+DATA <span class="c1">#5 : signed integer, 4 bytes</span>
+<span class="m">0</span>
+DATA <span class="c1">#6 : signed integer, 4 bytes</span>
+<span class="m">16384</span>
+DATA <span class="c1">#7 : String, 105 bytes</span>
+Search <span class="k">for</span> ossError*Analysis probe point after this log entry <span class="k">for</span> further</code></pre></div>
 <dl>
 <dt>ext4文件系统，并且支持O_DIRECT，最终的Container创建命令如下：</dt>
 <dd>sudo docker run -d -p 49170:22 -p 49171:50000 -v /home/tacy/Docker/db2db:/home/db2inst1/db2db -name db2exc -privileged tacylee/db2exc /bin/bash -c &lsquo;/etc/init.d/db2exc start &amp;&amp; /usr/sbin/sshd -D&rsquo;
@@ -635,29 +594,20 @@ Search for ossError*Analysis probe point after this log entry for further
 知道是db2sysc需要执行系统的OPEN操作出现问题，你可以通过stace来捕获具体的错误。</p>
 
 <p>我们先获取db2sysc的进程ID：</p>
-
-<pre><code class="language-shell">root@314f5d6aa350:~# ps -ef|grep db2sysc
-db2inst1   369   367  0 11:30 ?        00:00:23 db2sysc
-root      2894  2881  0 15:12 pts/1    00:00:00 grep --color=auto db2sysc
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">root@314f5d6aa350:~# ps -ef<span class="p">|</span>grep db2sysc
+db2inst1   <span class="m">369</span>   <span class="m">367</span>  <span class="m">0</span> <span class="m">11</span>:30 ?        <span class="m">00</span>:00:23 db2sysc
+root      <span class="m">2894</span>  <span class="m">2881</span>  <span class="m">0</span> <span class="m">15</span>:12 pts/1    <span class="m">00</span>:00:00 grep --color<span class="o">=</span>auto db2sysc</code></pre></div>
 <p>然后用下面命令trace db2sysc的所有open操作：</p>
-
-<pre><code class="language-shell">root@314f5d6aa350:~# strace -Ff -e open -o trace.out -p 369
-Process 369 attached with 36 threads - interrupt to quit
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">root@314f5d6aa350:~# strace -Ff -e open -o trace.out -p <span class="m">369</span>
+Process <span class="m">369</span> attached with <span class="m">36</span> threads - interrupt to quit</code></pre></div>
 <p>在另一个终端执行数据库创建操作，完成之后，分析trace.out文件：</p>
-
-<pre><code class="language-shell">2973  open(&quot;/home/db2inst1/sqllib/profile.env&quot;, O_RDONLY) = -1 ENOENT (No such file or directory)
-2973  open(&quot;/etc/passwd&quot;, O_RDONLY|O_CLOEXEC) = 42
-2973  open(&quot;/var/db2/global.reg&quot;, O_RDONLY|O_CREAT, 0644) = 42
-2973  open(&quot;/home/db2inst1/db2inst1/NODE0000/SQL00001/SQLOGCTL.LFH.1&quot;, O_RDWR|O_DSYNC) = 42
-2973  open(&quot;/home/db2inst1/db2inst1/NODE0000/SQL00001/SQLOGCTL.LFH.2&quot;, O_RDWR|O_DSYNC) = 43
-2973  open(&quot;/proc/mounts&quot;, O_RDONLY)    = 45
-2973  open(&quot;/home/db2inst1/db2inst1/NODE0000/SQL00001/SQLOGDIR/S0000000.LOG&quot;, O_RDWR|O_DSYNC|O_DIRECT) = -1 EINVAL (Invalid argument)
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="m">2973</span>  open<span class="o">(</span><span class="s2">&#34;/home/db2inst1/sqllib/profile.env&#34;</span>, O_RDONLY<span class="o">)</span> <span class="o">=</span> -1 ENOENT <span class="o">(</span>No such file or directory<span class="o">)</span>
+<span class="m">2973</span>  open<span class="o">(</span><span class="s2">&#34;/etc/passwd&#34;</span>, O_RDONLY<span class="p">|</span>O_CLOEXEC<span class="o">)</span> <span class="o">=</span> <span class="m">42</span>
+<span class="m">2973</span>  open<span class="o">(</span><span class="s2">&#34;/var/db2/global.reg&#34;</span>, O_RDONLY<span class="p">|</span>O_CREAT, <span class="m">0644</span><span class="o">)</span> <span class="o">=</span> <span class="m">42</span>
+<span class="m">2973</span>  open<span class="o">(</span><span class="s2">&#34;/home/db2inst1/db2inst1/NODE0000/SQL00001/SQLOGCTL.LFH.1&#34;</span>, O_RDWR<span class="p">|</span>O_DSYNC<span class="o">)</span> <span class="o">=</span> <span class="m">42</span>
+<span class="m">2973</span>  open<span class="o">(</span><span class="s2">&#34;/home/db2inst1/db2inst1/NODE0000/SQL00001/SQLOGCTL.LFH.2&#34;</span>, O_RDWR<span class="p">|</span>O_DSYNC<span class="o">)</span> <span class="o">=</span> <span class="m">43</span>
+<span class="m">2973</span>  open<span class="o">(</span><span class="s2">&#34;/proc/mounts&#34;</span>, O_RDONLY<span class="o">)</span>    <span class="o">=</span> <span class="m">45</span>
+<span class="m">2973</span>  open<span class="o">(</span><span class="s2">&#34;/home/db2inst1/db2inst1/NODE0000/SQL00001/SQLOGDIR/S0000000.LOG&#34;</span>, O_RDWR<span class="p">|</span>O_DSYNC<span class="p">|</span>O_DIRECT<span class="o">)</span> <span class="o">=</span> -1 EINVAL <span class="o">(</span>Invalid argument<span class="o">)</span></code></pre></div>
 <p>看截取部分的最后一行，提示open操作的参数错误，基本你就能判断是O_DIRECT无法执行
 导致，这属于换个思路解决问题，也很有效果。</p>
 
@@ -712,35 +662,32 @@ docker服务进程之间的交互来学习。</p>
 </dl>
 
 <p>你就可以在socat窗口看到交互的内容，你将看到例如下面的输出：</p>
-
-<pre><code class="language-shell">&gt; 2014/09/05 14:04:45.169982  length=130 from=0 to=129
-GET /v1.13/containers/json?all=1 HTTP/1.1\r
-Host: /tmp/proxysocket.sock\r
-User-Agent: Docker-Client/1.1.0\r
-Accept-Encoding: gzip\r
-\r
-&lt; 2014/09/05 14:04:45.171377  length=991 from=0 to=990
-HTTP/1.1 200 OK\r
-Content-Type: application/json\r
-Date: Fri, 05 Sep 2014 06:04:45 GMT\r
-Content-Length: 882\r
-\r
-[{&quot;Command&quot;:&quot;/bin/bash&quot;,&quot;Created&quot;:1405345176,&quot;Id&quot;:&quot;044f8cb3e0d6522ec36e09
-c3df0e7ff4bbf2d963d67be6d7faade6c88b5cbbb8&quot;,&quot;Image&quot;:&quot;tianon/centos:5.8&quot;,&quot;
-Names&quot;:[&quot;/sad_turing&quot;],&quot;Ports&quot;:[],&quot;Status&quot;:&quot;Exited (1) 6 weeks ago&quot;}
-,{&quot;Command&quot;:&quot;/bin/bash -c '/etc/init.d/db2exc start \\u0026\\u0026 /usr/s
-bin/sshd -D'&quot;,&quot;Created&quot;:1397215845,&quot;Id&quot;:&quot;314f5d6aa350976b8c9071958ee0c8fd
-0e2c700b8b348410be50e1ba77db4a07&quot;,&quot;Image&quot;:&quot;tacylee/db2exc:latest&quot;,&quot;Names&quot;
-:[&quot;/db2exc&quot;],&quot;Ports&quot;:[],&quot;Status&quot;:&quot;Exited (137) 4 months ago&quot;}
-,{&quot;Command&quot;:&quot;\\&quot;/bin/sh -c 'sed -i -E \\&quot;s/HOST = [^)]+/HOST = $HOSTNAME/
-g\\&quot; /u01/app/oracle/product/11.2.0/xe/network/admin/listener.ora; servic
-e oracle-xe start; /usr/sbin/sshd -D'\\&quot;&quot;,&quot;Created&quot;:1397014650,&quot;Id&quot;:&quot;1379
-9635f5ee898e38c0f300475a1eaf3ad3da6e18fc8ea978f54176a96d44c9&quot;,&quot;Image&quot;:&quot;wn
-ameless/oracle-xe-11g:latest&quot;,&quot;Names&quot;:[&quot;/oraclexe&quot;],&quot;Ports&quot;:[],&quot;Status&quot;:&quot;
-Exited (-1) 6 weeks ago&quot;}
-]
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">&gt; <span class="m">2014</span>/09/05 <span class="m">14</span>:04:45.169982  <span class="nv">length</span><span class="o">=</span><span class="m">130</span> <span class="nv">from</span><span class="o">=</span><span class="m">0</span> <span class="nv">to</span><span class="o">=</span><span class="m">129</span>
+GET /v1.13/containers/json?all<span class="o">=</span><span class="m">1</span> HTTP/1.1<span class="se">\r</span>
+Host: /tmp/proxysocket.sock<span class="se">\r</span>
+User-Agent: Docker-Client/1.1.0<span class="se">\r</span>
+Accept-Encoding: gzip<span class="se">\r</span>
+<span class="se">\r</span>
+&lt; <span class="m">2014</span>/09/05 <span class="m">14</span>:04:45.171377  <span class="nv">length</span><span class="o">=</span><span class="m">991</span> <span class="nv">from</span><span class="o">=</span><span class="m">0</span> <span class="nv">to</span><span class="o">=</span><span class="m">990</span>
+HTTP/1.1 <span class="m">200</span> OK<span class="se">\r</span>
+Content-Type: application/json<span class="se">\r</span>
+Date: Fri, <span class="m">05</span> Sep <span class="m">2014</span> <span class="m">06</span>:04:45 GMT<span class="se">\r</span>
+Content-Length: <span class="m">882</span><span class="se">\r</span>
+<span class="se">\r</span>
+<span class="o">[{</span><span class="s2">&#34;Command&#34;</span>:<span class="s2">&#34;/bin/bash&#34;</span>,<span class="s2">&#34;Created&#34;</span>:1405345176,<span class="s2">&#34;Id&#34;</span>:<span class="s2">&#34;044f8cb3e0d6522ec36e09
+</span><span class="s2">c3df0e7ff4bbf2d963d67be6d7faade6c88b5cbbb8&#34;</span>,<span class="s2">&#34;Image&#34;</span>:<span class="s2">&#34;tianon/centos:5.8&#34;</span>,<span class="s2">&#34;
+</span><span class="s2">Names&#34;</span>:<span class="o">[</span><span class="s2">&#34;/sad_turing&#34;</span><span class="o">]</span>,<span class="s2">&#34;Ports&#34;</span>:<span class="o">[]</span>,<span class="s2">&#34;Status&#34;</span>:<span class="s2">&#34;Exited (1) 6 weeks ago&#34;</span><span class="o">}</span>
+,<span class="o">{</span><span class="s2">&#34;Command&#34;</span>:<span class="s2">&#34;/bin/bash -c &#39;/etc/init.d/db2exc start \\u0026\\u0026 /usr/s
+</span><span class="s2">bin/sshd -D&#39;&#34;</span>,<span class="s2">&#34;Created&#34;</span>:1397215845,<span class="s2">&#34;Id&#34;</span>:<span class="s2">&#34;314f5d6aa350976b8c9071958ee0c8fd
+</span><span class="s2">0e2c700b8b348410be50e1ba77db4a07&#34;</span>,<span class="s2">&#34;Image&#34;</span>:<span class="s2">&#34;tacylee/db2exc:latest&#34;</span>,<span class="s2">&#34;Names&#34;</span>
+:<span class="o">[</span><span class="s2">&#34;/db2exc&#34;</span><span class="o">]</span>,<span class="s2">&#34;Ports&#34;</span>:<span class="o">[]</span>,<span class="s2">&#34;Status&#34;</span>:<span class="s2">&#34;Exited (137) 4 months ago&#34;</span><span class="o">}</span>
+,<span class="o">{</span><span class="s2">&#34;Command&#34;</span>:<span class="s2">&#34;\\&#34;</span>/bin/sh -c <span class="s1">&#39;sed -i -E \\&#34;s/HOST = [^)]+/HOST = $HOSTNAME/
+</span><span class="s1">g\\&#34; /u01/app/oracle/product/11.2.0/xe/network/admin/listener.ora; servic
+</span><span class="s1">e oracle-xe start; /usr/sbin/sshd -D&#39;</span><span class="se">\\</span><span class="s2">&#34;&#34;</span>,<span class="s2">&#34;Created&#34;</span>:1397014650,<span class="s2">&#34;Id&#34;</span>:<span class="s2">&#34;1379
+</span><span class="s2">9635f5ee898e38c0f300475a1eaf3ad3da6e18fc8ea978f54176a96d44c9&#34;</span>,<span class="s2">&#34;Image&#34;</span>:<span class="s2">&#34;wn
+</span><span class="s2">ameless/oracle-xe-11g:latest&#34;</span>,<span class="s2">&#34;Names&#34;</span>:<span class="o">[</span><span class="s2">&#34;/oraclexe&#34;</span><span class="o">]</span>,<span class="s2">&#34;Ports&#34;</span>:<span class="o">[]</span>,<span class="s2">&#34;Status&#34;</span>:<span class="s2">&#34;
+</span><span class="s2">Exited (-1) 6 weeks ago&#34;</span><span class="o">}</span>
+<span class="o">]</span></code></pre></div>
 <dl>
 <dt>你也可以建立tcp代理，这样远程客户端也能连接上来：</dt>
 <dd>sudo socat -t100 -v tcp-listen:5050,reuseaddr,fork UNIX-CONNECT:/var/run/docker.sock</dd>
@@ -777,20 +724,14 @@ image非常臃肿.</p>
 </dl>
 
 <p>如果你碰到如下错误：</p>
-
-<pre><code class="language-shell">tacy@tacy:~$ sudo docker rmi 8dbd9e392a96
-Error: Conflict, 8dbd9e392a96 wasn't deleted
-2014/04/04 14:07:55 Error: failed to remove one or more images
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">tacy@tacy:~$ sudo docker rmi 8dbd9e392a96
+Error: Conflict, 8dbd9e392a96 wasn<span class="err">&#39;</span>t deleted
+<span class="m">2014</span>/04/04 <span class="m">14</span>:07:55 Error: failed to remove one or more images</code></pre></div>
 <p>很可能是由于该image正在被使用，你可以通过下面命令查看和操作</p>
-
-<pre><code class="language-shell">sudo docker ps
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">sudo docker ps
 sudo docker stop &lt;CONTAINER ID&gt;
 sudo docker rm &lt;CONTAINER ID&gt;
-sudo docker rmi &lt;IMAGE ID&gt;
-</code></pre>
-
+sudo docker rmi &lt;IMAGE ID&gt;</code></pre></div>
 <h1 id="docker-upgrade">docker upgrade</h1>
 
 <h2 id="network">network</h2>
@@ -819,13 +760,10 @@ Within GitHub, a Docker integration appears in your repositories Settings &gt; W
 <h2 id="kafka">kafka</h2>
 
 <p>All-in-one: <a href="https://github.com/spotify/docker-kafka">https://github.com/spotify/docker-kafka</a></p>
-
-<pre><code class="language-abap">docker run -p 2181:2181 -p 9092:9092 --env ADVERTISED_HOST=172.18.1.0 --env ADVERTISED_PORT=9092 spotify/kafka
+<div class="highlight"><pre class="chroma"><code class="language-abap" data-lang="abap">docker run -p 2181:2181 -p 9092:9092 --env ADVERTISED_HOST=172.18.1.0 --env ADVERTISED_PORT=9092 spotify/kafka
 bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test
 bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
-bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning
-</code></pre>
-
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning</code></pre></div>
 <h1 id="centos">Centos</h1>
 
 <p>[[<a href="http://wiki.centos.org/Cloud/Docker][Cloud/Doker">http://wiki.centos.org/Cloud/Docker][Cloud/Doker</a> - Centos Wiki]]</p>
@@ -908,12 +846,9 @@ bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --f
 <h1 id="docker-registry">Docker registry</h1>
 
 <p>[[<a href="https://www.digitalocean.com/community/tutorials/how-to-set-up-a-private-docker-registry-on-ubuntu-14-04][How">https://www.digitalocean.com/community/tutorials/how-to-set-up-a-private-docker-registry-on-ubuntu-14-04][How</a> To Set Up a Private Docker Registry]]</p>
-
-<pre><code class="language-shell">$docker tag dockerfile/redis 172.16.11.1:5000/tacy/redis
-$docker push 172.16.11.1:5000/tacy/redis
-$docker pull 172.16.11.1:5000/tacy/redis
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">$docker</span> tag dockerfile/redis <span class="m">172</span>.16.11.1:5000/tacy/redis
+<span class="nv">$docker</span> push <span class="m">172</span>.16.11.1:5000/tacy/redis
+<span class="nv">$docker</span> pull <span class="m">172</span>.16.11.1:5000/tacy/redis</code></pre></div>
 <h1 id="docker-paas">Docker PaaS</h1>
 
 <ul>

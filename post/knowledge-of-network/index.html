@@ -339,20 +339,16 @@ if (!doNotTrack) {
 关闭连接可以由任意一端发起，假设client发起：client发送fin，server端应答fin/ack，客户端接收之后不再继续发送数据，server处理完剩余的数据之后，发送fin，客户端应答fin/ack，连接关闭。</p>
 
 <h2 id="连接状态">连接状态</h2>
-
-<pre><code class="language-shell">
-     TCP A                                                TCP B
-  1.  ESTABLISHED                                          ESTABLISHED
-  2.  (Close)
-      FIN-WAIT-1  --&gt; &lt;SEQ=100&gt;&lt;ACK=300&gt;&lt;CTL=FIN,ACK&gt;  --&gt; CLOSE-WAIT
-  3.  FIN-WAIT-2  &lt;-- &lt;SEQ=300&gt;&lt;ACK=101&gt;&lt;CTL=ACK&gt;      &lt;-- CLOSE-WAIT
-  4.                                                       (Close)
-      TIME-WAIT   &lt;-- &lt;SEQ=300&gt;&lt;ACK=101&gt;&lt;CTL=FIN,ACK&gt;  &lt;-- LAST-ACK
-  5.  TIME-WAIT   --&gt; &lt;SEQ=101&gt;&lt;ACK=301&gt;&lt;CTL=ACK&gt;      --&lt; CLOSED
-  6.  (2 MSL)
-      CLOSED
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">     TCP A                                                TCP B
+  <span class="m">1</span>.  ESTABLISHED                                          ESTABLISHED
+  <span class="m">2</span>.  <span class="o">(</span>Close<span class="o">)</span>
+      FIN-WAIT-1  --&gt; &lt;<span class="nv">SEQ</span><span class="o">=</span><span class="m">100</span>&gt;&lt;<span class="nv">ACK</span><span class="o">=</span><span class="m">300</span>&gt;&lt;<span class="nv">CTL</span><span class="o">=</span>FIN,ACK&gt;  --&gt; CLOSE-WAIT
+  <span class="m">3</span>.  FIN-WAIT-2  &lt;-- &lt;<span class="nv">SEQ</span><span class="o">=</span><span class="m">300</span>&gt;&lt;<span class="nv">ACK</span><span class="o">=</span><span class="m">101</span>&gt;&lt;<span class="nv">CTL</span><span class="o">=</span>ACK&gt;      &lt;-- CLOSE-WAIT
+  <span class="m">4</span>.                                                       <span class="o">(</span>Close<span class="o">)</span>
+      TIME-WAIT   &lt;-- &lt;<span class="nv">SEQ</span><span class="o">=</span><span class="m">300</span>&gt;&lt;<span class="nv">ACK</span><span class="o">=</span><span class="m">101</span>&gt;&lt;<span class="nv">CTL</span><span class="o">=</span>FIN,ACK&gt;  &lt;-- LAST-ACK
+  <span class="m">5</span>.  TIME-WAIT   --&gt; &lt;<span class="nv">SEQ</span><span class="o">=</span><span class="m">101</span>&gt;&lt;<span class="nv">ACK</span><span class="o">=</span><span class="m">301</span>&gt;&lt;<span class="nv">CTL</span><span class="o">=</span>ACK&gt;      --&lt; CLOSED
+  <span class="m">6</span>.  <span class="o">(</span><span class="m">2</span> MSL<span class="o">)</span>
+      CLOSED</code></pre></div>
 <p>tcp A 发送FIN到tcp B，请求终止连接，tcp A来到FIN-WAIT-1状态；tcp B接收到FIN之后处于CLOSE-WAIT状态，tcp B发送ACK到TCP A；TCP A接收到ACK之后来到FIN-WAIT-2状态，这个时候，tcp A到tcp B的发送数据通道其实已经结束，但是由于连接是双向的，所以tcp A依然要等待tcp B发送完数据；tcp B处理完剩余的数据之后，发送FIN到tcp A，tcp B处于LAST-ACK状态，这个时候tcp A处于TIME-WAIT状态，tcp A应答ACK，tcp B CLOSED，tcp A等待2 MSL（一般是2毫秒）之后CLOSED。</p>
 
 <h2 id="rto">RTO</h2>
@@ -408,12 +404,9 @@ global Internet.</p>
 <h3 id="cwnd">CWND</h3>
 
 <p>拥塞窗口, 一般tcp/ip能明确知道两端的buffer windows大小(ack/syn都携带窗口信息), 但是不能知道链路的拥塞情况, 所以在开始的时候会使用slow start机制, 也就是先试探着发送几个MSS, 如果情况良好, 继续增加CWND, 发送几个MSS由initcwnd控制, 该参数可以调整:</p>
-
-<pre><code class="language-shell">shell&gt; ip route | while read r; do
-           ip route change $r initcwnd 10;
-       done
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">shell&gt; ip route <span class="p">|</span> <span class="k">while</span> <span class="nb">read</span> r<span class="p">;</span> <span class="k">do</span>
+           ip route change <span class="nv">$r</span> initcwnd <span class="m">10</span><span class="p">;</span>
+       <span class="k">done</span></code></pre></div>
 <h2 id="mss">MSS</h2>
 
 <p>只计算data, 不计算header, SYN会携带MSS信息, 如果没有MSS携带, 默认是536(IP数据包包大小+最小的ip头+最小的tcp头结果不能小于576, 这是规范定义的)</p>

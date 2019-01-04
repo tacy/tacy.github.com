@@ -68,7 +68,7 @@
 
 <meta itemprop="datePublished" content="2015-01-01T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2019-01-04T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="4338">
+<meta itemprop="wordCount" content="4354">
 
 
 
@@ -332,10 +332,7 @@ if (!doNotTrack) {
 <p>archlinux包更新非常, 如果你经常需要安装包, 会频繁出现新安装的包更新了依赖包, 但是原来依赖这个依赖包的组件可能就不能运行了, 这种情况下, 导致你需要频繁的升级整个系统.</p>
 
 <p>我的做法是把仓库固定在某个时间点上, 例如&rsquo;2018-11-29&rsquo;, 让pacman的server只用这个路径的包, 这样就可以解决这个问题, 编辑/etc/pacman.d/mirrorlist, 只用下面这个server, 其他全部注释掉</p>
-
-<pre><code class="language-shell">Server=https://archive.archlinux.org/repos/2018/11/29/$repo/os/$arch
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">Server</span><span class="o">=</span>https://archive.archlinux.org/repos/2018/11/29/<span class="nv">$repo</span>/os/<span class="nv">$arch</span></code></pre></div>
 <h2 id="gnome">gnome</h2>
 
 <h3 id="gnome-shell">gnome-shell</h3>
@@ -351,22 +348,19 @@ themes aur: gtk-theme-arc-git
 <ul>
 <li>.config/gtk3.0/gtk.css</li>
 </ul>
-
-<pre><code class="language-shell">terminal-window notebook &gt; header.top button {
-    padding: 0 0 0 0;
-    background-image: none;
-    border: 0;
-}
-terminal-window notebook &gt; header.top &gt; tabs &gt; tab {
-    margin: 0 0 0 0;
-    padding: 0 0 0 0;
-}
-terminal-window notebook &gt; header.top &gt; tabs &gt; tab label {
-    padding: 0 0 0 0;
-    margin: 0 0 0 0;
-}
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">terminal-window notebook &gt; header.top button <span class="o">{</span>
+    padding: <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span><span class="p">;</span>
+    background-image: none<span class="p">;</span>
+    border: <span class="m">0</span><span class="p">;</span>
+<span class="o">}</span>
+terminal-window notebook &gt; header.top &gt; tabs &gt; tab <span class="o">{</span>
+    margin: <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span><span class="p">;</span>
+    padding: <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span><span class="p">;</span>
+<span class="o">}</span>
+terminal-window notebook &gt; header.top &gt; tabs &gt; tab label <span class="o">{</span>
+    padding: <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span><span class="p">;</span>
+    margin: <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span><span class="p">;</span>
+<span class="o">}</span></code></pre></div>
 <ul>
 <li>profile
 theme variant -&gt; light
@@ -392,11 +386,8 @@ shortcuts -&gt; switch to tab1 -&gt; Ctrl_1</li>
 <p>clean journal files manually: <code>journalctl --vacuum-size=100M</code> or <code>journalctl --vacuum-time=2weeks</code></p>
 
 <p>journal file no presistent, edit <code>/etc/systemd/journald.conf</code>:</p>
-
-<pre><code>Storage=volatile
-RuntimeMaxUse=25
-</code></pre>
-
+<div class="highlight"><pre class="chroma">Storage=volatile
+RuntimeMaxUse=25</pre></div>
 <h1 id="env">env</h1>
 
 <h2 id="man-path">MAN PATH</h2>
@@ -406,12 +397,9 @@ RuntimeMaxUse=25
 <h2 id="graphical-applications-evn-variables">graphical applications evn variables</h2>
 
 <p>Applications running on Wayland may to use systemd user environments variables instead, as Wayland does not initiate any Xorg related files:</p>
-
-<pre><code>~/.config/environment.d/envvars.conf
+<div class="highlight"><pre class="chroma">~/.config/environment.d/envvars.conf
 PATH=$PATH:~/scripts
-GUIVAR=value
-</code></pre>
-
+GUIVAR=value</pre></div>
 <h1 id="hardware-info">Hardware INFO</h1>
 
 <p>smartctl
@@ -430,28 +418,24 @@ hdparm</p>
 
 <p>It is possible to enable natural scrolling through synaptics. Simply use negative values for VertScrollDelta and HorizScrollDelta like so:
 /etc/X11/xorg.conf.d/50-synaptics.conf</p>
-
-<pre><code>Section &quot;InputClass&quot;
-    Identifier &quot;Trackpad&quot;
-    Driver &quot;synaptics&quot;
-    MatchIsTouchpad &quot;on&quot;
-    Option &quot;HorizTwoFingerScroll&quot; &quot;1&quot;
-    Option &quot;VertScrollDelta&quot; &quot;-111&quot;
-    Option &quot;HorizScrollDelta&quot; &quot;-111&quot;
-    Option &quot;HorizHysteresis&quot; &quot;72&quot;
-    Option &quot;VertHysteresis&quot; &quot;72&quot;
-    Option &quot;PalmDetect&quot; &quot;3&quot;
-    Option &quot;PalmMinWidth&quot; &quot;12&quot;
-    Option &quot;PalmMinZ&quot; &quot;20&quot;
-    Option &quot;AreaRightEdge&quot; &quot;4461&quot;
-    Option &quot;AreaTopEdge&quot; &quot;395&quot;
-    Option &quot;FingerLow&quot; &quot;10&quot;
-    Option &quot;FingerHigh&quot; &quot;50&quot;
-    MatchDevicePath &quot;/dev/input/event*&quot;
-EndSection
-
-</code></pre>
-
+<div class="highlight"><pre class="chroma">Section &#34;InputClass&#34;
+    Identifier &#34;Trackpad&#34;
+    Driver &#34;synaptics&#34;
+    MatchIsTouchpad &#34;on&#34;
+    Option &#34;HorizTwoFingerScroll&#34; &#34;1&#34;
+    Option &#34;VertScrollDelta&#34; &#34;-111&#34;
+    Option &#34;HorizScrollDelta&#34; &#34;-111&#34;
+    Option &#34;HorizHysteresis&#34; &#34;72&#34;
+    Option &#34;VertHysteresis&#34; &#34;72&#34;
+    Option &#34;PalmDetect&#34; &#34;3&#34;
+    Option &#34;PalmMinWidth&#34; &#34;12&#34;
+    Option &#34;PalmMinZ&#34; &#34;20&#34;
+    Option &#34;AreaRightEdge&#34; &#34;4461&#34;
+    Option &#34;AreaTopEdge&#34; &#34;395&#34;
+    Option &#34;FingerLow&#34; &#34;10&#34;
+    Option &#34;FingerHigh&#34; &#34;50&#34;
+    MatchDevicePath &#34;/dev/input/event*&#34;
+EndSection</pre></div>
 <p>缺省配置的触摸板, 两指右键容易触发滚动事件, 导致焦点错位, 需要设置HorizHysteresis和VertHysteresis两个值.</p>
 
 <p>另外一个问题就是手掌误触发移动事件, 这个需要设置PalmDetect参数, 需要自己慢慢调节, 注意参数是PalmMinWidth, 我的机器需要调到8才行, 太小正常的手指移动有问题. 但是这个问题通过设置Palm依然不能解决, 最终通过设置AreaRightEdge和AreaTopEdge解决, 这个的意思就是屏蔽掉一部分触摸板, 这里把右边和上边的部分触摸板屏蔽了, 最终解决了这个鼠标乱跳的烦人问题</p>
@@ -479,11 +463,8 @@ EndSection
 <p>pacman安装即可, 然后需要修改以下/etc/tor/torrc里面的配置, 缺省没有打开controller, 如果你需要编程调用, 需要打开该端口, 同时修改hashpasswd, hashpasswd可以通过&rsquo;tor &ndash;hash-password yourpassws&rsquo;获取.</p>
 
 <p>如果只需要脚本控制tor, 就不需要配置tor称为bridge relay或者relay, 容易引起麻烦. 如果只需要给自己提供bridge, 可以配置:</p>
-
-<pre><code>BridgeRelay 1
-PublishServerDescriptor 0
-</code></pre>
-
+<div class="highlight"><pre class="chroma">BridgeRelay 1
+PublishServerDescriptor 0</pre></div>
 <h1 id="fonts">fonts</h1>
 
 <p>The font paths initially known to Fontconfig are: /usr/share/fonts/, ~/.local/share/fonts (and ~/.fonts/, now deprecated). Fontconfig will scan these directories recursively. For ease of organization and installation, it is recommended to use these font paths when adding fonts.
@@ -492,15 +473,11 @@ To see a list of known Fontconfig fonts: <code>fc-list : file</code></p>
 <p>字体控制通过gnome-tweaks调整, 建议用12号字体</p>
 
 <p>一般安装字体:</p>
-
-<pre><code>ttf-inconsolata                                 #程序员字体, 从验证结果看, 这个字体支持中英文混编效果最好(用12号字体)
-adobe-source-han-sans-cn-fonts 1.004-1          #中文
-</code></pre>
-
+<div class="highlight"><pre class="chroma">ttf-inconsolata                                 #程序员字体, 从验证结果看, 这个字体支持中英文混编效果最好(用12号字体)
+adobe-source-han-sans-cn-fonts 1.004-1          #中文</pre></div>
 <p>字体配置文件在/etc/fonts目录下, 用户一般定义自己的配置在/etc/fonts/local.conf目录:</p>
-
-<pre><code>[tacy@tacyArch fonts]$ cat /etc/fonts/local.conf
-&lt;!DOCTYPE fontconfig SYSTEM &quot;../fonts.dtd&quot;&gt;
+<div class="highlight"><pre class="chroma">[tacy@tacyArch fonts]$ cat /etc/fonts/local.conf
+&lt;!DOCTYPE fontconfig SYSTEM &#34;../fonts.dtd&#34;&gt;
 &lt;fontconfig&gt;
   &lt;!-- Generic name aliasing --&gt;
   &lt;alias&gt;
@@ -516,9 +493,7 @@ adobe-source-han-sans-cn-fonts 1.004-1          #中文
       &lt;family&gt;Inconsolata&lt;/family&gt;
     &lt;/prefer&gt;
   &lt;/alias&gt;
-&lt;/fontconfig&gt;
-</code></pre>
-
+&lt;/fontconfig&gt;</pre></div>
 <p>配置完成之后, monospace优先使用Inconsolata, sans-serif/sans优先使用SourceHanSansCN</p>
 
 <p>查看字体列表<code>fc-list : file</code></p>
@@ -530,19 +505,15 @@ adobe-source-han-sans-cn-fonts 1.004-1          #中文
 <p>sudo pip install powerline-status  #install into: /usr/bin/ &amp; <code>pip show powerline-status</code></p>
 
 <h2 id="install-powerline-fonts">install powerline fonts</h2>
-
-<pre><code>cd  ~/usr/share/fonts/tacy
+<div class="highlight"><pre class="chroma">cd  ~/usr/share/fonts/tacy
 wget https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf
 fc-cache ./tacy
 cd /etc/fonts/conf.avail
 wget https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf
 cd /etc/fonts/conf.d
-ln -s /etc/fonts/10-powerline-symbols.conf .
-</code></pre>
-
+ln -s /etc/fonts/10-powerline-symbols.conf .</pre></div>
 <h2 id="powerline-daemon-by-systemd">powerline daemon by systemd</h2>
-
-<pre><code>cat ~/.config/systemd/user/powerline-daemon.service
+<div class="highlight"><pre class="chroma">cat ~/.config/systemd/user/powerline-daemon.service
 [Unit]
 Description=powerline-daemon - Daemon that improves powerline performance
 Documentation=man:powerline-daemon(1)
@@ -555,9 +526,7 @@ ExecStart=/usr/bin/powerline-daemon --foreground
 WantedBy=default.target
 
 systemctl --user enable powerline-daemon
-systemctl --user start powerline-daemon
-</code></pre>
-
+systemctl --user start powerline-daemon</pre></div>
 <h2 id="tmux">tmux</h2>
 
 <p>add <code>source /usr/lib/python3.5/site-packages/powerline/bindings/tmux/powerline.conf</code> to <code>~/.tmux.conf</code></p>
@@ -571,8 +540,7 @@ systemctl --user start powerline-daemon
 <p>chattr +i /etc/resolv.conf</p>
 
 <h1 id="tmux-1">tmux</h1>
-
-<pre><code># remap prefix to Control + a
+<div class="highlight"><pre class="chroma"># remap prefix to Control + a
 unbind C-b
 set -g prefix C-x
 bind C-x send-prefix
@@ -587,16 +555,14 @@ unbind [
 bind-key -T prefix e copy-mode
 # move x clipboard into tmux paste buffer
 # To copy:
-bind-key -n -t emacs-copy M-w copy-pipe &quot;xclip -i -sel p -f | xclip -i -sel c &quot;
+bind-key -n -t emacs-copy M-w copy-pipe &#34;xclip -i -sel p -f | xclip -i -sel c &#34;
 # To paste:
-bind-key -n C-y run &quot;xclip -o | tmux load-buffer - ; tmux paste-buffer&quot;
+bind-key -n C-y run &#34;xclip -o | tmux load-buffer - ; tmux paste-buffer&#34;
 
 
 ## * Window Management
 set -g base-index 1 # start window indices at 1
-set -g renumber-windows on
-</code></pre>
-
+set -g renumber-windows on</pre></div>
 <h1 id="zsh">zsh</h1>
 
 <h2 id="install">Install</h2>
@@ -614,35 +580,31 @@ set -g renumber-windows on
 
 <li><p>在<code>~/.bashrc</code>中判断是否有tmux实例, 如果没有创建一个新的, 否则attach它</p></li>
 </ol>
-
-<pre><code class="language-sh">#
-# ~/.bashrc
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">#
+<span class="c1"># ~/.bashrc</span>
 #
 
-# If not running interactively, don't do anything
-[[ $- != *i* ]] &amp;&amp; return
+<span class="c1"># If not running interactively, don&#39;t do anything</span>
+<span class="o">[[</span> <span class="nv">$-</span> !<span class="o">=</span> *i* <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="k">return</span>
 
-alias ls='ls --color=auto'
-PS1='[\u@\h \W]\$ '
-export PATH=~/bin:$PATH
+<span class="nb">alias</span> <span class="nv">ls</span><span class="o">=</span><span class="s1">&#39;ls --color=auto&#39;</span>
+<span class="nv">PS1</span><span class="o">=</span><span class="s1">&#39;[\u@\h \W]\$ &#39;</span>
+<span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span>~/bin:<span class="nv">$PATH</span>
 
-# tmux
-if which tmux &gt;/dev/null 2&gt;&amp;1; then
-    ID=&quot;`tmux ls | grep -vm1 attached | cut -d: -f1`&quot; # get the id of a deattached session
-    if [[ -z &quot;$ID&quot; ]] ;then # if not available create a new one
+<span class="c1"># tmux</span>
+<span class="k">if</span> which tmux &gt;/dev/null <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="p">;</span> <span class="k">then</span>
+    <span class="nv">ID</span><span class="o">=</span><span class="s2">&#34;`tmux ls | grep -vm1 attached | cut -d: -f1`&#34;</span> <span class="c1"># get the id of a deattached session</span>
+    <span class="k">if</span> <span class="o">[[</span> -z <span class="s2">&#34;</span><span class="nv">$ID</span><span class="s2">&#34;</span> <span class="o">]]</span> <span class="p">;</span><span class="k">then</span> <span class="c1"># if not available create a new one</span>
         tmux new-session
-    else
-        tmux attach-session -t &quot;$ID&quot; # if available attach to it
-    fi
-fi
-</code></pre>
-
+    <span class="k">else</span>
+        tmux attach-session -t <span class="s2">&#34;</span><span class="nv">$ID</span><span class="s2">&#34;</span> <span class="c1"># if available attach to it</span>
+    <span class="k">fi</span>
+<span class="k">fi</span></code></pre></div>
 <ol>
 <li>通过systemd启动tmux
 &gt;systemctl &ndash;user start tmux</li>
 </ol>
-
-<pre><code>[Unit]
+<div class="highlight"><pre class="chroma">[Unit]
 Description=Start tmux in detached session
 
 [Service]
@@ -651,10 +613,7 @@ ExecStart=/usr/bin/tmux new-session -s %u -d
 ExecStop=/usr/bin/tmux kill-session -t %u
 
 [Install]
-WantedBy=multi-user.target
-
-</code></pre>
-
+WantedBy=multi-user.target</pre></div>
 <h2 id="oh-my-zsh">Oh-my-zsh</h2>
 
 <blockquote>
@@ -662,8 +621,7 @@ WantedBy=multi-user.target
 </blockquote>
 
 <p>my custom conf:</p>
-
-<pre><code># ********************************************************************
+<div class="highlight"><pre class="chroma"># ********************************************************************
 ## tacy cust ##
 HISTFILE=~/.histfile
 HISTSIZE=1000
@@ -671,25 +629,23 @@ SAVEHIST=1000
 setopt HIST_FIND_NO_DUPS HIST_IGNORE_ALL_DUPS HIST_IGNORE_DUPS HIST_IGNORE_SPACE HIST_SAVE_NO_DUPS
 
 # Automatically included new bin file in the completion
-zstyle ':completion:*' rehash true
+zstyle &#39;:completion:*&#39; rehash true
 
 # emacs mode
 bindkey -e
 
 # app set
 ## set relative app
-evince_bg() { evince &quot;$@&quot; &amp; }
+evince_bg() { evince &#34;$@&#34; &amp; }
 alias -s pdf=evince_bg
 
-emacs_bg() { emacsclient &quot;$@&quot; &amp; }
+emacs_bg() { emacsclient &#34;$@&#34; &amp; }
 alias -s go=emacs_bg -nc
 alias -s html=emacs_bg -nc
 alias -s py=emacs_bg -nc
 alias -s md=emacs_bg -nc
 alias -s go=emacs_bg -nc
-# ********************************************************************
-</code></pre>
-
+# ********************************************************************</pre></div>
 <h2 id="autojump">autojump</h2>
 
 <blockquote>
@@ -709,14 +665,11 @@ alias -s go=emacs_bg -nc
 <h1 id="network">network</h1>
 
 <h2 id="bbr">BBR</h2>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">cat /etc/sysctl.d/50-bbr.conf
+net.core.default_qdisc<span class="o">=</span>fq
+net.ipv4.tcp_congestion_control<span class="o">=</span>bbr
 
-<pre><code class="language-shell">cat /etc/sysctl.d/50-bbr.conf
-net.core.default_qdisc=fq
-net.ipv4.tcp_congestion_control=bbr
-
-lsmod|grep -i bbr
-</code></pre>
-
+lsmod<span class="p">|</span>grep -i bbr</code></pre></div>
 <h2 id="software-ap">software AP</h2>
 
 <p>最简单的办法就是使用<a href="https://github.com/oblique/create_ap">create_ap</a>, 一条命令搞定<code>create_ap wlan0 wlan0 MyAccessPoint MyPassPhrase</code></p>
@@ -740,8 +693,7 @@ lsmod|grep -i bbr
 <h1 id="qemu">Qemu</h1>
 
 <h2 id="mount-qcow2">mount qcow2</h2>
-
-<pre><code>$modprobe nbd max_part=16
+<div class="highlight"><pre class="chroma">$modprobe nbd max_part=16
 $qemu-nbd --connection=/dev/nbd0 node_two.qcow2
 $fdisk -l /dev/nbd0
 Disk /dev/nbd0: 8 GiB, 8589934592 bytes, 16777216 sectors
@@ -754,20 +706,14 @@ Disk identifier: 0x000aa3f5
 Device      Boot Start      End  Sectors Size Id Type
 /dev/nbd0p1 *     2048 16777215 16775168   8G 83 Linux
 
-$mount /dev/nbd0p1 tmp
-
-</code></pre>
-
+$mount /dev/nbd0p1 tmp</pre></div>
 <p>有时候没办法mount, 比如盘元数据有问题, 你可以用工具修复以下, 比如:<code>xfs_repair -L /dev/nbd0p1</code></p>
 
 <h2 id="tftp-server">tftp server</h2>
 
 <p>dnsmasq内嵌tftp server, 直接修改/etc/dnsmasq配置, 指定下面选项即可:</p>
-
-<pre><code>tftp-root=/srv/tftp
-enable-tftp
-</code></pre>
-
+<div class="highlight"><pre class="chroma">tftp-root=/srv/tftp
+enable-tftp</pre></div>
 <p>如果需要配置ubuntu的pxe server, 下载netboot.tar.gz包, 解压到/srv/tftp即可</p>
 
 <p>注意网络里面的dhcpserver, 容易导致问题. 另外, 无线网卡需要支持ipxe才行</p>
@@ -779,17 +725,11 @@ enable-tftp
 <p><code>du -s ./* | sort -n</code> 查询磁盘空间</p>
 
 <h3 id="imagemagick">imagemagick</h3>
+<div class="highlight"><pre class="chroma">find . -name &#39;*-1.jpg&#39; -exec mogrify -font Source-Han-Sans-CN-Heavy -fill &#39;#E91E63&#39; -draw &#39;rectangle 0,565,800,705&#39; -pointsize 120 -gravity center -fill black -annotate +0+230 &#39;日本直邮到手&#39; -fill white -annotate +5+235 &#39;日本直邮到手&#39; &#39;{}&#39; \; -print
 
-<pre><code>find . -name '*-1.jpg' -exec mogrify -font Source-Han-Sans-CN-Heavy -fill '#E91E63' -draw 'rectangle 0,565,800,705' -pointsize 120 -gravity center -fill black -annotate +0+230 '日本直邮到手' -fill white -annotate +5+235 '日本直邮到手' '{}' \; -print
-
-find . -name '*.JPG' -exec mogrify -filter Triangle -define jpeg:extent=45KB -thumbnail 800x800\! '{}' \;
-</code></pre>
-
+find . -name &#39;*.JPG&#39; -exec mogrify -filter Triangle -define jpeg:extent=45KB -thumbnail 800x800\! &#39;{}&#39; \;</pre></div>
 <h3 id="ffmpeg">ffmpeg</h3>
-
-<pre><code>find . -name '*.MOV' -exec ffmpeg -i '{}' -vcodec libx264 -crf 32 '{}'.mp4
-</code></pre>
-
+<div class="highlight"><pre class="chroma">find . -name &#39;*.MOV&#39; -exec ffmpeg -i &#39;{}&#39; -vcodec libx264 -crf 32 &#39;{}&#39;.mp4</pre></div>
 <h3 id="chrome">chrome</h3>
 
 <ol>
@@ -806,16 +746,10 @@ find . -name '*.JPG' -exec mogrify -filter Triangle -define jpeg:extent=45KB -th
 
 <p>Disable GTK+ 3
 When the SWT GTK+ 3 UI is buggy and sometimes unusable, You can try to disable the use of GTK+ 3 with add the following to /usr/lib/eclipse/eclipse.ini.</p>
-
-<pre><code>--launcher.GTK_version
-2
-</code></pre>
-
+<div class="highlight"><pre class="chroma">--launcher.GTK_version
+2</pre></div>
 <p>Those two lines must be added before:</p>
-
-<pre><code class="language-text">--launcher.appendVmargs
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">--launcher.appendVmargs</code></pre></div>
 <h3 id="pacman">pacman</h3>
 
 <p>pacman -Qo filename / pkgfile filename
@@ -850,13 +784,10 @@ ls -l /dev 也可以查看major:minor
 <h2 id="debugfs-ext4-3-fs">debugfs（ext4/3 fs)</h2>
 
 <p>通过inode找文件：</p>
-
-<pre><code class="language-shell">sudo debugfs /dev/sda6
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">sudo debugfs /dev/sda6
 debugfs: ncheck &lt;inode number&gt;
 Inode Pathname
-10403886  /home/tacy/i2p
-</code></pre>
-
+<span class="m">10403886</span>  /home/tacy/i2p</code></pre></div>
 <h2 id="lsof">lsof</h2>
 
 <p>列出系统内打开的所有文件</p>
@@ -878,14 +809,11 @@ Inode Pathname
 
 <p>ss -top
 可以查看当前所有的连接：包括状态/定时器（retrans/keepalive)，发送和接受队列，那个进程发起，用户是谁都能看到</p>
-
-<pre><code class="language-shell">ss -o state established '( dport = :ssh or sport = :ssh )'
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">ss -o state established <span class="s1">&#39;( dport = :ssh or sport = :ssh )&#39;</span>
   Display all established ssh connections.
 
 ss -x src /tmp/.X11-unix/*
-  Find all local processes connected to X server.
-</code></pre>
-
+  Find all <span class="nb">local</span> processes connected to X server.</code></pre></div>
 <h2 id="sockdump">sockdump</h2>
 
 <p>这是别人用brf写的一个监控unix socket的小工具，可以查看unix socket间的通讯记录

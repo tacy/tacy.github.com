@@ -342,8 +342,7 @@ if (!doNotTrack) {
 <p>serviceaccount也是一种特殊用户, 用户名&rdquo;service:serviceaccount:<namespace>:<serviceaccount>&rdquo;, 需要注意权限bind的时候别直接写serviceaccount名, 而要写它的用户名</p>
 
 <h3 id="查看cluster-roles">查看cluster roles</h3>
-
-<pre><code>[root@nf5270m-ose ~]# oc get clusterroles
+<div class="highlight"><pre class="chroma">[root@nf5270m-ose ~]# oc get clusterroles
 NAME
 system:router
 edit
@@ -354,33 +353,24 @@ registry-editor
 system:discovery
 system:node-admin
 system:image-auditor
-......
-</code></pre>
-
+......</pre></div>
 <p>查看role的rules</p>
-
-<pre><code>[root@nf5270m-ose ~]# oc describe clusterroles cluster-pod-reader
+<div class="highlight"><pre class="chroma">[root@nf5270m-ose ~]# oc describe clusterroles cluster-pod-reader
 Name:			cluster-pod-reader
 Created:		About an hour ago
 Labels:			&lt;none&gt;
 Annotations:		&lt;none&gt;
 Verbs			Non-Resource URLs	Extension	Resource Names	API Groups	Resources
-[get list watch]	[]					[]		[]		[pods]
-</code></pre>
-
+[get list watch]	[]					[]		[]		[pods]</pre></div>
 <h3 id="查看cluster-policy">查看cluster policy</h3>
-
-<pre><code>[root@nf5270m-ose ~]# oc get clusterpolicy
+<div class="highlight"><pre class="chroma">[root@nf5270m-ose ~]# oc get clusterpolicy
 NAME      ROLES                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               LAST MODIFIED
-default   admin, basic-user, cluster-admin, cluster-pod-reader, cluster-reader, cluster-status, edit, management-infra-admin, registry-admin, registry-editor, registry-viewer, self-provisioner, system:build-controller, system:build-strategy-custom, system:build-strategy-docker, system:build-strategy-source, system:daemonset-controller, system:deployer, system:deployment-controller, system:discovery, system:gc-controller, system:hpa-controller, system:image-auditor, system:image-builder, system:image-pruner, system:image-puller, system:image-pusher, system:job-controller, system:master, system:namespace-controller, system:node, system:node-admin, system:node-proxier, system:node-reader, system:oauth-token-deleter, system:pv-binder-controller, system:pv-provisioner-controller, system:pv-recycler-controller, system:registry, system:replication-controller, system:router, system:sdn-manager, system:sdn-reader, system:webhook, view   2016-08-16 15:19:09 +0800 CST
-</code></pre>
-
+default   admin, basic-user, cluster-admin, cluster-pod-reader, cluster-reader, cluster-status, edit, management-infra-admin, registry-admin, registry-editor, registry-viewer, self-provisioner, system:build-controller, system:build-strategy-custom, system:build-strategy-docker, system:build-strategy-source, system:daemonset-controller, system:deployer, system:deployment-controller, system:discovery, system:gc-controller, system:hpa-controller, system:image-auditor, system:image-builder, system:image-pruner, system:image-puller, system:image-pusher, system:job-controller, system:master, system:namespace-controller, system:node, system:node-admin, system:node-proxier, system:node-reader, system:oauth-token-deleter, system:pv-binder-controller, system:pv-provisioner-controller, system:pv-recycler-controller, system:registry, system:replication-controller, system:router, system:sdn-manager, system:sdn-reader, system:webhook, view   2016-08-16 15:19:09 +0800 CST</pre></div>
 <p>查看具体每个role的rules:
 oc describe clusterpolicy default</p>
 
 <h3 id="查看roles和用户绑定">查看roles和用户绑定</h3>
-
-<pre><code>[root@nf5270m-ose ~]# oc describe clusterpolicybinding :default
+<div class="highlight"><pre class="chroma">[root@nf5270m-ose ~]# oc describe clusterpolicybinding :default
 Name:							:default
 Created:						5 days ago
 Labels:							&lt;none&gt;
@@ -404,9 +394,7 @@ RoleBinding[cluster-pod-reader]:
 							Users:			podreader
 							Groups:			&lt;none&gt;
 							ServiceAccounts:	&lt;none&gt;
-							Subjects:		&lt;none&gt;
-</code></pre>
-
+							Subjects:		&lt;none&gt;</pre></div>
 <h3 id="clusterpolicy">clusterpolicy</h3>
 
 <p>ClusterPolicy is a object that holds all the ClusterRoles for a particular namespace. There is at most one ClusterPolicy document per namespace</p>
@@ -459,20 +447,17 @@ RoleBinding[cluster-pod-reader]:
 </ol>
 
 <h3 id="设置project-quota">设置Project Quota</h3>
-
-<pre><code>apiVersion: v1
+<div class="highlight"><pre class="chroma">apiVersion: v1
 kind: ResourceQuota
 metadata:
   name: compute-resources
 spec:
   hard:
-    pods: &quot;4&quot;
-    requests.cpu: &quot;10&quot;
+    pods: &#34;4&#34;
+    requests.cpu: &#34;10&#34;
     requests.memory: 20Gi
-    limits.cpu: &quot;64&quot;
-    limits.memory: 256Gi
-</code></pre>
-
+    limits.cpu: &#34;64&#34;
+    limits.memory: 256Gi</pre></div>
 <p>定义了所有NotTerminating的pod的限制, 最小不能低于requet, 最高不能超过limits</p>
 
 <p>oc create -f compute-resource -n projectname</p>
@@ -482,37 +467,34 @@ spec:
 <p>如果project设置了Quota, 必须为project里面的所有pod设置request或和limit, 这样会比较麻烦, 你最好也为该project定义一个limit-range, 在limit-range里面可以定义request和limit的default值</p>
 
 <h3 id="设置project-limitrange">设置Project limitrange</h3>
-
-<pre><code>apiVersion: &quot;v1&quot;
-kind: &quot;LimitRange&quot;
+<div class="highlight"><pre class="chroma">apiVersion: &#34;v1&#34;
+kind: &#34;LimitRange&#34;
 metadata:
-  name: &quot;core-resource-limits&quot;
+  name: &#34;core-resource-limits&#34;
 spec:
   limits:
-    - type: &quot;Pod&quot;
+    - type: &#34;Pod&#34;
       max:
-        cpu: &quot;2&quot;
-        memory: &quot;1Gi&quot;
+        cpu: &#34;2&#34;
+        memory: &#34;1Gi&#34;
       min:
-        cpu: &quot;200m&quot;
-        memory: &quot;6Mi&quot;
-    - type: &quot;Container&quot;
+        cpu: &#34;200m&#34;
+        memory: &#34;6Mi&#34;
+    - type: &#34;Container&#34;
       max:
-        cpu: &quot;2&quot;
-        memory: &quot;1Gi&quot;
+        cpu: &#34;2&#34;
+        memory: &#34;1Gi&#34;
       min:
-        cpu: &quot;100m&quot;
-        memory: &quot;4Mi&quot;
+        cpu: &#34;100m&#34;
+        memory: &#34;4Mi&#34;
       default:
-        cpu: &quot;300m&quot;
-        memory: &quot;200Mi&quot;
+        cpu: &#34;300m&#34;
+        memory: &#34;200Mi&#34;
       defaultRequest:
-        cpu: &quot;200m&quot;
-        memory: &quot;100Mi&quot;
+        cpu: &#34;200m&#34;
+        memory: &#34;100Mi&#34;
       maxLimitRequestRatio:
-        cpu: &quot;10&quot;
-</code></pre>
-
+        cpu: &#34;10&#34;</pre></div>
 <p>oc create -f core-resource-limit -n projectname</p>
 
 <p>有了这个之后, 项目里面的pod如果没有定义memory和cpu限制, 会用limitrange的default值</p>
@@ -571,8 +553,7 @@ oc export clusterrole cluster-reader &gt; podreader.yaml</li>
 </ul>
 
 <p>修改podreader.xml</p>
-
-<pre><code>apiVersion: v1
+<div class="highlight"><pre class="chroma">apiVersion: v1
 kind: ClusterRole
 metadata:
   creationTimestamp: null
@@ -585,9 +566,7 @@ rules:
   verbs:
   - get
   - list
-  - watch
-</code></pre>
-
+  - watch</pre></div>
 <p>创建该角色:
 oc create -f podreader.xml</p>
 
@@ -636,8 +615,7 @@ docker build</p></li>
 <p>serviceaccount方法:</p>
 
 <p>首先必须注意, ServiceAccount在Openshift里面也对应到一个用户, 用户名是&rdquo;system:serviceaccount:<namespace>:<sa_name>&rdquo;, 所有如果你需要给ServiceAccount赋权限, 需要这样写: <code>oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:default:test_sa</code></p>
-
-<pre><code>$ oc create serviceaccount robot
+<div class="highlight"><pre class="chroma">$ oc create serviceaccount robot
 
 $ oc policy add-role-to-user admin system:serviceaccounts:test:robot   #注意, 这里test是project, 另外可能需要加cluster role
 
@@ -668,10 +646,7 @@ token:		fyJhbGciOiJSUzI1NiIyInR5cCI2IkpXVCJ9...
 ca.crt:		1070 bytes
 namespace:	8 bytes
 
-$ curl -X GET -H &quot;Authorization: Bearer &lt;token&gt;&quot; https://openshift.redhat.com:8443/oapi/v1 --insecure
-
-</code></pre>
-
+$ curl -X GET -H &#34;Authorization: Bearer &lt;token&gt;&#34; https://openshift.redhat.com:8443/oapi/v1 --insecure</pre></div>
 <h2 id="java-heap-size">java heap size</h2>
 
 <p>get_heap_size 获取cgroup配合的内存， 做一些运算</p>

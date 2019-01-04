@@ -352,32 +352,27 @@ if (!doNotTrack) {
 </dl>
 
 <p>配置OpenVSwitch</p>
-
-<pre><code class="language-shell">
-$cat /etc/network/interface
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">$cat</span> /etc/network/interface
 auto ovsbr0
 iface ovsbr0 inet static
-   address 172.16.11.1
-   network 172.16.11.0
-   netmask 255.255.255.0
-   broadcast 172.16.11.255
+   address <span class="m">172</span>.16.11.1
+   network <span class="m">172</span>.16.11.0
+   netmask <span class="m">255</span>.255.255.0
+   broadcast <span class="m">172</span>.16.11.255
 
-$ovs-vsctl add-br ovsbr0
+<span class="nv">$ovs</span>-vsctl add-br ovsbr0
 
-$cat /etc/openvswitch/ovs-ifup
-#!/bin/sh
-switch='ovsbr0'
-/sbin/ifconfig $1 0.0.0.0 up
-ovs-vsctl add-port ${switch} $1
+<span class="nv">$cat</span> /etc/openvswitch/ovs-ifup
+<span class="cp">#!/bin/sh
+</span><span class="cp"></span><span class="nv">switch</span><span class="o">=</span><span class="s1">&#39;ovsbr0&#39;</span>
+/sbin/ifconfig <span class="nv">$1</span> <span class="m">0</span>.0.0.0 up
+ovs-vsctl add-port <span class="si">${</span><span class="nv">switch</span><span class="si">}</span> <span class="nv">$1</span>
 
-$cat /etc/openvswitch/ovs-ifdown
-#!/bin/sh
-switch='ovsbr0'
-/sbin/ifconfig $1 0.0.0.0 down
-ovs-vsctl del-port ${switch} $1
-
-</code></pre>
-
+<span class="nv">$cat</span> /etc/openvswitch/ovs-ifdown
+<span class="cp">#!/bin/sh
+</span><span class="cp"></span><span class="nv">switch</span><span class="o">=</span><span class="s1">&#39;ovsbr0&#39;</span>
+/sbin/ifconfig <span class="nv">$1</span> <span class="m">0</span>.0.0.0 down
+ovs-vsctl del-port <span class="si">${</span><span class="nv">switch</span><span class="si">}</span> <span class="nv">$1</span></code></pre></div>
 <p>添加一个bridge ,然后添加到OVS里面, 同时编写两个脚本, 后面KVM命令行启动虚拟机要用到.</p>
 
 <dl>
@@ -386,25 +381,19 @@ ovs-vsctl del-port ${switch} $1
 </dl>
 
 <p>配置iptables:</p>
-
-<pre><code class="language-shell">iptables -I FORWARD -j ACCEPT
-iptables -t nat -A POSTROUTING -s 172.16.11.0/24 ! -d 172.168.11.0/24 -j MASQUERADE
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">iptables -I FORWARD -j ACCEPT
+iptables -t nat -A POSTROUTING -s <span class="m">172</span>.16.11.0/24 ! -d <span class="m">172</span>.168.11.0/24 -j MASQUERADE</code></pre></div>
 <p>对所有172.16.11.0/24网段出去的流量做NAT, 同时转发所有的包. 这里只是测试环境, 所以我打开了所有包的转发, 当然你也能细粒度控制包转发.</p>
 
 <p>完成上面两步只后, 你还需要有一个dhcp server, 为你创建的虚拟机提供DHCP服务, 可以用dnsmasq这个软件来完成.</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">$apt</span>-get install dnsmasq-base
 
-<pre><code class="language-shell">$apt-get install dnsmasq-base
+<span class="nv">$cat</span> resolv.dnsmasq.conf
+<span class="c1"># Google&#39;s nameservers, for example</span>
+nameserver <span class="m">8</span>.8.8.8
+nameserver <span class="m">8</span>.8.4.4
 
-$cat resolv.dnsmasq.conf
-# Google's nameservers, for example
-nameserver 8.8.8.8
-nameserver 8.8.4.4
-
-$dnsmasq --bind-interfaces --listen-address 172.16.11.1 --dhcp-range 172.16.11.100,172.16.11.200 --resolv-file=/home/tacy/coreos/config/resolv.dnsmasq.conf --dhcp-boot=pxelinux.0,roo,172.16.11.2
-</code></pre>
-
+<span class="nv">$dnsmasq</span> --bind-interfaces --listen-address <span class="m">172</span>.16.11.1 --dhcp-range <span class="m">172</span>.16.11.100,172.16.11.200 --resolv-file<span class="o">=</span>/home/tacy/coreos/config/resolv.dnsmasq.conf --dhcp-boot<span class="o">=</span>pxelinux.0,roo,172.16.11.2</code></pre></div>
 <p>这样, 一个基本的虚拟化环境就差不多了.</p>
 
 <h1 id="配置etcd">配置etcd</h1>
@@ -436,11 +425,8 @@ $dnsmasq --bind-interfaces --listen-address 172.16.11.1 --dhcp-range 172.16.11.1
 </dl>
 
 <p>准备好之后, 我们就可以来启动一个etcd服务的CoreOS虚拟机了. 由于我们需要使用Cloud-Config文件启动, 你需要把配置文件放置到一个特定的位置, 我们先创建一个目录:</p>
-
-<pre><code class="language-shell">$mkdir -p tmp/openstack/latest
-$cp etcd.yml tmp/openstack/latest/user_data
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">$mkdir</span> -p tmp/openstack/latest
+<span class="nv">$cp</span> etcd.yml tmp/openstack/latest/user_data</code></pre></div>
 <p>也就是把我们修改好的etcd.yml文件更名为user_data, 放置到/tmp/openstack/lastest目录下, 目录名的后两层不能修改, tmp可以任意. 这样CoreOS才能找到配置文件.</p>
 
 <dl>
@@ -449,55 +435,43 @@ $cp etcd.yml tmp/openstack/latest/user_data
 </dl>
 
 <p>这里我重命名coreos_production_qemu_image.img为coreos.img, 启动etcd server:</p>
-
-<pre><code class="language-shell">$kvm -m 2048 -smp 2 \
--drive file=../images/etcd.img,if=virtio,cache=none,aio=native \
--fsdev local,id=conf,security_model=none,readonly,path=../config/etcd \
--device virtio-9p-pci,fsdev=conf,mount_tag=config-2 \
--net nic,vlan=0,model=virtio,macaddr=52:54:00:24:93:29\
--net tap,vlan=0,vhost=on,script=/etc/openvswitch/ovs-ifup,downscript=/etc/openvswitch/ovs-ifdown \
--nographic -serial file:../logs/etcd.log
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">$kvm</span> -m <span class="m">2048</span> -smp <span class="m">2</span> <span class="se">\
+</span><span class="se"></span>-drive <span class="nv">file</span><span class="o">=</span>../images/etcd.img,if<span class="o">=</span>virtio,cache<span class="o">=</span>none,aio<span class="o">=</span>native <span class="se">\
+</span><span class="se"></span>-fsdev local,id<span class="o">=</span>conf,security_model<span class="o">=</span>none,readonly,path<span class="o">=</span>../config/etcd <span class="se">\
+</span><span class="se"></span>-device virtio-9p-pci,fsdev<span class="o">=</span>conf,mount_tag<span class="o">=</span>config-2 <span class="se">\
+</span><span class="se"></span>-net nic,vlan<span class="o">=</span><span class="m">0</span>,model<span class="o">=</span>virtio,macaddr<span class="o">=</span><span class="m">52</span>:54:00:24:93:29<span class="se">\
+</span><span class="se"></span>-net tap,vlan<span class="o">=</span><span class="m">0</span>,vhost<span class="o">=</span>on,script<span class="o">=</span>/etc/openvswitch/ovs-ifup,downscript<span class="o">=</span>/etc/openvswitch/ovs-ifdown <span class="se">\
+</span><span class="se"></span>-nographic -serial file:../logs/etcd.log</code></pre></div>
 <p>我的目录结构如下, Cloud-Config文件统一放到config目录, images下面存放虚拟机镜像, 虚拟机启动日志存放到logs目录:</p>
-
-<pre><code class="language-shell">|-coreos
-   |---bin
-   |---config
-   |-----etcd
-   |-------openstack
-   |---------latest
-   |-----node
-   |-------openstack
-   |---------latest
-   |---example
-   |-----guestbook
-   |---images
-   |---logs
-   |---temp
-   |---template
-   |---tools
-   |---units
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="p">|</span>-coreos
+   <span class="p">|</span>---bin
+   <span class="p">|</span>---config
+   <span class="p">|</span>-----etcd
+   <span class="p">|</span>-------openstack
+   <span class="p">|</span>---------latest
+   <span class="p">|</span>-----node
+   <span class="p">|</span>-------openstack
+   <span class="p">|</span>---------latest
+   <span class="p">|</span>---example
+   <span class="p">|</span>-----guestbook
+   <span class="p">|</span>---images
+   <span class="p">|</span>---logs
+   <span class="p">|</span>---temp
+   <span class="p">|</span>---template
+   <span class="p">|</span>---tools
+   <span class="p">|</span>---units</code></pre></div>
 <p>好了, 现在你的etcd server就配置好了,  当然你还需要配置两个环境变量:</p>
-
-<pre><code class="language-shell">$ export ETCDCTL_PEERS=http://172.16.11.10:4001
-$ export FLEETCTL_ENDPOINT=http://172.16.11.10:4001
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ <span class="nb">export</span> <span class="nv">ETCDCTL_PEERS</span><span class="o">=</span>http://172.16.11.10:4001
+$ <span class="nb">export</span> <span class="nv">FLEETCTL_ENDPOINT</span><span class="o">=</span>http://172.16.11.10:4001</code></pre></div>
 <dl>
 <dt>同时在etcd创建flannel网络节点:</dt>
 <dd>$etcdctl mk /coreos.com/network/config &lsquo;{&ldquo;Network&rdquo;:&ldquo;10.0.0.0/16&rdquo;}&rsquo;</dd>
 </dl>
 
 <p>用fleetctl验证一下:</p>
-
-<pre><code class="language-shell">tacy@momo1:~/coreos$ fleetctl list-machines
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">tacy@momo1:~/coreos$ fleetctl list-machines
 MACHINE         IP              METADATA
-6a6e4c00...     172.16.11.10    role=etcd
-</code></pre>
-
+6a6e4c00...     <span class="m">172</span>.16.11.10    <span class="nv">role</span><span class="o">=</span>etcd</code></pre></div>
 <p>现在你可以继续配置其他虚拟机节点了, 这些节点用来运行K8S</p>
 
 <h1 id="配置其他node">配置其他Node</h1>
@@ -508,20 +482,16 @@ MACHINE         IP              METADATA
 </dl>
 
 <p>配置完成之后验证一下:</p>
-
-<pre><code class="language-shell">tacy@momo1:~/kubernetes/server/kubernetes/server/bin$ fleetctl list-machines
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">tacy@momo1:~/kubernetes/server/kubernetes/server/bin$ fleetctl list-machines
 MACHINE         IP              METADATA
-127d44a9...     172.16.11.165   role=kubernetes
-6a6e4c00...     172.16.11.10    role=etcd
-7b0826fb...     172.16.11.132   role=kubernetes
-bb8edb08...     172.16.11.178   role=kubernetes
-</code></pre>
-
+127d44a9...     <span class="m">172</span>.16.11.165   <span class="nv">role</span><span class="o">=</span>kubernetes
+6a6e4c00...     <span class="m">172</span>.16.11.10    <span class="nv">role</span><span class="o">=</span>etcd
+7b0826fb...     <span class="m">172</span>.16.11.132   <span class="nv">role</span><span class="o">=</span>kubernetes
+bb8edb08...     <span class="m">172</span>.16.11.178   <span class="nv">role</span><span class="o">=</span>kubernetes</code></pre></div>
 <p>可以看到我这里创建了3个节点, 创建节点相关工作比较繁琐, 我写了一个脚本来完成:</p>
-
-<pre><code class="language-shell">tacy@momo1:~/coreos/bin$ cat microcloud.py
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">tacy@momo1:~/coreos/bin$ cat microcloud.py
+<span class="cp">#!/usr/bin/env python
+</span><span class="cp"></span><span class="c1"># -*- coding: utf-8 -*-</span>
 
 import os
 import random
@@ -529,75 +499,70 @@ import pickle
 import argparse
 import subprocess
 
-parser = argparse.ArgumentParser(description='MicroCloud Ctl')
+<span class="nv">parser</span> <span class="o">=</span> argparse.ArgumentParser<span class="o">(</span><span class="nv">description</span><span class="o">=</span><span class="s1">&#39;MicroCloud Ctl&#39;</span><span class="o">)</span>
 
-parser.add_argument('-i',
-                    '--image',
-                    help='kvm node name',
-                    required = True)
-parser.add_argument('-c',
-                    '--clouddriver',
-                    help='cloud config driver directory',
-                    required = True)
+parser.add_argument<span class="o">(</span><span class="s1">&#39;-i&#39;</span>,
+                    <span class="s1">&#39;--image&#39;</span>,
+                    <span class="nv">help</span><span class="o">=</span><span class="s1">&#39;kvm node name&#39;</span>,
+                    <span class="nv">required</span> <span class="o">=</span> True<span class="o">)</span>
+parser.add_argument<span class="o">(</span><span class="s1">&#39;-c&#39;</span>,
+                    <span class="s1">&#39;--clouddriver&#39;</span>,
+                    <span class="nv">help</span><span class="o">=</span><span class="s1">&#39;cloud config driver directory&#39;</span>,
+                    <span class="nv">required</span> <span class="o">=</span> True<span class="o">)</span>
 
-args = parser.parse_args()
-img = args.image
-cdf = args.clouddriver
+<span class="nv">args</span> <span class="o">=</span> parser.parse_args<span class="o">()</span>
+<span class="nv">img</span> <span class="o">=</span> args.image
+<span class="nv">cdf</span> <span class="o">=</span> args.clouddriver
 
-pypath = os.path.dirname(os.path.abspath(__file__))
-node = img.split('/')[-1]
-macaddrfile = '{0}/../config/macaddr.list'.format(pypath)
-if not os.path.isfile(macaddrfile):
-    with open(macaddrfile, 'wb+') as fd:
-        pickle.dump({}, fd)
-macs = {}
-with open(macaddrfile, 'rb+') as fd:
-    macs = pickle.load(fd)
-mac = ''
-if node in macs:
-    mac = macs[node]
-else:
-    rands = [ 0x52, 0x54, 0x00,
-              random.randint(0x00, 0x7f),
-              random.randint(0x00, 0xff),
-              random.randint(0x00, 0xff) ]
-    mac = ':'.join(map(lambda x: &quot;%02x&quot; % x, rands))
-    macs[node] = mac
-    with open(macaddrfile, 'wb+') as fd:
-        pickle.dump(macs, fd)
+<span class="nv">pypath</span> <span class="o">=</span> os.path.dirname<span class="o">(</span>os.path.abspath<span class="o">(</span>__file__<span class="o">))</span>
+<span class="nv">node</span> <span class="o">=</span> img.split<span class="o">(</span><span class="s1">&#39;/&#39;</span><span class="o">)[</span>-1<span class="o">]</span>
+<span class="nv">macaddrfile</span> <span class="o">=</span> <span class="s1">&#39;{0}/../config/macaddr.list&#39;</span>.format<span class="o">(</span>pypath<span class="o">)</span>
+<span class="k">if</span> not os.path.isfile<span class="o">(</span>macaddrfile<span class="o">)</span>:
+    with open<span class="o">(</span>macaddrfile, <span class="s1">&#39;wb+&#39;</span><span class="o">)</span> as fd:
+        pickle.dump<span class="o">({}</span>, fd<span class="o">)</span>
+<span class="nv">macs</span> <span class="o">=</span> <span class="o">{}</span>
+with open<span class="o">(</span>macaddrfile, <span class="s1">&#39;rb+&#39;</span><span class="o">)</span> as fd:
+    <span class="nv">macs</span> <span class="o">=</span> pickle.load<span class="o">(</span>fd<span class="o">)</span>
+<span class="nv">mac</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="k">if</span> node in macs:
+    <span class="nv">mac</span> <span class="o">=</span> macs<span class="o">[</span>node<span class="o">]</span>
+<span class="k">else</span>:
+    <span class="nv">rands</span> <span class="o">=</span> <span class="o">[</span> 0x52, 0x54, 0x00,
+              random.randint<span class="o">(</span>0x00, 0x7f<span class="o">)</span>,
+              random.randint<span class="o">(</span>0x00, 0xff<span class="o">)</span>,
+              random.randint<span class="o">(</span>0x00, 0xff<span class="o">)</span> <span class="o">]</span>
+    <span class="nv">mac</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span>.join<span class="o">(</span>map<span class="o">(</span>lambda x: <span class="s2">&#34;%02x&#34;</span> % x, rands<span class="o">))</span>
+    macs<span class="o">[</span>node<span class="o">]</span> <span class="o">=</span> mac
+    with open<span class="o">(</span>macaddrfile, <span class="s1">&#39;wb+&#39;</span><span class="o">)</span> as fd:
+        pickle.dump<span class="o">(</span>macs, fd<span class="o">)</span>
 
-args = ['qemu-system-x86_64', '-enable-kvm',
-        '-m', '2048',
-        '-smp', '2',
-        '-drive', 'file={0},if=virtio,cache=none,aio=native'.format(img),
-        '-fsdev', 'local,id=conf,security_model=none,readonly,path={0}'.format(cdf),
-        '-device', 'virtio-9p-pci,fsdev=conf,mount_tag=config-2',
-        '-net', 'nic,vlan=0,model=virtio,macaddr={0}'.format(mac),
-        '-net', 'tap,vlan=0,vhost=on,script=/etc/openvswitch/ovs-ifup,downscript=/etc/openvswitch/ovs-ifdown',
-        '-nographic',
-        '-serial', 'file:{0}/../logs/{1}.log'.format(pypath, node)]
+<span class="nv">args</span> <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;qemu-system-x86_64&#39;</span>, <span class="s1">&#39;-enable-kvm&#39;</span>,
+        <span class="s1">&#39;-m&#39;</span>, <span class="s1">&#39;2048&#39;</span>,
+        <span class="s1">&#39;-smp&#39;</span>, <span class="s1">&#39;2&#39;</span>,
+        <span class="s1">&#39;-drive&#39;</span>, <span class="s1">&#39;file={0},if=virtio,cache=none,aio=native&#39;</span>.format<span class="o">(</span>img<span class="o">)</span>,
+        <span class="s1">&#39;-fsdev&#39;</span>, <span class="s1">&#39;local,id=conf,security_model=none,readonly,path={0}&#39;</span>.format<span class="o">(</span>cdf<span class="o">)</span>,
+        <span class="s1">&#39;-device&#39;</span>, <span class="s1">&#39;virtio-9p-pci,fsdev=conf,mount_tag=config-2&#39;</span>,
+        <span class="s1">&#39;-net&#39;</span>, <span class="s1">&#39;nic,vlan=0,model=virtio,macaddr={0}&#39;</span>.format<span class="o">(</span>mac<span class="o">)</span>,
+        <span class="s1">&#39;-net&#39;</span>, <span class="s1">&#39;tap,vlan=0,vhost=on,script=/etc/openvswitch/ovs-ifup,downscript=/etc/openvswitch/ovs-ifdown&#39;</span>,
+        <span class="s1">&#39;-nographic&#39;</span>,
+        <span class="s1">&#39;-serial&#39;</span>, <span class="s1">&#39;file:{0}/../logs/{1}.log&#39;</span>.format<span class="o">(</span>pypath, node<span class="o">)]</span>
 
-#os.execv('/usr/bin/qemu-system-x86_64', args)
-process = subprocess.Popen(['/usr/bin/qemu-system-x86_64'] + args[1:],
-                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-#stdout, stderr = process.communicate()
-#print stdout, stderr
-print process.returncode
-</code></pre>
-
+<span class="c1">#os.execv(&#39;/usr/bin/qemu-system-x86_64&#39;, args)</span>
+<span class="nv">process</span> <span class="o">=</span> subprocess.Popen<span class="o">([</span><span class="s1">&#39;/usr/bin/qemu-system-x86_64&#39;</span><span class="o">]</span> + args<span class="o">[</span><span class="m">1</span>:<span class="o">]</span>,
+                 <span class="nv">stdout</span><span class="o">=</span>subprocess.PIPE, <span class="nv">stderr</span><span class="o">=</span>subprocess.PIPE<span class="o">)</span>
+<span class="c1">#stdout, stderr = process.communicate()</span>
+<span class="c1">#print stdout, stderr</span>
+print process.returncode</code></pre></div>
 <p>有了这个脚本之后, 新建一个节点只需要创建一下img, 然后运行这个脚本就行了.</p>
 
 <h1 id="通过fleet部署k8s">通过fleet部署K8S</h1>
 
 <p>CoreOS部署好之后, 你现在可以用fleet完成K8S的部署, 使用Kelsey Hightower提供的units, 直接用下面命令完成部署:</p>
-
-<pre><code class="language-shell">$ fleetctl start kube-proxy.service
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ fleetctl start kube-proxy.service
 $ fleetctl start kube-kubelet.service
 $ fleetctl start kube-apiserver.service
 $ fleetctl start kube-scheduler.service
-$ fleetctl start kube-controller-manager.service
-</code></pre>
-
+$ fleetctl start kube-controller-manager.service</code></pre></div>
 <p>同样的问题, 这里下载地址都是Google存储, 国内无法访问, 而且版本也是老的, 建议自己下载最新版本和配置下载地址.</p>
 
 <p>完成之后, 你就有了一个本地运行的K8S集群.</p>
@@ -611,26 +576,20 @@ $ fleetctl start kube-controller-manager.service
 <p>直接下载最新发布的K8S版本, 解压缩之后里面有example/guestbook目录, 这就是我们需要部署的例子, guestbook部署包括一个redis master, 2个redis slave和3个web节点.</p>
 
 <p>部署起来也和很简单, 直接通过kubectl工具即可完成:</p>
-
-<pre><code class="language-shell">kubectl create -f redis-master.json
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">kubectl create -f redis-master.json
 kubectl create -f redis-master-service.json
 kubectl create -f redis-slave-controller.json
 kubectl create -f redis-slave-service.json
-kubectl create -f frontend-controller.json
-</code></pre>
-
+kubectl create -f frontend-controller.json</code></pre></div>
 <p>看看结果:</p>
-
-<pre><code class="language-shell">tacy@momo1:~$ kubectl get pods
-NAME                                   IMAGE(S)                   HOST                LABELS                                       STATUS
-8f85c3e8-7481-11e4-8c27-52540015fd4a   brendanburns/redis-slave   172.16.11.132/      name=redisslave,uses=redis-master            Running
-8f85ff95-7481-11e4-8c27-52540015fd4a   brendanburns/redis-slave   172.16.11.165/      name=redisslave,uses=redis-master            Running
-4229efd3-751b-11e4-8c27-52540015fd4a   brendanburns/php-redis     172.16.11.132/      name=frontend,uses=redisslave,redis-master   Running
-422ac57d-751b-11e4-8c27-52540015fd4a   brendanburns/php-redis     172.16.11.178/      name=frontend,uses=redisslave,redis-master   Running
-422bd487-751b-11e4-8c27-52540015fd4a   brendanburns/php-redis     172.16.11.165/      name=frontend,uses=redisslave,redis-master   Running
-redis-master                           dockerfile/redis           172.16.11.165/      name=redis-master                            Running
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">tacy@momo1:~$ kubectl get pods
+NAME                                   IMAGE<span class="o">(</span>S<span class="o">)</span>                   HOST                LABELS                                       STATUS
+8f85c3e8-7481-11e4-8c27-52540015fd4a   brendanburns/redis-slave   <span class="m">172</span>.16.11.132/      <span class="nv">name</span><span class="o">=</span>redisslave,uses<span class="o">=</span>redis-master            Running
+8f85ff95-7481-11e4-8c27-52540015fd4a   brendanburns/redis-slave   <span class="m">172</span>.16.11.165/      <span class="nv">name</span><span class="o">=</span>redisslave,uses<span class="o">=</span>redis-master            Running
+4229efd3-751b-11e4-8c27-52540015fd4a   brendanburns/php-redis     <span class="m">172</span>.16.11.132/      <span class="nv">name</span><span class="o">=</span>frontend,uses<span class="o">=</span>redisslave,redis-master   Running
+422ac57d-751b-11e4-8c27-52540015fd4a   brendanburns/php-redis     <span class="m">172</span>.16.11.178/      <span class="nv">name</span><span class="o">=</span>frontend,uses<span class="o">=</span>redisslave,redis-master   Running
+422bd487-751b-11e4-8c27-52540015fd4a   brendanburns/php-redis     <span class="m">172</span>.16.11.165/      <span class="nv">name</span><span class="o">=</span>frontend,uses<span class="o">=</span>redisslave,redis-master   Running
+redis-master                           dockerfile/redis           <span class="m">172</span>.16.11.165/      <span class="nv">name</span><span class="o">=</span>redis-master                            Running</code></pre></div>
 <p>这样就把guestbook部署完成了. 你在宿主机上可以直接通过80端口访问</p>
 
 <h1 id="部署监控">部署监控</h1>

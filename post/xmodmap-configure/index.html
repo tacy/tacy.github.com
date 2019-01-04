@@ -332,17 +332,14 @@ if (!doNotTrack) {
 <h1 id="一些特殊键的标准位置">一些特殊键的标准位置</h1>
 
 <p>下面是我的ubuntu上几个特殊键的位置，包括shift，ctrl，alt，super/win，menu键：</p>
-
-<pre><code class="language-shell">keycode 133 = Super_L NoSymbol Super_L$
-keycode 134 = Super_R NoSymbol Super_R
-keycode 135 = Menu NoSymbol Menu
-keycode  50 = Shift_L NoSymbol Shift_L
-keycode  62 = Shift_R NoSymbol Shift_R
-keycode  66 = Caps_Lock NoSymbol Caps_Lock
-keycode  37 = Control_L NoSymbol Control_L
-keycode  105 = Control_R NoSymbol Control_R
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">keycode <span class="nv">133</span> <span class="o">=</span> Super_L NoSymbol Super_L$
+keycode <span class="nv">134</span> <span class="o">=</span> Super_R NoSymbol Super_R
+keycode <span class="nv">135</span> <span class="o">=</span> Menu NoSymbol Menu
+keycode  <span class="nv">50</span> <span class="o">=</span> Shift_L NoSymbol Shift_L
+keycode  <span class="nv">62</span> <span class="o">=</span> Shift_R NoSymbol Shift_R
+keycode  <span class="nv">66</span> <span class="o">=</span> Caps_Lock NoSymbol Caps_Lock
+keycode  <span class="nv">37</span> <span class="o">=</span> Control_L NoSymbol Control_L
+keycode  <span class="nv">105</span> <span class="o">=</span> Control_R NoSymbol Control_R</code></pre></div>
 <p>你可以通过如下命令获取：
 <code>$xmodmap -pke &gt; xmodmap.out</code></p>
 
@@ -363,48 +360,35 @@ keycode  105 = Control_R NoSymbol Control_R
 
 <p>这里通过clear语法实现，下面是一些特殊键的表达[fn:1]</p></li>
 </ul>
-
-<pre><code class="language-shell">
-  clear Shift
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">  clear Shift
   clear Lock
   clear Control
   clear Mod1
   clear Mod2
   clear Mod3
   clear Mod4
-  clear Mod5
-</code></pre>
-
+  clear Mod5</code></pre></div>
 <p>我主要关注shift、lock、control、mod1和mod4，其中mod1表示alt，mod4表示super，这里我只需要取消下面几个：</p>
-
-<pre><code class="language-shell">  clear Shift
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">  clear Shift
   clear Lock
   clear Control
-  clear Mod4
-</code></pre>
-
+  clear Mod4</code></pre></div>
 <h2 id="设定新的映射关系">设定新的映射关系</h2>
-
-<pre><code class="language-shell">  keycode  66 = Control_L
-  keycode  37 = Caps_Lock
-  keycode 133 = Super_L
-  keycode 134 = Control_R
-  keycode 135 = Control_R
-  keycode 50  = Shift_L
-  keycode 62  = Shift_R
-  !keycode 62  = Menu
-  keycode 105 = Shift_R
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">  keycode  <span class="nv">66</span> <span class="o">=</span> Control_L
+  keycode  <span class="nv">37</span> <span class="o">=</span> Caps_Lock
+  keycode <span class="nv">133</span> <span class="o">=</span> Super_L
+  keycode <span class="nv">134</span> <span class="o">=</span> Control_R
+  keycode <span class="nv">135</span> <span class="o">=</span> Control_R
+  keycode <span class="nv">50</span>  <span class="o">=</span> Shift_L
+  keycode <span class="nv">62</span>  <span class="o">=</span> Shift_R
+  !keycode <span class="nv">62</span>  <span class="o">=</span> Menu
+  keycode <span class="nv">105</span> <span class="o">=</span> Shift_R</code></pre></div>
 <h2 id="绑定映射关系">绑定映射关系</h2>
-
-<pre><code class="language-shell">  !add mod1    = Alt_R Alt_L Meta_R Meta_L
-  add Shift   = Shift_R Shift_L
-  add Lock    = Caps_Lock
-  add Control = Control_R Control_L
-  add Mod4    = Super_R Super_L Menu
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">  !add <span class="nv">mod1</span>    <span class="o">=</span> Alt_R Alt_L Meta_R Meta_L
+  add <span class="nv">Shift</span>   <span class="o">=</span> Shift_R Shift_L
+  add <span class="nv">Lock</span>    <span class="o">=</span> Caps_Lock
+  add <span class="nv">Control</span> <span class="o">=</span> Control_R Control_L
+  add <span class="nv">Mod4</span>    <span class="o">=</span> Super_R Super_L Menu</code></pre></div>
 <p>完成之后，保存你的xmodmap文件，可以通过如下命令立即生效：</p>
 
 <p><code>$xmodmap ~/.Xmodmap</code></p>
