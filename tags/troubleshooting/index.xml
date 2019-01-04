@@ -17,7 +17,7 @@
       <pubDate>Wed, 02 Jan 2019 00:00:00 +0000</pubDate>
       
       <guid>http://tacy.github.io/post/trace/</guid>
-      <description>TRACE[^4]1 linux下的trace，这里只讨论function相关的分析，event和计数器不涉及。从两个维度讨论，首先是根据运行态：分为kerne</description>
+      <description>对于linux下的trace，我建议你参考Brendan Gregg的文章：Choosing a linux tracer，里面详细列出了linux下每个t</description>
     </item>
     
   </channel>

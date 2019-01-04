@@ -98,7 +98,7 @@
       <pubDate>Sat, 28 Sep 2013 00:00:00 +0000</pubDate>
       
       <guid>http://tacy.github.io/post/emacs-tips/</guid>
-      <description>Display too long line highlight (setq whitespace-style &amp;#39;(lines)) (setq whitespace-line-column 78) (global-whitespace-mode 1) Macro | key sequence | comment | |--------------+-------------------------------| | F3 | start record macro | | F4 | end record macro | | C-x ( | start record macro | | C-x ) | end record macro | | C-x e | execute last macro | | C-u 10 C-x e | execute last macro repeat 100</description>
+      <description>EMACS 有任何操作问题，建议参考Xha Emacs，我有操作问题一般都能在这里找到答案。 Display too long line highlight (setq whitespace-style &amp;#39;(lines)) (setq whitespace-line-column 78) (global-whitespace-mode 1) Macro | key sequence | comment | |--------------+-------------------------------| | F3 | start record macro | | F4</description>
     </item>
     
     <item>

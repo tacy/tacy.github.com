@@ -23,7 +23,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <meta name="author" content="春龙" />
-  <meta name="description" content="TRACE[^4]1 linux下的trace，这里只讨论function相关的分析，event和计数器不涉及。从两个维度讨论，首先是根据运行态：分为kerne" />
+  <meta name="description" content="对于linux下的trace，我建议你参考Brendan Gregg的文章：Choosing a linux tracer，里面详细列出了linux下每个t" />
 
   <meta name="keywords" content="Tacy, tech, life, linux, performance, kubernetes, golang, java, troubleshooting" />
 
@@ -58,25 +58,25 @@
 
 
 <meta property="og:title" content="Linux trace" />
-<meta property="og:description" content="TRACE[^4]1 linux下的trace，这里只讨论function相关的分析，event和计数器不涉及。从两个维度讨论，首先是根据运行态：分为kerne" />
+<meta property="og:description" content="对于linux下的trace，我建议你参考Brendan Gregg的文章：Choosing a linux tracer，里面详细列出了linux下每个t" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://tacy.github.io/post/trace/" /><meta property="article:published_time" content="2019-01-02T00:00:00&#43;00:00"/>
 <meta property="article:modified_time" content="2019-01-02T00:00:00&#43;00:00"/>
 
 <meta itemprop="name" content="Linux trace">
-<meta itemprop="description" content="TRACE[^4]1 linux下的trace，这里只讨论function相关的分析，event和计数器不涉及。从两个维度讨论，首先是根据运行态：分为kerne">
+<meta itemprop="description" content="对于linux下的trace，我建议你参考Brendan Gregg的文章：Choosing a linux tracer，里面详细列出了linux下每个t">
 
 
 <meta itemprop="datePublished" content="2019-01-02T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2019-01-02T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="7544">
+<meta itemprop="wordCount" content="8077">
 
 
 
 <meta itemprop="keywords" content="tech,linux,trace,troubleshooting," />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Linux trace"/>
-<meta name="twitter:description" content="TRACE[^4]1 linux下的trace，这里只讨论function相关的分析，event和计数器不涉及。从两个维度讨论，首先是根据运行态：分为kerne"/>
+<meta name="twitter:description" content="对于linux下的trace，我建议你参考Brendan Gregg的文章：Choosing a linux tracer，里面详细列出了linux下每个t"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -326,9 +326,9 @@ if (!doNotTrack) {
     <div class="post-content">
       
 
-<h1 id="trace-4-13">TRACE[^4]<sup class="footnote-ref" id="fnref:13"><a href="#fn:13">1</a></sup></h1>
+<p>对于linux下的trace，我建议你参考Brendan Gregg的文章：<a href="http://www.brendangregg.com/blog/2015-07-08/choosing-a-linux-tracer.html">Choosing a linux tracer</a>，里面详细列出了linux下每个tracer的介绍，本文里主要介绍ftrace，讨论function相关的部分，event和计数器不涉及。</p>
 
-<p>linux下的trace，这里只讨论function相关的分析，event和计数器不涉及。从两个维度讨论，首先是根据运行态：分为kernel和userland；其次根据trace方式：分为静态分析和动态分析。</p>
+<p>下面我们从两个维度来看看ftrace在linux中的使用，首先是根据运行态：分为kernel和userland；其次根据trace方式：分为静态分析和动态分析。</p>
 
 <h2 id="kernel">Kernel</h2>
 
@@ -346,7 +346,7 @@ tcp:tcp_probe                                      <span class="o">[</span>Trace
 ...</code></pre></div>
 <p>静态分析有两种方式：ftrace和perf</p>
 
-<h4 id="ftrace-7-8">ftrace<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">2</a></sup><sup class="footnote-ref" id="fnref:8"><a href="#fn:8">3</a></sup></h4>
+<h4 id="ftrace-7-8">ftrace<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">1</a></sup><sup class="footnote-ref" id="fnref:8"><a href="#fn:8">2</a></sup></h4>
 
 <p>ftrace是linux下的主要trace框架，linux实现了一个tracefs文件系统（类似proc的虚文件系统，驻留在内存），挂载在/sys/kernel/debug/tracing目录下，里面包括所有ftrace相关的内容，ftrace就是通过配置该目录下的文件，完成tracing。</p>
 
@@ -366,18 +366,13 @@ tcp:tcp_probe                                      <span class="o">[</span>Trace
 <span class="c1">#           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION</span>
 <span class="c1">#              | |       |   ||||       |         |</span>
            gdbus-1275  <span class="o">[</span><span class="m">001</span><span class="o">]</span> .... <span class="m">11758</span>.901088: unix_poll &lt;-sock_poll</code></pre></div>
-<p>如果你查看trace的内容，你会发现内容太多，你很难找到有价值的东西，绝大部分时候，你不是对整个系统的调用感兴趣，你只想看你关心的内容，ftrace提供了function filter来进行trace过滤：通过设置<code>set_ftrace_filter  set_ftrace_notrace  set_ftrace_pid</code>三个文件，你能过滤需要trace的function。</p>
+<p>如果你查看trace的内容，你会发现内容太多，你很难找到有价值的东西，绝大部分时候，你不是对整个系统的调用感兴趣，你只想看你关心的内容，ftrace提供了function filter来进行trace过滤：通过设置<code>set_ftrace_filter  set_ftrace_notrace  set_ftrace_pid</code>三个文件，你能过滤出来需要trace的function。</p>
 
 <p>最简单的做法是看看available_filter_functions里面有些什么，里面的这些function都是可以用，例如我关心tcp_sendmsg：<code>echo tcp_sendmsg &gt; set_ftrace_filter</code>，这样function tracer就只会记录tcp_sendmsg这个function。当然filter也支持“*”号通配符，支持三种写法：“*key/<em>key</em>/key*”。也支持模块过滤“echo :mod:ext3 &gt; set_ftrace_filter”</p>
 
-<p>另外，filter也支持“Format: <function>:<trigger>[:count]”这类的写法，通过它你能实现：某个function调用了，就tracingoff/tracingon/stacktrace/snapshot/dump/cpudump。例如：<code>echo do_trap:traceoff:3 &gt; set_ftrace_filter</code>，do_trap调用三次，停止trace。</p>
+<p>另外，filter也支持“Format: <function>:<trigger>[:count]”这类的写法，通过它你能实现：某个function调用了，就触发一个预先定义的action（tracingoff/tracingon/stacktrace/snapshot/dump/cpudump），执行相关操作。例如：<code>echo do_trap:traceoff:3 &gt; set_ftrace_filter</code>，do_trap调用三次，执行停止trace操作。</p>
 
 <p>如果你需要看到调用栈，可以设置：<code>echo 1 &gt; options/func_stack_trace</code>，但是必须注意，该操作容易导致问题，务必需要先设置filter，缩小trace范围，否则容易导致系统问题。</p>
-
-<p>这里主要说一下tracepoint相关内容。tracing目录下有一个events目录，里面就是所有的kernel tracepoint，内容和<code>perf list tracepoint</code>输出一致，只是这里是目录结构呈现。
-trace方法就是找到对应的tracepoint，例如tcp_probe，进入到该目录下（events/tcp/tcp_probe），通过命令<code>echo 1 &gt; enable</code>激活该探针，然后你就可以回到tracing目录下，查看trace文件内容，里面能看到trace内容，输出格式可以参考探针目录下的format文件。</p>
-
-<p>另外你也能设置filter，根据条件过滤事件；你也能设置triger，当条件满足的时候，触发定义的action，例如stracktrace，输出栈到trace文件</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@tacyArch tracing<span class="o">]</span><span class="c1"># cat available_filter_functions |grep tcp_sendmsg</span>
 bpf_tcp_sendmsg
 tcp_sendmsg_locked
@@ -408,7 +403,11 @@ bash: echo: write error: Invalid argument
 
 <h5 id="tracepoint">tracepoint</h5>
 
-<p>tracing里面的events目录，包含了所有的tracepoint，每一个tracepoint都以目录存在，目录下面是针对该tracepoint的配置文件:</p>
+<p>下面我们来看看tracepoint相关内容。tracing目录下有一个events目录，里面就是所有的kernel tracepoint，包含了所有的tracepoint，每一个tracepoint都以目录存在，目录下面是针对该tracepoint的配置文件。</p>
+
+<p>trace方法就是找到对应的tracepoint，例如tcp_probe，进入到该目录下（events/tcp/tcp_probe），通过命令<code>echo 1 &gt; enable</code>激活该探针，然后你就可以回到tracing目录下，查看trace文件内容，里面能看到trace内容，输出格式可以参考探针目录下的format文件。</p>
+
+<p>另外你也能设置filter，根据条件过滤事件；你也能设置triger，当条件满足的时候，触发定义的action，例如stracktrace，输出栈到trace文件</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@tacyArch tcp_receive_reset<span class="o">]</span><span class="c1"># ls</span>
 <span class="nb">enable</span>  filter  format  hist  id  trigger
 
@@ -463,15 +462,19 @@ print fmt: <span class="s2">&#34;sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddr
  irq/69-brcmf_pc <span class="m">19366</span> <span class="o">[</span><span class="m">003</span><span class="o">]</span> <span class="m">99977</span>.000673: tcp:tcp_probe: <span class="nv">src</span><span class="o">=</span><span class="m">192</span>.168.1.21:59262 <span class="nv">dest</span><span class="o">=</span>xx.201.xx.119:80 <span class="nv">mark</span><span class="o">=</span><span class="m">0</span> <span class="nv">data_len</span><span class="o">=</span><span class="m">60</span> <span class="nv">snd_nxt</span><span class="o">=</span>0x6ec6b07d <span class="nv">snd_una</span><span class="o">=</span>0x6ec6b07d <span class="nv">snd_cwnd</span><span class="o">=</span><span class="m">55</span> ssthresh&gt;
  irq/69-brcmf_pc <span class="m">19366</span> <span class="o">[</span><span class="m">003</span><span class="o">]</span> <span class="m">99977</span>.057786: tcp:tcp_probe: <span class="nv">src</span><span class="o">=</span><span class="m">192</span>.168.1.21:59262 <span class="nv">dest</span><span class="o">=</span>xx.201.xx.119:80 <span class="nv">mark</span><span class="o">=</span><span class="m">0</span> <span class="nv">data_len</span><span class="o">=</span><span class="m">0</span> <span class="nv">snd_nxt</span><span class="o">=</span>0x6ec6b0a1 <span class="nv">snd_una</span><span class="o">=</span>0x6ec6b07d <span class="nv">snd_cwnd</span><span class="o">=</span><span class="m">55</span> <span class="nv">ssthresh</span><span class="o">=</span>&gt;
 <span class="o">[</span>root@tacyArch ~<span class="o">]</span>#</code></pre></div>
+<h4 id="小结">小结</h4>
+
+<p>静态分析方法比较简单，无需太多代码方面的知识，只需要通过配置即可完成。用户能通过对合适的tracepoint进行分析，找出有用的信息，从而解决一些疑难问题。但是静态分析受限于预先埋下的探针，另外探针输出的内容也无法增加，在一些情况下，满足不了trace的需求。</p>
+
 <h3 id="动态分析">动态分析</h3>
 
-<p>动态分析，当某函数没有预先在代码中埋下探针的时候，系统能够动态给它添加探针的分析方式。在kernel中，这些动态添加的探针也被称为kprobe。kernel把所有的可symbol输出在/proc/kallsyms文件中，你可以对这里面的所有symbol添加探针。kprobe可以说是linux中最牛逼的trace手段。</p>
+<p>下面我们来看看动态分析，动态分析，顾名思义，就是当某函数没有预先在代码中埋下探针的时候，系统能够动态给它添加探针的分析方式。在kernel中，这些动态添加的探针也被称为kprobe。kernel把所有的symbol输出在/proc/kallsyms文件中，你可以对这里面的所有symbol添加探针。kprobe可以说是linux中最牛逼的trace手段。</p>
 
-<p>动态分析也支持ftrace和perf两种方式。两者的选择：优先选择perf，perf会做错误检验，不容易导致问题，ftrace的话就需要你特别小心，这里可是在kernel层面的操作，一个不小心，系统可能会挂起或者中断。</p>
+<p>动态分析也支持ftrace和perf两种方式。两者的选择：优先选择perf，主要原因是perf会做错误检验，不容易导致问题，ftrace的话就需要你特别小心，这里可是在kernel层面的操作，一个不小心，系统可能会挂起或者中断。</p>
 
-<h4 id="ftrace-6">ftrace<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">4</a></sup></h4>
+<h4 id="ftrace-6">ftrace<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">3</a></sup></h4>
 
-<p>/proc/kallsyms里面所有的symbol都能添加kprobe，kprobe和function tracer无关，无需启用function tracer。你只需定义好event，写入到kprobe_events即可，ftrace会自动在/sys/kernel/debug/tracing/events下创建kprobe目录，并在该目录下为每个kprobe创建类似tracepoint的目录，之后你只需要通过enable文件来控制启用还是禁用。event的语法如下：</p>
+<p>/proc/kallsyms里面所有的symbol都能添加kprobe，kprobe和function tracer无关，无需启用function tracer。你只需定义好event，写入到traceing目录下的kprobe_events文件即可，ftrace会自动在/sys/kernel/debug/tracing/events下创建kprobe目录，并在该目录下为每个kprobe创建类似tracepoint的目录，之后你只需要通过enable文件来控制启用还是禁用。kprobe event的语法定义如下：</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">Synopsis of kprobe_events
 -------------------------
   p<span class="o">[</span>:<span class="o">[</span>GRP/<span class="o">]</span>EVENT<span class="o">]</span> <span class="o">[</span>MOD:<span class="o">]</span>SYM<span class="o">[</span>+offs<span class="o">]</span><span class="p">|</span>MEMADDR <span class="o">[</span>FETCHARGS<span class="o">]</span>	: Set a probe
@@ -536,9 +539,11 @@ print fmt: <span class="s2">&#34;(%lx)&#34;</span>, REC-&gt;__probe_ip</code></p
 <span class="c1">#              | |       |   ||||       |         |</span>
             curl-21745 <span class="o">[</span><span class="m">001</span><span class="o">]</span> ...1 <span class="m">27996</span>.148112: tcp_sendmsg: <span class="o">(</span>tcp_sendmsg+0x0/0x40<span class="o">)</span>
 <span class="o">[</span>root@tacyArch tracing<span class="o">]</span><span class="c1"># echo 0 &gt; events/kprobes/tcp_sendmsg/enable</span></code></pre></div>
-<p>看起来和ftrace的function tracer差不多，这就尴尬了？</p>
+<p>输出结果看起来和ftrace的function tracer差不多，这就尴尬了？我们想要看到调用参数</p>
 
-<p>继续努力，接下来，我们看看怎么查看调用参数，先看看tcp_sendmsg代码：</p>
+<p>继续努力，接下来，我们看看怎么输出调用参数，先看看tcp_sendmsg代码：</p>
+
+<p>（下面的操作依赖kernel debug info的安装）</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@tacyArch src<span class="o">]</span><span class="c1"># gdb /lib/modules/4.19.12-arch1-1-ARCH/build/vmlinux</span>
 ...
 For help, <span class="nb">type</span> <span class="s2">&#34;help&#34;</span>.
@@ -557,7 +562,9 @@ Source directories searched: /home/tacy/workspace/archlinux-linux:<span class="n
 <span class="m">1441</span>
 <span class="m">1442</span>            lock_sock<span class="o">(</span>sk<span class="o">)</span><span class="p">;</span>
 <span class="m">1443</span>            <span class="nv">ret</span> <span class="o">=</span> tcp_sendmsg_locked<span class="o">(</span>sk, msg, size<span class="o">)</span><span class="p">;</span></code></pre></div>
-<p>tcp_sendmsg有3个调用参数，我们希望能看到发送包的大小：size，第三个参数的寄存器使用的是rdx（参考System V ABI AMD64<sup class="footnote-ref" id="fnref:9"><a href="#fn:9">5</a></sup><sup class="footnote-ref" id="fnref:10"><a href="#fn:10">6</a></sup>，找到每个register定义），我们重新定义一个probe，覆盖之前的：</p>
+<p>上面的代码输出显示，tcp_sendmsg有3个调用参数。我们希望能把发送包的大小（size）输出的trace结果中。这里，你首先需要知道，在X64架构下，calling的参数存放规范（参考System V ABI AMD64<sup class="footnote-ref" id="fnref:9"><a href="#fn:9">4</a></sup><sup class="footnote-ref" id="fnref:10"><a href="#fn:10">5</a></sup>，找到每个register定义），根据规范，我们知道第三个参数的寄存器使用的是rdx。</p>
+
+<p>下面我们重新定义一个probe，覆盖之前的：</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@tacyArch tracing<span class="o">]</span><span class="c1"># echo &#39;probe:tcp_sendmsg tcp_sendmsg size=%dx&#39; &gt; kprobe_events</span>
 <span class="o">[</span>root@tacyArch tracing<span class="o">]</span><span class="c1"># cat events/kprobes/tcp_sendmsg/format</span>
 name: tcp_sendmsg
@@ -657,9 +664,15 @@ Available variables at tcp_sendmsg
 
 <span class="c1"># perf probe --add &#39;tcp_sendmsg size&#39;  # 使用tcp_sendmsg参数，输出到结果中</span>
 <span class="c1"># perf probe -V tcp_sendmsg:+9  # 可以查看函数内部变量，内部变量也能输出</span></code></pre></div>
-<h2 id="userland">userland</h2>
+<h4 id="小结-1">小结</h4>
 
-<p>usersland的trace同样包括静态和动态两部分，但是这两部分我们也统一称为uprobe<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">7</a></sup>，你可以在ftrace目录（/sys/kernel/debug/tracing）下的uprobe_events文件中找到你定义的所有uprobe event。</p>
+<p>动态分析方法和静态分析方法相比，需要你具备代码级别的知识，对kernel代码越熟悉，对linux的tracer就像玩一样，感觉没啥解决不了的问题，这方面可以参考大牛Brendan Gregg。</p>
+
+<p>同时，通过kprobe，也是让你学习了解kernel的一个最佳途径，无需修改代码，直接进行debug。</p>
+
+<h2 id="userland">Userland</h2>
+
+<p>Usersland的trace同样包括静态和动态两部分，但是这两部分我们也统一称为uprobe<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">6</a></sup>，你可以在ftrace目录（/sys/kernel/debug/tracing）下的uprobe_events文件中找到你定义的所有uprobe event。</p>
 
 <p>uprobe event定义：</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">Synopsis of uprobe_tracer
@@ -693,7 +706,9 @@ Available variables at tcp_sendmsg
 
 <p>同样，我们也可以通过ftrace和perf两种方式操作它。但是ftrace操作方法复杂（主要是需要小心操作地址），方法参考<a href="http://www.brendangregg.com/blog/2015-07-03/hacking-linux-usdt-ftrace.html">Hacking Linux USDT with Ftrace</a>。</p>
 
-<p>下面我们用openjdk为例，说明用户空间的静态分析方法。首先需要你的JDK启用了enable-dtrace，其次启动java应用的时候加上参数<code>-XX:+ExtendedDTraceProbes</code>，查看USDT probe：</p>
+<p>下面我们用openjdk为例，说明用户空间的静态分析方法。</p>
+
+<p>首先需要你的JDK启用了enable-dtrace，其次启动java应用的时候加上参数<code>-XX:+ExtendedDTraceProbes</code>，查看USDT probe：</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">readelf -n /usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so
 Displaying notes found in: .note.gnu.build-id
   Owner                 Data size       Description
@@ -715,18 +730,18 @@ Displaying notes found in: .note.stapsdt
   stapsdt              0x00000071       NT_STAPSDT <span class="o">(</span>SystemTap probe descriptors<span class="o">)</span>
     Provider: hotspot
     Name: method__compile__begin</code></pre></div>
-<p>确保出处中有stapsdt字样</p>
+<p>确保出处中有stapsdt字样，说明你的jdk启用了dtrace。</p>
 
 <h4 id="ftrace">ftrace</h4>
 
-<p>我们用method<strong>entry为例，操作如何通过ftrace来trace该probe。参考前面uprobe event的定义<code>p[:[GRP/]EVENT] PATH:OFFSET [FETCHARGS] : Set a uprobe</code>，我们需要找到method</strong>entry在libjvm.so中的位置，可以通过readelf找到：</p>
+<p>我们用method<strong>entry这个probe为例，讲述如何通过ftrace来trace该probe。参考前面uprobe event的定义<code>p[:[GRP/]EVENT] PATH:OFFSET [FETCHARGS] : Set a uprobe</code>，我们需要找到method</strong>entry在libjvm.so中的位置，可以通过readelf找到：</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@tacyArch tacy<span class="o">]</span><span class="c1"># readelf -n /usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so |tail +2659 -|head -5 -</span>
   stapsdt              0x00000062       NT_STAPSDT <span class="o">(</span>SystemTap probe descriptors<span class="o">)</span>
     Provider: hotspot
     Name: method__entry
     Location: 0x0000000000bd21e5, Base: 0x0000000000dbb1b2, Semaphore: 0x0000000000000000
     Arguments: -8@%rax <span class="m">8</span>@%rdx -4@%ecx <span class="m">8</span>@%rsi -4@%edi <span class="m">8</span>@%r8 -4@%r9d</code></pre></div>
-<p>method__entry的位置在0x0000000000bd21e5，应为libjvm.so是一个共享库，所以这个地址可以直接使用（如果非共享库，你还需要找到程序的base加载地址，location-base得到偏移）。</p>
+<p>method__entry的位置在0x0000000000bd21e5，因为libjvm.so是一个共享库，所以这个地址可以直接使用（如果非共享库，你还需要找到程序的base加载地址，通过公式：location - base load address，计算得到偏移）。</p>
 
 <p>readelf的输出中，可以看到method__entry的arguments，总共有7个（这里我也没搞明白为啥register的使用不用遵守System V ABI AMD64规范），具体每个参数的定义就需要去看代码了，我机器上找不到stp文件，只能看在线<a href="https://github.com/mpujari/systemtap-tapset-openjdk9/blob/master/tapset-1.8.0/hotspot-1.8.0.stp.in#L411">stp</a>，引用在下面：</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">/* hotspot.method_entry <span class="o">(</span>extended probe<span class="o">)</span>
@@ -869,7 +884,7 @@ You can now use it in all perf tools, such as:
 
 <p>ftrace最大的问题是不可编程，无法做更多扩展，但是它不需要太新的kernel，对目前很多生产环境来说，这非常关键，而且ftrace也在持续改进，建议follow大牛@srostedt（kernel ftrace maintainer）。</p>
 
-<p>至于目前最热门的ebpf/bcc<sup class="footnote-ref" id="fnref:12"><a href="#fn:12">8</a></sup>，强烈建议学习，优点就是一句话：可编程。kernel至少都需要4.1（推荐4.8以上），RHEL7.6官方已经支持<sup class="footnote-ref" id="fnref:11"><a href="#fn:11">9</a></sup>。</p>
+<p>至于目前最热门的ebpf/bcc<sup class="footnote-ref" id="fnref:12"><a href="#fn:12">7</a></sup>，强烈建议学习，优点就是一句话：可编程。kernel至少都需要4.1（推荐4.8以上），RHEL7.6官方已经支持<sup class="footnote-ref" id="fnref:11"><a href="#fn:11">8</a></sup>。</p>
 
 <h2 id="相关知识">相关知识</h2>
 
@@ -883,8 +898,6 @@ You can now use it in all perf tools, such as:
 <hr />
 
 <ol>
-<li id="fn:13"><a href="http://www.brendangregg.com/blog/2015-07-08/choosing-a-linux-tracer.html">Choosing a Linux Tracer (2015)</a>
- <a class="footnote-return" href="#fnref:13"><sup>[return]</sup></a></li>
 <li id="fn:7"><a href="https://www.kernel.org/doc/Documentation/trace/ftrace.txt">ftrace document</a>
  <a class="footnote-return" href="#fnref:7"><sup>[return]</sup></a></li>
 <li id="fn:8"><a href="https://lwn.net/Articles/370423/">Secrets of the Ftrace function tracer</a>

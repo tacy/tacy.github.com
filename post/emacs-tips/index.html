@@ -68,7 +68,7 @@
 
 <meta itemprop="datePublished" content="2013-09-28T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2019-01-04T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="4352">
+<meta itemprop="wordCount" content="4448">
 
 
 
@@ -325,6 +325,10 @@ if (!doNotTrack) {
     <div class="post-content">
       
 
+<h1 id="emacs">EMACS</h1>
+
+<p>有任何操作问题，建议参考<a href="http://ergoemacs.org/index.html">Xha Emacs</a>，我有操作问题一般都能在这里找到答案。</p>
+
 <h1 id="display">Display</h1>
 
 <h2 id="too-long-line-highlight">too long line highlight</h2>
@@ -355,12 +359,10 @@ if (!doNotTrack) {
 |               |                   |</p>
 
 <h1 id="coding">Coding</h1>
-
-<p>| key sequence | comment        |
-|&mdash;&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;-|
-| M-;          | comment coding |
-|              |                |</p>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="p">|</span> key sequence <span class="p">|</span> comment        <span class="p">|</span>
+<span class="p">|</span>--------------+----------------<span class="p">|</span>
+<span class="p">|</span> M-<span class="p">;</span>          <span class="p">|</span> comment coding <span class="p">|</span>
+<span class="p">|</span>              <span class="p">|</span>                <span class="p">|</span></code></pre></div>
 <h1 id="replace">Replace</h1>
 
 <p>替换字符串有很灵活的方式，比如我需要替换如下字符串组用序列数字：</p>
@@ -527,7 +529,10 @@ Number lines in rectangle: number-to-register ‘C-x r N’. This command also i
 <h2 id="navigation">Navigation</h2>
 
 <h3 id="dired">Dired</h3>
-<div class="highlight"><pre class="chroma">^            dired-up-directory</pre></div>
+<div class="highlight"><pre class="chroma">^            dired-up-directory
+&lt;remap&gt;      dired-toggle-read-only                  切换到编辑模式后，可以对文件名做批量操作，C-c C-c提交
+%-m          dired-mark-files-regexp                 mark file by regex
+Q            dired-do-find-regexp-and-replace        在所有mark文件里面，做查找替换</pre></div>
 <h3 id="helm">Helm</h3>
 
 <p><a href="helm intro">http://tuhdo.github.io/helm-intro.html</a>

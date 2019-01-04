@@ -40,9 +40,9 @@
       
         <description>
 
-&lt;h1 id=&#34;trace-4-13&#34;&gt;TRACE[^4]&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:13&#34;&gt;&lt;a href=&#34;#fn:13&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/h1&gt;
+&lt;p&gt;对于linux下的trace，我建议你参考Brendan Gregg的文章：&lt;a href=&#34;http://www.brendangregg.com/blog/2015-07-08/choosing-a-linux-tracer.html&#34;&gt;Choosing a linux tracer&lt;/a&gt;，里面详细列出了linux下每个tracer的介绍，本文里主要介绍ftrace，讨论function相关的部分，event和计数器不涉及。&lt;/p&gt;
 
-&lt;p&gt;linux下的trace，这里只讨论function相关的分析，event和计数器不涉及。从两个维度讨论，首先是根据运行态：分为kernel和userland；其次根据trace方式：分为静态分析和动态分析。&lt;/p&gt;
+&lt;p&gt;下面我们从两个维度来看看ftrace在linux中的使用，首先是根据运行态：分为kernel和userland；其次根据trace方式：分为静态分析和动态分析。&lt;/p&gt;
 
 &lt;h2 id=&#34;kernel&#34;&gt;Kernel&lt;/h2&gt;
 
@@ -60,7 +60,7 @@ tcp:tcp_probe                                      &lt;span class=&#34;o&#34;&gt
 ...&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;静态分析有两种方式：ftrace和perf&lt;/p&gt;
 
-&lt;h4 id=&#34;ftrace-7-8&#34;&gt;ftrace&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:7&#34;&gt;&lt;a href=&#34;#fn:7&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:8&#34;&gt;&lt;a href=&#34;#fn:8&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;&lt;/h4&gt;
+&lt;h4 id=&#34;ftrace-7-8&#34;&gt;ftrace&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:7&#34;&gt;&lt;a href=&#34;#fn:7&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:8&#34;&gt;&lt;a href=&#34;#fn:8&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;/h4&gt;
 
 &lt;p&gt;ftrace是linux下的主要trace框架，linux实现了一个tracefs文件系统（类似proc的虚文件系统，驻留在内存），挂载在/sys/kernel/debug/tracing目录下，里面包括所有ftrace相关的内容，ftrace就是通过配置该目录下的文件，完成tracing。&lt;/p&gt;
 
@@ -80,18 +80,13 @@ tcp:tcp_probe                                      &lt;span class=&#34;o&#34;&gt
 &lt;span class=&#34;c1&#34;&gt;#           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION&lt;/span&gt;
 &lt;span class=&#34;c1&#34;&gt;#              | |       |   ||||       |         |&lt;/span&gt;
            gdbus-1275  &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;001&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; .... &lt;span class=&#34;m&#34;&gt;11758&lt;/span&gt;.901088: unix_poll &amp;lt;-sock_poll&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;如果你查看trace的内容，你会发现内容太多，你很难找到有价值的东西，绝大部分时候，你不是对整个系统的调用感兴趣，你只想看你关心的内容，ftrace提供了function filter来进行trace过滤：通过设置&lt;code&gt;set_ftrace_filter  set_ftrace_notrace  set_ftrace_pid&lt;/code&gt;三个文件，你能过滤需要trace的function。&lt;/p&gt;
+&lt;p&gt;如果你查看trace的内容，你会发现内容太多，你很难找到有价值的东西，绝大部分时候，你不是对整个系统的调用感兴趣，你只想看你关心的内容，ftrace提供了function filter来进行trace过滤：通过设置&lt;code&gt;set_ftrace_filter  set_ftrace_notrace  set_ftrace_pid&lt;/code&gt;三个文件，你能过滤出来需要trace的function。&lt;/p&gt;
 
 &lt;p&gt;最简单的做法是看看available_filter_functions里面有些什么，里面的这些function都是可以用，例如我关心tcp_sendmsg：&lt;code&gt;echo tcp_sendmsg &amp;gt; set_ftrace_filter&lt;/code&gt;，这样function tracer就只会记录tcp_sendmsg这个function。当然filter也支持“*”号通配符，支持三种写法：“*key/&lt;em&gt;key&lt;/em&gt;/key*”。也支持模块过滤“echo :mod:ext3 &amp;gt; set_ftrace_filter”&lt;/p&gt;
 
-&lt;p&gt;另外，filter也支持“Format: &lt;function&gt;:&lt;trigger&gt;[:count]”这类的写法，通过它你能实现：某个function调用了，就tracingoff/tracingon/stacktrace/snapshot/dump/cpudump。例如：&lt;code&gt;echo do_trap:traceoff:3 &amp;gt; set_ftrace_filter&lt;/code&gt;，do_trap调用三次，停止trace。&lt;/p&gt;
+&lt;p&gt;另外，filter也支持“Format: &lt;function&gt;:&lt;trigger&gt;[:count]”这类的写法，通过它你能实现：某个function调用了，就触发一个预先定义的action（tracingoff/tracingon/stacktrace/snapshot/dump/cpudump），执行相关操作。例如：&lt;code&gt;echo do_trap:traceoff:3 &amp;gt; set_ftrace_filter&lt;/code&gt;，do_trap调用三次，执行停止trace操作。&lt;/p&gt;
 
 &lt;p&gt;如果你需要看到调用栈，可以设置：&lt;code&gt;echo 1 &amp;gt; options/func_stack_trace&lt;/code&gt;，但是必须注意，该操作容易导致问题，务必需要先设置filter，缩小trace范围，否则容易导致系统问题。&lt;/p&gt;
-
-&lt;p&gt;这里主要说一下tracepoint相关内容。tracing目录下有一个events目录，里面就是所有的kernel tracepoint，内容和&lt;code&gt;perf list tracepoint&lt;/code&gt;输出一致，只是这里是目录结构呈现。
-trace方法就是找到对应的tracepoint，例如tcp_probe，进入到该目录下（events/tcp/tcp_probe），通过命令&lt;code&gt;echo 1 &amp;gt; enable&lt;/code&gt;激活该探针，然后你就可以回到tracing目录下，查看trace文件内容，里面能看到trace内容，输出格式可以参考探针目录下的format文件。&lt;/p&gt;
-
-&lt;p&gt;另外你也能设置filter，根据条件过滤事件；你也能设置triger，当条件满足的时候，触发定义的action，例如stracktrace，输出栈到trace文件&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@tacyArch tracing&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# cat available_filter_functions |grep tcp_sendmsg&lt;/span&gt;
 bpf_tcp_sendmsg
 tcp_sendmsg_locked
@@ -122,7 +117,11 @@ bash: echo: write error: Invalid argument
 
 &lt;h5 id=&#34;tracepoint&#34;&gt;tracepoint&lt;/h5&gt;
 
-&lt;p&gt;tracing里面的events目录，包含了所有的tracepoint，每一个tracepoint都以目录存在，目录下面是针对该tracepoint的配置文件:&lt;/p&gt;
+&lt;p&gt;下面我们来看看tracepoint相关内容。tracing目录下有一个events目录，里面就是所有的kernel tracepoint，包含了所有的tracepoint，每一个tracepoint都以目录存在，目录下面是针对该tracepoint的配置文件。&lt;/p&gt;
+
+&lt;p&gt;trace方法就是找到对应的tracepoint，例如tcp_probe，进入到该目录下（events/tcp/tcp_probe），通过命令&lt;code&gt;echo 1 &amp;gt; enable&lt;/code&gt;激活该探针，然后你就可以回到tracing目录下，查看trace文件内容，里面能看到trace内容，输出格式可以参考探针目录下的format文件。&lt;/p&gt;
+
+&lt;p&gt;另外你也能设置filter，根据条件过滤事件；你也能设置triger，当条件满足的时候，触发定义的action，例如stracktrace，输出栈到trace文件&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@tacyArch tcp_receive_reset&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls&lt;/span&gt;
 &lt;span class=&#34;nb&#34;&gt;enable&lt;/span&gt;  filter  format  hist  id  trigger
 
@@ -177,15 +176,19 @@ print fmt: &lt;span class=&#34;s2&#34;&gt;&amp;#34;sport=%hu dport=%hu saddr=%pI
  irq/69-brcmf_pc &lt;span class=&#34;m&#34;&gt;19366&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;003&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;99977&lt;/span&gt;.000673: tcp:tcp_probe: &lt;span class=&#34;nv&#34;&gt;src&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;192&lt;/span&gt;.168.1.21:59262 &lt;span class=&#34;nv&#34;&gt;dest&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;xx.201.xx.119:80 &lt;span class=&#34;nv&#34;&gt;mark&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;data_len&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;60&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;snd_nxt&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;0x6ec6b07d &lt;span class=&#34;nv&#34;&gt;snd_una&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;0x6ec6b07d &lt;span class=&#34;nv&#34;&gt;snd_cwnd&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;55&lt;/span&gt; ssthresh&amp;gt;
  irq/69-brcmf_pc &lt;span class=&#34;m&#34;&gt;19366&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;003&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;99977&lt;/span&gt;.057786: tcp:tcp_probe: &lt;span class=&#34;nv&#34;&gt;src&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;192&lt;/span&gt;.168.1.21:59262 &lt;span class=&#34;nv&#34;&gt;dest&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;xx.201.xx.119:80 &lt;span class=&#34;nv&#34;&gt;mark&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;data_len&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;snd_nxt&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;0x6ec6b0a1 &lt;span class=&#34;nv&#34;&gt;snd_una&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;0x6ec6b07d &lt;span class=&#34;nv&#34;&gt;snd_cwnd&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;55&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;ssthresh&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;gt;
 &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@tacyArch ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;#&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h4 id=&#34;小结&#34;&gt;小结&lt;/h4&gt;
+
+&lt;p&gt;静态分析方法比较简单，无需太多代码方面的知识，只需要通过配置即可完成。用户能通过对合适的tracepoint进行分析，找出有用的信息，从而解决一些疑难问题。但是静态分析受限于预先埋下的探针，另外探针输出的内容也无法增加，在一些情况下，满足不了trace的需求。&lt;/p&gt;
+
 &lt;h3 id=&#34;动态分析&#34;&gt;动态分析&lt;/h3&gt;
 
-&lt;p&gt;动态分析，当某函数没有预先在代码中埋下探针的时候，系统能够动态给它添加探针的分析方式。在kernel中，这些动态添加的探针也被称为kprobe。kernel把所有的可symbol输出在/proc/kallsyms文件中，你可以对这里面的所有symbol添加探针。kprobe可以说是linux中最牛逼的trace手段。&lt;/p&gt;
+&lt;p&gt;下面我们来看看动态分析，动态分析，顾名思义，就是当某函数没有预先在代码中埋下探针的时候，系统能够动态给它添加探针的分析方式。在kernel中，这些动态添加的探针也被称为kprobe。kernel把所有的symbol输出在/proc/kallsyms文件中，你可以对这里面的所有symbol添加探针。kprobe可以说是linux中最牛逼的trace手段。&lt;/p&gt;
 
-&lt;p&gt;动态分析也支持ftrace和perf两种方式。两者的选择：优先选择perf，perf会做错误检验，不容易导致问题，ftrace的话就需要你特别小心，这里可是在kernel层面的操作，一个不小心，系统可能会挂起或者中断。&lt;/p&gt;
+&lt;p&gt;动态分析也支持ftrace和perf两种方式。两者的选择：优先选择perf，主要原因是perf会做错误检验，不容易导致问题，ftrace的话就需要你特别小心，这里可是在kernel层面的操作，一个不小心，系统可能会挂起或者中断。&lt;/p&gt;
 
-&lt;h4 id=&#34;ftrace-6&#34;&gt;ftrace&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:6&#34;&gt;&lt;a href=&#34;#fn:6&#34;&gt;4&lt;/a&gt;&lt;/sup&gt;&lt;/h4&gt;
+&lt;h4 id=&#34;ftrace-6&#34;&gt;ftrace&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:6&#34;&gt;&lt;a href=&#34;#fn:6&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;&lt;/h4&gt;
 
-&lt;p&gt;/proc/kallsyms里面所有的symbol都能添加kprobe，kprobe和function tracer无关，无需启用function tracer。你只需定义好event，写入到kprobe_events即可，ftrace会自动在/sys/kernel/debug/tracing/events下创建kprobe目录，并在该目录下为每个kprobe创建类似tracepoint的目录，之后你只需要通过enable文件来控制启用还是禁用。event的语法如下：&lt;/p&gt;
+&lt;p&gt;/proc/kallsyms里面所有的symbol都能添加kprobe，kprobe和function tracer无关，无需启用function tracer。你只需定义好event，写入到traceing目录下的kprobe_events文件即可，ftrace会自动在/sys/kernel/debug/tracing/events下创建kprobe目录，并在该目录下为每个kprobe创建类似tracepoint的目录，之后你只需要通过enable文件来控制启用还是禁用。kprobe event的语法定义如下：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;Synopsis of kprobe_events
 -------------------------
   p&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;:&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;GRP/&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;EVENT&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;MOD:&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;SYM&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;+offs&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;MEMADDR &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;FETCHARGS&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;	: Set a probe
@@ -250,9 +253,11 @@ print fmt: &lt;span class=&#34;s2&#34;&gt;&amp;#34;(%lx)&amp;#34;&lt;/span&gt;, 
 &lt;span class=&#34;c1&#34;&gt;#              | |       |   ||||       |         |&lt;/span&gt;
             curl-21745 &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;001&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; ...1 &lt;span class=&#34;m&#34;&gt;27996&lt;/span&gt;.148112: tcp_sendmsg: &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;tcp_sendmsg+0x0/0x40&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
 &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@tacyArch tracing&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# echo 0 &amp;gt; events/kprobes/tcp_sendmsg/enable&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;看起来和ftrace的function tracer差不多，这就尴尬了？&lt;/p&gt;
+&lt;p&gt;输出结果看起来和ftrace的function tracer差不多，这就尴尬了？我们想要看到调用参数&lt;/p&gt;
 
-&lt;p&gt;继续努力，接下来，我们看看怎么查看调用参数，先看看tcp_sendmsg代码：&lt;/p&gt;
+&lt;p&gt;继续努力，接下来，我们看看怎么输出调用参数，先看看tcp_sendmsg代码：&lt;/p&gt;
+
+&lt;p&gt;（下面的操作依赖kernel debug info的安装）&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@tacyArch src&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# gdb /lib/modules/4.19.12-arch1-1-ARCH/build/vmlinux&lt;/span&gt;
 ...
 For help, &lt;span class=&#34;nb&#34;&gt;type&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;help&amp;#34;&lt;/span&gt;.
@@ -271,7 +276,9 @@ Source directories searched: /home/tacy/workspace/archlinux-linux:&lt;span class
 &lt;span class=&#34;m&#34;&gt;1441&lt;/span&gt;
 &lt;span class=&#34;m&#34;&gt;1442&lt;/span&gt;            lock_sock&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;sk&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
 &lt;span class=&#34;m&#34;&gt;1443&lt;/span&gt;            &lt;span class=&#34;nv&#34;&gt;ret&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; tcp_sendmsg_locked&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;sk, msg, size&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;tcp_sendmsg有3个调用参数，我们希望能看到发送包的大小：size，第三个参数的寄存器使用的是rdx（参考System V ABI AMD64&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:9&#34;&gt;&lt;a href=&#34;#fn:9&#34;&gt;5&lt;/a&gt;&lt;/sup&gt;&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:10&#34;&gt;&lt;a href=&#34;#fn:10&#34;&gt;6&lt;/a&gt;&lt;/sup&gt;，找到每个register定义），我们重新定义一个probe，覆盖之前的：&lt;/p&gt;
+&lt;p&gt;上面的代码输出显示，tcp_sendmsg有3个调用参数。我们希望能把发送包的大小（size）输出的trace结果中。这里，你首先需要知道，在X64架构下，calling的参数存放规范（参考System V ABI AMD64&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:9&#34;&gt;&lt;a href=&#34;#fn:9&#34;&gt;4&lt;/a&gt;&lt;/sup&gt;&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:10&#34;&gt;&lt;a href=&#34;#fn:10&#34;&gt;5&lt;/a&gt;&lt;/sup&gt;，找到每个register定义），根据规范，我们知道第三个参数的寄存器使用的是rdx。&lt;/p&gt;
+
+&lt;p&gt;下面我们重新定义一个probe，覆盖之前的：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@tacyArch tracing&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# echo &amp;#39;probe:tcp_sendmsg tcp_sendmsg size=%dx&amp;#39; &amp;gt; kprobe_events&lt;/span&gt;
 &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@tacyArch tracing&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# cat events/kprobes/tcp_sendmsg/format&lt;/span&gt;
 name: tcp_sendmsg
@@ -371,9 +378,15 @@ Available variables at tcp_sendmsg
 
 &lt;span class=&#34;c1&#34;&gt;# perf probe --add &amp;#39;tcp_sendmsg size&amp;#39;  # 使用tcp_sendmsg参数，输出到结果中&lt;/span&gt;
 &lt;span class=&#34;c1&#34;&gt;# perf probe -V tcp_sendmsg:+9  # 可以查看函数内部变量，内部变量也能输出&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h2 id=&#34;userland&#34;&gt;userland&lt;/h2&gt;
+&lt;h4 id=&#34;小结-1&#34;&gt;小结&lt;/h4&gt;
 
-&lt;p&gt;usersland的trace同样包括静态和动态两部分，但是这两部分我们也统一称为uprobe&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:5&#34;&gt;&lt;a href=&#34;#fn:5&#34;&gt;7&lt;/a&gt;&lt;/sup&gt;，你可以在ftrace目录（/sys/kernel/debug/tracing）下的uprobe_events文件中找到你定义的所有uprobe event。&lt;/p&gt;
+&lt;p&gt;动态分析方法和静态分析方法相比，需要你具备代码级别的知识，对kernel代码越熟悉，对linux的tracer就像玩一样，感觉没啥解决不了的问题，这方面可以参考大牛Brendan Gregg。&lt;/p&gt;
+
+&lt;p&gt;同时，通过kprobe，也是让你学习了解kernel的一个最佳途径，无需修改代码，直接进行debug。&lt;/p&gt;
+
+&lt;h2 id=&#34;userland&#34;&gt;Userland&lt;/h2&gt;
+
+&lt;p&gt;Usersland的trace同样包括静态和动态两部分，但是这两部分我们也统一称为uprobe&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:5&#34;&gt;&lt;a href=&#34;#fn:5&#34;&gt;6&lt;/a&gt;&lt;/sup&gt;，你可以在ftrace目录（/sys/kernel/debug/tracing）下的uprobe_events文件中找到你定义的所有uprobe event。&lt;/p&gt;
 
 &lt;p&gt;uprobe event定义：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;Synopsis of uprobe_tracer
@@ -407,7 +420,9 @@ Available variables at tcp_sendmsg
 
 &lt;p&gt;同样，我们也可以通过ftrace和perf两种方式操作它。但是ftrace操作方法复杂（主要是需要小心操作地址），方法参考&lt;a href=&#34;http://www.brendangregg.com/blog/2015-07-03/hacking-linux-usdt-ftrace.html&#34;&gt;Hacking Linux USDT with Ftrace&lt;/a&gt;。&lt;/p&gt;
 
-&lt;p&gt;下面我们用openjdk为例，说明用户空间的静态分析方法。首先需要你的JDK启用了enable-dtrace，其次启动java应用的时候加上参数&lt;code&gt;-XX:+ExtendedDTraceProbes&lt;/code&gt;，查看USDT probe：&lt;/p&gt;
+&lt;p&gt;下面我们用openjdk为例，说明用户空间的静态分析方法。&lt;/p&gt;
+
+&lt;p&gt;首先需要你的JDK启用了enable-dtrace，其次启动java应用的时候加上参数&lt;code&gt;-XX:+ExtendedDTraceProbes&lt;/code&gt;，查看USDT probe：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;readelf -n /usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so
 Displaying notes found in: .note.gnu.build-id
   Owner                 Data size       Description
@@ -429,18 +444,18 @@ Displaying notes found in: .note.stapsdt
   stapsdt              0x00000071       NT_STAPSDT &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;SystemTap probe descriptors&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
     Provider: hotspot
     Name: method__compile__begin&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;确保出处中有stapsdt字样&lt;/p&gt;
+&lt;p&gt;确保出处中有stapsdt字样，说明你的jdk启用了dtrace。&lt;/p&gt;
 
 &lt;h4 id=&#34;ftrace&#34;&gt;ftrace&lt;/h4&gt;
 
-&lt;p&gt;我们用method&lt;strong&gt;entry为例，操作如何通过ftrace来trace该probe。参考前面uprobe event的定义&lt;code&gt;p[:[GRP/]EVENT] PATH:OFFSET [FETCHARGS] : Set a uprobe&lt;/code&gt;，我们需要找到method&lt;/strong&gt;entry在libjvm.so中的位置，可以通过readelf找到：&lt;/p&gt;
+&lt;p&gt;我们用method&lt;strong&gt;entry这个probe为例，讲述如何通过ftrace来trace该probe。参考前面uprobe event的定义&lt;code&gt;p[:[GRP/]EVENT] PATH:OFFSET [FETCHARGS] : Set a uprobe&lt;/code&gt;，我们需要找到method&lt;/strong&gt;entry在libjvm.so中的位置，可以通过readelf找到：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@tacyArch tacy&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# readelf -n /usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so |tail +2659 -|head -5 -&lt;/span&gt;
   stapsdt              0x00000062       NT_STAPSDT &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;SystemTap probe descriptors&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
     Provider: hotspot
     Name: method__entry
     Location: 0x0000000000bd21e5, Base: 0x0000000000dbb1b2, Semaphore: 0x0000000000000000
     Arguments: -8@%rax &lt;span class=&#34;m&#34;&gt;8&lt;/span&gt;@%rdx -4@%ecx &lt;span class=&#34;m&#34;&gt;8&lt;/span&gt;@%rsi -4@%edi &lt;span class=&#34;m&#34;&gt;8&lt;/span&gt;@%r8 -4@%r9d&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;method__entry的位置在0x0000000000bd21e5，应为libjvm.so是一个共享库，所以这个地址可以直接使用（如果非共享库，你还需要找到程序的base加载地址，location-base得到偏移）。&lt;/p&gt;
+&lt;p&gt;method__entry的位置在0x0000000000bd21e5，因为libjvm.so是一个共享库，所以这个地址可以直接使用（如果非共享库，你还需要找到程序的base加载地址，通过公式：location - base load address，计算得到偏移）。&lt;/p&gt;
 
 &lt;p&gt;readelf的输出中，可以看到method__entry的arguments，总共有7个（这里我也没搞明白为啥register的使用不用遵守System V ABI AMD64规范），具体每个参数的定义就需要去看代码了，我机器上找不到stp文件，只能看在线&lt;a href=&#34;https://github.com/mpujari/systemtap-tapset-openjdk9/blob/master/tapset-1.8.0/hotspot-1.8.0.stp.in#L411&#34;&gt;stp&lt;/a&gt;，引用在下面：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;/* hotspot.method_entry &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;extended probe&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
@@ -583,7 +598,7 @@ You can now use it in all perf tools, such as:
 
 &lt;p&gt;ftrace最大的问题是不可编程，无法做更多扩展，但是它不需要太新的kernel，对目前很多生产环境来说，这非常关键，而且ftrace也在持续改进，建议follow大牛@srostedt（kernel ftrace maintainer）。&lt;/p&gt;
 
-&lt;p&gt;至于目前最热门的ebpf/bcc&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:12&#34;&gt;&lt;a href=&#34;#fn:12&#34;&gt;8&lt;/a&gt;&lt;/sup&gt;，强烈建议学习，优点就是一句话：可编程。kernel至少都需要4.1（推荐4.8以上），RHEL7.6官方已经支持&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:11&#34;&gt;&lt;a href=&#34;#fn:11&#34;&gt;9&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
+&lt;p&gt;至于目前最热门的ebpf/bcc&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:12&#34;&gt;&lt;a href=&#34;#fn:12&#34;&gt;7&lt;/a&gt;&lt;/sup&gt;，强烈建议学习，优点就是一句话：可编程。kernel至少都需要4.1（推荐4.8以上），RHEL7.6官方已经支持&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:11&#34;&gt;&lt;a href=&#34;#fn:11&#34;&gt;8&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
 
 &lt;h2 id=&#34;相关知识&#34;&gt;相关知识&lt;/h2&gt;
 
@@ -597,8 +612,6 @@ You can now use it in all perf tools, such as:
 &lt;hr /&gt;
 
 &lt;ol&gt;
-&lt;li id=&#34;fn:13&#34;&gt;&lt;a href=&#34;http://www.brendangregg.com/blog/2015-07-08/choosing-a-linux-tracer.html&#34;&gt;Choosing a Linux Tracer (2015)&lt;/a&gt;
- &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:13&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
 &lt;li id=&#34;fn:7&#34;&gt;&lt;a href=&#34;https://www.kernel.org/doc/Documentation/trace/ftrace.txt&#34;&gt;ftrace document&lt;/a&gt;
  &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:7&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
 &lt;li id=&#34;fn:8&#34;&gt;&lt;a href=&#34;https://lwn.net/Articles/370423/&#34;&gt;Secrets of the Ftrace function tracer&lt;/a&gt;
