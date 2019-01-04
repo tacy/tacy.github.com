@@ -18,18 +18,15 @@
       
       <guid>http://tacy.github.io/about/</guid>
       
-        <description>&lt;p&gt;Hugo is a static site engine written in Go.&lt;/p&gt;
+        <description>&lt;p&gt;IT老民工，一个女儿的爸爸，会点编程，喜欢Linux和开源，什么都会点，什么都不精通，喜欢解决技术问题，对新教育兴趣浓厚。&lt;/p&gt;
 
-&lt;p&gt;It makes use of a variety of open source projects including:&lt;/p&gt;
+&lt;p&gt;工作环境： archlinux/emacs/mbp/vscode/android&lt;/p&gt;
 
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/spf13/cobra&#34;&gt;Cobra&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/spf13/viper&#34;&gt;Viper&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/spf13/jWalterWeatherman&#34;&gt;J Walter Weatherman&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/spf13/cast&#34;&gt;Cast&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;这个blog用hugo和github page支撑，emacs编写&lt;/p&gt;
 
-&lt;p&gt;Learn more and contribute on &lt;a href=&#34;https://github.com/gohugoio&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;就这样。&lt;/p&gt;
+
+&lt;p&gt;我的社交信息都在下面，欢迎关注&lt;/p&gt;
 </description>
       
     </item>
