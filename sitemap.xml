@@ -10,6 +10,13 @@
   </url>
   
   <url>
+    <loc>http://tacy.github.io/post/binary/</loc>
+    <lastmod>2019-01-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>http://tacy.github.io/post/trace/</loc>
     <lastmod>2019-01-02T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -381,7 +388,7 @@
   
   <url>
     <loc>http://tacy.github.io/tags/debug/</loc>
-    <lastmod>2018-09-05T00:00:00+00:00</lastmod>
+    <lastmod>2019-01-05T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -402,7 +409,7 @@
   
   <url>
     <loc>http://tacy.github.io/tags/gdb/</loc>
-    <lastmod>2018-09-05T00:00:00+00:00</lastmod>
+    <lastmod>2019-01-05T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -479,7 +486,7 @@
   
   <url>
     <loc>http://tacy.github.io/tags/linux/</loc>
-    <lastmod>2019-01-02T00:00:00+00:00</lastmod>
+    <lastmod>2019-01-05T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -549,7 +556,7 @@
   
   <url>
     <loc>http://tacy.github.io/post/</loc>
-    <lastmod>2019-01-02T00:00:00+00:00</lastmod>
+    <lastmod>2019-01-05T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -619,14 +626,14 @@
   
   <url>
     <loc>http://tacy.github.io/tags/tech/</loc>
-    <lastmod>2019-01-02T00:00:00+00:00</lastmod>
+    <lastmod>2019-01-05T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://tacy.github.io/categories/tech/</loc>
-    <lastmod>2019-01-02T00:00:00+00:00</lastmod>
+    <lastmod>2019-01-05T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -640,7 +647,7 @@
   
   <url>
     <loc>http://tacy.github.io/tags/tools/</loc>
-    <lastmod>2018-09-05T00:00:00+00:00</lastmod>
+    <lastmod>2019-01-05T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>

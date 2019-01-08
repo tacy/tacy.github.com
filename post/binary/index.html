@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>binary notes - Tacy - Notes</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="春龙" /><meta name="description" content="关于二进制文件的笔记" />
+
+  <meta name="keywords" content="Tacy, tech, life, linux, performance, kubernetes, golang, java, troubleshooting" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.51" />
+
+
+<link rel="canonical" href="http://tacy.github.io/post/binary/" />
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.c8c1ff75dee09b44060a6c38f41b9036bac2512ccdb22d7f296cec12dc786375.css" integrity="sha256-yMH/dd7gm0QGCmw49BuQNrrCUSzNsi1/KWzsEtx4Y3U=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="binary notes" />
+<meta property="og:description" content="关于二进制文件的笔记" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://tacy.github.io/post/binary/" /><meta property="article:published_time" content="2019-01-05T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2019-01-05T00:00:00&#43;00:00"/>
+
+<meta itemprop="name" content="binary notes">
+<meta itemprop="description" content="关于二进制文件的笔记">
+
+
+<meta itemprop="datePublished" content="2019-01-05T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2019-01-05T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="2533">
+
+
+
+<meta itemprop="keywords" content="tech,debug,gdb,linux,tools," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="binary notes"/>
+<meta name="twitter:description" content="关于二进制文件的笔记"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33694554-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Tacy&#39;s notes</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/">Home</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/post/">Archives</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/tags/">Tags</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/categories/">Categories</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/about/">About</a>
+          
+        
+      </li>
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      Tacy's notes
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/">Home</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/post/">Archives</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/tags/">Tags</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/categories/">Categories</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/about/">About</a>
+          
+
+        
+
+      </li>
+    
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">binary notes</h1>
+      
+      <div class="post-meta">
+        <time datetime="2019-01-05" class="post-time">
+          2019-01-05
+        </time>
+        <div class="post-category">
+            <a href="http://tacy.github.io/categories/tech/"> tech </a>
+            
+          </div>
+        
+
+        
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    
+    <div class="post-content">
+      
+
+<p>编译之后产生的二进制文件，有很多种不同的格式，一般在linux下，elf是最常用的，如果没有特殊说明，这里指的都是elf格式的二进制文件</p>
+
+<p>二进制文件包括可运共享库</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="se">\u</span>279c  public git:<span class="o">(</span>master<span class="o">)</span> <span class="se">\u</span><span class="m">2717</span> file /lib/libc-2.28.so
+/lib/libc-2.28.so: ELF <span class="m">64</span>-bit LSB shared object, x86-64, version <span class="m">1</span> <span class="o">(</span>GNU/Linux<span class="o">)</span>, dynamically linked, interpreter /usr/lib/ld-linux-x86-64.so.2, BuildID<span class="o">[</span>sha1<span class="o">]=</span>81de091ea963d49b45f9536f4b0548dcabd03f0e, <span class="k">for</span> GNU/Linux <span class="m">3</span>.2.0, not stripped
+<span class="se">\u</span>279c  public git:<span class="o">(</span>master<span class="o">)</span> <span class="se">\u</span><span class="m">2717</span> fild /usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so
+zsh: <span class="nb">command</span> not found: fild
+<span class="se">\u</span>279c  public git:<span class="o">(</span>master<span class="o">)</span> <span class="se">\u</span><span class="m">2717</span> fil /usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so
+zsh: <span class="nb">command</span> not found: fil
+<span class="se">\u</span>279c  public git:<span class="o">(</span>master<span class="o">)</span> <span class="se">\u</span><span class="m">2717</span> file /usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so
+/usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so: ELF <span class="m">64</span>-bit LSB pie executable, x86-64, version <span class="m">1</span> <span class="o">(</span>GNU/Linux<span class="o">)</span>, dynamically linked, BuildID<span class="o">[</span>sha1<span class="o">]=</span>deaa14871e0101bc717a00461519385ebdb010fd, not stripped, too many notes <span class="o">(</span><span class="m">256</span><span class="o">)</span></code></pre></div>
+<h1 id="little-endian-big-endian">little endian &amp; big endian</h1>
+
+<p>little endian： 9A9B9C9D   =&gt;   (9D-&gt;0x1000, 9C-&gt;0x1001, 9B-&gt;0x1002, 9A-&gt;0x1003)
+big endian则相反，存储成 （9A-&gt;0x1000, 9B-&gt;0x1001, 9C-&gt;0x1002, 9D-&gt;0x1003)</p>
+
+<p>x86架构用的是little endian</p>
+
+<h1 id="stack-frame">stack frame</h1>
+
+<h2 id="x86-1">x86<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></h2>
+
+<p>x86在调用的时候，参数不会入register，都是压在栈里面，callee直接通过esp偏移找参数，简单代码示例：</p>
+<div class="highlight"><pre class="chroma">void
+bar(int a, int b)
+{
+    int x, y;
+
+    x = 555;
+    y = a+b;
+}
+
+void
+foo(void) {
+    bar(111,222);
+}</pre></div>
+<p>foo被调用的时候，会把111，222存入到当前自己的stack frame，注意是从右到做入栈，所以他会做如下操作：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">esp</span> <span class="o">=</span> 当前esp - <span class="m">8</span>
+<span class="m">222</span> 存入esp-4
+<span class="m">111</span> 存入esp-8
+开始调用bar，之前先把返回地址存入栈 <span class="o">(</span>4bytes<span class="o">)</span></code></pre></div>
+<p>接下来，调用bar：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">保存foo的ebp <span class="o">(</span>4bytes<span class="o">)</span>
+把esp塞入ebp，目前esp在的位置就是bar的ebp
+<span class="nv">esp</span> <span class="o">=</span> 当前esp - <span class="m">16</span>
+<span class="m">555</span> 存入当前esp - <span class="m">4</span>
+取出a的值从<span class="o">(</span>%ebp<span class="o">)</span>+8, 放入%eax
+取出b的值从<span class="o">(</span>%ebp<span class="o">)</span>+12,放入%edx
+求和放入ebp-8
+弹出保存的ebp，放入%ebp，重设esp为返回地址</code></pre></div>
+<h2 id="x64-2">x64<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup></h2>
+
+<p>看看下面代码，基本上你就大概知道x64是使用寄存器和栈一起在函数调用之间传递参数：</p>
+<div class="highlight"><pre class="chroma"><code class="language-c++" data-lang="c++"><span class="kt">int</span> <span class="nf">foobar</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">,</span> <span class="kt">int</span> <span class="n">c</span><span class="p">,</span> <span class="kt">int</span> <span class="n">d</span><span class="p">,</span> <span class="kt">int</span> <span class="n">e</span><span class="p">,</span> <span class="kt">int</span> <span class="n">f</span><span class="p">,</span> <span class="kt">int</span> <span class="n">g</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">aa</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">bb</span> <span class="o">=</span> <span class="n">b</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">cc</span> <span class="o">=</span> <span class="n">c</span> <span class="o">+</span> <span class="mi">3</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">dd</span> <span class="o">=</span> <span class="n">d</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">ee</span> <span class="o">=</span> <span class="n">e</span> <span class="o">+</span> <span class="mi">5</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">ff</span> <span class="o">=</span> <span class="n">f</span> <span class="o">+</span> <span class="mi">6</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">gg</span> <span class="o">=</span> <span class="n">g</span> <span class="o">+</span> <span class="mi">6</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="n">aa</span> <span class="o">+</span> <span class="n">bb</span> <span class="o">+</span> <span class="n">cc</span> <span class="o">+</span> <span class="n">dd</span> <span class="o">+</span> <span class="n">ee</span> <span class="o">+</span> <span class="n">ff</span> <span class="o">+</span> <span class="n">gg</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="n">aa</span> <span class="o">*</span> <span class="n">bb</span> <span class="o">*</span> <span class="n">cc</span> <span class="o">*</span> <span class="n">dd</span> <span class="o">*</span> <span class="n">ee</span> <span class="o">*</span> <span class="n">ff</span> <span class="o">*</span> <span class="n">gg</span> <span class="o">+</span> <span class="n">sum</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="n">foobar</span><span class="p">(</span><span class="mi">33</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">66</span><span class="p">,</span> <span class="mi">77</span><span class="p">,</span> <span class="mi">88</span><span class="p">,</span> <span class="mi">99</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>汇编代码<code>gcc -fno-asynchronous-unwind-tables -masm=intel -S simple.c -o simple.s</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-assembly" data-lang="assembly">        .file   &#34;simple.c&#34;
+        .intel_syntax noprefix
+        .text
+        .globl  foobar
+        .type   foobar, @function
+foobar:
+        push    rbp
+        mov     rbp, rsp
+        mov     DWORD PTR -36[rbp], edi
+        mov     DWORD PTR -40[rbp], esi
+        mov     DWORD PTR -44[rbp], edx
+        mov     DWORD PTR -48[rbp], ecx
+        mov     DWORD PTR -52[rbp], r8d
+        mov     DWORD PTR -56[rbp], r9d
+        mov     eax, DWORD PTR -36[rbp]
+        add     eax, 1
+        mov     DWORD PTR -32[rbp], eax
+        mov     eax, DWORD PTR -40[rbp]
+        add     eax, 2
+        mov     DWORD PTR -28[rbp], eax
+        mov     eax, DWORD PTR -44[rbp]
+        add     eax, 3
+        mov     DWORD PTR -24[rbp], eax
+        mov     eax, DWORD PTR -48[rbp]
+        add     eax, 4
+        mov     DWORD PTR -20[rbp], eax
+        mov     eax, DWORD PTR -52[rbp]
+        add     eax, 5
+        mov     DWORD PTR -16[rbp], eax
+        mov     eax, DWORD PTR -56[rbp]
+        add     eax, 6
+        mov     DWORD PTR -12[rbp], eax
+        mov     eax, DWORD PTR 16[rbp]
+        add     eax, 6
+        mov     DWORD PTR -8[rbp], eax
+        mov     edx, DWORD PTR -32[rbp]
+        mov     eax, DWORD PTR -28[rbp]
+        add     edx, eax
+        mov     eax, DWORD PTR -24[rbp]
+        add     edx, eaxn
+        mov     eax, DWORD PTR -20[rbp]
+        add     edx, eax
+        mov     eax, DWORD PTR -16[rbp]
+        add     edx, eax
+        mov     eax, DWORD PTR -12[rbp]
+        add     edx, eax
+        mov     eax, DWORD PTR -8[rbp]
+        add     eax, edx
+        mov     DWORD PTR -4[rbp], eax
+        mov     eax, DWORD PTR -32[rbp]
+        imul    eax, DWORD PTR -28[rbp]
+        imul    eax, DWORD PTR -24[rbp]
+        imul    eax, DWORD PTR -20[rbp]
+        imul    eax, DWORD PTR -16[rbp]
+        imul    eax, DWORD PTR -12[rbp]
+        imul    eax, DWORD PTR -8[rbp]
+        mov     edx, eax
+        mov     eax, DWORD PTR -4[rbp]
+        add     eax, edx
+        pop     rbp
+        ret
+        .size   foobar, .-foobar
+        .globl  main
+        .type   main, @function
+main:
+        push    rbp
+        mov     rbp, rsp
+        sub     rsp, 16
+        push    99
+        mov     r9d, 88
+        mov     r8d, 77
+        mov     ecx, 66
+        mov     edx, 55
+        mov     esi, 44
+        mov     edi, 33
+        call    foobar
+        add     rsp, 8
+        mov     DWORD PTR -4[rbp], eax
+        mov     eax, DWORD PTR -4[rbp]
+        add     eax, 1
+        leave
+        ret
+        .size   main, .-main
+        .ident  &#34;GCC: (GNU) 8.2.1 20180831&#34;
+        .section        .note.GNU-stack,&#34;&#34;,@progbits</code></pre></div>
+<p>caller负责把前面六个参数入寄存器（整型和指针类型，其他类型请参考规范calling conventions），依次是edi,esi,edx,ecx,r8d,r9d，第七个以后的参数入栈。说明一下，由于这里的参数都是整型，4字节，所以寄存器都是用的4字节寄存器，如果是8字节，e改为r，例如rdi</p>
+
+<p>callee会先保存caller的rbp（当前的frame pointer），然后保存当前rsp（strack pointer）为自己栈帧的rbp，接下来移动rsp，分配栈空间给参数或者内部变量使用。</p>
+
+<p>callee会把返回结果放入到eax，如果结果超过8byte，可以增加一个寄存器edx来存放返回结果，如果超过16字节，可能会更复杂点，caller会在自己的栈分配一块空间，然后把指针当成callee的第一个参数放入rdi，其他参数依次往后移一位。caller可以从eax获取到返回结果（或者更复杂）。可以看kernel代码<code>arch/x86/entry/calling.h</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-assembly" data-lang="assembly"> x86 function call convention, 64-bit:
+ -------------------------------------
+  arguments           |  callee-saved      | extra caller-saved | return
+ [callee-clobbered]   |                    | [callee-clobbered] |
+ ---------------------------------------------------------------------------
+ rdi rsi rdx rcx r8-9 | rbx rbp [*] r12-15 | r10-11             | rax, rdx [**]
+
+ ( rsp is obviously invariant across normal function calls. (gcc can &#39;merge&#39;
+   functions when it sees tail-call optimization possibilities) rflags is
+   clobbered. Leftover arguments are passed over the stack frame.)
+
+ [*]  In the frame-pointers case rbp is fixed to the stack frame.
+
+ [**] for struct return values wider than 64 bits the return convention is a
+      bit more complex: up to 128 bits width we return small structures
+      straight in rax, rdx. For structures larger than that (3 words or
+      larger) the caller puts a pointer to an on-stack return struct
+      [allocated in the caller&#39;s stack frame] into the first argument - i.e.
+      into rdi. All other arguments shift up by one in this case.
+      Fortunately this case is rare in the kernel.</code></pre></div>
+<p>如果编译的时候启用了<code>-fomit-frame-pointer</code>选项，会优化掉rbp的使用，也就是不使用rbp做frame pointer，优化后的结果：</p>
+<div class="highlight"><pre class="chroma"><code class="language-assembly" data-lang="assembly">main:
+        sub     rsp, 16
+        push    99
+        mov     r9d, 88
+        mov     r8d, 77
+        mov     ecx, 66
+        mov     edx, 55
+        mov     esi, 44
+        mov     edi, 33
+        call    foobar
+        add     rsp, 8
+        mov     DWORD PTR 12[rsp], eax
+        mov     eax, DWORD PTR 12[rsp]
+        add     eax, 1
+        add     rsp, 16
+        ret
+        .size   main, .-main
+        .ident  &#34;GCC: (GNU) 8.2.1 20180831&#34;
+        .section        .note.GNU-stack,&#34;&#34;,@progbits</code></pre></div>
+<h1 id="x84-64-date-types">x84-64 date types</h1>
+
+<table>
+<thead>
+<tr>
+<th>C declaration</th>
+<th>Intel data type</th>
+<th>GAS suffix</th>
+<th>x86-64 Size (Bytes)</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>char</td>
+<td>Byte</td>
+<td>b</td>
+<td>1</td>
+</tr>
+
+<tr>
+<td>short</td>
+<td>Word</td>
+<td>w</td>
+<td>2</td>
+</tr>
+
+<tr>
+<td>int</td>
+<td>Double word</td>
+<td>l</td>
+<td>4</td>
+</tr>
+
+<tr>
+<td>unsigned</td>
+<td>Double word</td>
+<td>l</td>
+<td>4</td>
+</tr>
+
+<tr>
+<td>long</td>
+<td>int</td>
+<td>Quad word</td>
+<td>q</td>
+</tr>
+
+<tr>
+<td>unsigned long</td>
+<td>Quad word</td>
+<td>q</td>
+<td>8</td>
+</tr>
+
+<tr>
+<td>char *</td>
+<td>Quad word</td>
+<td>q</td>
+<td>8</td>
+</tr>
+
+<tr>
+<td>float</td>
+<td>Single precision</td>
+<td>s</td>
+<td>4</td>
+</tr>
+
+<tr>
+<td>double</td>
+<td>Double precision</td>
+<td>d</td>
+<td>8</td>
+</tr>
+
+<tr>
+<td>long double</td>
+<td>Extended precision</td>
+<td>t</td>
+<td>16</td>
+</tr>
+</tbody>
+</table>
+
+<p>char * 指针64bit</p>
+
+<h1 id="pie">PIE</h1>
+
+<p>在我的archlinux上（2018年12月的更新），gcc默认启用了pic和pie，会导致加载地址随机：</p>
+<div class="highlight"><pre class="chroma">➜  cat simple.c
+#include &lt;stdio.h&gt;
+int foobar(int *a, int b, int c, int d, int e, int f, int g)
+{
+    int aa = *a + 1;
+    int bb = b + 2;
+    int cc = c + 3;
+    int dd = d + 4;
+    int ee = e + 5;
+    int ff = f + 6;
+    int gg = g + 6;
+    int sum = aa + bb + cc + dd + ee + ff + gg;
+
+    return aa * bb * cc * dd * ee * ff * gg + sum;
+}
+
+int main()
+{
+    int b = 111;
+    int a = foobar(&amp;b, 44, 55, 66, 77, 88, 99);
+    printf(&#34;hello world&#34;);
+    return a + 1;
+}</pre></div>
+<h2 id="默认编译-fpic-fpie">默认编译（-fPIC -fPIE）：</h2>
+<div class="highlight"><pre class="chroma">➜  binary-study &gt; objdump -t simple|grep text
+0000000000001050 l    d  .text  0000000000000000              .text
+0000000000001080 l     F .text  0000000000000000              deregister_tm_clones
+00000000000010b0 l     F .text  0000000000000000              register_tm_clones
+00000000000010f0 l     F .text  0000000000000000              __do_global_dtors_aux
+0000000000001140 l     F .text  0000000000000000              frame_dummy
+00000000000012e0 g     F .text  0000000000000005              __libc_csu_fini
+0000000000001149 g     F .text  00000000000000a3              foobar
+0000000000001270 g     F .text  0000000000000065              __libc_csu_init
+0000000000001050 g     F .text  000000000000002f              _start
+00000000000011ec g     F .text  000000000000007b              main
+
+➜  binary-study &gt; gdb simple
+...
+Reading symbols from simple...(no debugging symbols found)...done.
+(gdb) b main
+Breakpoint 1 at 0x11f0    # 这个地址不是虚拟地址，真正的地址需要运行时确认
+(gdb) info b
+Num     Type           Disp Enb Address            What
+1       breakpoint     keep y   0x00000000000011f0 &lt;main+4&gt;
+(gdb) run
+Starting program: /home/tacy/workspace/binary-study/simple
+
+Breakpoint 1, 0x00005555555551f0 in main ()   # 地址确认，替换成真正的虚拟地址
+(gdb) info b
+Num     Type           Disp Enb Address            What
+1       breakpoint     keep y   0x00005555555551f0 &lt;main+4&gt;
+        breakpoint already hit 1 time
+(gdb) info address main
+Symbol &#34;main&#34; is at 0x5555555551ec in a file compiled without debugging.
+
+
+➜  binary-study &gt;  cat /proc/`pidof simple`/maps   # 加载地址，不是传统的0x4000000
+555555554000-555555555000 r--p 00000000 08:06 10403523                   /home/tacy/workspace/binary-study/simple
+555555555000-555555556000 r-xp 00001000 08:06 10403523                   /home/tacy/workspace/binary-study/simple
+555555556000-555555557000 r--p 00002000 08:06 10403523                   /home/tacy/workspace/binary-study/simple
+555555557000-555555558000 r--p 00002000 08:06 10403523                   /home/tacy/workspace/binary-study/simple
+555555558000-555555559000 rw-p 00003000 08:06 10403523                   /home/tacy/workspace/binary-study/simple</pre></div>
+<p>编译的时候开启pic和pie，symbol的地址需要在运行时确认（必须先运行才知道地址）</p>
+
+<h2 id="禁用pie和pic">禁用PIE和PIC</h2>
+<div class="highlight"><pre class="chroma">➜  binary-study gcc  -fno-PIC  -no-pie simple.c -o simple
+➜  binary-study objdump -t simple|grep text
+0000000000401050 l    d  .text  0000000000000000              .text
+0000000000401090 l     F .text  0000000000000000              deregister_tm_clones
+00000000004010c0 l     F .text  0000000000000000              register_tm_clones
+0000000000401100 l     F .text  0000000000000000              __do_global_dtors_aux
+0000000000401130 l     F .text  0000000000000000              frame_dummy
+00000000004012d0 g     F .text  0000000000000005              __libc_csu_fini
+0000000000401136 g     F .text  00000000000000a3              foobar
+0000000000401260 g     F .text  0000000000000065              __libc_csu_init
+0000000000401080 g     F .text  0000000000000005              .hidden _dl_relocate_static_pie
+0000000000401050 g     F .text  000000000000002f              _start
+00000000004011d9 g     F .text  0000000000000079              main
+➜  binary-study gdb simple
+...
+Reading symbols from simple...(no debugging symbols found)...done.
+(gdb) info address main
+Symbol &#34;main&#34; is at 0x4011d9 in a file compiled without debugging.
+(gdb) b main
+Breakpoint 1 at 0x4011dd
+(gdb) run
+Starting program: /home/tacy/workspace/binary-study/simple
+
+Breakpoint 1, 0x00000000004011dd in main ()
+(gdb)
+
+➜  binary-study cat /proc/`pidof simple`/maps
+00400000-00401000 r--p 00000000 08:06 10358659                           /home/tacy/workspace/binary-study/simple
+00401000-00402000 r-xp 00001000 08:06 10358659                           /home/tacy/workspace/binary-study/simple
+00402000-00403000 r--p 00002000 08:06 10358659                           /home/tacy/workspace/binary-study/simple
+00403000-00404000 r--p 00002000 08:06 10358659                           /home/tacy/workspace/binary-study/simple
+00404000-00405000 rw-p 00003000 08:06 10358659                           /home/tacy/workspace/binary-study/simple</pre></div>
+<p>不启用pic和pie，symbol的地址在编译的时候就确认了，可以直接使用</p>
+
+<h1 id="gcc">gcc</h1>
+
+<p>显示编译选项启用情况： gcc -Q -v <input file></p>
+
+<h1 id="resource">resource</h1>
+
+<ol>
+<li><img src="/static/resource/x86-64.pdf" alt="Notes on x86-64 programming" /></li>
+<li><img src="/static/resource/asm64-handout.pdf" alt="x86-64 Machine-Level Programming" /></li>
+</ol>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1"><a href="https://www.cs.rutgers.edu/~pxk/419/notes/frames.html">stack frame for x86</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:2"><a href="Stack frame layout on x86-64">stack frame for x64</a>
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+</ol>
+</div>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">春龙</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">2019-01-05</span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">License</span>
+    <span class="item-content">true</span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="http://tacy.github.io/tags/tech/">tech</a>
+          <a href="http://tacy.github.io/tags/debug/">debug</a>
+          <a href="http://tacy.github.io/tags/gdb/">gdb</a>
+          <a href="http://tacy.github.io/tags/linux/">linux</a>
+          <a href="http://tacy.github.io/tags/tools/">tools</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/trace/">
+            <span class="next-text nav-default">Linux trace</span>
+            <span class="prev-text nav-mobile">Next</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+
+  
+
+  <div class="disqus-comment">
+  <div class="disqus-button" id="load_disqus" onclick="load_disqus()">
+    Show Disqus Comments
+  </div>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_config = function () {
+      this.page.url = "http://tacy.github.io/post/binary/";
+    };
+    function load_disqus() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'tacyweblog';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+
+      $('#load_disqus').remove();
+    };
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+  
+  </div>
+  
+    
+
+
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+  
+  
+    <a href="mailto:your@email.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://stackoverflow.com/users/1225294/tacy-lee" rel="me noopener" class="iconfont"
+      title="stack-overflow"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M809.714286 932.571429l-638.857143 0 0-274.285714-91.428571 0 0 365.714286 821.714286 0 0-365.714286-91.428571 0 0 274.285714zm-538.285714-299.428571l18.857143-89.714286 447.428571 94.285714-18.857143 89.142857zm58.857143-213.714286l38.285714-83.428571 414.285714 193.714286-38.285714 82.857143zm114.857143-203.428571l58.285714-70.285714 350.857143 293.142857-58.285714 70.285714zm226.857143-216l272.571429 366.285714-73.142857 54.857143-272.571429-366.285714zm-410.285714 840.571429l0-90.857143 457.142857 0 0 90.857143-457.142857 0z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://twitter.com/tacy_lee" rel="me noopener" class="iconfont"
+      title="twitter"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1264 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M1229.8616 18.043658c0 0-117.852626 63.135335-164.151872 67.344358-105.225559-164.151872-505.082682-92.598492-437.738325 223.078185C278.622548 312.675223 89.216542 47.506814 89.216542 47.506814s-117.852626 189.406006 75.762402 345.139833C127.097743 396.85567 55.544363 371.601535 55.544363 371.601535S26.081207 535.753407 253.368414 615.724832c-21.045112 29.463156-113.643603 8.418045-113.643603 8.418045s25.254134 143.10676 231.496229 180.987961c-143.10676 130.479693-387.230056 92.598492-370.393967 105.225559 206.242095 189.406006 1119.599946 231.496229 1128.01799-643.98042C1179.353331 249.539887 1263.533778 123.269217 1263.533778 123.269217s-130.479693 37.881201-138.897738 33.672179C1225.652577 98.015083 1229.8616 18.043658 1229.8616 18.043658"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/tacy" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://weibo.com/p/1005051970158087" rel="me noopener" class="iconfont"
+      title="weibo"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M385.714286 733.714286q12-19.428571 6.285714-39.428571t-25.714286-28.571429q-19.428571-8-41.714286-0.571429t-34.285714 26.285714q-12.571429 19.428571-7.428571 39.142857t24.571429 28.857143 42.571429 1.428571 35.714286-27.142857zm53.714286-69.142857q4.571429-7.428571 2-15.142857t-10-10.571429q-8-2.857143-16.285714 2.857143t-12.285714 10.571429q-9.714286 17.714286 7.428571 25.714286 8 2.857143 16.571429 2.857143t12.571429-10.571429zm99.428571 61.142857q-25.714286 58.285714-90.285714 85.714286t-128 6.857143q-61.142857-19.428571-84.285714-72.285714t3.714286-107.142857q26.857143-53.142857 86.571429-79.428571t120.285714-10.857143q63.428571 16.571429 90.571429 68.285714t1.428571 108.857143zm178.285714-91.428571q-5.142857-54.857143-50.857143-97.142857t-119.142857-62.285714-156.857143-12q-127.428571 13.142857-211.142857 80.857143t-75.714286 151.142857q5.142857 54.857143 50.857143 97.142857t119.142857 62.285714 156.857143 12q127.428571-13.142857 211.142857-80.857143t75.714286-151.142857zm176 2.285714q0 38.857143-21.142857 79.714286t-62.285714 78.285714-96.285714 67.142857-129.142857 47.428571-154.571429 17.714286-157.142857-19.142857-137.428571-53.142857-98-86.285714-37.142857-114q0-65.714286 39.714286-140t112.857143-147.428571q96.571429-96.571429 195.142857-134.857143t140.857143 4q37.142857 36.571429 11.428571 119.428571-2.285714 8-0.571429 11.428571t5.714286 4 8.285714 2.857143 7.714286-2l3.428571-1.142857q79.428571-33.714286 140.571429-33.714286t87.428571 34.857143q25.714286 36 0 101.714286-1.142857 7.428571-2.571429 11.428571t2.571429 7.142857 6.857143 4.285714 9.714286 3.428571q32.571429 10.285714 58.857143 26.857143t45.714286 46.571429 19.428571 66.571429zm-42.285714-356.571429q24 26.857143 31.142857 62t-3.714286 67.142857q-4.571429 13.142857-16.857143 19.428571t-25.428571 2.285714q-13.142857-4.571429-19.428571-16.857143t-2.285714-25.428571q11.428571-36-13.714286-63.428571t-61.142857-20q-13.714286 2.857143-25.714286-4.571429t-14.285714-21.142857q-2.857143-13.714286 4.571429-25.428571t21.142857-14.571429q34.285714-7.428571 68 3.142857t57.714286 37.428571zm103.428571-93.142857q49.714286 54.857143 64.285714 127.142857t-7.714286 138q-5.142857 15.428571-19.428571 22.857143t-29.714286 2.285714-22.857143-19.428571-2.857143-29.714286q16-46.857143 5.714286-98.285714t-45.714286-90.285714q-35.428571-39.428571-84.571429-54.571429t-98.857143-4.857143q-16 3.428571-29.714286-5.428571t-17.142857-24.857143 5.428571-29.428571 24.857143-16.857143q70.285714-14.857143 139.428571 6.571429t118.857143 76.857143z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://www.douban.com/people/tacy_lee/" rel="me noopener" class="iconfont"
+      title="douban"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M926.917973 37.80608C959.65184 37.80608 986.19392 64.34816 986.19392 97.082027L986.19392 926.917973C986.19392 959.65184 959.65184 986.19392 926.917973 986.19392L97.082027 986.19392C64.34816 986.19392 37.80608 959.65184 37.80608 926.917973L37.80608 97.082027C37.80608 64.34816 64.34816 37.80608 97.082027 37.80608zM176.653653 176.19968 176.653653 252.678827 825.658027 252.678827 825.658027 176.19968zM217.719467 316.146347 217.719467 628.08064 273.524053 628.08064 341.292373 770.39616 157.259093 770.39616 157.259093 845.417813 842.949973 845.417813 842.949973 770.39616 654.226773 770.39616 722.899627 628.08064 783.67744 628.08064 783.67744 316.146347zM684.885333 392.891733 684.885333 553.987413 312.576 553.987413 312.576 392.891733zM570.770773 770.39616 426.653013 770.39616 359.621973 628.08064 639.443627 628.08064z"></path>
+</svg>
+
+    </a>
+
+
+<a href="http://tacy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+  
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2012 -
+    2019
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        春龙
+        
+      </span></span>
+
+  
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

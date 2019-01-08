@@ -6,10 +6,19 @@
     <description>Recent content in Debug on Tacy - Notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 05 Sep 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 05 Jan 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://tacy.github.io/tags/debug/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>binary notes</title>
+      <link>http://tacy.github.io/post/binary/</link>
+      <pubDate>Sat, 05 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/binary/</guid>
+      <description>编译之后产生的二进制文件，有很多种不同的格式，一般在linux下，elf是最常用的，如果没有特殊说明，这里指的都是elf格式的二进制文件 二进</description>
+    </item>
     
     <item>
       <title>gdb notes</title>
@@ -17,7 +26,7 @@
       <pubDate>Wed, 05 Sep 2018 00:00:00 +0000</pubDate>
       
       <guid>http://tacy.github.io/post/gdb/</guid>
-      <description>coredump find coredump cat /proc/sys/kernel/core_pattern /usr/lib/systemd/systemd-coredump %p %u %g %s %t %e Examining a core dump, Use coredumpctl to find the corresponding dump: You need to uniquely identify the relevant dump. This is possible by specifying a PID, name of the executable, path to the executable or a journalctl predicate (see coredumpctl(1) and journalctl(1) for details). To see details of the core dumps: Pay attention to &amp;ldquo;Signal&amp;rdquo; row, that helps</description>
+      <description>gdb是linux下最重要的debug工具，对于问题分析，非常有帮助。掌握gdb对于linux开发是必备的技能。 info info addr # info symbol # 显示地址的sy</description>
     </item>
     
   </channel>

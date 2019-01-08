@@ -6,10 +6,19 @@
     <description>Recent content in Tech on Tacy - Notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 02 Jan 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 05 Jan 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://tacy.github.io/categories/tech/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>binary notes</title>
+      <link>http://tacy.github.io/post/binary/</link>
+      <pubDate>Sat, 05 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/binary/</guid>
+      <description>编译之后产生的二进制文件，有很多种不同的格式，一般在linux下，elf是最常用的，如果没有特殊说明，这里指的都是elf格式的二进制文件 二进</description>
+    </item>
     
     <item>
       <title>Linux trace</title>
@@ -26,7 +35,7 @@
       <pubDate>Wed, 05 Sep 2018 00:00:00 +0000</pubDate>
       
       <guid>http://tacy.github.io/post/gdb/</guid>
-      <description>coredump find coredump cat /proc/sys/kernel/core_pattern /usr/lib/systemd/systemd-coredump %p %u %g %s %t %e Examining a core dump, Use coredumpctl to find the corresponding dump: You need to uniquely identify the relevant dump. This is possible by specifying a PID, name of the executable, path to the executable or a journalctl predicate (see coredumpctl(1) and journalctl(1) for details). To see details of the core dumps: Pay attention to &amp;ldquo;Signal&amp;rdquo; row, that helps</description>
+      <description>gdb是linux下最重要的debug工具，对于问题分析，非常有帮助。掌握gdb对于linux开发是必备的技能。 info info addr # info symbol # 显示地址的sy</description>
     </item>
     
     <item>
@@ -180,15 +189,6 @@
       
       <guid>http://tacy.github.io/post/flamegraph/</guid>
       <description>FlameGraph 火焰图[fn:1]，简单通过x轴横条宽度来度量时间指标，y轴代表线程栈的层次，简单明了， 容易找出具体的可优化点，非常方便，当然前提是我们通</description>
-    </item>
-    
-    <item>
-      <title>linux kernel</title>
-      <link>http://tacy.github.io/post/linux-kernel/</link>
-      <pubDate>Thu, 19 Jun 2014 00:00:00 +0000</pubDate>
-      
-      <guid>http://tacy.github.io/post/linux-kernel/</guid>
-      <description>linux kernel vm vfs_cache_pressure 简单说，就是控制page cache的回收，是优先回收data block还是meta block(page cache 包括这两部分），一般情况下建议还是保留meta</description>
     </item>
     
   </channel>

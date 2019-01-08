@@ -297,6 +297,40 @@ if (!doNotTrack) {
   <header class="post-header">
     <h1 class="post-title">
       
+      <a class="post-link" href="/post/binary/">binary notes</a>
+    </h1>
+    
+    <div class="post-meta">
+      <time datetime="2019-01-05" class="post-time">
+        2019-01-05
+      </time>
+      <div class="post-category">
+          <a href="http://tacy.github.io/categories/tech/"> tech </a>
+          
+        </div>
+      
+      
+      
+    </div>
+  </header>
+  
+  <div class="post-content">
+    
+    <div class="post-summary">
+      编译之后产生的二进制文件，有很多种不同的格式，一般在linux下，elf是最常用的，如果没有特殊说明，这里指的都是elf格式的二进制文件 二进
+    </div>
+    <div class="read-more">
+      <a href="/post/binary/" class="read-more-link">Read more</a>
+    </div>
+    
+  </div>
+</article>
+
+    
+      <article class="post bg-white">
+  <header class="post-header">
+    <h1 class="post-title">
+      
       <a class="post-link" href="/post/trace/">Linux trace</a>
     </h1>
     
@@ -351,7 +385,7 @@ if (!doNotTrack) {
   <div class="post-content">
     
     <div class="post-summary">
-      coredump find coredump cat /proc/sys/kernel/core_pattern /usr/lib/systemd/systemd-coredump %p %u %g %s %t %e Examining a core dump, Use coredumpctl to find the corresponding dump: You need to uniquely identify the relevant dump. This is possible by specifying a PID, name of the executable, path to the executable or a journalctl predicate (see coredumpctl(1) and journalctl(1) for details). To see details of the core dumps: Pay attention to &ldquo;Signal&rdquo; row, that helps
+      gdb是linux下最重要的debug工具，对于问题分析，非常有帮助。掌握gdb对于linux开发是必备的技能。 info info addr # info symbol # 显示地址的sy
     </div>
     <div class="read-more">
       <a href="/post/gdb/" class="read-more-link">Read more</a>
@@ -429,40 +463,6 @@ if (!doNotTrack) {
 </article>
 
     
-      <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/mysql/">mysql notes</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2017-10-11" class="post-time">
-        2017-10-11
-      </time>
-      <div class="post-category">
-          <a href="http://tacy.github.io/categories/tech/"> tech </a>
-          
-        </div>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      read-only user Adding the new MySQL user Connect to your database as root, then add your new user like so: CREATE USER &lsquo;lele&rsquo;@&lsquo;%&rsquo; IDENTIFIED BY &lsquo;lele_lelelele&rsquo;; The % here means the user &lsquo;tester&rsquo; connecting from any host, you can place a network hostname here instead if you want to restrict access further. Naturally you will also want to substitute password with something a little stronger ;-) Now run the following
-    </div>
-    <div class="read-more">
-      <a href="/post/mysql/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
-
-    
   </section>
 
   
@@ -522,6 +522,10 @@ if (!doNotTrack) {
       
       <li >
         <a href="/page/9/">9</a>
+      </li>
+      
+      <li >
+        <a href="/page/10/">10</a>
       </li>
       
     </ul>
