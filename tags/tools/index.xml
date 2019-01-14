@@ -26,7 +26,7 @@
       <pubDate>Wed, 05 Sep 2018 00:00:00 +0000</pubDate>
       
       <guid>http://tacy.github.io/post/gdb/</guid>
-      <description>gdb是linux下最重要的debug工具，对于问题分析，非常有帮助。掌握gdb对于linux开发是必备的技能。 info info addr # info symbol # 显示地址的sy</description>
+      <description>linux下最重要的debug工具，对于问题分析，非常有帮助。掌握gdb对于linux开发和故障诊断是必备的技能。 info info addr # info symbol # 显示地址的s</description>
     </item>
     
     <item>
