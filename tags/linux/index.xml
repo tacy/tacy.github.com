@@ -6,10 +6,19 @@
     <description>Recent content in Linux on Tacy - Notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 05 Jan 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 12 Mar 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://tacy.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>tcp connect can&#39;t establish</title>
+      <link>http://tacy.github.io/post/network-troubleshooting-tcp-connect-cant-established/</link>
+      <pubDate>Tue, 12 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/network-troubleshooting-tcp-connect-cant-established/</guid>
+      <description>最近碰到一起网络故障，有代表意义，记录下过程 故障现象 客户系统频繁报调用超时，检查后端服务提供方日志，并没有发现服务调用异常情况，服务调用时长</description>
+    </item>
     
     <item>
       <title>binary notes</title>
@@ -17,7 +26,7 @@
       <pubDate>Sat, 05 Jan 2019 00:00:00 +0000</pubDate>
       
       <guid>http://tacy.github.io/post/binary/</guid>
-      <description>编译之后产生的二进制文件，有很多种不同的格式，一般在linux下，elf是最常用的，如果没有特殊说明，这里指的都是elf格式的二进制文件 二进</description>
+      <description>编译之后产生的二进制文件，有很多种不同的格式，一般在linux下，elf是最常用的，如果没有特殊说明，这里指的都是elf格式的二进制文件 ELF readelf</description>
     </item>
     
     <item>

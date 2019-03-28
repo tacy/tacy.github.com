@@ -68,7 +68,7 @@
 
 <meta itemprop="datePublished" content="2015-01-01T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2019-01-04T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="4354">
+<meta itemprop="wordCount" content="4477">
 
 
 
@@ -410,6 +410,20 @@ lscpu
 lshw
 hdparm</p>
 
+<h2 id="查找网卡的插槽地址">查找网卡的插槽地址</h2>
+<div class="highlight"><pre class="chroma">[root@wfpprddb01 tacy]#lspci -vvv|grep -i &#39;Ethernet&#39; -A10
+
+[root@wfpprddb01 tacy]# ethtool -i ens1f0
+driver: ixgbe
+version: 4.4.0-k
+firmware-version: 0x800003df
+expansion-rom-version:
+bus-info: 0000:43:00.0
+supports-statistics: yes
+supports-test: yes
+supports-eeprom-access: yes
+supports-register-dump: yes
+supports-priv-flags: no</pre></div>
 <h1 id="mouse-touchpad">mouse &amp; touchpad</h1>
 
 <p>升级系统系统的时候, 容易把synaptics的配置弄丢了, 注意修改</p>
@@ -457,6 +471,10 @@ EndSection</pre></div>
 <h2 id="cower">cower</h2>
 
 <p>aur包管理器, 可以查看安装的aur包, 是否由更新, 下载更新, 然后通过makepkg安装更新</p>
+
+<h1 id="mimetype">mimetype</h1>
+
+<p><code>xdg-mime default org.gnome.Nautilus.desktop inode/directory</code></p>
 
 <h1 id="tor">tor</h1>
 
@@ -670,6 +688,16 @@ net.core.default_qdisc<span class="o">=</span>fq
 net.ipv4.tcp_congestion_control<span class="o">=</span>bbr
 
 lsmod<span class="p">|</span>grep -i bbr</code></pre></div>
+<h2 id="mtu">mtu</h2>
+
+<p>ip link show |grep mtu
+ip link set eth0 mtu 9000  # (JUMBO frames)
+/etc/sysconfig/network-scripts/<interface>  add line &lsquo;MTU=&ldquo;9000&rdquo;&rsquo; or accroding to archlinux jumbo frames</p>
+
+<h2 id="网卡bonding">网卡bonding</h2>
+
+<p><code>teamdctl team0 state</code></p>
+
 <h2 id="software-ap">software AP</h2>
 
 <p>最简单的办法就是使用<a href="https://github.com/oblique/create_ap">create_ap</a>, 一条命令搞定<code>create_ap wlan0 wlan0 MyAccessPoint MyPassPhrase</code></p>
@@ -819,6 +847,11 @@ ss -x src /tmp/.X11-unix/*
 <p>这是别人用brf写的一个监控unix socket的小工具，可以查看unix socket间的通讯记录
 用<code>ss -xlp</code>可以查看系统处于listen状态下的unix socket</p>
 
+<h2 id="offload">offload</h2>
+
+<p>ethtool -k ethY
+ethtool -K ethY tso on</p>
+
 <h1 id="utils">Utils</h1>
 
 <h2 id="coreutils">coreutils</h2>
@@ -852,6 +885,19 @@ ss -x src /tmp/.X11-unix/*
 <h2 id="其他">其他</h2>
 
 <p>man / debugfs / gdb / lsof</p>
+
+<h2 id="log">log</h2>
+
+<p>last -n5 -x reboot shutdown
+ausearch -i -m system_boot,system_shutdown
+ethtool interface 查网卡速度 / 设置offload
+teamdctl team0 state</p>
+
+<h2 id="rhel">rhel</h2>
+
+<h3 id="selinux">selinux</h3>
+
+<p>getenforce</p>
 
 <h1 id="my-server-configuration">my server configuration</h1>
 

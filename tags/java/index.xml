@@ -6,10 +6,19 @@
     <description>Recent content in Java on Tacy - Notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 23 Apr 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 28 Mar 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://tacy.github.io/tags/java/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Axis2 performance improve</title>
+      <link>http://tacy.github.io/post/axis2-performance-improve/</link>
+      <pubDate>Thu, 28 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/axis2-performance-improve/</guid>
+      <description>上面一篇关于连接超时的文章，就是由于axis2客户端实现导致，下面是我用测试代码（启了4个线程，每个线程做4次调用）运行过程中的抓包： 可以看</description>
+    </item>
     
     <item>
       <title>Heapster monitor java by custom metrics</title>

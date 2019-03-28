@@ -32,6 +32,174 @@
     </item>
     
     <item>
+      <title>Axis2 performance improve</title>
+      <link>http://tacy.github.io/post/axis2-performance-improve/</link>
+      <pubDate>Thu, 28 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/axis2-performance-improve/</guid>
+      
+        <description>&lt;p&gt;上面一篇关于连接超时的文章，就是由于axis2客户端实现导致，下面是我用测试代码（启了4个线程，每个线程做4次调用）运行过程中的抓包：
+&lt;img src=&#34;http://tacy.github.io/img/axis2-1.png&#34; alt=&#34;axis2 client&#34; /&gt;
+可以看到，每次调用都会新建立一个连接，无法重用&lt;/p&gt;
+
+&lt;p&gt;优化了一下，下面是修改过后的代码运行的抓包
+&lt;img src=&#34;http://tacy.github.io/img/axis2-2.png&#34; alt=&#34;axis2 client&#34; /&gt;
+连接都被重用了&lt;/p&gt;
+
+&lt;p&gt;下面是实现代码片段：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;	&lt;span class=&#34;kd&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ConfigurationContext&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;defaultConfigurationContext&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;createDefaultConfigurationContext&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+
+	&lt;span class=&#34;kd&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ConfigurationContext&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;createDefaultConfigurationContext&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(){&lt;/span&gt;
+		&lt;span class=&#34;c1&#34;&gt;// reuse HTTP connections if possible.
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;		&lt;span class=&#34;n&#34;&gt;MultiThreadedHttpConnectionManager&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mgr&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MultiThreadedHttpConnectionManager&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;HttpConnectionManagerParams&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;params&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mgr&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;getParams&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+		&lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;params&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+			&lt;span class=&#34;n&#34;&gt;params&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HttpConnectionManagerParams&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+			&lt;span class=&#34;n&#34;&gt;mgr&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;setParams&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;params&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+		&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;params&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;setMaxTotalConnections&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;40&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;params&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;setDefaultMaxConnectionsPerHost&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;20&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;IdleConnectionTimeoutThread&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ict&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;IdleConnectionTimeoutThread&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;ict&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;addConnectionManager&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mgr&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;ict&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;setConnectionTimeout&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;15000&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;ict&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;start&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;HttpClient&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;httpClient&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HttpClient&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mgr&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;ConfigurationContext&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;defaultConfigurationContext&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+		&lt;span class=&#34;k&#34;&gt;try&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+			&lt;span class=&#34;n&#34;&gt;defaultConfigurationContext&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ConfigurationContextFactory&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;createDefaultConfigurationContext&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+		&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;catch&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Exception&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;e&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+			&lt;span class=&#34;c1&#34;&gt;// TODO Auto-generated catch block
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;			&lt;span class=&#34;n&#34;&gt;e&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;printStackTrace&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+		&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;defaultConfigurationContext&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;setProperty&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;HTTPConstants&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;CACHED_HTTP_CLIENT&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;httpClient&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+		&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;defaultConfigurationContext&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+	&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+
+	&lt;span class=&#34;o&#34;&gt;...&lt;/span&gt;
+
+	&lt;span class=&#34;n&#34;&gt;ServiceClient&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sender&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ServiceClient&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;defaultConfigurationContext&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;OMElement&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;result&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sender&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;sendReceive&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;method&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;sender&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;cleanupTransport&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+      
+    </item>
+    
+    <item>
+      <title>tcp connect can&#39;t establish</title>
+      <link>http://tacy.github.io/post/network-troubleshooting-tcp-connect-cant-established/</link>
+      <pubDate>Tue, 12 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/network-troubleshooting-tcp-connect-cant-established/</guid>
+      
+        <description>
+
+&lt;p&gt;最近碰到一起网络故障，有代表意义，记录下过程&lt;/p&gt;
+
+&lt;h1 id=&#34;故障现象&#34;&gt;故障现象&lt;/h1&gt;
+
+&lt;p&gt;客户系统频繁报调用超时，检查后端服务提供方日志，并没有发现服务调用异常情况，服务调用时长都控制在5S以内。&lt;/p&gt;
+
+&lt;h1 id=&#34;故障分析&#34;&gt;故障分析&lt;/h1&gt;
+
+&lt;p&gt;分析调用方日志，由于我们在sdk里面提供了uuid作为requestid，调用方的异常日志都记录了该字段。我们通过该字段去查后端服务的日志，在日志中并没有发现该requestid。也就是会说，请求并没有调用到后端服务，问题应该出现在网络上。&lt;/p&gt;
+
+&lt;p&gt;由于网络环境比较复杂，中间有防火墙和F5以及多层交换设备，我们先是在客户端进行了简单的抓包。&lt;/p&gt;
+
+&lt;p&gt;通过异常日志中的requestid，在捕获包中查找（通过tcp contains过滤），结果却找不到对应的数据包，也就是说请求并没有发出去，怀疑tcp连接应该是没有建立。&lt;/p&gt;
+
+&lt;p&gt;继续分析，发现网络中存在大量的syn包重传，下面截取了一个典型的例子：
+&lt;img src=&#34;http://tacy.github.io/img/tcp-tw-reuse-1.png&#34; alt=&#34;wireshark sack&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;可以看到，tcp进行了5次syn包重传（linux默认），花了60多秒的时间，而调用方的服务调用超时设置的是60秒，也就是说连接没有建立，请求直接超时了。这也就解释了为什么在后台服务提供方的日志中并没有发现对应的requestid。&lt;/p&gt;
+
+&lt;p&gt;检查调用方和服务提供方网络，并没有发现明显的异常，为什么偏偏只丢syn包呢？接下来又在F5端和服务提供方网络进行抓包分析，发现异常。&lt;/p&gt;
+
+&lt;p&gt;先来看看F5的包：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;140994 689.875661 10.24.20.249 → 10.24.20.26  TCP 0 0 0.000000000 0 29200 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3135523389 TSecr=0 WS=128
+144871 719.924532  10.24.20.26 → 10.24.20.249 TCP 1 887 30.048871000 0 220 [TCP ACKed unseen segment] 8080 → 57011 [FIN, ACK] Seq=1 Ack=887 Win=220 Len=0 TSval=2612910209 TSecr=3135523404
+144872 719.924548  10.24.20.51 → 10.24.18.13  TCP 1 1 0.000000000 0 220 8080 → 57011 [FIN, ACK] Seq=1 Ack=1 Win=220 Len=0 TSval=2612910209 TSecr=3135523404
+144877 719.963860  10.24.18.13 → 10.24.20.51  TCP 1 2 0.039312000 0 625 57011 → 8080 [ACK] Seq=1 Ack=2 Win=625 Len=0 TSval=3135553478 TSecr=2612910209
+144878 719.963869 10.24.20.249 → 10.24.20.26  TCP 887 2 0.039337000 0 80000 [TCP Previous segment not captured] 57011 → 8080 [ACK] Seq=887 Ack=2 Win=80000 Len=0 TSval=3135553478 TSecr=2612910209
+148017 741.416886  10.24.18.13 → 10.24.20.51  TCP 1 2 21.453026000 0 625 57011 → 8080 [FIN, ACK] Seq=1 Ack=2 Win=625 Len=0 TSval=3135574931 TSecr=2612910209
+148018 741.416892 10.24.20.249 → 10.24.20.26  TCP 887 2 21.453023000 0 80000 57011 → 8080 [FIN, ACK] Seq=887 Ack=2 Win=80000 Len=0 TSval=3135574931 TSecr=2612910209
+148021 741.417014  10.24.20.26 → 10.24.20.249 TCP 2 888 0.000122000 0 220 [TCP ACKed unseen segment] 8080 → 57011 [ACK] Seq=2 Ack=888 Win=220 Len=0 TSval=2612931702 TSecr=3135574931
+148022 741.417047  10.24.20.51 → 10.24.18.13  TCP 2 2 0.000161000 0 220 8080 → 57011 [ACK] Seq=2 Ack=2 Win=220 Len=0 TSval=2612931702 TSecr=3135574931
+150058 750.708540 10.24.20.249 → 10.24.20.26  TCP 0 0 0.000000000 0 29200 [TCP Port numbers reused] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134415069 TSecr=0 WS=128
+150136 751.711154  10.24.18.14 → 10.24.20.51  TCP 0 0 0.000000000 0 29200 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134416072 TSecr=0 WS=128
+150137 751.711159 10.24.20.249 → 10.24.20.26  TCP 0 0 1.002619000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134416072 TSecr=0 WS=128
+150545 753.715177  10.24.18.14 → 10.24.20.51  TCP 0 0 2.004023000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134418076 TSecr=0 WS=128
+150546 753.715187 10.24.20.249 → 10.24.20.26  TCP 0 0 2.004028000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134418076 TSecr=0 WS=128
+151292 757.719161  10.24.18.14 → 10.24.20.51  TCP 0 0 4.003984000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134422080 TSecr=0 WS=128
+151293 757.719183 10.24.20.249 → 10.24.20.26  TCP 0 0 4.003996000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134422080 TSecr=0 WS=128
+152398 765.735191  10.24.18.14 → 10.24.20.51  TCP 0 0 8.016030000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134430096 TSecr=0 WS=128
+152399 765.735201 10.24.20.249 → 10.24.20.26  TCP 0 0 8.016018000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134430096 TSecr=0 WS=128
+158405 781.783166  10.24.18.14 → 10.24.20.51  TCP 0 0 16.047975000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134446144 TSecr=0 WS=128
+158406 781.783177 10.24.20.249 → 10.24.20.26  TCP 0 0 16.047976000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134446144 TSecr=0 WS=128
+175385 881.982585  10.24.20.51 → 10.107.209.51 TCP 1 1 0.000000000 0 229 8080 → 57011 [FIN, ACK] Seq=1 Ack=1 Win=229 Len=0 TSval=2613072267 TSecr=333623407
+175394 882.059551 10.107.209.51 → 10.24.20.51  TCP 1 2 0.076966000 0 5988 57011 → 8080 [ACK] Seq=1 Ack=2 Win=5988 Len=0 TSval=333653945 TSecr=2613072267&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;249代表F5地址，26是服务提供方服务器地址，上面信息显示，F5重用了端口（包150058）和26进行连接，连发了5个syn包，看起来是丢包了。&lt;/p&gt;
+
+&lt;p&gt;但是我们来看看服务提供方包：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;136316 654.713264 10.24.20.249 → 10.24.20.26  TCP 0 0 0.000000000 0 29200 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3135523389 TSecr=0 WS=128
+136317 654.713292  10.24.20.26 → 10.24.20.249 TCP 0 1 0.000028000 0 28960 8080 → 57011 [SYN, ACK] Seq=0 Ack=1 Win=28960 Len=0 MSS=1460 SACK_PERM=1 TSval=2612880161 TSecr=3135523389 WS=128
+136318 654.713558 10.24.20.249 → 10.24.20.26  TCP 1 1 0.000266000 0 29312 57011 → 8080 [ACK] Seq=1 Ack=1 Win=29312 Len=0 TSval=3135523390 TSecr=2612880161
+136319 654.713747 10.24.20.249 → 10.24.20.26  HTTP 1 1 0.000189000 182 29312 POST /default/WSWorkItemManagerService?wsdl HTTP/1.1
+136320 654.713759  10.24.20.26 → 10.24.20.249 TCP 1 183 0.000012000 0 28800 8080 → 57011 [ACK] Seq=1 Ack=183 Win=28800 Len=0 TSval=2612880161 TSecr=3135523390
+136321 654.713814 10.24.20.249 → 10.24.20.26  HTTP 183 1 0.000055000 704 29312 Continuation
+136322 654.713824  10.24.20.26 → 10.24.20.249 TCP 1 887 0.000010000 0 28160 8080 → 57011 [ACK] Seq=1 Ack=887 Win=28160 Len=0 TSval=2612880161 TSecr=3135523390
+136323 654.727617  10.24.20.26 → 10.24.20.249 HTTP 1 887 0.013793000 8192 28160 HTTP/1.1 200 OK [Unreassembled Packet]
+136324 654.727706  10.24.20.26 → 10.24.20.249 HTTP 8193 887 0.000089000 5792 28160 Continuation
+136325 654.727915 10.24.20.249 → 10.24.20.26  TCP 887 8193 0.000209000 0 45696 57011 → 8080 [ACK] Seq=887 Ack=8193 Win=45696 Len=0 TSval=3135523404 TSecr=2612880175
+136326 654.727928  10.24.20.26 → 10.24.20.249 HTTP 13985 887 0.000013000 11386 28160 Continuation
+136327 654.728040 10.24.20.249 → 10.24.20.26  TCP 887 11089 0.000112000 0 51456 57011 → 8080 [ACK] Seq=887 Ack=11089 Win=51456 Len=0 TSval=3135523404 TSecr=2612880175
+136328 654.728049 10.24.20.249 → 10.24.20.26  TCP 887 11089 0.000009000 0 54272 [TCP Window Update] 57011 → 8080 [ACK] Seq=887 Ack=11089 Win=54272 Len=0 TSval=3135523404 TSecr=2612880175 SLE=12537 SRE=13985
+136329 654.728056 10.24.20.249 → 10.24.20.26  TCP 887 13985 0.000007000 0 57216 57011 → 8080 [ACK] Seq=887 Ack=13985 Win=57216 Len=0 TSval=3135523404 TSecr=2612880175
+136330 654.728202 10.24.20.249 → 10.24.20.26  TCP 887 25371 0.000146000 0 80000 57011 → 8080 [ACK] Seq=887 Ack=25371 Win=80000 Len=0 TSval=3135523404 TSecr=2612880175
+142165 684.762029  10.24.20.26 → 10.24.20.249 TCP 25371 887 30.033827000 0 28160 8080 → 57011 [FIN, ACK] Seq=25371 Ack=887 Win=28160 Len=0 TSval=2612910209 TSecr=3135523404
+142174 684.801477 10.24.20.249 → 10.24.20.26  TCP 887 25372 0.039448000 0 80000 57011 → 8080 [ACK] Seq=887 Ack=25372 Win=80000 Len=0 TSval=3135553478 TSecr=2612910209
+146703 706.254510 10.24.20.249 → 10.24.20.26  TCP 887 25372 21.453033000 0 80000 57011 → 8080 [FIN, ACK] Seq=887 Ack=25372 Win=80000 Len=0 TSval=3135574931 TSecr=2612910209
+146704 706.254518  10.24.20.26 → 10.24.20.249 TCP 25372 888 0.000008000 0 28160 8080 → 57011 [ACK] Seq=25372 Ack=888 Win=28160 Len=0 TSval=2612931702 TSecr=3135574931
+148567 715.546271 10.24.20.249 → 10.24.20.26  TCP 0 0 0.000000000 0 29200 [TCP Port numbers reused] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134415069 TSecr=0 WS=128
+148568 715.546299  10.24.20.26 → 10.24.20.249 TCP 1 3942326266 0.000028000 0 220 8080 → 57011 [ACK] Seq=1 Ack=3942326266 Win=220 Len=0 TSval=2612940994 TSecr=3135574931
+148672 716.548784 10.24.20.249 → 10.24.20.26  TCP 0 0 1.002485000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134416072 TSecr=0 WS=128
+148673 716.548800  10.24.20.26 → 10.24.20.249 TCP 1 3942326266 0.000016000 0 220 [TCP Dup ACK 148568#1] 8080 → 57011 [ACK] Seq=1 Ack=3942326266 Win=220 Len=0 TSval=2612941996 TSecr=3135574931
+149153 718.552810 10.24.20.249 → 10.24.20.26  TCP 0 0 2.004010000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134418076 TSecr=0 WS=128
+149154 718.552831  10.24.20.26 → 10.24.20.249 TCP 1 3942326266 0.000021000 0 220 [TCP Dup ACK 148568#2] 8080 → 57011 [ACK] Seq=1 Ack=3942326266 Win=220 Len=0 TSval=2612944000 TSecr=3135574931
+150128 722.556839 10.24.20.249 → 10.24.20.26  TCP 0 0 4.004008000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134422080 TSecr=0 WS=128
+150129 722.556858  10.24.20.26 → 10.24.20.249 TCP 1 3942326266 0.000019000 0 220 [TCP Dup ACK 148568#3] 8080 → 57011 [ACK] Seq=1 Ack=3942326266 Win=220 Len=0 TSval=2612948004 TSecr=3135574931
+151923 730.572850 10.24.20.249 → 10.24.20.26  TCP 0 0 8.015992000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134430096 TSecr=0 WS=128
+151924 730.572871  10.24.20.26 → 10.24.20.249 TCP 1 3942326266 0.000021000 0 220 [TCP Dup ACK 148568#4] 8080 → 57011 [ACK] Seq=1 Ack=3942326266 Win=220 Len=0 TSval=2612956020 TSecr=3135574931
+155688 746.620837 10.24.20.249 → 10.24.20.26  TCP 0 0 16.047966000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134446144 TSecr=0 WS=128
+155689 746.620857  10.24.20.26 → 10.24.20.249 TCP 1 3942326266 0.000020000 0 220 [TCP Dup ACK 148568#5] 8080 → 57011 [ACK] Seq=1 Ack=3942326266 Win=220 Len=0 TSval=2612972068 TSecr=3135574931&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;tcp连接正常终止在包（142165，142174，146703，146704），接下来249在9秒之后，重用了同样的端口向26发起连接（包148567），26接收到syn包之后，回了一个ack包？不是一个syn/ack包？而且ack number = 3942326266&lt;/p&gt;
+
+&lt;p&gt;其实容易理解，由于26是active close一方，当连接终止之后，依然处于time_wait状态，这个时候，249重用了端口进行新的连接，可是这个连接在26上依然存在（处于time_wait状态），看到249发过来的syn包，和自己目前连接的sequence number一比，发现比自己目前的sequence number小，直接回一个ACK包告诉对方你给我发什么乱七八糟的东西，我期待下一个包的sequence number是3942326266，然后默默的把249发过来的SYN包扔掉了。。。&lt;/p&gt;
+
+&lt;h1 id=&#34;解决思路&#34;&gt;解决思路&lt;/h1&gt;
+
+&lt;p&gt;tcp连接的time_wait状态是用来保护连接的，linux把这个值写死在代码中（TCP_TIMEWAIT_LEN=60秒），除非自己编译源代码修改（不建议缩短这个值，容易导致连接损坏，或者连接关闭不完全）&lt;/p&gt;
+
+&lt;p&gt;在本系统中，由于服务提供方（26）设置的线程keepalive时间为30S，30S之后，会主动断开连接，连接就会进入time_wait状态；客户端连接被释放之后，很快用这个端口再次发起连接，导致了连接无法建立正常，我们简单的把keepalive参数设置为不超时，暂时缓解了该问题。&lt;/p&gt;
+
+&lt;h1 id=&#34;后续&#34;&gt;后续&lt;/h1&gt;
+
+&lt;p&gt;由于系统中，前端和后端调用量很大，中间的F5很容易导致类似问题，简易的优化方式：
+1. 增加客户端的可用端口数量(net.ipv4.ip_local_port_range)
+2. 增加F5的出口ip数量，缓解端口问题
+3. 增加服务端的server监听ip，缓解端口重用问题&lt;/p&gt;
+
+&lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
+
+&lt;ol&gt;
+&lt;li&gt;TCP连接的状态变化参考下图：
+&lt;img src=&#34;http://tacy.github.io/img/tcp-state-diagram-v2.svg&#34; alt=&#34;tcp state diagram&#34; /&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;2.&lt;/p&gt;
+</description>
+      
+    </item>
+    
+    <item>
       <title>binary notes</title>
       <link>http://tacy.github.io/post/binary/</link>
       <pubDate>Sat, 05 Jan 2019 00:00:00 +0000</pubDate>
@@ -42,15 +210,19 @@
 
 &lt;p&gt;编译之后产生的二进制文件，有很多种不同的格式，一般在linux下，elf是最常用的，如果没有特殊说明，这里指的都是elf格式的二进制文件&lt;/p&gt;
 
-&lt;p&gt;二进制文件包括可运共享库&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;se&#34;&gt;\u&lt;/span&gt;279c  public git:&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;master&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\u&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;2717&lt;/span&gt; file /lib/libc-2.28.so
-/lib/libc-2.28.so: ELF &lt;span class=&#34;m&#34;&gt;64&lt;/span&gt;-bit LSB shared object, x86-64, version &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;GNU/Linux&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;, dynamically linked, interpreter /usr/lib/ld-linux-x86-64.so.2, BuildID&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;sha1&lt;span class=&#34;o&#34;&gt;]=&lt;/span&gt;81de091ea963d49b45f9536f4b0548dcabd03f0e, &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; GNU/Linux &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;.2.0, not stripped
-&lt;span class=&#34;se&#34;&gt;\u&lt;/span&gt;279c  public git:&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;master&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\u&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;2717&lt;/span&gt; fild /usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so
-zsh: &lt;span class=&#34;nb&#34;&gt;command&lt;/span&gt; not found: fild
-&lt;span class=&#34;se&#34;&gt;\u&lt;/span&gt;279c  public git:&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;master&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\u&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;2717&lt;/span&gt; fil /usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so
-zsh: &lt;span class=&#34;nb&#34;&gt;command&lt;/span&gt; not found: fil
-&lt;span class=&#34;se&#34;&gt;\u&lt;/span&gt;279c  public git:&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;master&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\u&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;2717&lt;/span&gt; file /usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so
-/usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so: ELF &lt;span class=&#34;m&#34;&gt;64&lt;/span&gt;-bit LSB pie executable, x86-64, version &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;GNU/Linux&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;, dynamically linked, BuildID&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;sha1&lt;span class=&#34;o&#34;&gt;]=&lt;/span&gt;deaa14871e0101bc717a00461519385ebdb010fd, not stripped, too many notes &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;256&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h1 id=&#34;elf&#34;&gt;ELF&lt;/h1&gt;
+
+&lt;h2 id=&#34;readelf&#34;&gt;readelf&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;To retrieve a section header table:&lt;code&gt;readelf -S &amp;lt;object&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;To retrieve a program header table: &lt;code&gt;readelf -l &amp;lt;object&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;To retrieve a symbol table: &lt;code&gt;readelf -s &amp;lt;object&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;To retrieve the ELF file header data: &lt;code&gt;readelf -e &amp;lt;object&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;To retrieve relocation entries: &lt;code&gt;readelf -r &amp;lt;object&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;To retrieve a dynamic segment: &lt;code&gt;readelf -d &amp;lt;object&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
 &lt;h1 id=&#34;little-endian-big-endian&#34;&gt;little endian &amp;amp; big endian&lt;/h1&gt;
 
 &lt;p&gt;little endian： 9A9B9C9D   =&amp;gt;   (9D-&amp;gt;0x1000, 9C-&amp;gt;0x1001, 9B-&amp;gt;0x1002, 9A-&amp;gt;0x1003)
@@ -501,6 +673,10 @@ value at 0xc892303c&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;0 &amp;gt; /proc/sys/kernel/randomize_va_space&lt;/p&gt;
 
+&lt;h1 id=&#34;readelf-1&#34;&gt;readelf&lt;/h1&gt;
+
+&lt;p&gt;elf格式工具，可以用来查看elf文件信息，例如segment，header，relocs等&lt;/p&gt;
+
 &lt;h1 id=&#34;gcc&#34;&gt;gcc&lt;/h1&gt;
 
 &lt;h2 id=&#34;编译共享库&#34;&gt;编译共享库&lt;/h2&gt;
@@ -518,6 +694,7 @@ gcc -shared -no-pie -o libsimple.so simple.o  # no-pie必须在shared后面&lt;/
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;http://tacy.github.io/resource/x86-64.pdf&#34;&gt;Notes on x86-64 programming&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://tacy.github.io/resource/asm64-handout.pdf&#34;&gt;x86-64 Machine-Level Programming&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://blog.k3170makan.com/2018/09/introduction-to-elf-format-elf-header.html&#34;&gt;Introduction to the ELF Format&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div class=&#34;footnotes&#34;&gt;
 
@@ -4038,6 +4215,20 @@ lscpu
 lshw
 hdparm&lt;/p&gt;
 
+&lt;h2 id=&#34;查找网卡的插槽地址&#34;&gt;查找网卡的插槽地址&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;[root@wfpprddb01 tacy]#lspci -vvv|grep -i &amp;#39;Ethernet&amp;#39; -A10
+
+[root@wfpprddb01 tacy]# ethtool -i ens1f0
+driver: ixgbe
+version: 4.4.0-k
+firmware-version: 0x800003df
+expansion-rom-version:
+bus-info: 0000:43:00.0
+supports-statistics: yes
+supports-test: yes
+supports-eeprom-access: yes
+supports-register-dump: yes
+supports-priv-flags: no&lt;/pre&gt;&lt;/div&gt;
 &lt;h1 id=&#34;mouse-touchpad&#34;&gt;mouse &amp;amp; touchpad&lt;/h1&gt;
 
 &lt;p&gt;升级系统系统的时候, 容易把synaptics的配置弄丢了, 注意修改&lt;/p&gt;
@@ -4085,6 +4276,10 @@ EndSection&lt;/pre&gt;&lt;/div&gt;
 &lt;h2 id=&#34;cower&#34;&gt;cower&lt;/h2&gt;
 
 &lt;p&gt;aur包管理器, 可以查看安装的aur包, 是否由更新, 下载更新, 然后通过makepkg安装更新&lt;/p&gt;
+
+&lt;h1 id=&#34;mimetype&#34;&gt;mimetype&lt;/h1&gt;
+
+&lt;p&gt;&lt;code&gt;xdg-mime default org.gnome.Nautilus.desktop inode/directory&lt;/code&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;tor&#34;&gt;tor&lt;/h1&gt;
 
@@ -4298,6 +4493,16 @@ net.core.default_qdisc&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;fq
 net.ipv4.tcp_congestion_control&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;bbr
 
 lsmod&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;grep -i bbr&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h2 id=&#34;mtu&#34;&gt;mtu&lt;/h2&gt;
+
+&lt;p&gt;ip link show |grep mtu
+ip link set eth0 mtu 9000  # (JUMBO frames)
+/etc/sysconfig/network-scripts/&lt;interface&gt;  add line &amp;lsquo;MTU=&amp;ldquo;9000&amp;rdquo;&amp;rsquo; or accroding to archlinux jumbo frames&lt;/p&gt;
+
+&lt;h2 id=&#34;网卡bonding&#34;&gt;网卡bonding&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;teamdctl team0 state&lt;/code&gt;&lt;/p&gt;
+
 &lt;h2 id=&#34;software-ap&#34;&gt;software AP&lt;/h2&gt;
 
 &lt;p&gt;最简单的办法就是使用&lt;a href=&#34;https://github.com/oblique/create_ap&#34;&gt;create_ap&lt;/a&gt;, 一条命令搞定&lt;code&gt;create_ap wlan0 wlan0 MyAccessPoint MyPassPhrase&lt;/code&gt;&lt;/p&gt;
@@ -4447,6 +4652,11 @@ ss -x src /tmp/.X11-unix/*
 &lt;p&gt;这是别人用brf写的一个监控unix socket的小工具，可以查看unix socket间的通讯记录
 用&lt;code&gt;ss -xlp&lt;/code&gt;可以查看系统处于listen状态下的unix socket&lt;/p&gt;
 
+&lt;h2 id=&#34;offload&#34;&gt;offload&lt;/h2&gt;
+
+&lt;p&gt;ethtool -k ethY
+ethtool -K ethY tso on&lt;/p&gt;
+
 &lt;h1 id=&#34;utils&#34;&gt;Utils&lt;/h1&gt;
 
 &lt;h2 id=&#34;coreutils&#34;&gt;coreutils&lt;/h2&gt;
@@ -4480,6 +4690,19 @@ ss -x src /tmp/.X11-unix/*
 &lt;h2 id=&#34;其他&#34;&gt;其他&lt;/h2&gt;
 
 &lt;p&gt;man / debugfs / gdb / lsof&lt;/p&gt;
+
+&lt;h2 id=&#34;log&#34;&gt;log&lt;/h2&gt;
+
+&lt;p&gt;last -n5 -x reboot shutdown
+ausearch -i -m system_boot,system_shutdown
+ethtool interface 查网卡速度 / 设置offload
+teamdctl team0 state&lt;/p&gt;
+
+&lt;h2 id=&#34;rhel&#34;&gt;rhel&lt;/h2&gt;
+
+&lt;h3 id=&#34;selinux&#34;&gt;selinux&lt;/h3&gt;
+
+&lt;p&gt;getenforce&lt;/p&gt;
 
 &lt;h1 id=&#34;my-server-configuration&#34;&gt;my server configuration&lt;/h1&gt;
 
@@ -5520,311 +5743,6 @@ will fail as well.&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;[fn:1] [[&lt;a href=&#34;http://tnachen.wordpress.com/2014/08/19/docker-in-mesos-0-20/][Docker&#34;&gt;http://tnachen.wordpress.com/2014/08/19/docker-in-mesos-0-20/][Docker&lt;/a&gt; on Mesos 0.20]]&lt;/p&gt;
 
 &lt;p&gt;[fn:2] [[&lt;a href=&#34;http://mesos.apache.org/documentation/latest/docker-containerizer/][Docker&#34;&gt;http://mesos.apache.org/documentation/latest/docker-containerizer/][Docker&lt;/a&gt; Containerizer]]&lt;/p&gt;
-</description>
-      
-    </item>
-    
-    <item>
-      <title>wireshark和tcpdump相关笔记</title>
-      <link>http://tacy.github.io/post/wireshark-tcpdump/</link>
-      <pubDate>Thu, 21 Aug 2014 00:00:00 +0000</pubDate>
-      
-      <guid>http://tacy.github.io/post/wireshark-tcpdump/</guid>
-      
-        <description>
-
-&lt;h1 id=&#34;tshark&#34;&gt;tshark&lt;/h1&gt;
-
-&lt;p&gt;tshark -V -O http -Y &amp;ldquo;(http.request and http.host contains ymatou)&amp;rdquo;  -T fields -e frame.number -e http.request.method -e http.request.full_uri -r ~/workspace/python/osx/lele/ymt-addproductv2.pcapng&lt;/p&gt;
-
-&lt;h2 id=&#34;filter-field-reference&#34;&gt;FILTER FIELD REFERENCE&lt;/h2&gt;
-
-&lt;p&gt;tshark -G fields on the command line&lt;/p&gt;
-
-&lt;h1 id=&#34;troubleshooting&#34;&gt;Troubleshooting&lt;/h1&gt;
-
-&lt;h2 id=&#34;ssl-1-2-3&#34;&gt;SSL&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:3&#34;&gt;&lt;a href=&#34;#fn:3&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;&lt;/h2&gt;
-
-&lt;p&gt;Starting with Wireshark 2.0, the RSA key file is automatically matched against the public key as found in the Certificate handshake message. Before Wireshark 2.0, it relied on the user to enter a valid Address and Port value. Note that only RSA key exchanges can be decrypted using this RSA private key, Diffie-Hellman key exchanges cannot be decrypted using a RSA key file! (See &amp;ldquo;SSLKEYLOGFILE&amp;rdquo; if you have such a capture.)&lt;/p&gt;
-
-&lt;p&gt;连接建立的时候, 会告诉你是否采用Diffie Hellman key交换, 这样的方式你只能采用SSLKEYLOGFILE方式&lt;/p&gt;
-
-&lt;h2 id=&#34;抓不到应该出现的包&#34;&gt;抓不到应该出现的包&lt;/h2&gt;
-
-&lt;p&gt;路由问题,路由问题,路由问题&lt;/p&gt;
-
-&lt;p&gt;重要的事情说三遍, 仔细检查路由表, 看看是否路由正确, 网络配置错误很容易导致.&lt;/p&gt;
-
-&lt;h2 id=&#34;关于tcp-segment-len超过1500&#34;&gt;关于tcp segment len超过1500&lt;/h2&gt;
-
-&lt;p&gt;很可能是网卡支持tso, 同时打开了该功能, 应用层的拆包工作交给了网卡, 一般这种情况, 你能在对端看到正确的tcp segment len大小&lt;/p&gt;
-
-&lt;h2 id=&#34;如何查找一个session&#34;&gt;如何查找一个session&lt;/h2&gt;
-
-&lt;p&gt;标识一个tcp链接通过src_ip:port  -&amp;gt; dst_ip:port, 过滤条件写上就行, 当然tcp port存在重用的情况, 所以你还需要加上session id啥的, 在cookie里面有&lt;/p&gt;
-
-&lt;h1 id=&#34;usage&#34;&gt;Usage&lt;/h1&gt;
-
-&lt;h2 id=&#34;导出过滤的包&#34;&gt;导出过滤的包&lt;/h2&gt;
-
-&lt;p&gt;首先过滤包, 然后file -&amp;gt; export specified packets -&amp;gt; all packets
-也可以通过tshark来过滤, 一般可以&lt;/p&gt;
-
-&lt;h1 id=&#34;案例&#34;&gt;案例&lt;/h1&gt;
-
-&lt;h2 id=&#34;session失效&#34;&gt;session失效&lt;/h2&gt;
-
-&lt;p&gt;系统做了单点登录，用的是CAS，用户反馈偶尔系统登出之后，重新用其他帐号登入，查询
-到的用户资料依然是上一个用户的，只有关闭浏览器之后，才能正常。&lt;/p&gt;
-
-&lt;p&gt;从直观上判断，应该是session问题，询问了一下应用开发人员，确认用户id存放在session
-中。只有为啥session没有销毁成功，简单做法就是抓包分析。&lt;/p&gt;
-
-&lt;p&gt;先是用wireshark在客户端做了分析，发现在出现问题的时候，系统去请求出现问题的页面
-不会做跳转（初次访问该页面需要去cas登入），也就是说对于业务系统来说，jsessionid
-依然有效。&lt;/p&gt;
-
-&lt;p&gt;了解了一下cas的原理：用户去portal平台做登入，从cas获取到TGT。第一次访问业务模块
-的时候，由于没有session，会创建一个session，然后重定向到sso做登入。而注销的时候
-cas负责销毁创建的session。从故障看，问题就是出现在销毁session上。&lt;/p&gt;
-
-&lt;p&gt;通过tcpdump来抓包：
-sso服务器端：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@localhost ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# tcpdump -p -nn -s 0 tcp port 8088 and host 172.16.102.205  -w sso.dump&lt;/span&gt;
-tcpdump: listening on eth0, link-type EN10MB &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;Ethernet&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;, capture size &lt;span class=&#34;m&#34;&gt;65535&lt;/span&gt; bytes&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;应用端：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@trust-test-app ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# tcpdump -p -nn -s 0 host 172.17.102.106 and not tcp port 8001 -w sso-logout.dump&lt;/span&gt;
-tcpdump: listening on eth0, link-type EN10MB &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;Ethernet&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;, capture size &lt;span class=&#34;m&#34;&gt;65535&lt;/span&gt; bytes&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;用wireshark分析包，可以看到CAS发出去的销毁session请求被reset，查看了一下环境，问
-题出现在apache上，询问了一下，apache是自己编译的，而且配置文件也是乱七八糟，没想
-明白为啥被reset而不是connection reject之类的，修改apache配置问题解决。&lt;/p&gt;
-
-&lt;p&gt;当然也不能算彻底解决，CAS关于注销的实现有bug，是一个不可靠实现，需要做一定处理。&lt;/p&gt;
-&lt;div class=&#34;footnotes&#34;&gt;
-
-&lt;hr /&gt;
-
-&lt;ol&gt;
-&lt;li id=&#34;fn:1&#34;&gt;&lt;a href=&#34;https://wiki.wireshark.org/SSL&#34;&gt;Wireshark SSL&lt;/a&gt;
- &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:1&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li id=&#34;fn:2&#34;&gt;&lt;a href=&#34;https://github.com/k8sp/tls&#34;&gt;TLS完全指南&lt;/a&gt;
- &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:2&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li id=&#34;fn:3&#34;&gt;&lt;a href=&#34;https://github.com/kelseyhightower/docker-kubernetes-tls-guide&#34;&gt;Docker&amp;amp;Kubernetes tls guide&lt;/a&gt;
- &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:3&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-</description>
-      
-    </item>
-    
-    <item>
-      <title>android notes</title>
-      <link>http://tacy.github.io/post/android/</link>
-      <pubDate>Tue, 29 Jul 2014 00:00:00 +0000</pubDate>
-      
-      <guid>http://tacy.github.io/post/android/</guid>
-      
-        <description>
-
-&lt;h1 id=&#34;android&#34;&gt;Android&lt;/h1&gt;
-
-&lt;h2 id=&#34;emulator&#34;&gt;emulator&lt;/h2&gt;
-
-&lt;dl&gt;
-&lt;dt&gt;只需加载kvm模块，同时启动命令上添加‘-qemu -enable-kvm’ 参数即可，启动命令：&lt;/dt&gt;
-&lt;dd&gt;&lt;p&gt;emulator64-x86 -avd test -data userdata.img -qemu -m 2048 -enable-kvm&lt;/p&gt;&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;dl&gt;
-&lt;dt&gt;vm’ 参数即可，启动命令：&lt;/dt&gt;
-&lt;dd&gt;&lt;p&gt;emulator64-x86 -avd test -data userdata.img -qemu -m 2048 -enable-kvm&lt;/p&gt;&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;p&gt;其中的data如果没有指定，emulator好像每次都会初始化数据，也就是说重启之后，通过
-adb安装的应用就没有了。&lt;/p&gt;
-
-&lt;dl&gt;
-&lt;dt&gt;如果启动出现如下信息：&lt;/dt&gt;
-&lt;dd&gt;emulator: emulator window was out of view and was recentered
-你可以添加&amp;rsquo;-scale auto&amp;rsquo;参数（取值范围0.1-3)，注意，非qemu参数都加在qemu前面。&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;p&gt;另外avd文件存放在home/.android目录下。&lt;/p&gt;
-
-&lt;p&gt;你可以通过mksdcard创建sd镜像文件。&lt;/p&gt;
-
-&lt;p&gt;通过adb安装app和拷贝文件：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;adb push localfile /sdcard/
-adb install test.apk&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;dl&gt;
-&lt;dt&gt;启动sdk manager：&lt;/dt&gt;
-&lt;dd&gt;&lt;p&gt;android sdk&lt;/p&gt;&lt;/dd&gt;
-&lt;dt&gt;启动avd manager：&lt;/dt&gt;
-&lt;dd&gt;&lt;p&gt;android avd&lt;/p&gt;&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;p&gt;具体的其他子命令可以help，主要是abd和android两个。&lt;/p&gt;
-
-&lt;h1 id=&#34;env&#34;&gt;ENV&lt;/h1&gt;
-
-&lt;p&gt;android目录在workspace下&lt;/p&gt;
-
-&lt;h1 id=&#34;android-sdk&#34;&gt;android sdk&lt;/h1&gt;
-
-&lt;p&gt;About the version of Android SDK Build-tools, the answer is&lt;/p&gt;
-
-&lt;p&gt;By default, the Android SDK uses the most recent downloaded version of the Build Tools.&lt;/p&gt;
-
-&lt;p&gt;The [build] tools, such as aidl, aapt, dexdump, and dx, are typically called by the Android build tools or Android Development Tools (ADT), so you rarely need to invoke these tools directly. As a general rule, you should rely on the build tools or the ADT plugin to call them as needed.
-Source&lt;/p&gt;
-
-&lt;p&gt;Anyway, here is a synthesis of the differences between tools, platform-tools and build-tools:&lt;/p&gt;
-
-&lt;p&gt;Android SDK Tools
-Location: $ANDROID_HOME/tools
-Main tools: ant scripts (to build your APKs) and ddms (for debugging)
-Android SDK Platform-tools
-Location: $ANDROID_HOME/platform-tools
-Main tool: adb (to manage the state of an emulator or an Android device)
-Android SDK Build-tools
-Location: $ANDROID_HOME/build-tools/$VERSION/
-Documentation
-Main tools: aapt (to generate R.java and unaligned, unsigned APKs), dx (to convert Java bytecode to Dalvik bytecode), and zipalign (to optimize your APKs)&lt;/p&gt;
-
-&lt;h1 id=&#34;reverse-engineering&#34;&gt;reverse engineering&lt;/h1&gt;
-
-&lt;p&gt;编译过程是java-&amp;gt;smali-&amp;gt;dex, smali负责smali-&amp;gt;dex, baksmali负责dex-&amp;gt;smali, smali类汇编, 但是也可以修改.&lt;/p&gt;
-
-&lt;p&gt;一般如果你需要先获取apk, 然后通过apktool, 获取到apk的资源文件和smali, 然后可以直接通过smaliide(android studio插件)调试, 具体参考&lt;a href=&#34;https://github.com/JesusFreke/smali/wiki/smalidea&#34;&gt;smalidea&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;你也能通过baksmali获取到smali代码, 修改之后smali重新打包&lt;/p&gt;
-
-&lt;p&gt;如果觉得smali很难懂, 也可以通过dex2jar把dex转换成jar包, 然后通过java反编译工具获取java代码, 当然这个反编译一般都是不完全的, 但是你也能完成apk的修改, 然后重新打包&lt;/p&gt;
-
-&lt;h1 id=&#34;emulator-1&#34;&gt;emulator&lt;/h1&gt;
-
-&lt;h2 id=&#34;set-proxy&#34;&gt;set proxy&lt;/h2&gt;
-
-&lt;p&gt;Go to Settings&amp;gt;WIRELESS &amp;amp; NETWORKS&amp;gt;Mobile networks&amp;gt;Mobile networks settings&amp;gt;Access Point Names
-add access point by clicking &amp;ldquo;+&amp;rdquo; button and then type favorite name for Name, favorite name for APN, fixed Proxy and port. If necessary put user name and password.&lt;/p&gt;
-
-&lt;h2 id=&#34;fake-gps-location&#34;&gt;fake gps location&lt;/h2&gt;
-
-&lt;p&gt;直接通过模拟器发送就行了&lt;/p&gt;
-
-&lt;h1 id=&#34;android-studio&#34;&gt;android studio&lt;/h1&gt;
-
-&lt;p&gt;启动bin/studio.sh
-配置文件玩在~/.AndroidStudio1.5目录下, 调整jvm参数在该目录下的studio.vmoptions,&lt;/p&gt;
-
-&lt;p&gt;配置sdk: file-&amp;gt;setting
-配置project sdk: file-&amp;gt;project structure下, platform settings -&amp;gt; sdks中选择&amp;rdquo;+&amp;ldquo;. 还需要配置project运行用的sdk, project setting -&amp;gt; project中选择project sdk和project language level&lt;/p&gt;
-
-&lt;p&gt;avd管理: tools -&amp;gt; android -&amp;gt; avd manager&lt;/p&gt;
-
-&lt;h2 id=&#34;debug&#34;&gt;debug&lt;/h2&gt;
-
-&lt;p&gt;首先&lt;code&gt;lsusb&lt;/code&gt;获取到id, 例如&lt;code&gt;us 001 Device 004: ID 17ef:776d Lenovo&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;添加udev rules:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;cat /etc/udev/rules.d/51-android.rules
-DB your devices
-SUBSYSTEM==&amp;#34;usb&amp;#34;, ATTR{idVendor}==&amp;#34;17ef&amp;#34;, ATTR{Product}==&amp;#34;776d&amp;#34;, MODE=&amp;#34;0666&amp;#34;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;然后执行&lt;code&gt;sudo adb kill-server &amp;amp;&amp;amp; sudo adb start-server&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;接下来执行&lt;code&gt;adb devices&lt;/code&gt;, 应该看到下面这样的行输出:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;List of devices attached
-813d4882        device&lt;/pre&gt;&lt;/div&gt;
-&lt;h3 id=&#34;获取手机上的应用&#34;&gt;获取手机上的应用&lt;/h3&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-abap&#34; data-lang=&#34;abap&#34;&gt;adb shell pm list packages -f
-adb pull -p PATH/base.apk OUTPUT.apk
-
-安装到指定设备
-adb -s &amp;#34;deviceIDfromlist&amp;#34; install path+apkName&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h3 id=&#34;apk&#34;&gt;apk&lt;/h3&gt;
-
-&lt;p&gt;查看apk适配的架构&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-abap&#34; data-lang=&#34;abap&#34;&gt;/apk/# build-tools/version/aapt dump badging ymatou-shop.apk
-native-code: &amp;#39;arm64-v8a&amp;#39; &amp;#39;armeabi&amp;#39; &amp;#39;armeabi-v7a&amp;#39; &amp;#39;x86&amp;#39; &amp;#39;x86_64&amp;#39;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h2 id=&#34;字体显示方框&#34;&gt;字体显示方框&lt;/h2&gt;
-
-&lt;p&gt;setting -&amp;gt; Appearance -&amp;gt; Override default fonts by (not recommended)&lt;/p&gt;
-
-&lt;h2 id=&#34;migrate-eclipse-project-to-android-studio&#34;&gt;migrate eclipse project to android studio&lt;/h2&gt;
-
-&lt;p&gt;svn编码是gbk, 所以checkout代码出来的时候需要先修改LANG=zh_CN.gbk
-svn checkout file:///data/svn/android/zhijie/branches/vTest .
-svn checkout file:///data/svn/android/zhijie/branches/abs-library abs-library
-svn checkout file:///data/svn/android/zhijie/branches/sliding-library sliding-library&lt;/p&gt;
-
-&lt;p&gt;然后android studio直接import eclipse项目&lt;/p&gt;
-
-&lt;p&gt;接下来抛错误:
-Error:(12, 0) Error: NDK integration is deprecated in the current plugin.  Consider trying the new experimental plugin.  For details, see &lt;a href=&#34;http://tools.android.com/tech-docs/new-build-system/gradle-experimental&#34;&gt;http://tools.android.com/tech-docs/new-build-system/gradle-experimental&lt;/a&gt;.  Set &amp;ldquo;android.useDeprecatedNdk=true&amp;rdquo; in gradle.properties to continue using the current NDK integration.
-&lt;a href=&#34;openFile:/home/tacy/workspace/android/zhijie_pay/zhijie_pay/build.gradle&#34;&gt;Open File&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;修改gradle.properties, 增加行&lt;code&gt;android.useDeprecatedNdk=true&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;继续:
-ERROR: 9-patch image /home/tacy/workspace/android/zhijie_pay/zhijie_pay/src/main/res/drawable/navbar.9.png malformed&lt;/p&gt;
-
-&lt;p&gt;直接修改文件名为navbar.png(临时改法)&lt;/p&gt;
-
-&lt;p&gt;undefined reference to `__android_log_print&amp;rsquo;
-&lt;a href=&#34;http://stackoverflow.com/questions/4455941/undefined-reference-to-android-log-print&#34;&gt;http://stackoverflow.com/questions/4455941/undefined-reference-to-android-log-print&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Error:(63, 14) error: cannot find symbol method addOnPageChangeListener(&lt;anonymous OnPageChangeListener&gt;)
-&lt;a href=&#34;http://stackoverflow.com/questions/31099555/cannot-find-symbol-method-addonpagechangelistener&#34;&gt;http://stackoverflow.com/questions/31099555/cannot-find-symbol-method-addonpagechangelistener&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;01-31 15:43:12.995 9628-9628/? E/dalvikvm: dlopen(&amp;ldquo;/data/app-lib/com.zhijie.android-1/libBaiduMapSDK_v2_3_1.so&amp;rdquo;) failed: Cannot load library: load_library(linker.cpp:761): not a valid ELF executable: /data/app-lib/com.zhijie.android-1/libBaiduMapSDK_v2_3_1.so&lt;/p&gt;
-
-&lt;p&gt;emulator: ERROR: This AVD&amp;rsquo;s configuration is missing a kernel file!!
-需要安装对应的image&lt;/p&gt;
-
-&lt;p&gt;#zhijie
-java/com/zhijie/android/login/LoginActivity
-java/com/zhijie/android/shopping/net/HttpManager&lt;/p&gt;
-
-&lt;p&gt;client:13959203004 | e47ca7a09cf6781e29634502345930a7 | 4e5ceed89a82a06a37e2bd0f0d8f49a4&lt;/p&gt;
-
-&lt;p&gt;00000000 md5 =&amp;gt; dd4b21e9ef71e1291183a46b913ae6f2
-device_id =&amp;gt; 914ddf9d048008cb58390d20a94d9d05
-username =&amp;gt; 13959203004&lt;/p&gt;
-
-&lt;p&gt;client:18642716660 | e10adc3949ba59abbe56e057f20f883e | 609f7d6df5c040d964aeff06ef57beba&lt;/p&gt;
-
-&lt;p&gt;deviceId=a76fe41f91946c4f96fde0fa4341e679&amp;amp;username=18642716600&amp;amp;password=d4f74be5b3c0a379fe3f12b6503a89ed&amp;amp;macAddress=34%3Ac3%3Ad2%3A06%3Ad3%3A32&amp;amp;registTime=1454570913373HTTP/1.1 200 OK&lt;/p&gt;
-
-&lt;p&gt;update client set password=&amp;lsquo;dd4b21e9ef71e1291183a46b913ae6f2&amp;rsquo;, deviceid=&amp;lsquo;914ddf9d048008cb58390d20a94d9d05&amp;rsquo; where username=&amp;lsquo;18642716660&amp;rsquo;;&lt;/p&gt;
-
-&lt;p&gt;device_info: terminal   | tm38d628d1f73b896e77ace749a3301923 |&lt;/p&gt;
-
-&lt;p&gt;update device_info set devicetype=&amp;lsquo;pad&amp;rsquo;, deviceid=&amp;lsquo;914ddf9d048008cb58390d20a94d9d05&amp;rsquo; where id=&amp;lsquo;360&amp;rsquo;;&lt;/p&gt;
-
-&lt;p&gt;select o.cid from client c join device_info o on c.cid=o.cid where o.deviceid=&amp;lsquo;914ddf9d048008cb58390d20a94d9d05&amp;rsquo; and c.username=&amp;lsquo;18642716660&amp;rsquo; and c.password=&amp;lsquo;dd4b21e9ef71e1291183a46b913ae6f2&amp;rsquo;;&lt;/p&gt;
-
-&lt;h1 id=&#34;常用&#34;&gt;常用&lt;/h1&gt;
-
-&lt;h2 id=&#34;yarn&#34;&gt;yarn&lt;/h2&gt;
-
-&lt;p&gt;yarn add -S packagename / yarn add -D packagename / yarn remove packagename&lt;/p&gt;
-
-&lt;h2 id=&#34;react-native&#34;&gt;react native&lt;/h2&gt;
-
-&lt;p&gt;react-native link  packagename /  react-native unlink packagename&lt;/p&gt;
-
-&lt;h3 id=&#34;faq&#34;&gt;FAQ&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Unable to install /home/admin/MyApp/app/build/outputs/apk/app-local-debug.apk&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Step 1: Make sure your device is connected and then run adb devices. From the output, grab the device id H80xxxxxx.
-Step 2: Run react-native run-android &amp;ndash;deviceId H80xxxxxx&lt;/p&gt;
-
-&lt;h1 id=&#34;footnotes&#34;&gt;Footnotes&lt;/h1&gt;
-
-&lt;p&gt;[fn:1] [[&lt;a href=&#34;http://stackoverflow.com/questions/1554099/why-is-the-android-emulator-so-slow][Why&#34;&gt;http://stackoverflow.com/questions/1554099/why-is-the-android-emulator-so-slow][Why&lt;/a&gt; is the Android emulator so slow?]]&lt;/p&gt;
 </description>
       
     </item>

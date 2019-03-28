@@ -35,7 +35,7 @@
       <pubDate>Mon, 24 Mar 2014 00:00:00 +0000</pubDate>
       
       <guid>http://tacy.github.io/post/oracle-awr/</guid>
-      <description>Oracle AWR报告</description>
+      <description>Oracle AWR Automatic Workload Repository gathers, processes and maintains performance stats used for problem detection and self-tuning the databases. This collective information can be displayed as views and reports (HTML/text) to better show the current database performance status for further analysis. AWR gathers the following data: 1. Object Statistics (access / usage stats of DB segments) 2. Time Model Statistics (V$SYS_TIME_MODEL and V$SESS_TIME_MODEL views) 3. Some of the System and</description>
     </item>
     
   </channel>

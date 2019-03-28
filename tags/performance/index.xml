@@ -6,10 +6,19 @@
     <description>Recent content in Performance on Tacy - Notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 16 Jul 2014 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 28 Mar 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://tacy.github.io/tags/performance/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Axis2 performance improve</title>
+      <link>http://tacy.github.io/post/axis2-performance-improve/</link>
+      <pubDate>Thu, 28 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/axis2-performance-improve/</guid>
+      <description>上面一篇关于连接超时的文章，就是由于axis2客户端实现导致，下面是我用测试代码（启了4个线程，每个线程做4次调用）运行过程中的抓包： 可以看</description>
+    </item>
     
     <item>
       <title>Java性能分析之火焰图</title>
@@ -62,7 +71,7 @@
       <pubDate>Mon, 24 Mar 2014 00:00:00 +0000</pubDate>
       
       <guid>http://tacy.github.io/post/oracle-awr/</guid>
-      <description>Oracle AWR报告</description>
+      <description>Oracle AWR Automatic Workload Repository gathers, processes and maintains performance stats used for problem detection and self-tuning the databases. This collective information can be displayed as views and reports (HTML/text) to better show the current database performance status for further analysis. AWR gathers the following data: 1. Object Statistics (access / usage stats of DB segments) 2. Time Model Statistics (V$SYS_TIME_MODEL and V$SESS_TIME_MODEL views) 3. Some of the System and</description>
     </item>
     
     <item>

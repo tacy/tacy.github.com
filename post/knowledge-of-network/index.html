@@ -68,7 +68,7 @@
 
 <meta itemprop="datePublished" content="2012-08-16T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2012-08-16T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="5024">
+<meta itemprop="wordCount" content="5140">
 
 
 
@@ -370,6 +370,10 @@ slow TCP recovery after packet loss in local switches. This is the so-called TCP
 the TCP timer granularity and minimum RTO to be on the order of microseconds
 [V09]. Such small minimum RTO values are not recommended for use on the
 global Internet.</p>
+
+<h2 id="tcp-fin-timeout">tcp_fin_timeout</h2>
+
+<p>主动断开连接方，会等待对方回FIN包，并且处于FIN-WAIT-2状态，tcp_fin_timeout用于控制FIN-WAIT-2状态的时间，如果超过设定时间没有接收到FIN包，回直接close连接，连接进入time_wait状态</p>
 
 <h2 id="fast-retransmit">Fast Retransmit</h2>
 

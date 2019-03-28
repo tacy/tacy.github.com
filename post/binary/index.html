@@ -68,7 +68,7 @@
 
 <meta itemprop="datePublished" content="2019-01-05T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2019-01-05T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="3231">
+<meta itemprop="wordCount" content="3250">
 
 
 
@@ -327,15 +327,19 @@ if (!doNotTrack) {
 
 <p>编译之后产生的二进制文件，有很多种不同的格式，一般在linux下，elf是最常用的，如果没有特殊说明，这里指的都是elf格式的二进制文件</p>
 
-<p>二进制文件包括可运共享库</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="se">\u</span>279c  public git:<span class="o">(</span>master<span class="o">)</span> <span class="se">\u</span><span class="m">2717</span> file /lib/libc-2.28.so
-/lib/libc-2.28.so: ELF <span class="m">64</span>-bit LSB shared object, x86-64, version <span class="m">1</span> <span class="o">(</span>GNU/Linux<span class="o">)</span>, dynamically linked, interpreter /usr/lib/ld-linux-x86-64.so.2, BuildID<span class="o">[</span>sha1<span class="o">]=</span>81de091ea963d49b45f9536f4b0548dcabd03f0e, <span class="k">for</span> GNU/Linux <span class="m">3</span>.2.0, not stripped
-<span class="se">\u</span>279c  public git:<span class="o">(</span>master<span class="o">)</span> <span class="se">\u</span><span class="m">2717</span> fild /usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so
-zsh: <span class="nb">command</span> not found: fild
-<span class="se">\u</span>279c  public git:<span class="o">(</span>master<span class="o">)</span> <span class="se">\u</span><span class="m">2717</span> fil /usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so
-zsh: <span class="nb">command</span> not found: fil
-<span class="se">\u</span>279c  public git:<span class="o">(</span>master<span class="o">)</span> <span class="se">\u</span><span class="m">2717</span> file /usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so
-/usr/lib/jvm/java-10-openjdk/lib/server/libjvm.so: ELF <span class="m">64</span>-bit LSB pie executable, x86-64, version <span class="m">1</span> <span class="o">(</span>GNU/Linux<span class="o">)</span>, dynamically linked, BuildID<span class="o">[</span>sha1<span class="o">]=</span>deaa14871e0101bc717a00461519385ebdb010fd, not stripped, too many notes <span class="o">(</span><span class="m">256</span><span class="o">)</span></code></pre></div>
+<h1 id="elf">ELF</h1>
+
+<h2 id="readelf">readelf</h2>
+
+<ul>
+<li>To retrieve a section header table:<code>readelf -S &lt;object&gt;</code></li>
+<li>To retrieve a program header table: <code>readelf -l &lt;object&gt;</code></li>
+<li>To retrieve a symbol table: <code>readelf -s &lt;object&gt;</code></li>
+<li>To retrieve the ELF file header data: <code>readelf -e &lt;object&gt;</code></li>
+<li>To retrieve relocation entries: <code>readelf -r &lt;object&gt;</code></li>
+<li>To retrieve a dynamic segment: <code>readelf -d &lt;object&gt;</code></li>
+</ul>
+
 <h1 id="little-endian-big-endian">little endian &amp; big endian</h1>
 
 <p>little endian： 9A9B9C9D   =&gt;   (9D-&gt;0x1000, 9C-&gt;0x1001, 9B-&gt;0x1002, 9A-&gt;0x1003)
@@ -786,6 +790,10 @@ value at 0xc892303c</code></pre></div>
 
 <p>0 &gt; /proc/sys/kernel/randomize_va_space</p>
 
+<h1 id="readelf-1">readelf</h1>
+
+<p>elf格式工具，可以用来查看elf文件信息，例如segment，header，relocs等</p>
+
 <h1 id="gcc">gcc</h1>
 
 <h2 id="编译共享库">编译共享库</h2>
@@ -803,6 +811,7 @@ gcc -shared -no-pie -o libsimple.so simple.o  # no-pie必须在shared后面</p>
 <ol>
 <li><a href="/resource/x86-64.pdf">Notes on x86-64 programming</a></li>
 <li><a href="/resource/asm64-handout.pdf">x86-64 Machine-Level Programming</a></li>
+<li><a href="https://blog.k3170makan.com/2018/09/introduction-to-elf-format-elf-header.html">Introduction to the ELF Format</a></li>
 </ol>
 <div class="footnotes">
 
@@ -861,6 +870,19 @@ gcc -shared -no-pie -o libsimple.so simple.o  # no-pie必须在shared后面</p>
       
       <nav class="post-nav">
         
+          <a class="prev" href="/post/network-troubleshooting-tcp-connect-cant-established/">
+            
+            <i class="iconfont">
+              <svg  class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417 757.434875 204.940602c11.338233-12.190647 11.035334-32.285311-0.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-0.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891 0.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"></path>
+</svg>
+
+            </i>
+            <span class="prev-text nav-default">tcp connect can&#39;t establish</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
         
           <a class="next" href="/post/trace/">
             <span class="next-text nav-default">Linux trace</span>

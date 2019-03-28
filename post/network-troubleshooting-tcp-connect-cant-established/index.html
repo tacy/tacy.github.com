@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>tcp connect can&#39;t establish - Tacy - Notes</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="春龙" /><meta name="description" content="网络故障一例：由于连接处于timeout，同时由于对端端口重用，发过来的syn包直接被忽略，导致连接无法建立成功导致业务调用超时" />
+
+  <meta name="keywords" content="Tacy, tech, life, linux, performance, kubernetes, golang, java, troubleshooting" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.51" />
+
+
+<link rel="canonical" href="http://tacy.github.io/post/network-troubleshooting-tcp-connect-cant-established/" />
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.c8c1ff75dee09b44060a6c38f41b9036bac2512ccdb22d7f296cec12dc786375.css" integrity="sha256-yMH/dd7gm0QGCmw49BuQNrrCUSzNsi1/KWzsEtx4Y3U=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="tcp connect can&#39;t establish" />
+<meta property="og:description" content="网络故障一例：由于连接处于timeout，同时由于对端端口重用，发过来的syn包直接被忽略，导致连接无法建立成功导致业务调用超时" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://tacy.github.io/post/network-troubleshooting-tcp-connect-cant-established/" /><meta property="article:published_time" content="2019-03-12T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2019-03-12T00:00:00&#43;00:00"/>
+
+<meta itemprop="name" content="tcp connect can&#39;t establish">
+<meta itemprop="description" content="网络故障一例：由于连接处于timeout，同时由于对端端口重用，发过来的syn包直接被忽略，导致连接无法建立成功导致业务调用超时">
+
+
+<meta itemprop="datePublished" content="2019-03-12T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2019-03-12T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="2606">
+
+
+
+<meta itemprop="keywords" content="tech,troubleshooting,linux,network,tcpip," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="tcp connect can&#39;t establish"/>
+<meta name="twitter:description" content="网络故障一例：由于连接处于timeout，同时由于对端端口重用，发过来的syn包直接被忽略，导致连接无法建立成功导致业务调用超时"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33694554-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Tacy&#39;s notes</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/">Home</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/post/">Archives</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/tags/">Tags</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/categories/">Categories</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/about/">About</a>
+          
+        
+      </li>
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      Tacy's notes
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/">Home</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/post/">Archives</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/tags/">Tags</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/categories/">Categories</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="http://tacy.github.io/about/">About</a>
+          
+
+        
+
+      </li>
+    
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">tcp connect can&#39;t establish</h1>
+      
+      <div class="post-meta">
+        <time datetime="2019-03-12" class="post-time">
+          2019-03-12
+        </time>
+        <div class="post-category">
+            <a href="http://tacy.github.io/categories/tech/"> tech </a>
+            
+          </div>
+        
+
+        
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    
+    <div class="post-content">
+      
+
+<p>最近碰到一起网络故障，有代表意义，记录下过程</p>
+
+<h1 id="故障现象">故障现象</h1>
+
+<p>客户系统频繁报调用超时，检查后端服务提供方日志，并没有发现服务调用异常情况，服务调用时长都控制在5S以内。</p>
+
+<h1 id="故障分析">故障分析</h1>
+
+<p>分析调用方日志，由于我们在sdk里面提供了uuid作为requestid，调用方的异常日志都记录了该字段。我们通过该字段去查后端服务的日志，在日志中并没有发现该requestid。也就是会说，请求并没有调用到后端服务，问题应该出现在网络上。</p>
+
+<p>由于网络环境比较复杂，中间有防火墙和F5以及多层交换设备，我们先是在客户端进行了简单的抓包。</p>
+
+<p>通过异常日志中的requestid，在捕获包中查找（通过tcp contains过滤），结果却找不到对应的数据包，也就是说请求并没有发出去，怀疑tcp连接应该是没有建立。</p>
+
+<p>继续分析，发现网络中存在大量的syn包重传，下面截取了一个典型的例子：
+<img src="/img/tcp-tw-reuse-1.png" alt="wireshark sack" /></p>
+
+<p>可以看到，tcp进行了5次syn包重传（linux默认），花了60多秒的时间，而调用方的服务调用超时设置的是60秒，也就是说连接没有建立，请求直接超时了。这也就解释了为什么在后台服务提供方的日志中并没有发现对应的requestid。</p>
+
+<p>检查调用方和服务提供方网络，并没有发现明显的异常，为什么偏偏只丢syn包呢？接下来又在F5端和服务提供方网络进行抓包分析，发现异常。</p>
+
+<p>先来看看F5的包：</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">140994 689.875661 10.24.20.249 → 10.24.20.26  TCP 0 0 0.000000000 0 29200 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3135523389 TSecr=0 WS=128
+144871 719.924532  10.24.20.26 → 10.24.20.249 TCP 1 887 30.048871000 0 220 [TCP ACKed unseen segment] 8080 → 57011 [FIN, ACK] Seq=1 Ack=887 Win=220 Len=0 TSval=2612910209 TSecr=3135523404
+144872 719.924548  10.24.20.51 → 10.24.18.13  TCP 1 1 0.000000000 0 220 8080 → 57011 [FIN, ACK] Seq=1 Ack=1 Win=220 Len=0 TSval=2612910209 TSecr=3135523404
+144877 719.963860  10.24.18.13 → 10.24.20.51  TCP 1 2 0.039312000 0 625 57011 → 8080 [ACK] Seq=1 Ack=2 Win=625 Len=0 TSval=3135553478 TSecr=2612910209
+144878 719.963869 10.24.20.249 → 10.24.20.26  TCP 887 2 0.039337000 0 80000 [TCP Previous segment not captured] 57011 → 8080 [ACK] Seq=887 Ack=2 Win=80000 Len=0 TSval=3135553478 TSecr=2612910209
+148017 741.416886  10.24.18.13 → 10.24.20.51  TCP 1 2 21.453026000 0 625 57011 → 8080 [FIN, ACK] Seq=1 Ack=2 Win=625 Len=0 TSval=3135574931 TSecr=2612910209
+148018 741.416892 10.24.20.249 → 10.24.20.26  TCP 887 2 21.453023000 0 80000 57011 → 8080 [FIN, ACK] Seq=887 Ack=2 Win=80000 Len=0 TSval=3135574931 TSecr=2612910209
+148021 741.417014  10.24.20.26 → 10.24.20.249 TCP 2 888 0.000122000 0 220 [TCP ACKed unseen segment] 8080 → 57011 [ACK] Seq=2 Ack=888 Win=220 Len=0 TSval=2612931702 TSecr=3135574931
+148022 741.417047  10.24.20.51 → 10.24.18.13  TCP 2 2 0.000161000 0 220 8080 → 57011 [ACK] Seq=2 Ack=2 Win=220 Len=0 TSval=2612931702 TSecr=3135574931
+150058 750.708540 10.24.20.249 → 10.24.20.26  TCP 0 0 0.000000000 0 29200 [TCP Port numbers reused] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134415069 TSecr=0 WS=128
+150136 751.711154  10.24.18.14 → 10.24.20.51  TCP 0 0 0.000000000 0 29200 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134416072 TSecr=0 WS=128
+150137 751.711159 10.24.20.249 → 10.24.20.26  TCP 0 0 1.002619000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134416072 TSecr=0 WS=128
+150545 753.715177  10.24.18.14 → 10.24.20.51  TCP 0 0 2.004023000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134418076 TSecr=0 WS=128
+150546 753.715187 10.24.20.249 → 10.24.20.26  TCP 0 0 2.004028000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134418076 TSecr=0 WS=128
+151292 757.719161  10.24.18.14 → 10.24.20.51  TCP 0 0 4.003984000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134422080 TSecr=0 WS=128
+151293 757.719183 10.24.20.249 → 10.24.20.26  TCP 0 0 4.003996000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134422080 TSecr=0 WS=128
+152398 765.735191  10.24.18.14 → 10.24.20.51  TCP 0 0 8.016030000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134430096 TSecr=0 WS=128
+152399 765.735201 10.24.20.249 → 10.24.20.26  TCP 0 0 8.016018000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134430096 TSecr=0 WS=128
+158405 781.783166  10.24.18.14 → 10.24.20.51  TCP 0 0 16.047975000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134446144 TSecr=0 WS=128
+158406 781.783177 10.24.20.249 → 10.24.20.26  TCP 0 0 16.047976000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134446144 TSecr=0 WS=128
+175385 881.982585  10.24.20.51 → 10.107.209.51 TCP 1 1 0.000000000 0 229 8080 → 57011 [FIN, ACK] Seq=1 Ack=1 Win=229 Len=0 TSval=2613072267 TSecr=333623407
+175394 882.059551 10.107.209.51 → 10.24.20.51  TCP 1 2 0.076966000 0 5988 57011 → 8080 [ACK] Seq=1 Ack=2 Win=5988 Len=0 TSval=333653945 TSecr=2613072267</code></pre></div>
+<p>249代表F5地址，26是服务提供方服务器地址，上面信息显示，F5重用了端口（包150058）和26进行连接，连发了5个syn包，看起来是丢包了。</p>
+
+<p>但是我们来看看服务提供方包：</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">136316 654.713264 10.24.20.249 → 10.24.20.26  TCP 0 0 0.000000000 0 29200 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3135523389 TSecr=0 WS=128
+136317 654.713292  10.24.20.26 → 10.24.20.249 TCP 0 1 0.000028000 0 28960 8080 → 57011 [SYN, ACK] Seq=0 Ack=1 Win=28960 Len=0 MSS=1460 SACK_PERM=1 TSval=2612880161 TSecr=3135523389 WS=128
+136318 654.713558 10.24.20.249 → 10.24.20.26  TCP 1 1 0.000266000 0 29312 57011 → 8080 [ACK] Seq=1 Ack=1 Win=29312 Len=0 TSval=3135523390 TSecr=2612880161
+136319 654.713747 10.24.20.249 → 10.24.20.26  HTTP 1 1 0.000189000 182 29312 POST /default/WSWorkItemManagerService?wsdl HTTP/1.1
+136320 654.713759  10.24.20.26 → 10.24.20.249 TCP 1 183 0.000012000 0 28800 8080 → 57011 [ACK] Seq=1 Ack=183 Win=28800 Len=0 TSval=2612880161 TSecr=3135523390
+136321 654.713814 10.24.20.249 → 10.24.20.26  HTTP 183 1 0.000055000 704 29312 Continuation
+136322 654.713824  10.24.20.26 → 10.24.20.249 TCP 1 887 0.000010000 0 28160 8080 → 57011 [ACK] Seq=1 Ack=887 Win=28160 Len=0 TSval=2612880161 TSecr=3135523390
+136323 654.727617  10.24.20.26 → 10.24.20.249 HTTP 1 887 0.013793000 8192 28160 HTTP/1.1 200 OK [Unreassembled Packet]
+136324 654.727706  10.24.20.26 → 10.24.20.249 HTTP 8193 887 0.000089000 5792 28160 Continuation
+136325 654.727915 10.24.20.249 → 10.24.20.26  TCP 887 8193 0.000209000 0 45696 57011 → 8080 [ACK] Seq=887 Ack=8193 Win=45696 Len=0 TSval=3135523404 TSecr=2612880175
+136326 654.727928  10.24.20.26 → 10.24.20.249 HTTP 13985 887 0.000013000 11386 28160 Continuation
+136327 654.728040 10.24.20.249 → 10.24.20.26  TCP 887 11089 0.000112000 0 51456 57011 → 8080 [ACK] Seq=887 Ack=11089 Win=51456 Len=0 TSval=3135523404 TSecr=2612880175
+136328 654.728049 10.24.20.249 → 10.24.20.26  TCP 887 11089 0.000009000 0 54272 [TCP Window Update] 57011 → 8080 [ACK] Seq=887 Ack=11089 Win=54272 Len=0 TSval=3135523404 TSecr=2612880175 SLE=12537 SRE=13985
+136329 654.728056 10.24.20.249 → 10.24.20.26  TCP 887 13985 0.000007000 0 57216 57011 → 8080 [ACK] Seq=887 Ack=13985 Win=57216 Len=0 TSval=3135523404 TSecr=2612880175
+136330 654.728202 10.24.20.249 → 10.24.20.26  TCP 887 25371 0.000146000 0 80000 57011 → 8080 [ACK] Seq=887 Ack=25371 Win=80000 Len=0 TSval=3135523404 TSecr=2612880175
+142165 684.762029  10.24.20.26 → 10.24.20.249 TCP 25371 887 30.033827000 0 28160 8080 → 57011 [FIN, ACK] Seq=25371 Ack=887 Win=28160 Len=0 TSval=2612910209 TSecr=3135523404
+142174 684.801477 10.24.20.249 → 10.24.20.26  TCP 887 25372 0.039448000 0 80000 57011 → 8080 [ACK] Seq=887 Ack=25372 Win=80000 Len=0 TSval=3135553478 TSecr=2612910209
+146703 706.254510 10.24.20.249 → 10.24.20.26  TCP 887 25372 21.453033000 0 80000 57011 → 8080 [FIN, ACK] Seq=887 Ack=25372 Win=80000 Len=0 TSval=3135574931 TSecr=2612910209
+146704 706.254518  10.24.20.26 → 10.24.20.249 TCP 25372 888 0.000008000 0 28160 8080 → 57011 [ACK] Seq=25372 Ack=888 Win=28160 Len=0 TSval=2612931702 TSecr=3135574931
+148567 715.546271 10.24.20.249 → 10.24.20.26  TCP 0 0 0.000000000 0 29200 [TCP Port numbers reused] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134415069 TSecr=0 WS=128
+148568 715.546299  10.24.20.26 → 10.24.20.249 TCP 1 3942326266 0.000028000 0 220 8080 → 57011 [ACK] Seq=1 Ack=3942326266 Win=220 Len=0 TSval=2612940994 TSecr=3135574931
+148672 716.548784 10.24.20.249 → 10.24.20.26  TCP 0 0 1.002485000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134416072 TSecr=0 WS=128
+148673 716.548800  10.24.20.26 → 10.24.20.249 TCP 1 3942326266 0.000016000 0 220 [TCP Dup ACK 148568#1] 8080 → 57011 [ACK] Seq=1 Ack=3942326266 Win=220 Len=0 TSval=2612941996 TSecr=3135574931
+149153 718.552810 10.24.20.249 → 10.24.20.26  TCP 0 0 2.004010000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134418076 TSecr=0 WS=128
+149154 718.552831  10.24.20.26 → 10.24.20.249 TCP 1 3942326266 0.000021000 0 220 [TCP Dup ACK 148568#2] 8080 → 57011 [ACK] Seq=1 Ack=3942326266 Win=220 Len=0 TSval=2612944000 TSecr=3135574931
+150128 722.556839 10.24.20.249 → 10.24.20.26  TCP 0 0 4.004008000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134422080 TSecr=0 WS=128
+150129 722.556858  10.24.20.26 → 10.24.20.249 TCP 1 3942326266 0.000019000 0 220 [TCP Dup ACK 148568#3] 8080 → 57011 [ACK] Seq=1 Ack=3942326266 Win=220 Len=0 TSval=2612948004 TSecr=3135574931
+151923 730.572850 10.24.20.249 → 10.24.20.26  TCP 0 0 8.015992000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134430096 TSecr=0 WS=128
+151924 730.572871  10.24.20.26 → 10.24.20.249 TCP 1 3942326266 0.000021000 0 220 [TCP Dup ACK 148568#4] 8080 → 57011 [ACK] Seq=1 Ack=3942326266 Win=220 Len=0 TSval=2612956020 TSecr=3135574931
+155688 746.620837 10.24.20.249 → 10.24.20.26  TCP 0 0 16.047966000 0 29200 [TCP Retransmission] 57011 → 8080 [SYN] Seq=0 Win=29200 Len=0 MSS=1460 SACK_PERM=1 TSval=3134446144 TSecr=0 WS=128
+155689 746.620857  10.24.20.26 → 10.24.20.249 TCP 1 3942326266 0.000020000 0 220 [TCP Dup ACK 148568#5] 8080 → 57011 [ACK] Seq=1 Ack=3942326266 Win=220 Len=0 TSval=2612972068 TSecr=3135574931</code></pre></div>
+<p>tcp连接正常终止在包（142165，142174，146703，146704），接下来249在9秒之后，重用了同样的端口向26发起连接（包148567），26接收到syn包之后，回了一个ack包？不是一个syn/ack包？而且ack number = 3942326266</p>
+
+<p>其实容易理解，由于26是active close一方，当连接终止之后，依然处于time_wait状态，这个时候，249重用了端口进行新的连接，可是这个连接在26上依然存在（处于time_wait状态），看到249发过来的syn包，和自己目前连接的sequence number一比，发现比自己目前的sequence number小，直接回一个ACK包告诉对方你给我发什么乱七八糟的东西，我期待下一个包的sequence number是3942326266，然后默默的把249发过来的SYN包扔掉了。。。</p>
+
+<h1 id="解决思路">解决思路</h1>
+
+<p>tcp连接的time_wait状态是用来保护连接的，linux把这个值写死在代码中（TCP_TIMEWAIT_LEN=60秒），除非自己编译源代码修改（不建议缩短这个值，容易导致连接损坏，或者连接关闭不完全）</p>
+
+<p>在本系统中，由于服务提供方（26）设置的线程keepalive时间为30S，30S之后，会主动断开连接，连接就会进入time_wait状态；客户端连接被释放之后，很快用这个端口再次发起连接，导致了连接无法建立正常，我们简单的把keepalive参数设置为不超时，暂时缓解了该问题。</p>
+
+<h1 id="后续">后续</h1>
+
+<p>由于系统中，前端和后端调用量很大，中间的F5很容易导致类似问题，简易的优化方式：
+1. 增加客户端的可用端口数量(net.ipv4.ip_local_port_range)
+2. 增加F5的出口ip数量，缓解端口问题
+3. 增加服务端的server监听ip，缓解端口重用问题</p>
+
+<h1 id="参考">参考</h1>
+
+<ol>
+<li>TCP连接的状态变化参考下图：
+<img src="/img/tcp-state-diagram-v2.svg" alt="tcp state diagram" /></li>
+</ol>
+
+<p>2.</p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">春龙</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">2019-03-12</span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">License</span>
+    <span class="item-content">true</span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="http://tacy.github.io/tags/tech/">tech</a>
+          <a href="http://tacy.github.io/tags/troubleshooting/">troubleshooting</a>
+          <a href="http://tacy.github.io/tags/linux/">linux</a>
+          <a href="http://tacy.github.io/tags/network/">network</a>
+          <a href="http://tacy.github.io/tags/tcpip/">tcpip</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+          <a class="prev" href="/post/axis2-performance-improve/">
+            
+            <i class="iconfont">
+              <svg  class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417 757.434875 204.940602c11.338233-12.190647 11.035334-32.285311-0.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-0.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891 0.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"></path>
+</svg>
+
+            </i>
+            <span class="prev-text nav-default">Axis2 performance improve</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        
+          <a class="next" href="/post/binary/">
+            <span class="next-text nav-default">binary notes</span>
+            <span class="prev-text nav-mobile">Next</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+
+  
+
+  <div class="disqus-comment">
+  <div class="disqus-button" id="load_disqus" onclick="load_disqus()">
+    Show Disqus Comments
+  </div>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_config = function () {
+      this.page.url = "http://tacy.github.io/post/network-troubleshooting-tcp-connect-cant-established/";
+    };
+    function load_disqus() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'tacysweblog';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+
+      $('#load_disqus').remove();
+    };
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+  
+  </div>
+  
+    
+
+
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+  
+  
+    <a href="mailto:your@email.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://stackoverflow.com/users/1225294/tacy-lee" rel="me noopener" class="iconfont"
+      title="stack-overflow"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M809.714286 932.571429l-638.857143 0 0-274.285714-91.428571 0 0 365.714286 821.714286 0 0-365.714286-91.428571 0 0 274.285714zm-538.285714-299.428571l18.857143-89.714286 447.428571 94.285714-18.857143 89.142857zm58.857143-213.714286l38.285714-83.428571 414.285714 193.714286-38.285714 82.857143zm114.857143-203.428571l58.285714-70.285714 350.857143 293.142857-58.285714 70.285714zm226.857143-216l272.571429 366.285714-73.142857 54.857143-272.571429-366.285714zm-410.285714 840.571429l0-90.857143 457.142857 0 0 90.857143-457.142857 0z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://twitter.com/tacy_lee" rel="me noopener" class="iconfont"
+      title="twitter"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1264 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M1229.8616 18.043658c0 0-117.852626 63.135335-164.151872 67.344358-105.225559-164.151872-505.082682-92.598492-437.738325 223.078185C278.622548 312.675223 89.216542 47.506814 89.216542 47.506814s-117.852626 189.406006 75.762402 345.139833C127.097743 396.85567 55.544363 371.601535 55.544363 371.601535S26.081207 535.753407 253.368414 615.724832c-21.045112 29.463156-113.643603 8.418045-113.643603 8.418045s25.254134 143.10676 231.496229 180.987961c-143.10676 130.479693-387.230056 92.598492-370.393967 105.225559 206.242095 189.406006 1119.599946 231.496229 1128.01799-643.98042C1179.353331 249.539887 1263.533778 123.269217 1263.533778 123.269217s-130.479693 37.881201-138.897738 33.672179C1225.652577 98.015083 1229.8616 18.043658 1229.8616 18.043658"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/tacy" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://weibo.com/p/1005051970158087" rel="me noopener" class="iconfont"
+      title="weibo"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M385.714286 733.714286q12-19.428571 6.285714-39.428571t-25.714286-28.571429q-19.428571-8-41.714286-0.571429t-34.285714 26.285714q-12.571429 19.428571-7.428571 39.142857t24.571429 28.857143 42.571429 1.428571 35.714286-27.142857zm53.714286-69.142857q4.571429-7.428571 2-15.142857t-10-10.571429q-8-2.857143-16.285714 2.857143t-12.285714 10.571429q-9.714286 17.714286 7.428571 25.714286 8 2.857143 16.571429 2.857143t12.571429-10.571429zm99.428571 61.142857q-25.714286 58.285714-90.285714 85.714286t-128 6.857143q-61.142857-19.428571-84.285714-72.285714t3.714286-107.142857q26.857143-53.142857 86.571429-79.428571t120.285714-10.857143q63.428571 16.571429 90.571429 68.285714t1.428571 108.857143zm178.285714-91.428571q-5.142857-54.857143-50.857143-97.142857t-119.142857-62.285714-156.857143-12q-127.428571 13.142857-211.142857 80.857143t-75.714286 151.142857q5.142857 54.857143 50.857143 97.142857t119.142857 62.285714 156.857143 12q127.428571-13.142857 211.142857-80.857143t75.714286-151.142857zm176 2.285714q0 38.857143-21.142857 79.714286t-62.285714 78.285714-96.285714 67.142857-129.142857 47.428571-154.571429 17.714286-157.142857-19.142857-137.428571-53.142857-98-86.285714-37.142857-114q0-65.714286 39.714286-140t112.857143-147.428571q96.571429-96.571429 195.142857-134.857143t140.857143 4q37.142857 36.571429 11.428571 119.428571-2.285714 8-0.571429 11.428571t5.714286 4 8.285714 2.857143 7.714286-2l3.428571-1.142857q79.428571-33.714286 140.571429-33.714286t87.428571 34.857143q25.714286 36 0 101.714286-1.142857 7.428571-2.571429 11.428571t2.571429 7.142857 6.857143 4.285714 9.714286 3.428571q32.571429 10.285714 58.857143 26.857143t45.714286 46.571429 19.428571 66.571429zm-42.285714-356.571429q24 26.857143 31.142857 62t-3.714286 67.142857q-4.571429 13.142857-16.857143 19.428571t-25.428571 2.285714q-13.142857-4.571429-19.428571-16.857143t-2.285714-25.428571q11.428571-36-13.714286-63.428571t-61.142857-20q-13.714286 2.857143-25.714286-4.571429t-14.285714-21.142857q-2.857143-13.714286 4.571429-25.428571t21.142857-14.571429q34.285714-7.428571 68 3.142857t57.714286 37.428571zm103.428571-93.142857q49.714286 54.857143 64.285714 127.142857t-7.714286 138q-5.142857 15.428571-19.428571 22.857143t-29.714286 2.285714-22.857143-19.428571-2.857143-29.714286q16-46.857143 5.714286-98.285714t-45.714286-90.285714q-35.428571-39.428571-84.571429-54.571429t-98.857143-4.857143q-16 3.428571-29.714286-5.428571t-17.142857-24.857143 5.428571-29.428571 24.857143-16.857143q70.285714-14.857143 139.428571 6.571429t118.857143 76.857143z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://www.douban.com/people/tacy_lee/" rel="me noopener" class="iconfont"
+      title="douban"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M926.917973 37.80608C959.65184 37.80608 986.19392 64.34816 986.19392 97.082027L986.19392 926.917973C986.19392 959.65184 959.65184 986.19392 926.917973 986.19392L97.082027 986.19392C64.34816 986.19392 37.80608 959.65184 37.80608 926.917973L37.80608 97.082027C37.80608 64.34816 64.34816 37.80608 97.082027 37.80608zM176.653653 176.19968 176.653653 252.678827 825.658027 252.678827 825.658027 176.19968zM217.719467 316.146347 217.719467 628.08064 273.524053 628.08064 341.292373 770.39616 157.259093 770.39616 157.259093 845.417813 842.949973 845.417813 842.949973 770.39616 654.226773 770.39616 722.899627 628.08064 783.67744 628.08064 783.67744 316.146347zM684.885333 392.891733 684.885333 553.987413 312.576 553.987413 312.576 392.891733zM570.770773 770.39616 426.653013 770.39616 359.621973 628.08064 639.443627 628.08064z"></path>
+</svg>
+
+    </a>
+
+
+<a href="http://tacy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+  
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2012 -
+    2019
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        春龙
+        
+      </span></span>
+
+  
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

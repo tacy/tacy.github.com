@@ -6,10 +6,28 @@
     <description>Recent content in Tech on Tacy - Notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 05 Jan 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 28 Mar 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://tacy.github.io/categories/tech/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Axis2 performance improve</title>
+      <link>http://tacy.github.io/post/axis2-performance-improve/</link>
+      <pubDate>Thu, 28 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/axis2-performance-improve/</guid>
+      <description>上面一篇关于连接超时的文章，就是由于axis2客户端实现导致，下面是我用测试代码（启了4个线程，每个线程做4次调用）运行过程中的抓包： 可以看</description>
+    </item>
+    
+    <item>
+      <title>tcp connect can&#39;t establish</title>
+      <link>http://tacy.github.io/post/network-troubleshooting-tcp-connect-cant-established/</link>
+      <pubDate>Tue, 12 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/network-troubleshooting-tcp-connect-cant-established/</guid>
+      <description>最近碰到一起网络故障，有代表意义，记录下过程 故障现象 客户系统频繁报调用超时，检查后端服务提供方日志，并没有发现服务调用异常情况，服务调用时长</description>
+    </item>
     
     <item>
       <title>binary notes</title>
@@ -17,7 +35,7 @@
       <pubDate>Sat, 05 Jan 2019 00:00:00 +0000</pubDate>
       
       <guid>http://tacy.github.io/post/binary/</guid>
-      <description>编译之后产生的二进制文件，有很多种不同的格式，一般在linux下，elf是最常用的，如果没有特殊说明，这里指的都是elf格式的二进制文件 二进</description>
+      <description>编译之后产生的二进制文件，有很多种不同的格式，一般在linux下，elf是最常用的，如果没有特殊说明，这里指的都是elf格式的二进制文件 ELF readelf</description>
     </item>
     
     <item>
@@ -171,24 +189,6 @@
       
       <guid>http://tacy.github.io/post/wireshark-tcpdump/</guid>
       <description>tshark tshark -V -O http -Y &amp;ldquo;(http.request and http.host contains ymatou)&amp;rdquo; -T fields -e frame.number -e http.request.method -e http.request.full_uri -r ~/workspace/python/osx/lele/ymt-addproductv2.pcapng FILTER FIELD REFERENCE tshark -G fields on the command line Troubleshooting SSL123 Starting with Wireshark 2.0, the RSA key file is automatically matched against the public key as found in the Certificate handshake message. Before Wireshark 2.0, it relied on the user to enter a valid Address and Port</description>
-    </item>
-    
-    <item>
-      <title>android notes</title>
-      <link>http://tacy.github.io/post/android/</link>
-      <pubDate>Tue, 29 Jul 2014 00:00:00 +0000</pubDate>
-      
-      <guid>http://tacy.github.io/post/android/</guid>
-      <description>Android emulator 只需加载kvm模块，同时启动命令上添加‘-qemu -enable-kvm’ 参数即可，启动命令： emulator64-x86 -avd test -data userdata.img -qemu -m 2048 -enable-kvm vm’ 参数即可，启动命令</description>
-    </item>
-    
-    <item>
-      <title>Java性能分析之火焰图</title>
-      <link>http://tacy.github.io/post/flamegraph/</link>
-      <pubDate>Wed, 16 Jul 2014 00:00:00 +0000</pubDate>
-      
-      <guid>http://tacy.github.io/post/flamegraph/</guid>
-      <description>FlameGraph 火焰图[fn:1]，简单通过x轴横条宽度来度量时间指标，y轴代表线程栈的层次，简单明了， 容易找出具体的可优化点，非常方便，当然前提是我们通</description>
     </item>
     
   </channel>

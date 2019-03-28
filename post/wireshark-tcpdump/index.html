@@ -68,7 +68,7 @@
 
 <meta itemprop="datePublished" content="2014-08-21T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2014-08-21T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1108">
+<meta itemprop="wordCount" content="1294">
 
 
 
@@ -351,6 +351,22 @@ if (!doNotTrack) {
 
 <p>很可能是网卡支持tso, 同时打开了该功能, 应用层的拆包工作交给了网卡, 一般这种情况, 你能在对端看到正确的tcp segment len大小</p>
 
+<h2 id="tcp-full-window">TCP Full Window</h2>
+
+<p>The Receiver advertises a TCP Window of 5000 byte.
+The Sender sends 5 packets with a TCP Len of 1000 each
+There is no ACK between those 5 packets
+Wireshark will mark the 5th packet with [TCP Window Full] as it has seen those advertized 5000 bytes, without an ACK</p>
+
+<h2 id="sack">SACK</h2>
+
+<p>下面是一个wireshark包截图
+<img src="/img/wireshark-sack.png" alt="wireshark sack" /></p>
+
+<p>截图信息显示，接收端希望接受的下一个包的sequence号是16953，但是它已经收到了18413~22793的包了，没有接收到16953~18412，发送端可以根据这个ack，重传16953~18412。</p>
+
+<p>参考连接<a href="http://packetlife.net/blog/2010/jun/17/tcp-selective-acknowledgments-sack/">TCP Selective Acknowledgments (SACK)</a></p>
+
 <h2 id="如何查找一个session">如何查找一个session</h2>
 
 <p>标识一个tcp链接通过src_ip:port  -&gt; dst_ip:port, 过滤条件写上就行, 当然tcp port存在重用的情况, 所以你还需要加上session id啥的, 在cookie里面有</p>
@@ -361,6 +377,10 @@ if (!doNotTrack) {
 
 <p>首先过滤包, 然后file -&gt; export specified packets -&gt; all packets
 也可以通过tshark来过滤, 一般可以</p>
+
+<h1 id="lua">LUA</h1>
+
+<h2 id="httpext-lua">httpext.lua</h2>
 
 <h1 id="案例">案例</h1>
 
