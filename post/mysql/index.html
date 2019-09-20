@@ -68,7 +68,7 @@
 
 <meta itemprop="datePublished" content="2017-10-11T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2017-10-11T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1531">
+<meta itemprop="wordCount" content="1562">
 
 
 
@@ -647,7 +647,17 @@ sanity_check <span class="o">&amp;&amp;</span> do_backup &gt; <span class="s2">&
 <span class="k">fi</span></code></pre></div>
 <h2 id="设置定时任务">设置定时任务</h2>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">crontab -e <span class="o">(</span>注意是设置tacy_lee的定时任务<span class="o">)</span>
-<span class="m">0</span> */3 * * * /usr/local/bin/backup-mysql.sh</code></pre></div><div class="footnotes">
+<span class="m">0</span> */3 * * * /usr/local/bin/backup-mysql.sh</code></pre></div>
+<h1 id="tips">tips</h1>
+
+<h2 id="导出csv">导出csv</h2>
+
+<p>select * from sample INTO OUTFILE &lsquo;/var/lib/mysql-files/orders.csv&rsquo;</p>
+
+<h2 id="常用sql">常用sql</h2>
+
+<p>select deptid,COUNT(<em>) as TotalCount from staff group by deptid having count(</em>) &gt; 2</p>
+<div class="footnotes">
 
 <hr />
 

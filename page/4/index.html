@@ -61,7 +61,7 @@
 <meta property="og:description" content="工作的一点总结，以及生活的点滴感悟，你就当我在扯淡." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="http://tacy.github.io/" />
-<meta property="og:updated_time" content="2014-11-24T00:00:00&#43;00:00"/>
+<meta property="og:updated_time" content="2015-01-01T00:00:00&#43;00:00"/>
 
 <meta itemprop="name" content="Tacy - Notes">
 <meta itemprop="description" content="工作的一点总结，以及生活的点滴感悟，你就当我在扯淡.">
@@ -297,6 +297,74 @@ if (!doNotTrack) {
   <header class="post-header">
     <h1 class="post-title">
       
+      <a class="post-link" href="/post/archlinux/">archlinux notes</a>
+    </h1>
+    
+    <div class="post-meta">
+      <time datetime="2015-01-01" class="post-time">
+        2015-01-01
+      </time>
+      <div class="post-category">
+          <a href="http://tacy.github.io/categories/tech/"> tech </a>
+          
+        </div>
+      
+      
+      
+    </div>
+  </header>
+  
+  <div class="post-content">
+    
+    <div class="post-summary">
+      my archlinux machine baseline archlinux包更新非常, 如果你经常需要安装包, 会频繁出现新安装的包更新了依赖包, 但是原来依赖这个依赖包的组件可能就不能运行了,
+    </div>
+    <div class="read-more">
+      <a href="/post/archlinux/" class="read-more-link">Read more</a>
+    </div>
+    
+  </div>
+</article>
+
+    
+      <article class="post bg-white">
+  <header class="post-header">
+    <h1 class="post-title">
+      
+      <a class="post-link" href="/post/l2tp-ipsec-in-linode/">l2tp ipsec in linode</a>
+    </h1>
+    
+    <div class="post-meta">
+      <time datetime="2014-12-24" class="post-time">
+        2014-12-24
+      </time>
+      <div class="post-category">
+          <a href="http://tacy.github.io/categories/tech/"> tech </a>
+          
+        </div>
+      
+      
+      
+    </div>
+  </header>
+  
+  <div class="post-content">
+    
+    <div class="post-summary">
+      我参考的配置帖子: https://raymii.org/s/tutorials/IPSEC_L2TP_vpn_with_Ubuntu_14.04.html 先注意下面问题: Two or more interfaces found, checking IP forwarding Failed 我的环境是: My Ubuntu 14.04 LTS Profile (Latest 64 bit (3.16.7-x86_64-linode49)) 如果已经配置了ip_forward, 没啥好说的, 直接升级
+    </div>
+    <div class="read-more">
+      <a href="/post/l2tp-ipsec-in-linode/" class="read-more-link">Read more</a>
+    </div>
+    
+  </div>
+</article>
+
+    
+      <article class="post bg-white">
+  <header class="post-header">
+    <h1 class="post-title">
+      
       <a class="post-link" href="/post/%E6%9C%AC%E5%9C%B0kvm%E7%8E%AF%E5%A2%83%E8%BF%90%E8%A1%8Ckubernetes%E9%9B%86%E7%BE%A4/">本地KVM环境运行Kubernetes集群</a>
     </h1>
     
@@ -389,74 +457,6 @@ if (!doNotTrack) {
     </div>
     <div class="read-more">
       <a href="/post/raspberry-pi-wirelessap/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
-
-    
-      <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/marathon-in-mesos/">marathon in mesos</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2014-08-30" class="post-time">
-        2014-08-30
-      </time>
-      <div class="post-category">
-          <a href="http://tacy.github.io/categories/tech/"> tech </a>
-          
-        </div>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      mesos 记录一下最近一周的工作，最近一周一直在看PaaS，主要是结合Docker的方案，简单看了 看，成熟的东西没有，基本都有各种问题，可以参考一下
-    </div>
-    <div class="read-more">
-      <a href="/post/marathon-in-mesos/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
-
-    
-      <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/wireshark-tcpdump/">wireshark和tcpdump相关笔记</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2014-08-21" class="post-time">
-        2014-08-21
-      </time>
-      <div class="post-category">
-          <a href="http://tacy.github.io/categories/tech/"> tech </a>
-          
-        </div>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      tshark tshark -V -O http -Y &ldquo;(http.request and http.host contains ymatou)&rdquo; -T fields -e frame.number -e http.request.method -e http.request.full_uri -r ~/workspace/python/osx/lele/ymt-addproductv2.pcapng FILTER FIELD REFERENCE tshark -G fields on the command line Troubleshooting SSL123 Starting with Wireshark 2.0, the RSA key file is automatically matched against the public key as found in the Certificate handshake message. Before Wireshark 2.0, it relied on the user to enter a valid Address and Port
-    </div>
-    <div class="read-more">
-      <a href="/post/wireshark-tcpdump/" class="read-more-link">Read more</a>
     </div>
     
   </div>

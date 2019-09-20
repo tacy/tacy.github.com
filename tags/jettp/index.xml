@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Jettp on Tacy - Notes</title>
+    <link>http://tacy.github.io/tags/jettp/</link>
+    <description>Recent content in Jettp on Tacy - Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 19 Sep 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://tacy.github.io/tags/jettp/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Jetty接入异常</title>
+      <link>http://tacy.github.io/post/java-cause-accept-except/</link>
+      <pubDate>Thu, 19 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/java-cause-accept-except/</guid>
+      <description>故障现象 客户现场测试，部署的一个集成平台，Java，基于RHEL，在自己机器上测试一切正常，部署到客户机器怎么都无法调通，后台也没有任何日志</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -6,10 +6,28 @@
     <description>Recent content in Java on Tacy - Notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 28 Mar 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 19 Sep 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://tacy.github.io/tags/java/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Jetty接入异常</title>
+      <link>http://tacy.github.io/post/java-cause-accept-except/</link>
+      <pubDate>Thu, 19 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/java-cause-accept-except/</guid>
+      <description>故障现象 客户现场测试，部署的一个集成平台，Java，基于RHEL，在自己机器上测试一切正常，部署到客户机器怎么都无法调通，后台也没有任何日志</description>
+    </item>
+    
+    <item>
+      <title>java应用未关闭的http连接分析</title>
+      <link>http://tacy.github.io/post/java-http-connect-unclose/</link>
+      <pubDate>Thu, 18 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/java-http-connect-unclose/</guid>
+      <description>正常情况下，我们创建的http连接都需要主动关闭（也有很多http连接池管理的实现帮助你，你也需要release回到池中）。但依然有些丑陋的</description>
+    </item>
     
     <item>
       <title>Axis2 performance improve</title>

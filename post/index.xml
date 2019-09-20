@@ -6,10 +6,28 @@
     <description>Recent content in Posts on Tacy - Notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 28 Mar 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 19 Sep 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://tacy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Jetty接入异常</title>
+      <link>http://tacy.github.io/post/java-cause-accept-except/</link>
+      <pubDate>Thu, 19 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/java-cause-accept-except/</guid>
+      <description>故障现象 客户现场测试，部署的一个集成平台，Java，基于RHEL，在自己机器上测试一切正常，部署到客户机器怎么都无法调通，后台也没有任何日志</description>
+    </item>
+    
+    <item>
+      <title>java应用未关闭的http连接分析</title>
+      <link>http://tacy.github.io/post/java-http-connect-unclose/</link>
+      <pubDate>Thu, 18 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/java-http-connect-unclose/</guid>
+      <description>正常情况下，我们创建的http连接都需要主动关闭（也有很多http连接池管理的实现帮助你，你也需要release回到池中）。但依然有些丑陋的</description>
+    </item>
     
     <item>
       <title>Axis2 performance improve</title>
@@ -171,24 +189,6 @@
       
       <guid>http://tacy.github.io/post/raspberry-pi-wirelessap/</guid>
       <description>Raspberry Pi WirelessAP 有时候, 希望能做一些其他设备的抓包分析, 不想去折腾路由器, 就把手上的Raspberry Pi改造了一下, 当然你也能让他当成翻墙工具, 可以</description>
-    </item>
-    
-    <item>
-      <title>marathon in mesos</title>
-      <link>http://tacy.github.io/post/marathon-in-mesos/</link>
-      <pubDate>Sat, 30 Aug 2014 00:00:00 +0000</pubDate>
-      
-      <guid>http://tacy.github.io/post/marathon-in-mesos/</guid>
-      <description>mesos 记录一下最近一周的工作，最近一周一直在看PaaS，主要是结合Docker的方案，简单看了 看，成熟的东西没有，基本都有各种问题，可以参考一下</description>
-    </item>
-    
-    <item>
-      <title>wireshark和tcpdump相关笔记</title>
-      <link>http://tacy.github.io/post/wireshark-tcpdump/</link>
-      <pubDate>Thu, 21 Aug 2014 00:00:00 +0000</pubDate>
-      
-      <guid>http://tacy.github.io/post/wireshark-tcpdump/</guid>
-      <description>tshark tshark -V -O http -Y &amp;ldquo;(http.request and http.host contains ymatou)&amp;rdquo; -T fields -e frame.number -e http.request.method -e http.request.full_uri -r ~/workspace/python/osx/lele/ymt-addproductv2.pcapng FILTER FIELD REFERENCE tshark -G fields on the command line Troubleshooting SSL123 Starting with Wireshark 2.0, the RSA key file is automatically matched against the public key as found in the Certificate handshake message. Before Wireshark 2.0, it relied on the user to enter a valid Address and Port</description>
     </item>
     
   </channel>

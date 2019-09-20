@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Archive - Tacy - Notes</title>
+  <title>Jetty接入异常 - Tacy - Notes</title>
   
 
 <meta name="renderer" content="webkit" />
@@ -22,8 +22,8 @@
 
 <meta name="mobile-web-app-capable" content="yes">
 
-<meta name="author" content="春龙" />
-  <meta name="description" content="工作的一点总结，以及生活的点滴感悟，你就当我在扯淡." />
+<meta name="author" content="春龙" /><meta name="description" content="集成平台，基于Jetty，暴露的服务调用无响应，端口监听正常（通过telnet验证），类似平台挂起" />
+
   <meta name="keywords" content="Tacy, tech, life, linux, performance, kubernetes, golang, java, troubleshooting" />
 
 
@@ -34,8 +34,7 @@
 <meta name="generator" content="Hugo 0.51" />
 
 
-<link rel="canonical" href="http://tacy.github.io/post/" />
-<link href="http://tacy.github.io/post/index.xml" rel="alternate" type="application/rss+xml" title="Tacy - Notes" />
+<link rel="canonical" href="http://tacy.github.io/post/java-cause-accept-except/" />
 
 
 
@@ -57,18 +56,26 @@
 
 
 
-<meta property="og:title" content="Posts" />
-<meta property="og:description" content="工作的一点总结，以及生活的点滴感悟，你就当我在扯淡." />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="http://tacy.github.io/post/" />
-<meta property="og:updated_time" content="2019-09-19T00:00:00&#43;00:00"/>
+<meta property="og:title" content="Jetty接入异常" />
+<meta property="og:description" content="集成平台，基于Jetty，暴露的服务调用无响应，端口监听正常（通过telnet验证），类似平台挂起" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://tacy.github.io/post/java-cause-accept-except/" /><meta property="article:published_time" content="2019-09-19T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2019-09-19T00:00:00&#43;00:00"/>
 
-<meta itemprop="name" content="Posts">
-<meta itemprop="description" content="工作的一点总结，以及生活的点滴感悟，你就当我在扯淡.">
+<meta itemprop="name" content="Jetty接入异常">
+<meta itemprop="description" content="集成平台，基于Jetty，暴露的服务调用无响应，端口监听正常（通过telnet验证），类似平台挂起">
 
+
+<meta itemprop="datePublished" content="2019-09-19T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2019-09-19T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="627">
+
+
+
+<meta itemprop="keywords" content="tech,java,nio,jettp," />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Posts"/>
-<meta name="twitter:description" content="工作的一点总结，以及生活的点滴感悟，你就当我在扯淡."/>
+<meta name="twitter:title" content="Jetty接入异常"/>
+<meta name="twitter:description" content="集成平台，基于Jetty，暴露的服务调用无响应，端口监听正常（通过telnet验证），类似平台挂起"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -234,7 +241,7 @@ if (!doNotTrack) {
 
       </li>
     
-        <li class="menu-item active">
+        <li class="menu-item">
         
           
           
@@ -288,193 +295,157 @@ if (!doNotTrack) {
     <main id="main" class="main bg-llight">
       <div class="content-wrapper">
         <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Jetty接入异常</h1>
+      
+      <div class="post-meta">
+        <time datetime="2019-09-19" class="post-time">
+          2019-09-19
+        </time>
+        <div class="post-category">
+            <a href="http://tacy.github.io/categories/tech/"> tech </a>
+            
+          </div>
+        
+
+        
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    
+    <div class="post-content">
+      
+
+<h1 id="故障现象">故障现象</h1>
+
+<p>客户现场测试，部署的一个集成平台，Java，基于RHEL，在自己机器上测试一切正常，部署到客户机器怎么都无法调通，后台也没有任何日志。</p>
+
+<h1 id="分析解决">分析解决</h1>
+
+<p>现场反馈是在k8s容器里面部署不行，后面了解到的情况是即使直接部署在虚拟机上也是无法调通，也就可以排除容器网络的问题。</p>
+
+<p>首先怀疑是网络问题，同事的反馈显示，端口是能正常telnet的，curl也能看到连接正常：
+<img src="/img/jetty2.jpg" alt="jetty curl" /></p>
+
+<p>上图能看到连接已经建立了，但是server端迟迟没有返回。由于这里已经是直接本地调用了，查看了一下iptables，没发现有rule会影响29090端口的服务调用，自然怀疑是集成平台本省除了问题。</p>
+
+<p>接着就查看了一下集成平台的java线程栈，没有发现有线程挂住的情况，里面的线程都是空的，结合日志情况看，服务是没有被调用的。</p>
+
+<p>用抓包<code>tcpdump -i lo tcp -w esb.pcap</code>分析了一下，确认请求是已经收到了：
+<img src="/img/jetty3.jpg" alt="jetty wireshark" /></p>
+
+<p>也就是说从tcp协议层，包已经被接收了，为什么会出现这样的情况呢？按理来说，接收到包，中断，然后应用介入，acceptor读取请求，但是从线程栈看，没发现有什么异常情况。</p>
+
+<p>用<code>ss -tni -o &quot;dport = :29090</code>确认一下
+<img src="/img/jetty4.jpg" alt="jetty ss" /></p>
+
+<p>从输出看，recv-q里面有88字节待读取。结合抓包截图，看到我们的请求大小就是88字节，也就是说，协议层面没有问题，包已经送达了，也没有overflow drop问题，问题确认出现在java层面，怀疑nio问题，我的最初怀疑是jdk，最后通过降低jetty版本解决，时间有限，没有再做更多分析。</p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">春龙</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">2019-09-19</span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">License</span>
+    <span class="item-content">true</span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="http://tacy.github.io/tags/tech/">tech</a>
+          <a href="http://tacy.github.io/tags/java/">java</a>
+          <a href="http://tacy.github.io/tags/nio/">nio</a>
+          <a href="http://tacy.github.io/tags/jettp/">jettp</a>
           
-<section id="archive" class="archive">
-    <div class="archive-title">
-      <span class="archive-post-counter">
-          50 posts In Total
-      </span>
-    </div>
-    
-      <div class="collection-title">
-        <h2 class="archive-year">2019</h2>
-      </div>
+        </div>
 
-    <div class="archive-post">
-      <time datetime="2019-09-19" class="archive-post-time">
-        2019-09-19
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/java-cause-accept-except/" class="archive-post-link">
-          Jetty接入异常
-        </a>
-      </span>
-    </div>
-    
-
-    <div class="archive-post">
-      <time datetime="2019-07-18" class="archive-post-time">
-        2019-07-18
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/java-http-connect-unclose/" class="archive-post-link">
-          java应用未关闭的http连接分析
-        </a>
-      </span>
-    </div>
-    
-
-    <div class="archive-post">
-      <time datetime="2019-03-28" class="archive-post-time">
-        2019-03-28
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/axis2-performance-improve/" class="archive-post-link">
-          Axis2 performance improve
-        </a>
-      </span>
-    </div>
-    
-
-    <div class="archive-post">
-      <time datetime="2019-03-12" class="archive-post-time">
-        2019-03-12
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/network-troubleshooting-tcp-connect-cant-established/" class="archive-post-link">
-          tcp connect can&#39;t establish
-        </a>
-      </span>
-    </div>
-    
-
-    <div class="archive-post">
-      <time datetime="2019-01-05" class="archive-post-time">
-        2019-01-05
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/binary/" class="archive-post-link">
-          binary notes
-        </a>
-      </span>
-    </div>
-    
-
-    <div class="archive-post">
-      <time datetime="2019-01-02" class="archive-post-time">
-        2019-01-02
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/trace/" class="archive-post-link">
-          Linux trace
-        </a>
-      </span>
-    </div>
-    
-      <div class="collection-title">
-        <h2 class="archive-year">2018</h2>
-      </div>
-
-    <div class="archive-post">
-      <time datetime="2018-09-05" class="archive-post-time">
-        2018-09-05
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/gdb/" class="archive-post-link">
-          gdb notes
-        </a>
-      </span>
-    </div>
-    
-
-    <div class="archive-post">
-      <time datetime="2018-04-23" class="archive-post-time">
-        2018-04-23
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/heapster-monitor-java-by-custom-metrics/" class="archive-post-link">
-          Heapster monitor java by custom metrics
-        </a>
-      </span>
-    </div>
-    
-      <div class="collection-title">
-        <h2 class="archive-year">2017</h2>
-      </div>
-
-    <div class="archive-post">
-      <time datetime="2017-11-10" class="archive-post-time">
-        2017-11-10
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/openshift/" class="archive-post-link">
-          openshift notes
-        </a>
-      </span>
-    </div>
-    
-
-    <div class="archive-post">
-      <time datetime="2017-10-11" class="archive-post-time">
-        2017-10-11
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/mysql/" class="archive-post-link">
-          mysql notes
-        </a>
-      </span>
-    </div></section>
-
-
-
-
-
-
-  
-  
-  
-
-  
-  
-
-  
-  
-
-  
-  
-
-  
-  
-  <nav class="pagination">
-    <ul>
       
-      <li  class="active" >
-        <a href="/post/">1</a>
-      </li>
-      
-      <li >
-        <a href="/post/page/2/">2</a>
-      </li>
-      
-      <li >
-        <a href="/post/page/3/">3</a>
-      </li>
-      
-      <li >
-        <a href="/post/page/4/">4</a>
-      </li>
-      
-      <li >
-        <a href="/post/page/5/">5</a>
-      </li>
-      
-    </ul>
-  </nav>
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/java-http-connect-unclose/">
+            <span class="next-text nav-default">java应用未关闭的http连接分析</span>
+            <span class="prev-text nav-mobile">Next</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
 
   
   
 
+  
+  
 
+  
+  
+
+  
+
+  
+
+  <div class="disqus-comment">
+  <div class="disqus-button" id="load_disqus" onclick="load_disqus()">
+    Show Disqus Comments
+  </div>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_config = function () {
+      this.page.url = "http://tacy.github.io/post/java-cause-accept-except/";
+    };
+    function load_disqus() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'tacysweblog';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+
+      $('#load_disqus').remove();
+    };
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+  
+  </div>
+  
+    
 
 
 

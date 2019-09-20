@@ -68,7 +68,7 @@
 
 <meta itemprop="datePublished" content="2012-08-16T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2012-08-16T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="5140">
+<meta itemprop="wordCount" content="5277">
 
 
 
@@ -374,6 +374,15 @@ global Internet.</p>
 <h2 id="tcp-fin-timeout">tcp_fin_timeout</h2>
 
 <p>主动断开连接方，会等待对方回FIN包，并且处于FIN-WAIT-2状态，tcp_fin_timeout用于控制FIN-WAIT-2状态的时间，如果超过设定时间没有接收到FIN包，回直接close连接，连接进入time_wait状态</p>
+
+<h2 id="tcp-retries2">tcp_retries2</h2>
+
+<p>TCP retransmits an unacknowledged packet up to tcp_retries2 sysctl setting times (defaults to 15) using an exponential backoff timeout for which each retransmission timeout is between TCP_RTO_MIN (200 ms) and TCP_RTO_MAX (120 seconds). Once the 15th retry expires (by default), the TCP stack will notify the layers above (ie. app) of a broken connection.</p>
+
+<p>The value of TCP_RTO_MIN and TCP_RTO_MAX is hardcoded in the Linux kernel and defined by the following constants:</p>
+<div class="highlight"><pre class="chroma">#define TCP_RTO_MAX ((unsigned)(120*HZ))
+#define TCP_RTO_MIN ((unsigned)(HZ/5))</pre></div>
+<p>Linux 2.6+ uses HZ of 1000ms, so TCP_RTO_MIN is ~200 ms and TCP_RTO_MAX is ~120 seconds. Given a default value of tcp_retries set to 15, it means that it takes 924.6 seconds before a broken network link is notified to the upper layer (ie. application), since the connection is detected as broken when the last (15th) retry expires.</p>
 
 <h2 id="fast-retransmit">Fast Retransmit</h2>
 

@@ -32,6 +32,63 @@
     </item>
     
     <item>
+      <title>Jetty接入异常</title>
+      <link>http://tacy.github.io/post/java-cause-accept-except/</link>
+      <pubDate>Thu, 19 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/java-cause-accept-except/</guid>
+      
+        <description>
+
+&lt;h1 id=&#34;故障现象&#34;&gt;故障现象&lt;/h1&gt;
+
+&lt;p&gt;客户现场测试，部署的一个集成平台，Java，基于RHEL，在自己机器上测试一切正常，部署到客户机器怎么都无法调通，后台也没有任何日志。&lt;/p&gt;
+
+&lt;h1 id=&#34;分析解决&#34;&gt;分析解决&lt;/h1&gt;
+
+&lt;p&gt;现场反馈是在k8s容器里面部署不行，后面了解到的情况是即使直接部署在虚拟机上也是无法调通，也就可以排除容器网络的问题。&lt;/p&gt;
+
+&lt;p&gt;首先怀疑是网络问题，同事的反馈显示，端口是能正常telnet的，curl也能看到连接正常：
+&lt;img src=&#34;http://tacy.github.io/img/jetty2.jpg&#34; alt=&#34;jetty curl&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;上图能看到连接已经建立了，但是server端迟迟没有返回。由于这里已经是直接本地调用了，查看了一下iptables，没发现有rule会影响29090端口的服务调用，自然怀疑是集成平台本省除了问题。&lt;/p&gt;
+
+&lt;p&gt;接着就查看了一下集成平台的java线程栈，没有发现有线程挂住的情况，里面的线程都是空的，结合日志情况看，服务是没有被调用的。&lt;/p&gt;
+
+&lt;p&gt;用抓包&lt;code&gt;tcpdump -i lo tcp -w esb.pcap&lt;/code&gt;分析了一下，确认请求是已经收到了：
+&lt;img src=&#34;http://tacy.github.io/img/jetty3.jpg&#34; alt=&#34;jetty wireshark&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;也就是说从tcp协议层，包已经被接收了，为什么会出现这样的情况呢？按理来说，接收到包，中断，然后应用介入，acceptor读取请求，但是从线程栈看，没发现有什么异常情况。&lt;/p&gt;
+
+&lt;p&gt;用&lt;code&gt;ss -tni -o &amp;quot;dport = :29090&lt;/code&gt;确认一下
+&lt;img src=&#34;http://tacy.github.io/img/jetty4.jpg&#34; alt=&#34;jetty ss&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;从输出看，recv-q里面有88字节待读取。结合抓包截图，看到我们的请求大小就是88字节，也就是说，协议层面没有问题，包已经送达了，也没有overflow drop问题，问题确认出现在java层面，怀疑nio问题，我的最初怀疑是jdk，最后通过降低jetty版本解决，时间有限，没有再做更多分析。&lt;/p&gt;
+</description>
+      
+    </item>
+    
+    <item>
+      <title>java应用未关闭的http连接分析</title>
+      <link>http://tacy.github.io/post/java-http-connect-unclose/</link>
+      <pubDate>Thu, 18 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://tacy.github.io/post/java-http-connect-unclose/</guid>
+      
+        <description>&lt;p&gt;正常情况下，我们创建的http连接都需要主动关闭（也有很多http连接池管理的实现帮助你，你也需要release回到池中）。但依然有些丑陋的代码，忘记主动关闭，这些没有关闭的连接最终都会被回收，用不同的方式。&lt;/p&gt;
+
+&lt;p&gt;存在两种方式：&lt;/p&gt;
+
+&lt;p&gt;一种是连接发起端垃圾回收。由于http对象没有任何引用，gc会把它回收掉，这种情况下，连接不是采用四次挥手的正常端口模式，而是通过发送RESET包断开，没有处理的数据也会直接扔掉。&lt;/p&gt;
+
+&lt;p&gt;一种是服务端断开。由于keepalive存在，一般服务端都会有keepalive超时设置。如果到了超时时间，客户端没有断开连接，服务端会主动断开。这种情况下，服务端会采用四次挥手方式断开连接，但是由于客户端对象已经没有任何引用，不会调用close方法，客户端虽然接收到了服务端发过来的fin包，但是不会回fin包，所以连接无法正常断开：客户端将处于close-wait状态，等待gc回收，服务端将处于fin-wait-2状态，并等待超时，进入time-wait状态。&lt;/p&gt;
+
+&lt;p&gt;如果你在系统中看到大量的reset包，或者看到tcp连接处于close-wait/fin-wait-2状态，一般情况下都是连接没有正常关闭导致。&lt;/p&gt;
+</description>
+      
+    </item>
+    
+    <item>
       <title>Axis2 performance improve</title>
       <link>http://tacy.github.io/post/axis2-performance-improve/</link>
       <pubDate>Thu, 28 Mar 2019 00:00:00 +0000</pubDate>
@@ -2297,7 +2354,17 @@ sanity_check &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; do_ba
 &lt;span class=&#34;k&#34;&gt;fi&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;h2 id=&#34;设置定时任务&#34;&gt;设置定时任务&lt;/h2&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;crontab -e &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;注意是设置tacy_lee的定时任务&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; */3 * * * /usr/local/bin/backup-mysql.sh&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;footnotes&#34;&gt;
+&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; */3 * * * /usr/local/bin/backup-mysql.sh&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h1 id=&#34;tips&#34;&gt;tips&lt;/h1&gt;
+
+&lt;h2 id=&#34;导出csv&#34;&gt;导出csv&lt;/h2&gt;
+
+&lt;p&gt;select * from sample INTO OUTFILE &amp;lsquo;/var/lib/mysql-files/orders.csv&amp;rsquo;&lt;/p&gt;
+
+&lt;h2 id=&#34;常用sql&#34;&gt;常用sql&lt;/h2&gt;
+
+&lt;p&gt;select deptid,COUNT(&lt;em&gt;) as TotalCount from staff group by deptid having count(&lt;/em&gt;) &amp;gt; 2&lt;/p&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
 
 &lt;hr /&gt;
 
@@ -4503,9 +4570,84 @@ lsmod&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;grep -i bbr&lt;/code&gt;&lt;/pr
 ip link set eth0 mtu 9000  # (JUMBO frames)
 /etc/sysconfig/network-scripts/&lt;interface&gt;  add line &amp;lsquo;MTU=&amp;ldquo;9000&amp;rdquo;&amp;rsquo; or accroding to archlinux jumbo frames&lt;/p&gt;
 
+&lt;h2 id=&#34;tune-initial-windows-size&#34;&gt;tune initial windows size&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-1c-enterprise&#34; data-lang=&#34;1c-enterprise&#34;&gt;# ip route change default via 24.13.158.1 dev enp0s2 initcwnd 10 initrwnd 10
+# ip route change 10.1.1.0/24 dev enp0s3 proto kernel scope link src 10.1.1.100 initcwnd 10 initrwnd 10
+# ip route change 24.13.158.0/23 dev enp0s2 proto kernel scope link src 24.13.159.33 initcwnd 10 initrwnd 10
+# ip route show
+default via 24.13.158.1 dev enp0s2  initcwnd 10  initrwnd 10
+10.1.1.0/24 dev enp0s3  proto kernel  scope link  src 10.1.1.100  initcwnd 10  initrwnd 10
+24.13.158.0/23 dev enp0s2  proto kernel  scope link  src 24.13.159.33  initcwnd 10 initrwnd 10&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h2 id=&#34;tcp-connection&#34;&gt;tcp connection&lt;/h2&gt;
+
+&lt;h3 id=&#34;keepalive&#34;&gt;keepalive&lt;/h3&gt;
+
+&lt;p&gt;需要设置so_keepalive，在创建socket的时候，大部分网络应用都支持相关配置项。设置该选项之后，tcp连接空闲时间超过tcp_keepalive_time，linux会发送keepalive probe，对端回包，确认连接有效；如果没有接收到对端的回包，linux会在tcp_keepalive_intvl指定的时间间隔之后，重新发送probe，最多发送tcp_keepalive_probes个probe，如果依然没有回包，连接会被断开。&lt;/p&gt;
+
+&lt;p&gt;当两端之间存在其他影响连接状态设备时，例如中间有防火墙，keepalive就非常必要，在应用层实现的keepalive，大部分只是持有连接，不会发送保持连接的probe包，这类的keepalive时间稍长，很容易被防火墙之类的设备断开。&lt;/p&gt;
+
+&lt;h3 id=&#34;so-linger-2-3&#34;&gt;so_linger&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:3&#34;&gt;&lt;a href=&#34;#fn:3&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;/h3&gt;
+
+&lt;p&gt;tcp连接的断开有两种情况，一种是正常的四次挥手，一种是直接用reset包断开（abortive close），so_linger选项可以用来控制连接的断开行为。当设置so_linger为on，linux会等待发送队列中的数据发送完成，然后正常断开连接，或者等待so_linger time设置的超时时间，如果在这个时间之内依然没有发送完成，连接也会断开；如果设置为off，连接会丢弃掉所有数据，直接发送reset包断开连接。&lt;/p&gt;
+
+&lt;p&gt;一般不会采用发送reset包的方式断开连接，除非客户端没有正常关闭连接，导致服务端大量timeout（server active close）&lt;/p&gt;
+
+&lt;h2 id=&#34;tcp-tuning&#34;&gt;tcp tuning&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-1c-enterprise&#34; data-lang=&#34;1c-enterprise&#34;&gt;### /etc/sysctl.d/02-netIO.conf
+### Kernel settings for TCP
+
+# Provide adequate buffer memory.
+# rmem_max and wmem_max are TCP max buffer size
+# settable with setsockopt(), in bytes
+# tcp_rmem and tcp_wmem are per socket in bytes.
+# tcp_mem is for all TCP streams, in 4096-byte pages.
+# The following are suggested on IBM&amp;#39;s
+# High Performance Computing page
+net.core.rmem_max = 16777216
+net.core.wmem_max = 16777216
+net.core.rmem_default = 16777216
+net.core.wmem_default = 16777216
+net.ipv4.tcp_rmem = 4096 87380 16777216
+net.ipv4.tcp_wmem = 4096 87380 16777216
+# This server might have 200 clients simultaneously, so:
+#   max(tcp_wmem) * 2 * 200 / 4096
+net.ipv4.tcp_mem = 1638400 1638400 1638400
+
+# Disable TCP SACK (TCP Selective Acknowledgement),
+# DSACK (duplicate TCP SACK), and FACK (Forward Acknowledgement)
+net.ipv4.tcp_sack = 0
+net.ipv4.tcp_dsack = 0
+net.ipv4.tcp_fack = 0
+
+# Disable the gradual speed increase that&amp;#39;s useful
+# on variable-speed WANs but not for us
+net.ipv4.tcp_slow_start_after_idle = 0&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;h2 id=&#34;网卡bonding&#34;&gt;网卡bonding&lt;/h2&gt;
 
 &lt;p&gt;&lt;code&gt;teamdctl team0 state&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;## nic bind irq
+1. 先看看网卡现在的中断使用情况&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-1c-enterprise&#34; data-lang=&#34;1c-enterprise&#34;&gt;# grep eth0 /proc/interrupts
+32:   0     140      45       850264      PCI-MSI-edge      eth0&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;上面显示eth0用的是32号中断，中断的处理cpu大部分在cpu4上，2和3上也有一些&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;看当前的绑定情况&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-1c-enterprise&#34; data-lang=&#34;1c-enterprise&#34;&gt;# cat /proc/irq/32/smp_affinity
+f&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;上面显示irq 32没有绑定具体的cpu，任意cpu都可以&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;强制绑定到某个cpu&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-1c-enterprise&#34; data-lang=&#34;1c-enterprise&#34;&gt;# echo 1 &amp;gt;/proc/irq/32/smp_affinity
+# cat /proc/irq/32/smp_affinity
+1&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;上面的操作我们强制绑定的cpu1上，所有这个网卡的中断都由cpu1处理。&lt;/p&gt;
+
+&lt;p&gt;在多队列网卡的时候，可以给每个队列绑定一个网卡，这样会有更好的性能。&lt;/p&gt;
 
 &lt;h2 id=&#34;software-ap&#34;&gt;software AP&lt;/h2&gt;
 
@@ -4651,6 +4793,13 @@ Inode Pathname
 
 ss -x src /tmp/.X11-unix/*
   Find all &lt;span class=&#34;nb&#34;&gt;local&lt;/span&gt; processes connected to X server.&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h4 id=&#34;one-line&#34;&gt;one line&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;查看长期闲置的连接
+&lt;code&gt;ss -tni &#39;sport = :8080&#39;|grep -v Recv|sed &#39;N;s/\n/ /g&#39;|grep wscale|cut -d&#39;:&#39; -f1,2,3,14,15|sed &#39;s/lastrcv//g&#39;|sort -t&#39;:&#39; -nk5|tail -10&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
 &lt;h2 id=&#34;sockdump&#34;&gt;sockdump&lt;/h2&gt;
 
 &lt;p&gt;这是别人用brf写的一个监控unix socket的小工具，可以查看unix socket间的通讯记录
@@ -4712,6 +4861,19 @@ teamdctl team0 state&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://www.digitalocean.com/community/tutorials/how-to-install-dropbox-client-as-a-service-on-centos-7&#34;&gt;https://www.digitalocean.com/community/tutorials/how-to-install-dropbox-client-as-a-service-on-centos-7&lt;/a&gt;
 &lt;a href=&#34;https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-centos-7&#34;&gt;https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-centos-7&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li id=&#34;fn:2&#34;&gt;&lt;a href=&#34;https://stackoverflow.com/questions/3757289/tcp-option-so-linger-zero-when-its-required&#34;&gt;tcp option so-linger zero when its required&lt;/a&gt;
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:2&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn:3&#34;&gt;&lt;a href=&#34;http://deepix.github.io/2016/10/21/tcprst.html&#34;&gt;Resetting a TCP connection and SO_LINGER&lt;/a&gt;
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:3&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn:1&#34;&gt;&lt;a href=&#34;https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/performance_tuning_guide/s-cpu-irq&#34;&gt;INTERRUPTS AND IRQ TUNING&lt;/a&gt;
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:1&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
 </description>
       
     </item>
@@ -5407,346 +5569,6 @@ cp user_data myconfig/openstack/latest/&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;[fn:3] [[&lt;a href=&#34;https://coreos.com/docs/cluster-management/debugging/reading-the-system-log/][Reading&#34;&gt;https://coreos.com/docs/cluster-management/debugging/reading-the-system-log/][Reading&lt;/a&gt; the System Log]]&lt;/p&gt;
 
 &lt;p&gt;[fn:4] [[&lt;a href=&#34;https://github.com/coreos/coreos-cloudinit/issues/205][CoreOS&#34;&gt;https://github.com/coreos/coreos-cloudinit/issues/205][CoreOS&lt;/a&gt; Cloud init #205]]&lt;/p&gt;
-</description>
-      
-    </item>
-    
-    <item>
-      <title>Raspberry Pi WirelessAP</title>
-      <link>http://tacy.github.io/post/raspberry-pi-wirelessap/</link>
-      <pubDate>Wed, 29 Oct 2014 00:00:00 +0000</pubDate>
-      
-      <guid>http://tacy.github.io/post/raspberry-pi-wirelessap/</guid>
-      
-        <description>
-
-&lt;h1 id=&#34;raspberry-pi-wirelessap&#34;&gt;Raspberry Pi WirelessAP&lt;/h1&gt;
-
-&lt;p&gt;有时候, 希望能做一些其他设备的抓包分析, 不想去折腾路由器, 就把手上的Raspberry Pi改造了一下, 当然你也能让他当成翻墙工具, 可以自己扩展.&lt;/p&gt;
-
-&lt;p&gt;网上已经有一大堆文档, 大部分都已经过期了, 所以建议大家在搜索的时候, 尽量选择近期的文档, 这样会比较靠谱一点.&lt;/p&gt;
-
-&lt;p&gt;拿我的设备举例子: 我的无线网卡是RTL8192CU, 网上的大部分帖子都过期了, 上来就让你编译网卡驱动. 其实这个网卡在kernel 3.10之前有bug, 无法正确支持, 但是在后续版本中已经fix了, 我现在用的kernel是3.11, 自动支持.&lt;/p&gt;
-
-&lt;p&gt;主要的问题是hostapd对RT8192CU的支持有点问题, 需要用hack过的版本.&lt;/p&gt;
-
-&lt;h2 id=&#34;环境准备&#34;&gt;环境准备&lt;/h2&gt;
-
-&lt;dl&gt;
-&lt;dt&gt;安装相关软件&lt;/dt&gt;
-&lt;dd&gt;sudo apt-get install hostapd isc-dhcp-server&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;dl&gt;
-&lt;dt&gt;安装相关软件&lt;/dt&gt;
-&lt;dd&gt;sudo apt-get install hostapd isc-dhcp-server&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;p&gt;hostapd isc-dhcp-server&lt;/p&gt;
-
-&lt;h2 id=&#34;配置无线网卡和网络路由&#34;&gt;配置无线网卡和网络路由&lt;/h2&gt;
-
-&lt;p&gt;配置无线网卡为静态地址, 当然不要和eth0地址段冲突了, 如果你家里是192.168.1.0/24, 那么这里你需要设置为该网段以外的其他网段.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;pi@raspbmc:/etc/dhcp$ cat /etc/network/interfaces
-auto wlan0
-allow-hotplug wlan0
-iface wlan0 inet static
-    address &lt;span class=&#34;m&#34;&gt;192&lt;/span&gt;.168.42.1
-    netmask &lt;span class=&#34;m&#34;&gt;255&lt;/span&gt;.255.255.0
-up iptables-restore &amp;lt; /etc/iptables.ipv4.nat&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;dl&gt;
-&lt;dt&gt;接下来你需要启用ip转发功能, 简单做法是编辑/etc/sysctl.conf, 找到下面这样, 取消注释.&lt;/dt&gt;
-&lt;dd&gt;#net.ipv4.ip_forward=1
-然后通过下面命令启用:&lt;/dd&gt;
-&lt;dd&gt;sysctl -p&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;p&gt;设置NAT规则, 让包能够正常路由到其他网段:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-sudo iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
-sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;dl&gt;
-&lt;dt&gt;保存iptables配置:&lt;/dt&gt;
-&lt;dd&gt;sudo sh -c &amp;ldquo;iptables-save &amp;gt; /etc/iptables.ipv4.nat&amp;rdquo;&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;h2 id=&#34;配置dhcp服务&#34;&gt;配置DHCP服务&lt;/h2&gt;
-
-&lt;p&gt;你需要给连接AP的客户端自动分配ip地址信息, 所有你需要有dhcp服务, 当然你也能手动制定, 但是对于客户端太麻烦了.&lt;/p&gt;
-
-&lt;p&gt;先编写dhcp配置文件, 主要是注释下面两行:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;option domain-name &lt;span class=&#34;s2&#34;&gt;&amp;#34;example.org&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-option domain-name-servers ns1.example.org, ns2.example.org&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;dl&gt;
-&lt;dt&gt;取消注释下面一行:&lt;/dt&gt;
-&lt;dd&gt;#authoritative;&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;p&gt;添加下面内容到文件结尾, 注意这里的ip地址段和无线网卡匹配:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;subnet &lt;span class=&#34;m&#34;&gt;192&lt;/span&gt;.168.42.0 netmask &lt;span class=&#34;m&#34;&gt;255&lt;/span&gt;.255.255.0 &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-    range &lt;span class=&#34;m&#34;&gt;192&lt;/span&gt;.168.42.10 &lt;span class=&#34;m&#34;&gt;192&lt;/span&gt;.168.42.50&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-    option broadcast-address &lt;span class=&#34;m&#34;&gt;192&lt;/span&gt;.168.42.255&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-    option routers &lt;span class=&#34;m&#34;&gt;192&lt;/span&gt;.168.42.1&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-    default-lease-time &lt;span class=&#34;m&#34;&gt;600&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-    max-lease-time &lt;span class=&#34;m&#34;&gt;7200&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-    option domain-name &lt;span class=&#34;s2&#34;&gt;&amp;#34;local&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-    option domain-name-servers &lt;span class=&#34;m&#34;&gt;8&lt;/span&gt;.8.8.8, &lt;span class=&#34;m&#34;&gt;8&lt;/span&gt;.8.4.4&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;完整内容如下:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;pi@raspbmc:/etc/dhcp$ cat dhcpd.conf
-#
-&lt;span class=&#34;c1&#34;&gt;# Sample configuration file for ISC dhcpd for Debian&lt;/span&gt;
-#
-#
-
-&lt;span class=&#34;c1&#34;&gt;# The ddns-updates-style parameter controls whether or not the server will&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# attempt to do a DNS update when a lease is confirmed. We default to the&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# behavior of the version 2 packages (&amp;#39;none&amp;#39;, since DHCP v2 didn&amp;#39;t&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# have support for DDNS.)&lt;/span&gt;
-ddns-update-style none&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# option definitions common to all supported networks...&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#option domain-name &amp;#34;example.org&amp;#34;;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#option domain-name-servers ns1.example.org, ns2.example.org;&lt;/span&gt;
-
-default-lease-time &lt;span class=&#34;m&#34;&gt;600&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-max-lease-time &lt;span class=&#34;m&#34;&gt;7200&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# If this DHCP server is the official DHCP server for the local&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# network, the authoritative directive should be uncommented.&lt;/span&gt;
-authoritative&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# Use this to send dhcp log messages to a different log file (you also&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# have to hack syslog.conf to complete the redirection).&lt;/span&gt;
-log-facility local7&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# No service will be given on this subnet, but declaring it helps the&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# DHCP server to understand the network topology.&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;#subnet 10.152.187.0 netmask 255.255.255.0 {&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#}&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# This is a very basic subnet declaration.&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;#subnet 10.254.239.0 netmask 255.255.255.224 {&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  range 10.254.239.10 10.254.239.20;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  option routers rtr-239-0-1.example.org, rtr-239-0-2.example.org;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#}&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# This declaration allows BOOTP clients to get dynamic addresses,&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# which we don&amp;#39;t really recommend.&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;#subnet 10.254.239.32 netmask 255.255.255.224 {&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  range dynamic-bootp 10.254.239.40 10.254.239.60;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  option broadcast-address 10.254.239.31;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  option routers rtr-239-32-1.example.org;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#}&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# A slightly different configuration for an internal subnet.&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#subnet 10.5.5.0 netmask 255.255.255.224 {&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  range 10.5.5.26 10.5.5.30;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  option domain-name-servers ns1.internal.example.org;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  option domain-name &amp;#34;internal.example.org&amp;#34;;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  option routers 10.5.5.1;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  option broadcast-address 10.5.5.31;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  default-lease-time 600;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  max-lease-time 7200;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#}&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# Hosts which require special configuration options can be listed in&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# host statements.   If no address is specified, the address will be&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# allocated dynamically (if possible), but the host-specific information&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# will still come from the host declaration.&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;#host passacaglia {&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  hardware ethernet 0:0:c0:5d:bd:95;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  filename &amp;#34;vmunix.passacaglia&amp;#34;;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  server-name &amp;#34;toccata.fugue.com&amp;#34;;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#}&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# Fixed IP addresses can also be specified for hosts.   These addresses&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# should not also be listed as being available for dynamic assignment.&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# Hosts for which fixed IP addresses have been specified can boot using&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# BOOTP or DHCP.   Hosts for which no fixed address is specified can only&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# be booted with DHCP, unless there is an address range on the subnet&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# to which a BOOTP client is connected which has the dynamic-bootp flag&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# set.&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#host fantasia {&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  hardware ethernet 08:00:07:26:c0:a5;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  fixed-address fantasia.fugue.com;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#}&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# You can declare a class of clients and then do address allocation&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# based on that.   The example below shows a case where all clients&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# in a certain class get addresses on the 10.17.224/24 subnet, and all&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# other clients get addresses on the 10.0.29/24 subnet.&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;#class &amp;#34;foo&amp;#34; {&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  match if substring (option vendor-class-identifier, 0, 4) = &amp;#34;SUNW&amp;#34;;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#}&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;#shared-network 224-29 {&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  subnet 10.17.224.0 netmask 255.255.255.0 {&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#    option routers rtr-224.example.org;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  }&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  subnet 10.0.29.0 netmask 255.255.255.0 {&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#    option routers rtr-29.example.org;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  }&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  pool {&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#    allow members of &amp;#34;foo&amp;#34;;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#    range 10.17.224.10 10.17.224.250;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  }&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  pool {&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#    deny members of &amp;#34;foo&amp;#34;;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#    range 10.0.29.10 10.0.29.230;&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  }&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#}&lt;/span&gt;
-
-subnet &lt;span class=&#34;m&#34;&gt;192&lt;/span&gt;.168.42.0 netmask &lt;span class=&#34;m&#34;&gt;255&lt;/span&gt;.255.255.0 &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-    range &lt;span class=&#34;m&#34;&gt;192&lt;/span&gt;.168.42.10 &lt;span class=&#34;m&#34;&gt;192&lt;/span&gt;.168.42.50&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-    option broadcast-address &lt;span class=&#34;m&#34;&gt;192&lt;/span&gt;.168.42.255&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-    option routers &lt;span class=&#34;m&#34;&gt;192&lt;/span&gt;.168.42.1&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-    default-lease-time &lt;span class=&#34;m&#34;&gt;600&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-    max-lease-time &lt;span class=&#34;m&#34;&gt;7200&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-    option domain-name &lt;span class=&#34;s2&#34;&gt;&amp;#34;local&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-    option domain-name-servers &lt;span class=&#34;m&#34;&gt;8&lt;/span&gt;.8.8.8, &lt;span class=&#34;m&#34;&gt;8&lt;/span&gt;.8.4.4&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;接下来需要告诉dhcp, 它需要绑定在哪个网卡上, 简单修改isc-dhcp-server文件, 设置INTERFACES=&amp;ldquo;wlan0&amp;rdquo;:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;pi@raspbmc:/etc/dhcp$ cat /etc/default/isc-dhcp-server
-&lt;span class=&#34;c1&#34;&gt;# Defaults for isc-dhcp-server initscript&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# sourced by /etc/init.d/isc-dhcp-server&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# installed at /etc/default/isc-dhcp-server by the maintainer scripts&lt;/span&gt;
-
-#
-&lt;span class=&#34;c1&#34;&gt;# This is a POSIX shell fragment&lt;/span&gt;
-#
-
-&lt;span class=&#34;c1&#34;&gt;# Path to dhcpd&amp;#39;s config file (default: /etc/dhcp/dhcpd.conf).&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#DHCPD_CONF=/etc/dhcp/dhcpd.conf&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# Path to dhcpd&amp;#39;s PID file (default: /var/run/dhcpd.pid).&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#DHCPD_PID=/var/run/dhcpd.pid&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# Additional options to start dhcpd with.&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#	Don&amp;#39;t use options -cf or -pf here; use DHCPD_CONF/ DHCPD_PID instead&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#OPTIONS=&amp;#34;&amp;#34;&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# On what interfaces should the DHCP server (dhcpd) serve DHCP requests?&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#	Separate multiple interfaces with spaces, e.g. &amp;#34;eth0 eth1&amp;#34;.&lt;/span&gt;
-&lt;span class=&#34;nv&#34;&gt;INTERFACES&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;wlan0&amp;#34;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h2 id=&#34;配置hostapd&#34;&gt;配置hostapd&lt;/h2&gt;
-
-&lt;p&gt;编写hostapd.conf文件, 内容如下:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;pi@raspbmc:/etc/hostapd$ cat hostapd.conf
-&lt;span class=&#34;nv&#34;&gt;interface&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;wlan0
-&lt;span class=&#34;nv&#34;&gt;driver&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;rtl871xdrv
-&lt;span class=&#34;nv&#34;&gt;ssid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;Pi_AP
-&lt;span class=&#34;nv&#34;&gt;hw_mode&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;g
-&lt;span class=&#34;nv&#34;&gt;channel&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;6&lt;/span&gt;
-&lt;span class=&#34;nv&#34;&gt;macaddr_acl&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-&lt;span class=&#34;nv&#34;&gt;auth_algs&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-&lt;span class=&#34;nv&#34;&gt;ignore_broadcast_ssid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-&lt;span class=&#34;nv&#34;&gt;wpa&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
-&lt;span class=&#34;nv&#34;&gt;wpa_passphrase&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;Raspberry
-&lt;span class=&#34;nv&#34;&gt;wpa_key_mgmt&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;WPA-PSK
-&lt;span class=&#34;nv&#34;&gt;wpa_pairwise&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;TKIP
-&lt;span class=&#34;nv&#34;&gt;rsn_pairwise&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;CCMP&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;修改hostapd.conf文件, 指定配置文件位置DAEMON_CONF=&amp;ldquo;/etc/hostapd/hostapd.conf&amp;rdquo;:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;pi@raspbmc:/etc/hostapd$ cat /etc/default/hostapd
-&lt;span class=&#34;c1&#34;&gt;# Defaults for hostapd initscript&lt;/span&gt;
-#
-&lt;span class=&#34;c1&#34;&gt;# See /usr/share/doc/hostapd/README.Debian for information about alternative&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# methods of managing hostapd.&lt;/span&gt;
-#
-&lt;span class=&#34;c1&#34;&gt;# Uncomment and set DAEMON_CONF to the absolute path of a hostapd configuration&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# file and hostapd will be started during system boot. An example configuration&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# file can be found at /usr/share/doc/hostapd/examples/hostapd.conf.gz&lt;/span&gt;
-#
-&lt;span class=&#34;nv&#34;&gt;DAEMON_CONF&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;/etc/hostapd/hostapd.conf&amp;#34;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;dl&gt;
-&lt;dt&gt;用下面hack过的hostapd替换原始的:&lt;/dt&gt;
-&lt;dd&gt;wget &lt;a href=&#34;http://www.adafruit.com/downloads/adafruit_hostapd.zip&#34;&gt;http://www.adafruit.com/downloads/adafruit_hostapd.zip&lt;/a&gt;&lt;/dd&gt;
-&lt;/dl&gt;
-
-&lt;p&gt;用解压之后的文件替换/usr/sbin/hostapd, 记得添加执行权限, 替换之前也可以备份一下原始版本&lt;/p&gt;
-
-&lt;p&gt;完工, 现在检查一下效果, 确认:
-1. 无线网卡配置正常(ifconfig, wlan0正常)
-2. 确认ip_forward启用(/proc/sys/net/ipv4/ip_forward为1)
-3. 确认iptables nat正常(sudo iptables -t nat -S)
-3. dhcp服务启动(sudo service dhcp restart)
-4. hostapd服务启动(sudo service hostapd restart)&lt;/p&gt;
-
-&lt;p&gt;正常的话, 你在客户端应该能看到一个叫Pi_AP的信号了!&lt;/p&gt;
-</description>
-      
-    </item>
-    
-    <item>
-      <title>marathon in mesos</title>
-      <link>http://tacy.github.io/post/marathon-in-mesos/</link>
-      <pubDate>Sat, 30 Aug 2014 00:00:00 +0000</pubDate>
-      
-      <guid>http://tacy.github.io/post/marathon-in-mesos/</guid>
-      
-        <description>
-
-&lt;h1 id=&#34;mesos&#34;&gt;mesos&lt;/h1&gt;
-
-&lt;p&gt;记录一下最近一周的工作，最近一周一直在看PaaS，主要是结合Docker的方案，简单看了
-看，成熟的东西没有，基本都有各种问题，可以参考一下lusis写的[[&lt;a href=&#34;http://blog.lusis.org/blog/2014/06/14/paas-for-realists/][PaaS&#34;&gt;http://blog.lusis.org/blog/2014/06/14/paas-for-realists/][PaaS&lt;/a&gt; for Realists]]，&lt;/p&gt;
-
-&lt;p&gt;我没有去试这几个项目，未来有时间可能会做，目前我的重点在mesos上，这是[[&lt;a href=&#34;https://www.google.com/url?sa%3Dt&amp;amp;rct%3Dj&amp;amp;q%3D&amp;amp;esrc%3Ds&amp;amp;source%3Dweb&amp;amp;cd%3D2&amp;amp;cad%3Drja&amp;amp;uact%3D8&amp;amp;ved%3D0CCsQFjAB&amp;amp;url%3Dhttp%253A%252F%252Fresearch.google.com%252Fpubs%252Fpub41684.html&amp;amp;ei%3DIvEBVM_VJI-A8QXIlIDADQ&amp;amp;usg%3DAFQjCNFhre6QW6LnswxdXZu-jLg3WXQ1eQ&amp;amp;sig2%3DFWZK9sf-fke4bqNXZI_Ikg&amp;amp;bvm%3Dbv.74115972,d.dGc][Omega]]的&#34;&gt;https://www.google.com/url?sa%3Dt&amp;amp;rct%3Dj&amp;amp;q%3D&amp;amp;esrc%3Ds&amp;amp;source%3Dweb&amp;amp;cd%3D2&amp;amp;cad%3Drja&amp;amp;uact%3D8&amp;amp;ved%3D0CCsQFjAB&amp;amp;url%3Dhttp%253A%252F%252Fresearch.google.com%252Fpubs%252Fpub41684.html&amp;amp;ei%3DIvEBVM_VJI-A8QXIlIDADQ&amp;amp;usg%3DAFQjCNFhre6QW6LnswxdXZu-jLg3WXQ1eQ&amp;amp;sig2%3DFWZK9sf-fke4bqNXZI_Ikg&amp;amp;bvm%3Dbv.74115972,d.dGc][Omega]]的&lt;/a&gt;
-开源实现，支持各种framework，包括hadoop/storm/spark等流行的数据处理框架，当然熟
-悉这块的人也知道，资源调度器的另一个更流行的产品是YARN，但是他只支持MapReduce框
-架，而mesos支持面更广，他还支持应用运行在上面，具体的比较可以参考[[&lt;a href=&#34;http://www.quora.com/How-does-YARN-compare-to-Mesos][Quora上的帖子：&#34;&gt;http://www.quora.com/How-does-YARN-compare-to-Mesos][Quora上的帖子：&lt;/a&gt;
-How does YARN compare to Mesos?]]，另外就是mesos支持docker实现隔离。&lt;/p&gt;
-
-&lt;h1 id=&#34;marathon&#34;&gt;marathon&lt;/h1&gt;
-
-&lt;p&gt;marathon其实就是mesos上的一个framework，一个基于mesos的PaaS实现。通过它能部署应
-用，比如java、python、ruby等。利用mesos提供的HA、FT、Scale特性，你的应用天然具备
-这些特性。同时应用实现容器级别的资源隔离实现，非常方便。&lt;/p&gt;
-
-&lt;h1 id=&#34;marathon-mesos-docker&#34;&gt;marathon + mesos + docker&lt;/h1&gt;
-
-&lt;p&gt;部署测试了一下，还是比较理想，只是对于docker的支持还有一些问题，下面是一些需要
-注意的点：&lt;/p&gt;
-
-&lt;h2 id=&#34;安装注意事项&#34;&gt;安装注意事项&lt;/h2&gt;
-
-&lt;p&gt;首先mesos 0.19版本之前，支持docker都是通过External Containerization特性来支持，
-需要依赖Deimos项目，0.20版本（写本文的时候，刚刚发布几天）原声支持，这里用的是
-0.20版本&lt;/p&gt;
-
-&lt;p&gt;其次marathon目前发布的版本是0.6.1，不能支持mesos 0.20的docker特性，你需要获取源
-码snapshot自己编译。&lt;/p&gt;
-
-&lt;h2 id=&#34;功能上需要注意的点&#34;&gt;功能上需要注意的点&lt;/h2&gt;
-
-&lt;p&gt;首先一个需要注意的地方是mesos对于docker网络的支持，目前之支持host模式，也就意味
-着你的应用端口配置上有一些麻烦，你需要在应用启动阶段注入修改应用端口，mesos的下
-一个版本（0.20.1）能支持更复杂的网络配置[fn:1]。&lt;/p&gt;
-
-&lt;p&gt;关于网络举例来说，缺省是bridge，docker能做端口expose，docker容器内监听的80端口，
-如果外面想访问，只需把端口expose出来。这样对于运行在docker容器内的应用很方便，
-不会产生端口冲突问题，但是如果是host模式，docker容器内的监听端口直接监听在宿主
-机上，需要考虑同一宿主机的多实例应用端口冲突问题。&lt;/p&gt;
-
-&lt;p&gt;其次是LB的问题也需要注意，目前给出的示例是通过cron方式非实时更新LB配置，不是太理
-想，应该可以通过callback方式来走，会比较理想。&lt;/p&gt;
-
-&lt;p&gt;另外一点就是[fn:2]：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;Also since we explicitly attempt to pull the image on launch,if the docker image
-is only installed locally but not avaialble on the remote repository the launch
-will fail as well.&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;文档里面提到，如果是本地的image是不行的，必须提交到远程仓库，否则mesos会pull失败&lt;/p&gt;
-
-&lt;h1 id=&#34;footnotes&#34;&gt;Footnotes&lt;/h1&gt;
-
-&lt;p&gt;[fn:1] [[&lt;a href=&#34;http://tnachen.wordpress.com/2014/08/19/docker-in-mesos-0-20/][Docker&#34;&gt;http://tnachen.wordpress.com/2014/08/19/docker-in-mesos-0-20/][Docker&lt;/a&gt; on Mesos 0.20]]&lt;/p&gt;
-
-&lt;p&gt;[fn:2] [[&lt;a href=&#34;http://mesos.apache.org/documentation/latest/docker-containerizer/][Docker&#34;&gt;http://mesos.apache.org/documentation/latest/docker-containerizer/][Docker&lt;/a&gt; Containerizer]]&lt;/p&gt;
 </description>
       
     </item>
